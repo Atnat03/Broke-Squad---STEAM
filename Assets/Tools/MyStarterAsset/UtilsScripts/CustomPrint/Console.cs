@@ -3,23 +3,24 @@ using UnityEngine;
 
 namespace MyPrint
 {
-	public class Console
+	public class ABPrint
 	{
 		
 		#region Classic Print
 		
+		// ReSharper disable Unity.PerformanceAnalysis
 		public static void Print(string msg)
 		{
 			Debug.Log(msg);
 		}
 		
 		//Print avec une couleur et un style
-		public static void Print(string msg, ColorConsole color, ConsoleStyle style)
+		public static void Print(string msg, ABColor abColor, ConsoleStyle style)
 		{
-			(string, string) styleStr = ConsoleOption.GetStyle(style);
+			(string, string) styleStr = ABOption.GetStyle(style);
 			
 			 string s = $"{styleStr.Item1}" +
-			            $"{ConsoleOption.GetColor(color)} " +
+			            $"{ABOption.GetColor(abColor)} " +
 			            $"{msg}" +
 			            "</color> " +
 			            $"{styleStr.Item2}";
@@ -28,10 +29,10 @@ namespace MyPrint
 		}
 		
 		//Print avec une couleur uniquement
-		public static void Print(string msg, ColorConsole color)
+		public static void Print(string msg, ABColor abColor)
 		{
 			 string s = "" +
-			            $"{ConsoleOption.GetColor(color)}" +
+			            $"{ABOption.GetColor(abColor)}" +
 			            $"{msg}" +
 			            "</color>";
 			
@@ -41,7 +42,7 @@ namespace MyPrint
 		//Print avec un style uniquement
 		public static void Print(string msg, ConsoleStyle style)
 		{
-			(string, string) styleStr = ConsoleOption.GetStyle(style);
+			(string, string) styleStr = ABOption.GetStyle(style);
 			
 			string s = $"{styleStr.Item1}" +
 			           $"{msg}" +
@@ -68,13 +69,13 @@ namespace MyPrint
 		}
 		
 		//Print List element par element avec une couleur
-		public static void PrintList<T>(List<T> list, ColorConsole colorElement, string listName = "")
+		public static void PrintList<T>(List<T> list, ABColor abColorElement, string listName = "")
 		{
 			string s = $"List {listName}\n";
 			
 			for (int i = 0; i < list.Count; i++)
 			{
-				s += $"Element {i} : {ConsoleOption.GetColor(colorElement)}{list[i]}</color> \n";
+				s += $"Element {i} : {ABOption.GetColor(abColorElement)}{list[i]}</color> \n";
 			}
 			
 			Debug.Log(s);
@@ -99,13 +100,13 @@ namespace MyPrint
 		}
 		
 		//Print Array element par element avec une couleur
-		public static void PrintList<T>(T[] list, ColorConsole colorElement, string listName = "")
+		public static void PrintList<T>(T[] list, ABColor abColorElement, string listName = "")
 		{
 			string s = $"List {listName}\n";
 			
 			for (int i = 0; i < list.Length; i++)
 			{
-				s += $"Element {i} : {ConsoleOption.GetColor(colorElement)}{list[i]}</color> \n";
+				s += $"Element {i} : {ABOption.GetColor(abColorElement)}{list[i]}</color> \n";
 			}
 			
 			Debug.Log(s);
@@ -118,7 +119,7 @@ namespace MyPrint
 		{
 			string s = $"{boolName} ";
 			
-			string color = b ? ConsoleOption.GetColor(ColorConsole.Green) : ConsoleOption.GetColor(ColorConsole.Red);
+			string color = b ? ABOption.GetColor(ABColor.Green) : ABOption.GetColor(ABColor.Red);
 			
 			s += $"{color}{b}</color>";
 			
@@ -132,9 +133,9 @@ namespace MyPrint
 			Debug.Log("──────────────────────────────────");
 		}
 		
-		public static void PrintSpace(ColorConsole color)
+		public static void PrintSpace(ABColor abColor)
 		{
-			Debug.Log($"{ConsoleOption.GetColor(color)}──────────────────────────────────</color>");
+			Debug.Log($"{ABOption.GetColor(abColor)}──────────────────────────────────</color>");
 		}
 		#endregion
 	}

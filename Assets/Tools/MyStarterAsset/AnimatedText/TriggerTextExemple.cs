@@ -9,7 +9,7 @@ public class TriggerTextExemple : MonoBehaviour
     [ContextMenu("Trigger Effect")]
     public void TestTrigger()
     {
-        Console.Print("Trigger Effect");
+        ABPrint.Print("Trigger Effect");
         onTrigger?.Invoke();
     }
 }

@@ -1,11 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using MyPrint;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
-using Console = MyPrint.Console;
 
 public enum TextAnimationType 
 {Writing, Floating, Shaking, 
