@@ -5,7 +5,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
 {
     public class NumberOfUse : ItemModule, ICondition
     {
-        private readonly int _maxUse = 3;
+        [SerializeField] private int _maxUse = 3;
         private int _currentUse = 0;
 
         public ItemInput InputType => ItemInput.Left;

@@ -20,6 +20,16 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
 
         private SO_Item _itemData;
         
+        public ItemInstance Instance { get; private set; }
+        
+        public void SetInstance(ItemInstance instance)
+        {
+            Instance = instance;
+
+            foreach (var m in Instance.AllModules())
+                m?.Initialize(this);   // juste rebind, PAS de reset
+        }
+        
         public void SetNewItem(SO_Item newItem)
         {
             _itemData = newItem;
@@ -59,64 +69,55 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
             input.OnStartRightInput -= PerformRightClick;
             input.OnEndRightInput -= PerformRightRelease;
         }
-
-        #region Perform Input Action
         
-        void PerformRightClick()
-        {
-            if (!CanInput(ItemInput.Right)) return;
-            
-            foreach (IRightClick rightClick in _rightClicks)
-            {
-                rightClick?.StartRightClick();
-            }
-        }
-
-        void PerformRightRelease()
-        {
-            if (!CanInput(ItemInput.Right)) return;
-            
-            foreach (IRightClick rightClick in _rightClicks)
-            {
-                rightClick?.EndRightClick();
-            }
-        }
+        #region Perform Input Action
         
         void PerformLeftClick()
         {
-            if (!CanInput(ItemInput.Left)) return;
+            if (!CanInput(ItemInput.Left)) 
+                return;
             
-            foreach (ILeftClick leftClick in _leftClicks)
-            {
-                leftClick?.StartLeftClick();
-            }
-            
-            foreach (ICondition condition in _conditions)
-                condition?.UseItem();
+            foreach (ILeftClick l in Instance.LeftClicks) 
+                l?.StartLeftClick();
         }
-
+                
         void PerformLeftRelease()
         {
             if (!CanInput(ItemInput.Left)) return;
             
-            foreach (ILeftClick leftClick in _leftClicks)
-            {
-                leftClick?.EndLeftClick();
-            }
+            foreach (ILeftClick l in Instance.LeftClicks)
+                l?.EndLeftClick();
+            
+            foreach (ICondition condition in Instance.Conditions)
+                condition?.UseItem();
+        }
+        
+        void PerformRightClick()
+        {
+            if (!CanInput(ItemInput.Right)) 
+                return;
+            
+            foreach (IRightClick r in Instance.RightClicks) 
+                r?.StartRightClick();
+        }
+        
+
+        void PerformRightRelease()
+        {
+            if (!CanInput(ItemInput.Right)) 
+                return;
+            
+            foreach (IRightClick r in Instance.RightClicks)
+                r?.EndRightClick();
         }
         
         #endregion
 
         bool CanInput(ItemInput type)
         {
-            foreach (ICondition condition in _conditions)
-            {
-                if (!condition.CheckCondition(type))
-                {
+            foreach (ICondition c in Instance.Conditions)
+                if (!c.CheckCondition(type)) 
                     return false;
-                }
-            }
-            
             return true;
         }
     }

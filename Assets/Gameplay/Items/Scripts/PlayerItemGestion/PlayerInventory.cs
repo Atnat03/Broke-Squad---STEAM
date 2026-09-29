@@ -15,56 +15,65 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
     {
         [SerializeField] private PlayerInput _input;
         
-        [SerializeField] private SO_ItemList _possibleItems;
         [SerializeField] private Transform _parent;
-        [SerializeField] private GameObject _visualPrefab;
+        [SerializeField] private ItemPickup _item;
         
         private ItemCore _currentItem;
 
-        private void Start()
+        [ContextMenu("Equip")]
+        public void TestGrab()
         {
-            SO_Item item = ScriptableObject.CreateInstance<SO_Item>();
-            item.id = 0;
-            item.itemName = "test";
-            item.visualPrefab = _visualPrefab;
-            item.rightClicksActions = new List<IRightClick> { new ThrowModule() };
-            item.leftClicksActions = new List<ILeftClick> { new BreakThings() };
-            item.conditions = new List<ICondition> { new NumberOfUse() };
-            
-            CreateNewItem(item);
+            GrabItem(_item);
         }
 
-        public void GrabItem()
+        [ContextMenu("UnEquip")]
+        public void TestDrop()
         {
-           
+            DropItem(transform.position + Vector3.forward*0.5f);
         }
 
-        public void DropItem()
+        public void GrabItem(ItemPickup pickup)
         {
-            
+            if (HasItemInHand()) return;
+
+            EquipInstance(pickup.Instance);
+            Destroy(pickup.gameObject);
         }
 
-        public bool HasItemInHand()
+        public void DropItem(Vector3 position)
         {
-            return _currentItem != null;   
+            if (!HasItemInHand()) return;
+
+            ItemInstance instance = _currentItem.Instance;
+            SO_Item data = instance.Data;
+
+            DestroyItemInHand();
+
+            GameObject world = new GameObject(data.itemName);
+            world.transform.position = position;
+            Instantiate(data.visualPrefab, world.transform);
+            world.AddComponent<ItemPickup>().Setup(instance);
         }
 
-        private void CreateNewItem(SO_Item item)
+        private void EquipInstance(ItemInstance instance)
         {
-            GameObject newItem = new GameObject(item.itemName);
-            newItem.transform.SetParent(_parent);
-            
-            ItemCore itemCore = newItem.AddComponent<ItemCore>();
-            Instantiate(item.visualPrefab, itemCore.transform);
-            
-            itemCore.SetNewItem(item);
-            
-            _currentItem = itemCore;
-            
-            SetInputActionToItem();
+            GameObject go = new GameObject(instance.Data.itemName);
+            go.transform.SetParent(_parent, false);
+
+            ItemCore core = go.AddComponent<ItemCore>();
+            Instantiate(instance.Data.visualPrefab, core.transform);
+            core.SetInstance(instance);
+
+            _currentItem = core;
+            _currentItem.SubscribeToInput(_input);
         }
         
-        public void DestroyItemInHand()
+        private bool HasItemInHand()
+        {
+            return _currentItem != null;
+        }
+        
+        private void DestroyItemInHand()
         {
             if (_currentItem == null)
                 return;
@@ -73,11 +82,6 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
 
             Destroy(_currentItem.gameObject);
             _currentItem = null;
-        }
-
-        private void SetInputActionToItem()
-        {
-            _currentItem.SubscribeToInput(_input);
         }
     }
 }

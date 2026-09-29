@@ -8,13 +8,17 @@ namespace Gameplay.Items.Scripts.ItemModules
     {
         protected ItemCore core;
 
+        public void ResetState() => SetModule();
+
         public void Initialize(ItemCore core)
         {
             this.core = core;
-            
-            SetModule();
+            OnBind();
         }
-        
-        protected virtual void SetModule(){}
+
+        public IItemModule Clone() => (IItemModule)MemberwiseClone();
+
+        protected virtual void SetModule() {}
+        protected virtual void OnBind() {}
     }
 }

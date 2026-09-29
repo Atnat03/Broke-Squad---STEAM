@@ -4,6 +4,8 @@ namespace Gameplay.Items.Scripts.ItemModules
 {
     public interface IItemModule
     {
-        public void Initialize(ItemCore core);
+        void ResetState();
+        void Initialize(ItemCore core);
+        IItemModule Clone();
     }
 }
