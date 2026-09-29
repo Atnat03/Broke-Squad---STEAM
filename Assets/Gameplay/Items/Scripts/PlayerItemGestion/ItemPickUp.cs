@@ -1,5 +1,4 @@
 ﻿using Gameplay.Items.Scripts.ItemData;
-using UnityEditor;
 using UnityEngine;
 
 namespace Gameplay.Items.Scripts.PlayerItemGestion
@@ -21,7 +20,18 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
                 return _instance;
             }
         }
-        
+
         public void Setup(ItemInstance instance) => _instance = instance;
+
+        public void OnCollisionEnter(Collision collision)
+        {
+            if(_instance == null)
+                return;
+
+            foreach (var passif in _instance.Passifs)
+            {
+                passif.OnCollide(collision, this);
+            }
+        }
     }
 }

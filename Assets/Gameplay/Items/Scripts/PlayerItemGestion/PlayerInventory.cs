@@ -4,34 +4,73 @@ using Bus;
 using Gameplay.Controller;
 using Gameplay.Items.Scripts.ItemData;
 using Gameplay.Items.Scripts.ItemModules;
-using Gameplay.Items.Scripts.ItemModules.ConcreteModules;
-using Unity.VisualScripting;
-using UnityEditor;
+using MyPrint;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Gameplay.Items.Scripts.PlayerItemGestion
 {
     public class PlayerInventory : MonoBusListener
     {
-        [SerializeField] private PlayerInput _input;
+        public Camera PlayerCamera => _camera;
+        public ItemCore CurrentItem => _currentItem;
         
         [SerializeField] private Transform _parent;
-        [SerializeField] private ItemPickup _item;
         
+        [Header("Picking")]
+        [SerializeField] private Camera _camera;
+        [SerializeField] private float _range;
+        [SerializeField] private LayerMask _layerMask;
+        
+        [Header("UI")]
+        [Header("Throw")]
+        [SerializeField] private GameObject _throwUI;
+        [SerializeField] private Image _throwImage;
+        
+        [Header("Electic")]
+        [SerializeField] private GameObject _electicUI;
+        [SerializeField] private TextMeshProUGUI _electicPercent;
+        
+        private PlayerInput _input;
         private ItemCore _currentItem;
-
-        [ContextMenu("Equip")]
-        public void TestGrab()
+        
+        void Awake()
         {
-            GrabItem(_item);
+            _input = GetComponent<PlayerInput>();
+            
+            EnableBar(false);
+            EnableElectricInfo(false);
         }
 
-        [ContextMenu("UnEquip")]
-        public void TestDrop()
+        private void OnEnable()
         {
-            DropItem(transform.position + Vector3.forward*0.5f);
+            _input.OnInteractInput += PickUpItem;
         }
 
+        private void OnDisable()
+        {
+            _input.OnInteractInput -= PickUpItem;
+        }
+        
+        private void PickUpItem()
+        {
+            bool hasItem = HasItemInHand();
+            
+            if (!hasItem)
+            {
+                if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out RaycastHit hit, _range ,_layerMask))
+                {
+                    if (hit.transform.TryGetComponent(out ItemPickup item))
+                    {
+                        GrabItem(item);
+                        
+                        InvokeEvent(new OnInteractItemInWorld());
+                    }
+                }
+            }
+        }
+        
         public void GrabItem(ItemPickup pickup)
         {
             if (HasItemInHand()) return;
@@ -39,49 +78,71 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
             EquipInstance(pickup.Instance);
             Destroy(pickup.gameObject);
         }
-
-        public void DropItem(Vector3 position)
-        {
-            if (!HasItemInHand()) return;
-
-            ItemInstance instance = _currentItem.Instance;
-            SO_Item data = instance.Data;
-
-            DestroyItemInHand();
-
-            GameObject world = new GameObject(data.itemName);
-            world.transform.position = position;
-            Instantiate(data.visualPrefab, world.transform);
-            world.AddComponent<ItemPickup>().Setup(instance);
-        }
-
+        
         private void EquipInstance(ItemInstance instance)
         {
             GameObject go = new GameObject(instance.Data.itemName);
+
             go.transform.SetParent(_parent, false);
+            go.transform.localPosition = Vector3.zero;
+            go.transform.localRotation = Quaternion.identity;
+            go.transform.localScale = Vector3.one;
 
             ItemCore core = go.AddComponent<ItemCore>();
-            Instantiate(instance.Data.visualPrefab, core.transform);
-            core.SetInstance(instance);
+
+            GameObject visual = Instantiate(instance.Data.visualPrefab, core.transform);
+            visual.transform.localPosition = Vector3.zero;
+            visual.transform.localRotation = Quaternion.identity;
+
+            core.SetInstance(instance, this);
 
             _currentItem = core;
             _currentItem.SubscribeToInput(_input);
         }
+
+        public ItemPickup DropItem(Vector3 position, Quaternion rotation)
+        {
+            if (!HasItemInHand())
+                return null;
+
+            ItemInstance instance = _currentItem.Instance;
+
+            ItemPickup item = Instantiate(instance.Data.pickUpPrefab, position, rotation);
+            item.Setup(instance);
+
+            return item;
+        }
         
-        private bool HasItemInHand()
+        public bool HasItemInHand()
         {
             return _currentItem != null;
         }
         
-        private void DestroyItemInHand()
+        public void DestroyItemInHand()
         {
             if (_currentItem == null)
                 return;
 
+            _currentItem.ThrowItem();
+            
             _currentItem.UnsubscribeFromInput(_input);
 
             Destroy(_currentItem.gameObject);
             _currentItem = null;
+        }
+        
+        public void EnableBar(bool state) => _throwUI.SetActive(state);
+        
+        public void UpdateBar(float t)
+        {
+            _throwImage.fillAmount = t;
+        }
+        
+        public void EnableElectricInfo(bool state) => _electicUI.SetActive(state);
+        
+        public void UpdateElectricInfo(float percent)
+        {
+            _electicPercent.text = (int)percent + " %";
         }
     }
 }

@@ -15,24 +15,27 @@ MonoBehaviour:
   id: 0
   itemName: Test
   visualPrefab: {fileID: 2517337150570892065, guid: 0140db76ebb5df24f921af7841261310, type: 3}
-  leftClicksActions:
-  - rid: 7629053353929211977
+  pickUpPrefab: {fileID: 3642109076169085848, guid: 24f177f7526459e4c9e128fae0c282e5, type: 3}
+  leftClicksActions: []
   rightClicksActions:
-  - rid: 7629053353929211981
-  conditions:
-  - rid: 7629053353929211982
-  passif: []
+  - rid: 7629053358023639123
+  conditions: []
+  passif:
+  - rid: 7629053358023639127
   references:
     version: 2
     RefIds:
-    - rid: 7629053353929211977
-      type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
-      data: 
-    - rid: 7629053353929211981
+    - rid: 7629053358023639123
       type: {class: ThrowModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _throwForce: 0
-    - rid: 7629053353929211982
-      type: {class: NumberOfUse, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+        _minThrowForce: {x: 0, y: 0, z: 0}
+        _maxThrowForce: {x: 0, y: 2, z: 12}
+        _durationToFullFill: 0.5
+        _torqueForce: 5
+        _spawnDistance: 0.7
+    - rid: 7629053358023639127
+      type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _maxUse: 5
+        _minVelocityForDamage: 1
+        _X: 1
+        _weight: 10

@@ -5,7 +5,7 @@ namespace Gameplay.Items.Scripts.ItemModules
     public interface IItemModule
     {
         void ResetState();
-        void Initialize(ItemCore core);
+        void Initialize(ItemContext ctx);
         IItemModule Clone();
     }
 }
