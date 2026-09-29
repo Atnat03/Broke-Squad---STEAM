@@ -17,31 +17,13 @@ namespace Gameplay.LD.Scripts
             GetComponent<SphereCollider>().radius = _chargeDistance;
         }
 
-        /* List<PlayerInventory> _inventoryList = new List<PlayerInventory>();
-
-        void Update()
-        {
-            if (_inventoryList.Count == 0)
-                return;
-
-            foreach (PlayerInventory inventory in _inventoryList)
-            {
-
-            }
-        }
-        
-        public void OnTriggerEnter(Collider collision)
-        {
-            if (collision.TryGetComponent(out PlayerInventory inventory))
-            {
-                _inventoryList.Add(inventory);
-            }
-        }*/
-
         public void OnTriggerStay(Collider collision)
         {
             if (collision.TryGetComponent(out PlayerInventory inventory))
             {
+                if(inventory == null)
+                    return;
+                
                 ElectricModule elect = inventory.CurrentItem.Instance.Conditions.OfType<ElectricModule>().FirstOrDefault();
 
                 if (elect != null)
