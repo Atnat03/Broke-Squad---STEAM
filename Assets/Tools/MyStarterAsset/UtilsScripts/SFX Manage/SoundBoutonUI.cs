@@ -7,7 +7,7 @@ namespace SFX_Manage
     [RequireComponent(typeof(Button))]
     public class SoundBoutonUI : MonoBehaviour
     {
-        [SerializeField] private string nameSound;
+        [SerializeField, SoundName] private string nameSound;
 
         private Button button;
 
@@ -22,7 +22,7 @@ namespace SFX_Manage
 
         private void PlaySound()
         {
-            EventBus.InvokeEvent(new PlaySoundEvent { soundName = nameSound, position = transform.position });
+            EventBus.InvokeEvent(new PlaySoundEvent { soundName = nameSound, position = transform.position, is2D = true });
         }
 
         private void OnDestroy()

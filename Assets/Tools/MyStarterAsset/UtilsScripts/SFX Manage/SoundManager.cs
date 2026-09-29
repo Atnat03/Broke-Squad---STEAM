@@ -6,7 +6,7 @@ using SFX_Manage;
 
 public class SoundManager : MonoBusListener
 {
-    [SerializeField] private SoundsDataSO soundsData;
+    [SerializeField] private List<SoundsDataSO> soundsData = new();
 	[SerializeField] private int poolSize = 10;
 
 	private readonly Dictionary<string, AudioClip> clips = new();
@@ -26,12 +26,15 @@ public class SoundManager : MonoBusListener
 
     private void BuildClipDictionary()
     {
-        foreach (SoundData s in soundsData.sounds)
+        foreach (SoundsDataSO data in soundsData)
         {
-            if (string.IsNullOrEmpty(s.soundName) || s.audioClip == null) continue;
+            foreach (SoundData s in data.sounds)
+            {
+                if (string.IsNullOrEmpty(s.soundName) || s.audioClip == null) continue;
 
-            if (!clips.TryAdd(s.soundName, s.audioClip))
-                Debug.LogWarning($"SoundManager: nom de son en double '{s.soundName}'");
+                if (!clips.TryAdd(s.soundName, s.audioClip))
+                    Debug.LogWarning($"SoundManager: nom de son en double '{s.soundName}'");
+            }
         }
     }
 
@@ -63,9 +66,8 @@ public class SoundManager : MonoBusListener
 
         src.transform.position = e.position;
         src.clip = clip;
-        src.volume = e.volume * masterVolume;
-        src.pitch = e.pitch;
-        src.transform.position = e.position;
+        src.volume = (e.volume <= 0f ? 0f : e.volume) * masterVolume;
+        src.pitch = e.pitch <= 0f ? 0f : e.pitch;
         src.spatialBlend = e.is2D ? 0f : 1f;
         src.Play();
     }

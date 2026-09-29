@@ -1,4 +1,7 @@
+using Mono.Cecil;
+using NUnit.Framework;
 using ScriptableObjectsDefinitions;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -14,38 +17,43 @@ public class SoundNameDrawer : PropertyDrawer
             return;
         }
 
-        string[] soundNames = LoadSoundsNames();
-        int index = System.Array.IndexOf(soundNames, property.stringValue);
+        string[] keys = LoadKeys();
+        string current = property.stringValue;
+        int index = System.Array.IndexOf(keys, current);
 
-        if (index < 0)
+        List<string> options = new List<string>(keys);
+
+        bool isValid = index < 0;
+        if(isValid)
         {
-            soundNames = soundNames.Prepend($"<invalid : {property.stringValue}>").ToArray();
+            string shown = string.IsNullOrEmpty(current) ? "(aucun)" : $"INVALIDE : {current.Replace('/', '>')}";
+            options.Insert(0, $"Invalid: {shown}");
             index = 0;
-            EditorGUI.BeginChangeCheck();
-            int picked = EditorGUI.Popup(position, label.text, index, soundNames);
-            if (EditorGUI.EndChangeCheck() && picked > 0)
-                property.stringValue = soundNames[picked];
-            return;
         }
 
         EditorGUI.BeginChangeCheck();
-        index = EditorGUI.Popup(position, label.text, index, soundNames);
-        if (EditorGUI.EndChangeCheck())
+        int picked = EditorGUI.Popup(position, label.text, index, options.ToArray());
+        if(EditorGUI.EndChangeCheck())
         {
-            property.stringValue = soundNames[index];
+            if(isValid && picked == 0)
+            {
+                property.stringValue = "";
+            }
+            else
+            {
+                property.stringValue = options[picked];
+            }
         }
     }
 
-    private static string[] LoadSoundsNames()
+    private static string[] LoadKeys()
     {
-        string[] guids = AssetDatabase.FindAssets("t:SoundsDataSO");
-
-        if (guids.Length == 0) return new string[0];
-
-        var data = AssetDatabase.LoadAssetAtPath<SoundsDataSO>(AssetDatabase.GUIDToAssetPath(guids[0]));
-        return data.sounds
-            .Select(s => s.soundName)
-            .Where(n => !string.IsNullOrEmpty(n))
+        return AssetDatabase.FindAssets("t:SoundsDataSO")
+            .Select(g => AssetDatabase.LoadAssetAtPath<SoundsDataSO>(AssetDatabase.GUIDToAssetPath(g)))
+            .Where(d => d != null)
+            .SelectMany(d => d.sounds
+                .Where(s => !string.IsNullOrEmpty(s.soundName))
+                .Select(s => d.GetKey(s)))
             .ToArray();
     }
 }
