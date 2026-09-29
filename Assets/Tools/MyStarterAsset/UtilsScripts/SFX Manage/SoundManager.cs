@@ -18,6 +18,10 @@ public class SoundManager : MonoBusListener
     private void Awake()
     {
 		BuildClipDictionary();
+        BuildPool();
+
+        ListenToEvent<PlaySoundEvent>(OnPlaySound);
+        ListenToEvent<SfxSettingsChangedEvent>(OnSettingsChanged);
     }
 
     private void BuildClipDictionary()
@@ -57,11 +61,12 @@ public class SoundManager : MonoBusListener
         AudioSource src = pool[nextSource];
         nextSource = (nextSource + 1) % poolSize;
 
-        src.transform.position = e.Position;
+        src.transform.position = e.position;
         src.clip = clip;
         src.volume = e.volume * masterVolume;
         src.pitch = e.pitch;
-        src.transform.position = e.Position;
+        src.transform.position = e.position;
+        src.spatialBlend = e.is2D ? 0f : 1f;
         src.Play();
     }
 

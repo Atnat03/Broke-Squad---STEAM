@@ -11,9 +11,10 @@ using UnityEngine;
 public struct PlaySoundEvent
 {
     public string soundName;
-    public Vector3 Position;
+    public Vector3 position;
     public float volume;
     public float pitch;
+    public bool is2D; // true pour UI
     public bool shared; // true si son envoyé au autres joueurs 
 }
 
