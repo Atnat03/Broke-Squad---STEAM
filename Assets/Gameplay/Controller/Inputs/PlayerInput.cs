@@ -153,5 +153,7 @@ namespace Gameplay.Controller
         {
             OnMouseMovement?.Invoke(context.ReadValue<Vector2>());
         }
+        
+        private void OnDestroy() => _playerInputs.Dispose();
     }
 }

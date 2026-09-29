@@ -1,4 +1,5 @@
-﻿using Gameplay.Controller.States;
+﻿using System;
+using Gameplay.Controller.States;
 using UnityEngine;
 
 namespace Gameplay.Controller
@@ -32,12 +33,16 @@ namespace Gameplay.Controller
         [Header("Ground Check")]
         [SerializeField] private float groundCheckDist = 0.15f;
         [SerializeField] private float groundCheckRadiusMultiplier = 0.9f;
+        [SerializeField] private float groundCheckSkin = 0.1f;
         [SerializeField] private float maxSlopeAngle = 50f;
 
         [Header("Crouch")]
         [SerializeField] private float standHeight = 1.8f;
         [SerializeField] private float crouchHeight = 1.0f;
         [SerializeField] private float crouchTransitionSpeed = 12f;
+
+        [Header("Camera")]
+        [SerializeField] private Transform eyeTarget;
 
         private Rigidbody _rb;
         private CapsuleCollider _capsule;
@@ -53,7 +58,23 @@ namespace Gameplay.Controller
         private float _coyoteTimer;
         private Vector3 _groundNormal = Vector3.up;
 
+       
+        private float _bottomOffsetY;
+        private float _eyeStandLocalY;
+        
+        private float ScaleY => Mathf.Abs(transform.lossyScale.y);
+        private float WorldRadius => _capsule.radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.z));
+        private Vector3 FeetPosition
+        {
+            get
+            {
+                Vector3 c = transform.TransformPoint(_capsule.center);
+                return new Vector3(c.x, c.y - _capsule.height * 0.5f * ScaleY, c.z);
+            }
+        }
+
         public void SetYaw(float yawDegrees) => _rb.MoveRotation(Quaternion.Euler(0f, yawDegrees, 0f));
+        public Vector3 HorizontalVelocity => new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 
         #endregion
 
@@ -85,9 +106,16 @@ namespace Gameplay.Controller
                 bounciness = 0f,
                 bounceCombine = PhysicsMaterialCombine.Minimum
             };
+            
+            _bottomOffsetY = _capsule.center.y - _capsule.height / 2f;
 
             _capsule.height = standHeight;
-            //RecenterCapsule();
+            RecenterCapsule();
+
+            if (eyeTarget != null)
+                _eyeStandLocalY = eyeTarget.localPosition.y;
+            else
+                Debug.LogWarning("PlayerController: eyeTarget is not assigned, the camera won't lower when crouching.", this);
         }
 
         private void SetUpInputs()
@@ -128,8 +156,15 @@ namespace Gameplay.Controller
 
         #region Updates
 
+        private void Update()
+        {
+            _stateMachine.Update();
+            UpdateEyeHeight();
+        }
+
         void FixedUpdate()
         {
+            _stateMachine.FixedUpdate();
             float dt = Time.fixedDeltaTime;
 
             CheckGrounded();
@@ -138,6 +173,11 @@ namespace Gameplay.Controller
             ApplyHorizontalMovement(dt);
             ApplyJump();
             ApplyGravity(dt);
+        }
+
+        private void LateUpdate()
+        {
+            _stateMachine.LateUpdate();
         }
 
         private void UpdateTimers(float dt)
@@ -156,21 +196,34 @@ namespace Gameplay.Controller
 
             float target = IsCrouching ? crouchHeight : standHeight;
             _capsule.height = Mathf.MoveTowards(_capsule.height, target, crouchTransitionSpeed * dt);
-            //RecenterCapsule();
+            RecenterCapsule();
+        }
+        
+        private void UpdateEyeHeight()
+        {
+            if (eyeTarget == null) return;
+
+            float targetHeight = IsCrouching ? crouchHeight : standHeight;
+            float targetY = _eyeStandLocalY - (standHeight - targetHeight);
+
+            Vector3 p = eyeTarget.localPosition;
+            p.y = Mathf.MoveTowards(p.y, targetY, crouchTransitionSpeed * Time.deltaTime);
+            eyeTarget.localPosition = p;
         }
 
         private bool CanStandUp()
         {
-            float radius = _capsule.radius * 0.95f;
-            Vector3 bottom = transform.position + Vector3.up * (radius + 0.05f);
-            Vector3 top = transform.position + Vector3.up * (standHeight - radius);
+            float radius = WorldRadius * 0.95f;
+            Vector3 feet = FeetPosition;
+            Vector3 bottom = feet + Vector3.up * (radius + 0.05f);
+            Vector3 top = feet + Vector3.up * (standHeight * ScaleY - radius);
             return !Physics.CheckCapsule(bottom, top, radius, groundLayer, QueryTriggerInteraction.Ignore);
         }
-
+        
         private void RecenterCapsule()
         {
             Vector3 center = _capsule.center;
-            center.y = _capsule.height / 2f; 
+            center.y = _bottomOffsetY + _capsule.height / 2f; 
             _capsule.center = center;
         }
 
@@ -229,11 +282,10 @@ namespace Gameplay.Controller
         private void CheckGrounded()
         {
             LayerMask mask = groundLayer;
-
-            float radius = _capsule.radius * groundCheckRadiusMultiplier;
-            float startHeight = radius + 0.3f;                       
-            Vector3 origin = transform.position + Vector3.up * startHeight;
-            float dist = 0.3f + groundCheckDist;                     
+            
+            float radius = WorldRadius * groundCheckRadiusMultiplier;
+            Vector3 origin = FeetPosition + Vector3.up * (radius + groundCheckSkin);
+            float dist = groundCheckSkin + groundCheckDist;
 
             int count = Physics.SphereCastNonAlloc(
                 origin, radius, Vector3.down, _groundHits, dist,
@@ -244,8 +296,7 @@ namespace Gameplay.Controller
             {
                 var hit = _groundHits[i];
                 if (hit.collider == _capsule || hit.collider.transform.IsChildOf(transform)) continue; 
-                if (hit.distance <= 0f) continue; 
-
+                
                 if (Vector3.Angle(hit.normal, Vector3.up) <= maxSlopeAngle)
                 {
                     _groundNormal = hit.normal;
