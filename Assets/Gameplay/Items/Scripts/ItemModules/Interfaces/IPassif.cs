@@ -2,6 +2,7 @@
 {
     public interface IPassif
     {
-        
+        public void OnCollide();
+        public void OnThrow();
     }
 }

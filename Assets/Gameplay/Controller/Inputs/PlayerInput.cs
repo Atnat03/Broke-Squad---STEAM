@@ -1,11 +1,12 @@
 using System;
+using Bus;
 using MyPrint;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Gameplay.Controller
 {
-    public class PlayerInput : MonoBehaviour
+    public class PlayerInput : MonoBusListener
     {
         Player _playerInputs;
         
@@ -30,25 +31,21 @@ namespace Gameplay.Controller
         private void PerformLeftClick(InputAction.CallbackContext obj)
         {
             OnStartLeftInput?.Invoke();
-            ABPrint.Print("Left click", ABColor.Red);
         }
         
         private void PerformRightClick(InputAction.CallbackContext obj)
         {
             OnStartRightInput?.Invoke();
-            ABPrint.Print("Right click", ABColor.Red);
         }
 
         private void PerformLeftRelease(InputAction.CallbackContext obj)
         {
             OnEndLeftInput?.Invoke();
-            ABPrint.Print("Left release", ABColor.Red);
         }
 
         private void PerformRightRelease(InputAction.CallbackContext obj)
         {
             OnEndRightInput?.Invoke();
-            ABPrint.Print("Right release", ABColor.Red);
         }
     }
 }

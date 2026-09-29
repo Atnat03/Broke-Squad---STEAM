@@ -1,7 +1,19 @@
-﻿namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
+﻿using System;
+using MyPrint;
+
+namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
 {
-    public class ThrowModule : IRightClick
+    [Serializable]
+    public class ThrowModule : ItemModule, IRightClick
     {
-        
+        public void StartRightClick()
+        {
+            ABPrint.Print("Start Right Click", ABColor.Red);
+        }
+
+        public void EndRightClick()
+        {
+            ABPrint.Print("End Right Click", ABColor.Red);
+        }
     }
 }

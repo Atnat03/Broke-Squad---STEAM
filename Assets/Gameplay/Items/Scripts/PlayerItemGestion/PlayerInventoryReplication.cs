@@ -1,6 +1,8 @@
-﻿namespace Gameplay.Items.Scripts.PlayerItemGestion
+﻿using Bus;
+
+namespace Gameplay.Items.Scripts.PlayerItemGestion
 {
-    public class PlayerInventoryReplication
+    public class PlayerInventoryReplication : NetworkBusListener
     {
         
     }
