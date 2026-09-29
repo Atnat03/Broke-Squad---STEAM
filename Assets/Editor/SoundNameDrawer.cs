@@ -1,17 +1,18 @@
-using Mono.Cecil;
-using NUnit.Framework;
-using ScriptableObjectsDefinitions;
 using System.Collections.Generic;
 using System.Linq;
+using ScriptableObjectsDefinitions;
 using UnityEditor;
 using UnityEngine;
 
 [CustomPropertyDrawer(typeof(SoundNameAttribute))]
 public class SoundNameDrawer : PropertyDrawer
 {
+    private static string[] cachedKeys = new string[0];
+    private static double lastCacheTime = -10;
+
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
-        if(property.propertyType != SerializedPropertyType.String)
+        if (property.propertyType != SerializedPropertyType.String)
         {
             EditorGUI.PropertyField(position, property, label);
             return;
@@ -23,37 +24,40 @@ public class SoundNameDrawer : PropertyDrawer
 
         List<string> options = new List<string>(keys);
 
-        bool isValid = index < 0;
-        if(isValid)
+        bool isInvalid = index < 0;
+        if (isInvalid)
         {
-            string shown = string.IsNullOrEmpty(current) ? "(aucun)" : $"INVALIDE : {current.Replace('/', '>')}";
-            options.Insert(0, $"Invalid: {shown}");
+            string shown = string.IsNullOrEmpty(current)
+                ? "(aucun)"
+                : $"INVALIDE : {current.Replace('/', '>')}";
+            options.Insert(0, shown);
             index = 0;
         }
 
         EditorGUI.BeginChangeCheck();
         int picked = EditorGUI.Popup(position, label.text, index, options.ToArray());
-        if(EditorGUI.EndChangeCheck())
+        if (EditorGUI.EndChangeCheck())
         {
-            if(isValid && picked == 0)
-            {
-                property.stringValue = "";
-            }
-            else
-            {
-                property.stringValue = options[picked];
-            }
+            if (isInvalid && picked == 0) return;
+            property.stringValue = options[picked];
         }
     }
 
     private static string[] LoadKeys()
     {
-        return AssetDatabase.FindAssets("t:SoundsDataSO")
+        if (EditorApplication.timeSinceStartup - lastCacheTime < 1.0)
+            return cachedKeys;
+
+        lastCacheTime = EditorApplication.timeSinceStartup;
+
+        cachedKeys = AssetDatabase.FindAssets("t:SoundsDataSO")
             .Select(g => AssetDatabase.LoadAssetAtPath<SoundsDataSO>(AssetDatabase.GUIDToAssetPath(g)))
             .Where(d => d != null)
             .SelectMany(d => d.sounds
                 .Where(s => !string.IsNullOrEmpty(s.soundName))
                 .Select(s => d.GetKey(s)))
             .ToArray();
+
+        return cachedKeys;
     }
 }

@@ -9,7 +9,7 @@ namespace ScriptableObjectsDefinitions
     {
         public List<SoundData> sounds = new List<SoundData>();
 
-        public string GetKey(SoundData s) => $"{{name}}/{s.soundName}";
+        public string GetKey(SoundData s) => $"{name}/{s.soundName}";
     }
 
     [Serializable]

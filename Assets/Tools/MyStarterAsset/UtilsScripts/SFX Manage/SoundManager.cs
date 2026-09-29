@@ -32,8 +32,9 @@ public class SoundManager : MonoBusListener
             {
                 if (string.IsNullOrEmpty(s.soundName) || s.audioClip == null) continue;
 
-                if (!clips.TryAdd(s.soundName, s.audioClip))
-                    Debug.LogWarning($"SoundManager: nom de son en double '{s.soundName}'");
+                string key = data.GetKey(s);
+                if (!clips.TryAdd(key, s.audioClip))
+                    Debug.LogWarning($"SoundManager: nom de son en double '{key}'");
             }
         }
     }
@@ -66,8 +67,8 @@ public class SoundManager : MonoBusListener
 
         src.transform.position = e.position;
         src.clip = clip;
-        src.volume = (e.volume <= 0f ? 0f : e.volume) * masterVolume;
-        src.pitch = e.pitch <= 0f ? 0f : e.pitch;
+        src.volume = (e.volume <= 0f ? 1f : e.volume) * masterVolume;
+        src.pitch = e.pitch <= 0f ? 1f : e.pitch;
         src.spatialBlend = e.is2D ? 0f : 1f;
         src.Play();
     }
