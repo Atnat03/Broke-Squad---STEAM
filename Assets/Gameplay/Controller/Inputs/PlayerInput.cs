@@ -7,48 +7,151 @@ namespace Gameplay.Controller
 {
     public class PlayerInput : MonoBehaviour
     {
-        Player _playerInputs;
+        private Player _playerInputs;
         
-        //Actions
         public Action OnStartLeftInput;
         public Action OnStartRightInput;
         public Action OnEndLeftInput;
         public Action OnEndRightInput;
+
+        public Action OnJumpInput;
+        public Action OnJumpInputCanceled;
+
+        public Action OnSprintInput;
+        public Action OnSprintInputCanceled;
+
+        public Action OnCrouchInput;
+        public Action OnCrouchInputCanceled;
         
-        private void Awake() => _playerInputs = new Player();
+        public Action OnInteractInput;
+
+        public Action<Vector2> OnMoveInput;
+        public Action<Vector2> OnMouseMovement;
+
+        private void Awake()
+        {
+            _playerInputs = new Player();
+        }
 
         private void OnEnable()
         {
             _playerInputs.Enable();
-
+            
             _playerInputs.Gameplay.LeftClick.performed += PerformLeftClick;
             _playerInputs.Gameplay.RightClick.performed += PerformRightClick;
             _playerInputs.Gameplay.LeftRelease.performed += PerformLeftRelease;
             _playerInputs.Gameplay.RightRelease.performed += PerformRightRelease;
+            
+            _playerInputs.Gameplay.Movement.performed += PerformMovement;
+            _playerInputs.Gameplay.Movement.canceled += PerformMovement;
+            
+            _playerInputs.Gameplay.Jump.performed += PerformJump;
+            _playerInputs.Gameplay.Jump.canceled += PerformJumpCanceled;
+            
+            _playerInputs.Gameplay.Sprint.performed += PerformSprint;
+            _playerInputs.Gameplay.Sprint.canceled += PerformSprintCanceled;
+            
+            _playerInputs.Gameplay.Crouch.performed += PerformCrouch;
+            _playerInputs.Gameplay.Crouch.canceled += PerformCrouchCanceled;
+            
+            _playerInputs.Gameplay.Interact.performed += PerformInteract;
+            
+            _playerInputs.Gameplay.MouseMovement.performed += PerformeMouseMovement;
+            _playerInputs.Gameplay.MouseMovement.canceled += PerformeMouseMovement;
         }
-        
-        private void PerformLeftClick(InputAction.CallbackContext obj)
+
+        private void OnDisable()
+        {
+            _playerInputs.Gameplay.LeftClick.performed -= PerformLeftClick;
+            _playerInputs.Gameplay.RightClick.performed -= PerformRightClick;
+            _playerInputs.Gameplay.LeftRelease.performed -= PerformLeftRelease;
+            _playerInputs.Gameplay.RightRelease.performed -= PerformRightRelease;
+            
+            _playerInputs.Gameplay.Movement.performed -= PerformMovement;
+            _playerInputs.Gameplay.Movement.canceled -= PerformMovement;
+            
+            _playerInputs.Gameplay.Jump.performed -= PerformJump;
+            _playerInputs.Gameplay.Jump.canceled -= PerformJumpCanceled;
+            
+            _playerInputs.Gameplay.Sprint.performed -= PerformSprint;
+            _playerInputs.Gameplay.Sprint.canceled -= PerformSprintCanceled;
+            
+            _playerInputs.Gameplay.Crouch.performed -= PerformCrouch;
+            _playerInputs.Gameplay.Crouch.canceled -= PerformCrouchCanceled;
+            
+            _playerInputs.Gameplay.Interact.performed -= PerformInteract;
+            
+            _playerInputs.Gameplay.MouseMovement.performed -= PerformeMouseMovement;
+            _playerInputs.Gameplay.MouseMovement.canceled -= PerformeMouseMovement;
+
+            _playerInputs.Disable();
+        }
+
+        private void PerformLeftClick(InputAction.CallbackContext context)
         {
             OnStartLeftInput?.Invoke();
-            ABPrint.Print("Left click", ABColor.Red);
         }
-        
-        private void PerformRightClick(InputAction.CallbackContext obj)
+
+        private void PerformRightClick(InputAction.CallbackContext context)
         {
             OnStartRightInput?.Invoke();
-            ABPrint.Print("Right click", ABColor.Red);
         }
 
-        private void PerformLeftRelease(InputAction.CallbackContext obj)
+        private void PerformLeftRelease(InputAction.CallbackContext context)
         {
             OnEndLeftInput?.Invoke();
-            ABPrint.Print("Left release", ABColor.Red);
         }
 
-        private void PerformRightRelease(InputAction.CallbackContext obj)
+        private void PerformRightRelease(InputAction.CallbackContext context)
         {
             OnEndRightInput?.Invoke();
-            ABPrint.Print("Right release", ABColor.Red);
+        }
+
+        private void PerformMovement(InputAction.CallbackContext context)
+        {
+            Vector2 movement = context.ReadValue<Vector2>();
+
+            OnMoveInput?.Invoke(movement);
+        }
+
+        private void PerformJump(InputAction.CallbackContext context)
+        {
+            OnJumpInput?.Invoke();
+        }
+
+        private void PerformJumpCanceled(InputAction.CallbackContext context)
+        {
+            OnJumpInputCanceled?.Invoke();
+        }
+
+        private void PerformSprint(InputAction.CallbackContext context)
+        {
+            OnSprintInput?.Invoke();
+        }
+
+        private void PerformSprintCanceled(InputAction.CallbackContext context)
+        {
+            OnSprintInputCanceled?.Invoke();
+        }
+
+        private void PerformCrouch(InputAction.CallbackContext context)
+        {
+            OnCrouchInput?.Invoke();
+        }
+
+        private void PerformCrouchCanceled(InputAction.CallbackContext context)
+        {
+            OnCrouchInputCanceled?.Invoke();
+        }
+
+        private void PerformInteract(InputAction.CallbackContext context)
+        {
+            OnInteractInput?.Invoke();
+        }
+        
+        private void PerformeMouseMovement(InputAction.CallbackContext context)
+        {
+            OnMouseMovement?.Invoke(context.ReadValue<Vector2>());
         }
     }
 }
