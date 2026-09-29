@@ -7,7 +7,7 @@ namespace Gameplay.Controller
         [SerializeField] private float sensX = 0.1f;
         [SerializeField] private float sensY = 0.1f;
         [SerializeField] private PlayerInput playerInput;
-        [SerializeField] private PlayerController player; // drag the player here
+        [SerializeField] private PlayerController player; 
 
         private Vector2 _mouseMovement;
         private float _xRotation;
