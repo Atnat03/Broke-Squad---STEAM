@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Bus;
 using Gameplay.Controller;
 using Gameplay.Items.Scripts.ItemData;
 using Gameplay.Items.Scripts.ItemModules;
@@ -8,7 +10,7 @@ using UnityEngine;
 
 namespace Gameplay.Items.Scripts.PlayerItemGestion
 {
-    public class ItemCore : MonoBehaviour
+    public class ItemCore : MonoBusListener
     {
         private List<ILeftClick> _leftClicks;
         private List<IRightClick> _rightClicks;
@@ -22,30 +24,14 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
         
         public ItemInstance Instance { get; private set; }
         
-        public void SetInstance(ItemInstance instance)
+        public void SetInstance(ItemInstance instance, PlayerInventory inventory)
         {
             Instance = instance;
 
-            foreach (var m in Instance.AllModules())
-                m?.Initialize(this);   // juste rebind, PAS de reset
-        }
-        
-        public void SetNewItem(SO_Item newItem)
-        {
-            _itemData = newItem;
+            ItemContext context = new ItemContext(this, inventory, inventory.PlayerCamera);
             
-            _leftClicks = new List<ILeftClick>(_itemData.leftClicksActions);
-            _rightClicks = new List<IRightClick>(_itemData.rightClicksActions);
-            _conditions = new List<ICondition>(_itemData.conditions);
-
-            foreach (ILeftClick leftClick in _leftClicks)
-                leftClick?.Initialize(this);
-            
-            foreach (IRightClick rightClick in _rightClicks)
-                rightClick?.Initialize(this);
-            
-            foreach (ICondition condition in _conditions)
-                condition?.Initialize(this);
+            foreach (var module in Instance.AllModules())
+                module.Initialize(context);
         }
 
         public void SubscribeToInput(PlayerInput input)
@@ -104,7 +90,7 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
 
         void PerformRightRelease()
         {
-            if (!CanInput(ItemInput.Right)) 
+            if (!CanInput(ItemInput.Right))
                 return;
             
             foreach (IRightClick r in Instance.RightClicks)
@@ -116,9 +102,22 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
         bool CanInput(ItemInput type)
         {
             foreach (ICondition c in Instance.Conditions)
-                if (!c.CheckCondition(type)) 
+                if (c.InputType == type && !c.CheckCondition())
                     return false;
             return true;
+        }
+        
+        public Coroutine StartModuleCoroutine(IEnumerator routine)
+        {
+            return StartCoroutine(routine);
+        }
+
+        public void ThrowItem()
+        {
+            foreach (ICondition c in Instance.Conditions)
+            {
+                c.ThrowItem();
+            }
         }
     }
 }

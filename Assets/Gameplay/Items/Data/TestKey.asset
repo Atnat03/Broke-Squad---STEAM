@@ -10,32 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a25e583415c740d696418c1844fb897a, type: 3}
-  m_Name: Test
+  m_Name: TestKey
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.ItemData.SO_Item
-  id: 0
-  itemName: Test
-  visualPrefab: {fileID: 2517337150570892065, guid: 0140db76ebb5df24f921af7841261310, type: 3}
-  pickUpPrefab: {fileID: 3642109076169085848, guid: 24f177f7526459e4c9e128fae0c282e5, type: 3}
-  leftClicksActions: []
+  id: 2
+  itemName: Key
+  visualPrefab: {fileID: 3736102883660515363, guid: 67f819c4f9f07eb4cab4c589612ff89c, type: 3}
+  pickUpPrefab: {fileID: 5992760678564257085, guid: 3f638c4f71babcf4bb9e7193d3bb854d, type: 3}
+  leftClicksActions:
+  - rid: 7629053358023639126
   rightClicksActions:
-  - rid: 7629053358023639123
+  - rid: 7629053358023639120
   conditions: []
-  passif:
-  - rid: 7629053358023639127
+  passif: []
   references:
     version: 2
     RefIds:
-    - rid: 7629053358023639123
+    - rid: 7629053358023639120
       type: {class: ThrowModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minThrowForce: {x: 0, y: 0, z: 0}
         _maxThrowForce: {x: 0, y: 2, z: 12}
-        _durationToFullFill: 0.5
+        _durationToFullFill: 2
         _torqueForce: 5
         _spawnDistance: 0.7
-    - rid: 7629053358023639127
-      type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+    - rid: 7629053358023639126
+      type: {class: OpenDoorModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _minVelocityForDamage: 1
-        _X: 1
-        _weight: 10
+        _doorId: 0

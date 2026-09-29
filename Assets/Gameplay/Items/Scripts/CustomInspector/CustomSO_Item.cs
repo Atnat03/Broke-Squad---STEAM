@@ -12,6 +12,7 @@ namespace Gameplay.Items.Scripts.CustomInspector
         private SerializedProperty _id;
         private SerializedProperty _itemName;
         private SerializedProperty _visualPrefab;
+        private SerializedProperty _pickUpPrefab;
         private SerializedProperty _leftClicks;
         private SerializedProperty _rightClicks;
         private SerializedProperty _conditions;
@@ -22,6 +23,7 @@ namespace Gameplay.Items.Scripts.CustomInspector
             _id           = serializedObject.FindProperty(nameof(SO_Item.id));
             _itemName     = serializedObject.FindProperty(nameof(SO_Item.itemName));
             _visualPrefab = serializedObject.FindProperty(nameof(SO_Item.visualPrefab));
+            _pickUpPrefab = serializedObject.FindProperty(nameof(SO_Item.pickUpPrefab));
             _leftClicks   = serializedObject.FindProperty(nameof(SO_Item.leftClicksActions));
             _rightClicks  = serializedObject.FindProperty(nameof(SO_Item.rightClicksActions));
             _conditions   = serializedObject.FindProperty(nameof(SO_Item.conditions));
@@ -35,12 +37,22 @@ namespace Gameplay.Items.Scripts.CustomInspector
             EditorGUILayout.PropertyField(_id);
             EditorGUILayout.PropertyField(_itemName);
             EditorGUILayout.PropertyField(_visualPrefab);
+            EditorGUILayout.PropertyField(_pickUpPrefab);
 
-            EditorGUILayout.Space();
+            EditorGUILayout.Space(4);
 
             SerializeReferenceListDrawer.Draw(_leftClicks,  typeof(ILeftClick),  "Left Click Actions");
+            
+            EditorGUILayout.Space(4);
+
             SerializeReferenceListDrawer.Draw(_rightClicks, typeof(IRightClick), "Right Click Actions");
+            
+            EditorGUILayout.Space(4);
+
             SerializeReferenceListDrawer.Draw(_conditions,  typeof(ICondition),  "Conditions");
+            
+            EditorGUILayout.Space(4);
+
             SerializeReferenceListDrawer.Draw(_passif,      typeof(IPassif),     "Passifs");
 
             serializedObject.ApplyModifiedProperties();

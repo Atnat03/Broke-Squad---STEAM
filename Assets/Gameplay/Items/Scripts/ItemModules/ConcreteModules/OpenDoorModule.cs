@@ -1,14 +1,12 @@
-﻿using System;
-using Gameplay.Items.Scripts.PlayerItemGestion;
+﻿using Gameplay.LD.Scripts;
 using MyPrint;
 using UnityEngine;
 
 namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
 {
-    [Serializable]
-    public class BreakThings : ItemModule, ILeftClick
+    public class OpenDoorModule : ItemModule, ILeftClick
     {
-        [SerializeField] private float _strength = 10;
+        [SerializeField] private int _doorId;
         
         public void StartLeftClick()
         {
@@ -18,9 +16,12 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
             {
                 ABPrint.Print("Hit " + hit.transform.name, ABColor.Green);
                 
-                if (hit.transform.TryGetComponent(out Breakable wall))
+                if (hit.transform.TryGetComponent(out Door door))
                 {
-                    wall.Break(hit.point, _strength);
+                    if (door.TryOpen(_doorId))
+                    {
+                        Context.Inventory.DestroyItemInHand();
+                    }
                 }
             }
         }

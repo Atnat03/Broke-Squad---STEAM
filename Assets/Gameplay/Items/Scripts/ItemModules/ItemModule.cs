@@ -1,4 +1,6 @@
-﻿using Gameplay.Items.Scripts.PlayerItemGestion;
+﻿using Bus;
+using Gameplay.Items.Scripts.PlayerItemGestion;
+using UnityEngine;
 
 namespace Gameplay.Items.Scripts.ItemModules
 {
@@ -6,13 +8,13 @@ namespace Gameplay.Items.Scripts.ItemModules
     
     public abstract class ItemModule : IItemModule
     {
-        protected ItemCore core;
+        protected ItemContext Context { get; private set; }
 
         public void ResetState() => SetModule();
 
-        public void Initialize(ItemCore core)
+        public void Initialize(ItemContext context)
         {
-            this.core = core;
+            Context = context;
             OnBind();
         }
 
@@ -20,5 +22,19 @@ namespace Gameplay.Items.Scripts.ItemModules
 
         protected virtual void SetModule() {}
         protected virtual void OnBind() {}
+    }
+    
+    public class ItemContext
+    {
+        public ItemCore Core { get; }
+        public PlayerInventory Inventory { get; }
+        public Camera Camera { get; }
+
+        public ItemContext(ItemCore core, PlayerInventory inventory, Camera camera)
+        {
+            Core = core;
+            Inventory = inventory;
+            Camera = camera;
+        }
     }
 }
