@@ -17,21 +17,14 @@ MonoBehaviour:
   visualPrefab: {fileID: 5391119212338989874, guid: 0c8e985ed56d3ad49bf15c604091e80b, type: 3}
   pickUpPrefab: {fileID: 6331364238040384090, guid: 89113756ee8a8ab459b17590f66471c7, type: 3}
   leftClicksActions:
-  - rid: 7629053358023639125
+  - rid: 7629053377233289476
   rightClicksActions:
   - rid: 7629053358023639120
-  conditions:
-  - rid: 7629053358023639117
+  conditions: []
   passif: []
   references:
     version: 2
     RefIds:
-    - rid: 7629053358023639117
-      type: {class: ElectricModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
-      data:
-        type: 0
-        _batteryCapacity: 100
-        _useCost: 25
     - rid: 7629053358023639120
       type: {class: ThrowModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
@@ -40,7 +33,8 @@ MonoBehaviour:
         _durationToFullFill: 2
         _torqueForce: 5
         _spawnDistance: 0.7
-    - rid: 7629053358023639125
-      type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+    - rid: 7629053377233289476
+      type: {class: ChargeItemModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _strength: 10
+        _amountPercentChargePerClick: 25
+        _range: 2
