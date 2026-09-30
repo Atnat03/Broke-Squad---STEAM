@@ -6,12 +6,13 @@ using Gameplay.Items.Scripts.ItemData;
 using Gameplay.Items.Scripts.ItemModules;
 using MyPrint;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Gameplay.Items.Scripts.PlayerItemGestion
 {
-    public class PlayerInventory : MonoBusListener
+    public class PlayerInventory : NetworkBusListener
     {
         public Camera PlayerCamera => _camera;
         public ItemCore CurrentItem => _currentItem;
@@ -34,8 +35,8 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
         
         private PlayerInput _input;
         private ItemCore _currentItem;
-        
-        void Awake()
+
+        public override void OnNetworkSpawn()
         {
             _input = GetComponent<PlayerInput>();
             
@@ -51,6 +52,12 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
         private void OnDisable()
         {
             _input.OnInteractInput -= PickUpItem;
+        }
+
+        [Rpc(SendTo.Server)]
+        public void AskForPickUpItemServerRpc()
+        {
+            PickUpItem();
         }
         
         private void PickUpItem()
@@ -76,7 +83,8 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
             if (HasItemInHand()) return;
 
             EquipInstance(pickup.Instance);
-            Destroy(pickup.gameObject);
+            
+            pickup.GetComponent<NetworkObject>().Despawn();
         }
         
         private void EquipInstance(ItemInstance instance)

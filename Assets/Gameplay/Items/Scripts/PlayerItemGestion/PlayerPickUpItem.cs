@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Gameplay.Items.Scripts.PlayerItemGestion
 {
-    public class PlayerPickUpItem : MonoBusListener
+    public class PlayerPickUpItem : NetworkBusListener
     {
         [SerializeField] private float _range;
         [SerializeField] private Camera _camera;
@@ -16,7 +16,7 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
         private PlayerInput _inputs;
         private PlayerInventory _inventory;
         
-        void Awake()
+        public override void OnNetworkSpawn()
         {
             _inputs = GetComponent<PlayerInput>();
             _inventory = GetComponent<PlayerInventory>();
@@ -34,6 +34,9 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
 
         private void PickUpItem()
         {
+            if (!IsOwner)
+                return;
+            
             bool hasItem = _inventory.HasItemInHand();
             
             if (hasItem)
