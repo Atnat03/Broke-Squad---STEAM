@@ -5,23 +5,10 @@ namespace Gameplay.Controller
     [RequireComponent(typeof(Camera))]
     public class PlayerCamera : MonoBehaviour
     {
-        [System.Serializable]
-        public struct BobProfile
-        {
-            public float amplitudeY;
-            public float amplitudeX;
-            public float roll;
-            public float frequency;
-
-            public static BobProfile Lerp(BobProfile a, BobProfile b, float t) => new BobProfile
-            {
-                amplitudeY = Mathf.Lerp(a.amplitudeY, b.amplitudeY, t),
-                amplitudeX = Mathf.Lerp(a.amplitudeX, b.amplitudeX, t),
-                roll = Mathf.Lerp(a.roll, b.roll, t),
-                frequency = Mathf.Lerp(a.frequency, b.frequency, t),
-            };
-        }
-
+        
+        [SerializeField] private CameraProfileSO profile;
+        public bool autoUpdateProfileValue = true;
+        
         [Header("References")]
         [SerializeField] private PlayerInput playerInput;
         [SerializeField] private PlayerController player;
@@ -32,32 +19,32 @@ namespace Gameplay.Controller
         [SerializeField] private float sensY = 0.1f;
 
         [Header("Follow")]
-        [SerializeField] private float verticalSmoothTime = 0.08f;
-        [SerializeField] private float followReferenceSpeed = 7f;
-        [SerializeField] private float speedFactorLerp = 12f;
+        private float _verticalSmoothTime = 0.08f;
+        private float _followReferenceSpeed = 7f;
+        private float _speedFactorLerp = 12f;
 
         [Header("Follow - Still")]
-        [SerializeField] private float horizontalSmoothTimeStill = 0.1f;
-        [SerializeField] private float maxHorizontalLagStill = 0.15f;
+         private float _horizontalSmoothTimeStill = 0.1f;
+         private float _maxHorizontalLagStill = 0.15f;
 
         [Header("Follow - Fast")]
-        [SerializeField] private float horizontalSmoothTimeFast = 0f;
-        [SerializeField] private float maxHorizontalLagFast = 0.02f;
+         private float _horizontalSmoothTimeFast = 0f;
+         private float _maxHorizontalLagFast = 0.02f;
 
         [Header("FOV")]
-        [SerializeField] private float baseFov = 70f;
-        [SerializeField] private float crouchFov = 62f;
-        [SerializeField] private float sprintFov = 78f;
-        [SerializeField] private float fovLerpSpeed = 8f;
+         private float _baseFov = 70f;
+         private float _crouchFov = 62f;
+         private float _sprintFov = 78f;
+         private float _fovLerpSpeed = 8f;
 
         [Header("Head bob")]
-        [SerializeField] private bool bobEnabled = true;
-        [SerializeField] private BobProfile walkBob = new BobProfile { amplitudeY = 0.025f, amplitudeX = 0.015f, roll = 0.3f, frequency = 1.6f };
-        [SerializeField] private BobProfile sprintBob = new BobProfile { amplitudeY = 0.04f, amplitudeX = 0.025f, roll = 0.6f, frequency = 2.2f };
-        [SerializeField] private BobProfile crouchBob = new BobProfile { amplitudeY = 0.015f, amplitudeX = 0.01f, roll = 0.2f, frequency = 1.1f };
-        [SerializeField] private float profileLerpSpeed = 6f;
-        [SerializeField] private float bobFadeIn = 0.15f;
-        [SerializeField] private float bobFadeOut = 0.25f;
+        private bool _bobEnabled = true;
+        private BobProfile _walkBob = new BobProfile { amplitudeY = 0.025f, amplitudeX = 0.015f, roll = 0.3f, frequency = 1.6f };
+        private BobProfile _sprintBob = new BobProfile { amplitudeY = 0.04f, amplitudeX = 0.025f, roll = 0.6f, frequency = 2.2f };
+        private BobProfile _crouchBob = new BobProfile { amplitudeY = 0.015f, amplitudeX = 0.01f, roll = 0.2f, frequency = 1.1f };
+        private float _profileLerpSpeed = 6f;
+        private float _bobFadeIn = 0.15f;
+        private float _bobFadeOut = 0.25f;
 
         private Camera _cam;
         private Vector2 _mouseMovement;
@@ -77,7 +64,7 @@ namespace Gameplay.Controller
         {
             _cam = GetComponent<Camera>();
             playerInput.OnMouseMovement += value => _mouseMovement = value;
-            _bob = walkBob;
+            _bob = _walkBob;
         }
 
         private void Start()
@@ -85,12 +72,14 @@ namespace Gameplay.Controller
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 
-            _cam.fieldOfView = baseFov;
+            _cam.fieldOfView = _baseFov;
             _smoothPos = eyeTarget.position;
         }
 
         private void Update()
         {
+            if(autoUpdateProfileValue) GetDataFromProfile();
+            
             _yRotation += _mouseMovement.x * sensX;
             _xRotation -= _mouseMovement.y * sensY;
             _xRotation = Mathf.Clamp(_xRotation, -90f, 90f);
@@ -115,11 +104,11 @@ namespace Gameplay.Controller
 
         private void UpdateFov(float dt)
         {
-            float target = player.IsCrouching ? crouchFov
-                : player.IsSprinting ? sprintFov
-                : baseFov;
+            float target = player.IsCrouching ? _crouchFov
+                : player.IsSprinting ? _sprintFov
+                : _baseFov;
 
-            float alpha = 1f - Mathf.Exp(-fovLerpSpeed * dt);
+            float alpha = 1f - Mathf.Exp(-_fovLerpSpeed * dt);
             _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, target, alpha);
         }
 
@@ -127,11 +116,11 @@ namespace Gameplay.Controller
         {
             Vector3 target = eyeTarget.position;
 
-            float rawFactor = Mathf.Clamp01(player.HorizontalVelocity.magnitude / followReferenceSpeed);
-            _speedFactor = Mathf.Lerp(_speedFactor, rawFactor, 1f - Mathf.Exp(-speedFactorLerp * dt));
+            float rawFactor = Mathf.Clamp01(player.HorizontalVelocity.magnitude / _followReferenceSpeed);
+            _speedFactor = Mathf.Lerp(_speedFactor, rawFactor, 1f - Mathf.Exp(-_speedFactorLerp * dt));
 
-            float smoothTime = Mathf.Lerp(horizontalSmoothTimeStill, horizontalSmoothTimeFast, _speedFactor);
-            float maxLag = Mathf.Lerp(maxHorizontalLagStill, maxHorizontalLagFast, _speedFactor);
+            float smoothTime = Mathf.Lerp(_horizontalSmoothTimeStill, _horizontalSmoothTimeFast, _speedFactor);
+            float maxLag = Mathf.Lerp(_maxHorizontalLagStill, _maxHorizontalLagFast, _speedFactor);
 
             Vector3 h = new Vector3(_smoothPos.x, 0f, _smoothPos.z);
             Vector3 hTarget = new Vector3(target.x, 0f, target.z);
@@ -144,8 +133,8 @@ namespace Gameplay.Controller
             if (offset.sqrMagnitude > maxLag * maxLag)
                 h = hTarget + offset.normalized * maxLag;
 
-            float y = verticalSmoothTime > 0.0001f
-                ? Mathf.SmoothDamp(_smoothPos.y, target.y, ref _velY, verticalSmoothTime)
+            float y = _verticalSmoothTime > 0.0001f
+                ? Mathf.SmoothDamp(_smoothPos.y, target.y, ref _velY, _verticalSmoothTime)
                 : target.y;
 
             _smoothPos = new Vector3(h.x, y, h.z);
@@ -154,16 +143,16 @@ namespace Gameplay.Controller
         private Vector3 UpdateBob(float dt, out float roll)
         {
             roll = 0f;
-            if (!bobEnabled) return Vector3.zero;
+            if (!_bobEnabled) return Vector3.zero;
 
             bool moving = player.IsGrounded && player.HorizontalVelocity.magnitude > 0.1f;
 
-            BobProfile targetProfile = player.IsCrouching ? crouchBob
-                : player.IsSprinting ? sprintBob
-                : walkBob;
-            _bob = BobProfile.Lerp(_bob, targetProfile, 1f - Mathf.Exp(-profileLerpSpeed * dt));
+            BobProfile targetProfile = player.IsCrouching ? _crouchBob
+                : player.IsSprinting ? _sprintBob
+                : _walkBob;
+            _bob = BobProfile.Lerp(_bob, targetProfile, 1f - Mathf.Exp(-_profileLerpSpeed * dt));
 
-            float fade = Mathf.Max(0.01f, moving ? bobFadeIn : bobFadeOut);
+            float fade = Mathf.Max(0.01f, moving ? _bobFadeIn : _bobFadeOut);
             _bobWeight = Mathf.MoveTowards(_bobWeight, moving ? 1f : 0f, dt / fade);
 
             _bobPhase = (_bobPhase + _bob.frequency * dt * Mathf.PI * 2f) % (Mathf.PI * 2f);
@@ -174,5 +163,47 @@ namespace Gameplay.Controller
 
             return new Vector3(x, y, 0f);
         }
+
+
+        void GetDataFromProfile()
+        {
+            if(profile == null) return;
+            _verticalSmoothTime = profile.verticalSmoothTime;
+            _followReferenceSpeed = profile.followReferenceSpeed;
+            _speedFactorLerp = profile.speedFactorLerp;
+            _horizontalSmoothTimeStill = profile.horizontalSmoothTimeStill;
+            _maxHorizontalLagStill = profile.maxHorizontalLagStill;
+            _horizontalSmoothTimeFast = profile.horizontalSmoothTimeFast;
+            _maxHorizontalLagFast = profile.maxHorizontalLagFast;
+            _baseFov = profile.baseFov;
+            _crouchFov = profile.crouchFov;
+            _sprintFov = profile.sprintFov;
+            _fovLerpSpeed = profile.fovLerpSpeed;
+            _bobEnabled = profile.bobEnabled;
+            _walkBob = profile.walkBob;
+            _sprintBob = profile.sprintBob;
+            _crouchBob = profile.crouchBob;
+            _fovLerpSpeed = profile.fovLerpSpeed;
+            _bobFadeIn = profile.bobFadeIn;
+            _bobFadeOut = profile.bobFadeOut;
+            
+        }
     }
+}
+
+[System.Serializable]
+public struct BobProfile
+{
+    public float amplitudeY;
+    public float amplitudeX;
+    public float roll;
+    public float frequency;
+
+    public static BobProfile Lerp(BobProfile a, BobProfile b, float t) => new BobProfile
+    {
+        amplitudeY = Mathf.Lerp(a.amplitudeY, b.amplitudeY, t),
+        amplitudeX = Mathf.Lerp(a.amplitudeX, b.amplitudeX, t),
+        roll = Mathf.Lerp(a.roll, b.roll, t),
+        frequency = Mathf.Lerp(a.frequency, b.frequency, t),
+    };
 }
