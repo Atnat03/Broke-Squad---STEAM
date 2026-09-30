@@ -11,7 +11,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
         [SerializeField] private Vector3 _minThrowForce = Vector3.zero;
         [SerializeField] private Vector3 _maxThrowForce = new Vector3(0f, 2f, 12f);
         [SerializeField] private float _durationToFullFill = 2;
-        [SerializeField] private float _torqueForce = 5f;
+        [SerializeField] private Vector3 _torqueForce = new Vector3(5, 0, 0);
         [SerializeField] private float _spawnDistance = 0.7f;
 
         private float _charge;
@@ -64,7 +64,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
             Vector3 forward = camRot * Vector3.forward;
 
             rb.AddForce(right * force.x + up * force.y + forward * force.z, ForceMode.VelocityChange);
-            rb.AddTorque(right * _torqueForce, ForceMode.VelocityChange);
+            rb.AddTorque(_torqueForce, ForceMode.VelocityChange);
         }
     }
 }

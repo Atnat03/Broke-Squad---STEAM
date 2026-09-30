@@ -1,4 +1,6 @@
 ﻿using Gameplay.Items.Scripts.ItemData;
+using NUnit.Framework.Constraints;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Gameplay.Items.Scripts.PlayerItemGestion
@@ -7,9 +9,15 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
     {
         [SerializeField] int _id = 0;
         [SerializeField] SO_ItemList _itemDataList;
-        
-        private ItemInstance _instance;
+        [SerializeField] Outline _outline;
 
+        private ItemInstance _instance;
+        
+        void Awake()
+        {
+            SetOutline(false);
+        }
+        
         public ItemInstance Instance
         {
             get
@@ -22,6 +30,12 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
         }
 
         public void Setup(ItemInstance instance) => _instance = instance;
+
+        public void SetOutline(bool state)
+        {
+            if(_outline !=  null)
+                _outline.enabled = state;
+        }
 
         public void OnCollisionEnter(Collision collision)
         {
