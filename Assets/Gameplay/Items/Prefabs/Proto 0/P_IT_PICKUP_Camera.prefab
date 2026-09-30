@@ -151,6 +151,7 @@ GameObject:
   - component: {fileID: 1795660993032223770}
   - component: {fileID: 7011213549859714947}
   - component: {fileID: 2675807035882910673}
+  - component: {fileID: 7158422399143903956}
   m_Layer: 0
   m_Name: P_IT_PICKUP_Camera
   m_TagString: Untagged
@@ -188,7 +189,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.PlayerItemGestion.ItemPickup
   _id: 4
   _itemDataList: {fileID: 11400000, guid: 18b2d5bb76685644288ae15dd4f47f1a, type: 2}
-  _outline: {fileID: 2675807035882910673}
 --- !u!114 &3711821776542815034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -303,10 +303,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Outline
   outlineMode: 0
   outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 2
+  outlineWidth: 10
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &7158422399143903956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1365331866969658599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66559d7f60f743d69bc18b29cd97dccb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.Outliner
+  _outline: {fileID: 2675807035882910673}
 --- !u!1 &3574976098750430013
 GameObject:
   m_ObjectHideFlags: 0

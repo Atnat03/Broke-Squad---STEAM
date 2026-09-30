@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 8615398403326016098}
   - component: {fileID: 1845925289236400126}
   - component: {fileID: 2071280828253494305}
+  - component: {fileID: 6709245860905033785}
   m_Layer: 0
   m_Name: P_IT_PICKUP_Gravat
   m_TagString: Untagged
@@ -158,7 +159,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.PlayerItemGestion.ItemPickup
   _id: 6
   _itemDataList: {fileID: 11400000, guid: 18b2d5bb76685644288ae15dd4f47f1a, type: 2}
-  _outline: {fileID: 8615398403326016098}
 --- !u!114 &8615398403326016098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,7 +189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 283386216
+  GlobalObjectIdHash: 2376302691
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -250,3 +250,16 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &6709245860905033785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4694361299180977760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66559d7f60f743d69bc18b29cd97dccb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.Outliner
+  _outline: {fileID: 8615398403326016098}

@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 8665236263163189900}
   - component: {fileID: 6935950981093299668}
   - component: {fileID: 747450622133180273}
+  - component: {fileID: 5208945063224059061}
   m_Layer: 0
   m_Name: P_IT_PICKUP_Key
   m_TagString: Untagged
@@ -53,7 +54,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.PlayerItemGestion.ItemPickup
   _id: 0
   _itemDataList: {fileID: 11400000, guid: 18b2d5bb76685644288ae15dd4f47f1a, type: 2}
-  _outline: {fileID: 747450622133180273}
 --- !u!54 &1947064686131065841
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -250,3 +250,16 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &5208945063224059061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3142363071224636461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66559d7f60f743d69bc18b29cd97dccb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.Outliner
+  _outline: {fileID: 747450622133180273}

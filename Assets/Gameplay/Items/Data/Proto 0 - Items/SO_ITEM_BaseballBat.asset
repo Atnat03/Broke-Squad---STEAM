@@ -23,6 +23,7 @@ MonoBehaviour:
   conditions: []
   passif:
   - rid: 2255290332041183343
+  - rid: 2255290332041183621
   references:
     version: 2
     RefIds:
@@ -44,3 +45,8 @@ MonoBehaviour:
       type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _strength: 100
+    - rid: 2255290332041183621
+      type: {class: StunModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _minVelocityForStun: 8
+        _stunDuration: 2.5

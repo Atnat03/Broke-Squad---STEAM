@@ -10,19 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a25e583415c740d696418c1844fb897a, type: 3}
-  m_Name: SO_ITEM_Gravat
+  m_Name: SO_ITEM_Screwdriver
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.ItemData.SO_Item
-  id: 6
-  itemName: Gravat
-  visualPrefab: {fileID: 6257818723059611307, guid: e810128558743754c9475f1687f73ac1, type: 3}
-  pickUpPrefab: {fileID: 1986776034453942735, guid: 6b421c1c6c30fec4dab4333d278384fe, type: 3}
-  leftClicksActions: []
+  id: 7
+  itemName: Screwdriver
+  visualPrefab: {fileID: 1770553333635368575, guid: 82a5d71f9477e0e42b79330511cd898e, type: 3}
+  pickUpPrefab: {fileID: 5998113703020384803, guid: 73abbc0e48641f24da4333d26fd0e5ca, type: 3}
+  leftClicksActions:
+  - rid: 2255290332041183341
   rightClicksActions:
   - rid: 2255290332041183340
-  conditions: []
+  conditions:
+  - rid: 2255290332041183342
   passif:
   - rid: 2255290332041183343
-  - rid: 2255290332041183623
   references:
     version: 2
     RefIds:
@@ -34,14 +35,21 @@ MonoBehaviour:
         _durationToFullFill: 1
         _torqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: 0.7
+    - rid: 2255290332041183341
+      type: {class: OpenDoorModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _doorId: 100
+        _range: 2
+        _openAllDoors: 0
+    - rid: 2255290332041183342
+      type: {class: NumberOfUse, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _maxUse: 1
+        _inputType: 0
+        _destroyWhenUsed: 0
     - rid: 2255290332041183343
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 10
         _X: 10
         _weight: 5
-    - rid: 2255290332041183623
-      type: {class: StunModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
-      data:
-        _minVelocityForStun: 8
-        _stunDuration: 0.2

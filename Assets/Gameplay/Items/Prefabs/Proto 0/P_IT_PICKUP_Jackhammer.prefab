@@ -78,6 +78,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f6ea2372d138aa54c95d4dfe17c47195, type: 3}
       insertIndex: -1
       addedObject: {fileID: 377487258180918744}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f6ea2372d138aa54c95d4dfe17c47195, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4803623723835272532}
   m_SourcePrefab: {fileID: 100100000, guid: f6ea2372d138aa54c95d4dfe17c47195, type: 3}
 --- !u!1 &3014254146047721310 stripped
 GameObject:
@@ -98,7 +101,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.PlayerItemGestion.ItemPickup
   _id: 2
   _itemDataList: {fileID: 11400000, guid: 18b2d5bb76685644288ae15dd4f47f1a, type: 2}
-  _outline: {fileID: 377487258180918744}
 --- !u!54 &1035099949714697787
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -238,3 +240,16 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &4803623723835272532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3014254146047721310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66559d7f60f743d69bc18b29cd97dccb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.Outliner
+  _outline: {fileID: 377487258180918744}
