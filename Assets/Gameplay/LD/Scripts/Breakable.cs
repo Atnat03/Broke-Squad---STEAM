@@ -1,18 +1,14 @@
 using System;
 using MyPrint;
+using Unity.Netcode;
 using UnityEngine;
 
-public interface IBreakable
-{
-    public void Break(Vector3 center, float force);
-}
-
-public class Breakable : MonoBehaviour, IBreakable
+public class Breakable : NetworkBehaviour
 {
     [SerializeField] private GameObject _normalMesh;
     [SerializeField] private Rigidbody[] _breakMesh;
 
-    private void Start()
+    public override void OnNetworkSpawn()
     {
         _normalMesh.SetActive(true);
 
@@ -20,7 +16,14 @@ public class Breakable : MonoBehaviour, IBreakable
             rb.gameObject.SetActive(false);
     }
 
-    public void Break(Vector3 center, float force)
+    [Rpc(SendTo.Server)]
+    void AskServerToBreakRpc(float force)
+    {
+        ReplicateBreakRpc(force);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    void ReplicateBreakRpc(float force)
     {
         _normalMesh.SetActive(false);
         
@@ -32,5 +35,10 @@ public class Breakable : MonoBehaviour, IBreakable
             
             rb.AddExplosionForce(force, transform.position, transform.localScale.magnitude);
         }
+    }
+    
+    public void Break(float force)
+    {
+        AskServerToBreakRpc(force);
     }
 }

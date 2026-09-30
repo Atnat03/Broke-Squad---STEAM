@@ -20,7 +20,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
                 
                 if (hit.transform.TryGetComponent(out Breakable wall))
                 {
-                    wall.Break(hit.point, _strength);
+                    wall.Break(_strength);
                 }
             }
         }
