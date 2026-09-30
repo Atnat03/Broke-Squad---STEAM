@@ -1,3 +1,8 @@
+using MyPrint;
+using Network.Connections;
+using Unity.Netcode;
+using UnityEngine.SceneManagement;
+
 namespace Network.HUB
 {
     using System;
@@ -14,6 +19,8 @@ namespace Network.HUB
         public static int MAX_PLAYER_COUNT => MAX_PLAYER;
         const int MAX_PLAYER = 4;
 
+        [SerializeField] private string _sceneNameToPlayTogether;
+        
         //Lobby var
         private Lobby _hostLobby;
         private Lobby _joinedLobby;
@@ -135,6 +142,38 @@ namespace Network.HUB
         }
 
         #endregion
+
+        public async void StartGame()
+        {
+            if (!IsLobbyHost()) return;
+
+            try
+            {
+                ABPrint.Print("Start Game", ABColor.Yellow);
+
+                int    mySkin  = 0;
+                string myName  = _playerName;
+                Player me = _joinedLobby.Players.Find(p => p.Id == AuthenticationService.Instance.PlayerId);
+                
+                string relayCode = await RelayManager.instance.CreateRelay();
+
+                Lobby lobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, new UpdateLobbyOptions
+                {
+                    Data = new Dictionary<string, DataObject>
+                    {
+                        { "Relay", new DataObject(DataObject.VisibilityOptions.Member, relayCode) }
+                    }
+                });
+
+                _joinedLobby = lobby;
+                
+                NetworkManager.Singleton.SceneManager.LoadScene(_sceneNameToPlayTogether, LoadSceneMode.Single);
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+        }
 
         #region Create Lobby
 
