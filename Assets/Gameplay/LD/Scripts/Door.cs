@@ -35,7 +35,7 @@ namespace Gameplay.LD.Scripts
         {
             if (!IsServer) return false;
             if (_isOpen.Value) return false;
-            if (id != _doorID) return false;
+            if (id != _doorID && id != -1) return false;
 
             _isOpen.Value = true;
             return true;

@@ -5,6 +5,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using Gameplay.PlayerData;
 
 namespace Gameplay.IA.Scripts
 {
@@ -13,24 +14,34 @@ namespace Gameplay.IA.Scripts
         [SerializeField] private float _speedPatrol = 2;
         [SerializeField] private float _speedChase = 3;
         [SerializeField] private GuardFieldOfView _guardFieldOfView;
-        
+
         [Header("Color")]
         [SerializeField] private MeshRenderer _meshRenderer;
         [SerializeField] private Color _colorPatrol;
         [SerializeField] private Color _colorChase;
-        
+
         [Header("Navigation")]
         [SerializeField] private NavMeshAgent _agent;
         [SerializeField] private Transform[] _patrolPoints;
-        
+        [SerializeField] private float _patrolPointReachDistance = 2f;
+
+        [Header("Attack")]
+        [SerializeField] private int _damage = 10;
+        [SerializeField] private float _attackRange = 2;
+        [SerializeField] private float _attackCooldown = 1;
+        [SerializeField] private float _timeToStayInRangeToApplyDamage = 0.5f;
+
         [Header("HP")]
         [SerializeField] private float _maxHealth = 100;
         [SerializeField] private Color _colorHit = Color.white;
         [SerializeField] private Image _currentHealthUI;
-        
-        private readonly NetworkVariable<int> _patrolPointIndex = new NetworkVariable<int>();
+
         private readonly NetworkVariable<float> _currentHealth = new NetworkVariable<float>();
         private readonly NetworkVariable<bool> _isInChase = new NetworkVariable<bool>();
+
+        private int _patrolPointIndex;
+        private bool _isAttacking;
+        private Coroutine _hitColorCoroutine;
 
         public override void OnNetworkSpawn()
         {
@@ -38,6 +49,18 @@ namespace Gameplay.IA.Scripts
             _currentHealth.OnValueChanged += UpdateHP;
             
             _currentHealth.Value = _maxHealth;
+
+            if (IsServer)
+            {
+                _currentHealth.Value = _maxHealth;
+            }
+            else
+            {
+                _agent.enabled = false;
+            }
+
+            ApplyStateColor(_isInChase.Value);
+            RefreshHealthUI(_currentHealth.Value);
         }
 
         public override void OnNetworkDespawn()
@@ -48,82 +71,138 @@ namespace Gameplay.IA.Scripts
 
         private void UpdateHP(float previousValue, float newValue)
         {
-            _currentHealthUI.fillAmount = newValue / _maxHealth;
-            
-            StartCoroutine(HitColor());
+            RefreshHealthUI(newValue);
+
+            if (newValue < previousValue)
+            {
+                if (_hitColorCoroutine != null)
+                    StopCoroutine(_hitColorCoroutine);
+
+                _hitColorCoroutine = StartCoroutine(HitColor());
+            }
         }
 
-        IEnumerator HitColor()
+        private void RefreshHealthUI(float value)
+        {
+            if (_currentHealthUI != null)
+                _currentHealthUI.fillAmount = Mathf.Clamp01(value / _maxHealth);
+        }
+
+        private IEnumerator HitColor()
         {
             _meshRenderer.material.color = _colorHit;
-            
+
             yield return new WaitForSeconds(0.25f);
-            
-            Color currentColor = _isInChase.Value ? _colorChase : _colorPatrol;
-            _meshRenderer.material.color = currentColor;
-        }
-        
-        
-        
-        private void GuardStateChange(bool previousValue, bool newValue)
-        {
-            Color currentColor = newValue ? _colorChase : _colorPatrol;
-            
-            _meshRenderer.material.color = currentColor;
+
+            ApplyStateColor(_isInChase.Value);
+            _hitColorCoroutine = null;
         }
 
-        void Update()
+        private void GuardStateChange(bool previousValue, bool newValue)
+        {
+            if (_hitColorCoroutine == null)
+                ApplyStateColor(newValue);
+        }
+
+        private void ApplyStateColor(bool chasing)
+        {
+            _meshRenderer.material.color = chasing ? _colorChase : _colorPatrol;
+        }
+
+        private void Update()
         {
             if (!IsServer) return;
-            
-            if (_guardFieldOfView.CanSeeTarget)
+
+            bool canSee = _guardFieldOfView.CanSeeTarget && _guardFieldOfView.Target != null;
+
+            if (_isInChase.Value != canSee)
+                _isInChase.Value = canSee;
+
+            if (canSee)
             {
-                _isInChase.Value = true;
                 Chase();
+
+                if (!_isAttacking && IsTargetInAttackRange())
+                    StartCoroutine(AttackRoutine());
             }
             else
             {
-                _isInChase.Value = false;
                 Patrol();
             }
         }
 
-        private void ReachTarget()
+        private IEnumerator AttackRoutine()
         {
-            _patrolPointIndex.Value = (_patrolPointIndex.Value + 1) % _patrolPoints.Length;
+            _isAttacking = true;
+
+            float elapsed = 0f;
+            while (elapsed < _timeToStayInRangeToApplyDamage)
+            {
+                if (!IsTargetInAttackRange())
+                {
+                    _isAttacking = false;
+                    yield break;
+                }
+
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            Transform target = _guardFieldOfView.Target;
+            if (target != null && target.TryGetComponent(out PlayerData.PlayerData player))
+                player.TakeDamage(_damage);
+
+            yield return new WaitForSeconds(_attackCooldown);
+
+            _isAttacking = false;
+        }
+
+        private bool IsTargetInAttackRange()
+        {
+            Transform target = _guardFieldOfView.Target;
+            if (target == null) 
+                return false;
+
+            return Vector3.Distance(target.position, transform.position) < _attackRange;
         }
 
         private void Chase()
         {
+            if (IsTargetInAttackRange())
+                return;
+            
             _agent.speed = _speedChase;
             _agent.SetDestination(_guardFieldOfView.Target.position);
         }
-        
+
         private void Patrol()
         {
+            if (_patrolPoints == null || _patrolPoints.Length == 0) return;
+
             _agent.speed = _speedPatrol;
-            
-            if (Vector3.Distance(transform.position, _patrolPoints[_patrolPointIndex.Value].position) >= 2)
-            {
-                _agent.SetDestination(_patrolPoints[_patrolPointIndex.Value].position);
-            }
+
+            Transform point = _patrolPoints[_patrolPointIndex];
+
+            if (Vector3.Distance(transform.position, point.position) >= _patrolPointReachDistance)
+                _agent.SetDestination(point.position);
             else
-            {
-                ReachTarget();
-            }
+                _patrolPointIndex = (_patrolPointIndex + 1) % _patrolPoints.Length;
         }
 
         public void ApplyDamage(float damage)
         {
-            if (!IsServer) 
-                return;
-            
+            if (!IsServer) return;
+
             _currentHealth.Value -= damage;
 
             if (_currentHealth.Value <= 0)
-            {
-                GetComponent<NetworkObject>().Despawn();
-            }
+                NetworkObject.Despawn();
+        }
+
+        public void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(transform.position, transform.position + Vector3.forward * _attackRange);
         }
     }
 }

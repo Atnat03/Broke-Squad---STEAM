@@ -1,5 +1,7 @@
 ﻿using System;
+using Bus;
 using Gameplay.Controller.States;
+using Gameplay.PlayerData;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,7 +9,7 @@ namespace Gameplay.Controller
 {
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(CapsuleCollider))]
-    public class PlayerController : NetworkBehaviour
+    public class PlayerController : NetworkBusListener
     {
         #region variables
 
@@ -81,8 +83,10 @@ namespace Gameplay.Controller
         public void SetYaw(float yawDegrees) => _rb.MoveRotation(Quaternion.Euler(0f, yawDegrees, 0f));
         public Vector3 HorizontalVelocity => new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 
+        private bool _playerDead;
         #endregion
 
+        
         #region Initialization
 
         public override void OnNetworkSpawn()
@@ -97,6 +101,7 @@ namespace Gameplay.Controller
                 SetUpComponents();
                 SetUpInputs();
                 SetUpStateMachine();
+                ListenToEvent<PlayerDeathEvent>(SetPlayerDead);
             }
         }
 
@@ -171,7 +176,7 @@ namespace Gameplay.Controller
 
         private void Update()
         {
-            if(!IsOwner)
+            if(!IsOwner || _playerDead)
                 return;
             if(autoUpdateProfileValue) GetDataFromProfile();
             _stateMachine.Update();
@@ -180,7 +185,7 @@ namespace Gameplay.Controller
 
         void FixedUpdate()
         {
-            if(!IsOwner)
+            if(!IsOwner || _playerDead)
                 return;
             
             _stateMachine.FixedUpdate();
@@ -196,7 +201,7 @@ namespace Gameplay.Controller
 
         private void LateUpdate()
         {
-            if(!IsOwner)
+            if(!IsOwner || _playerDead)
                 return;
             
             _stateMachine.LateUpdate();
@@ -358,10 +363,13 @@ namespace Gameplay.Controller
         void At(IState from, IState to, IPredicate condition) => _stateMachine.AddTransition(from, to, condition);
         void Any(IState to, IPredicate condition) => _stateMachine.AddAnyTransition(to, condition);
 
-        private void OnGUI()
+        void SetPlayerDead(PlayerDeathEvent e)
         {
-            GUI.Label(new Rect(40, 10, 500, 30), $"Grounded = {IsGrounded}", new GUIStyle());
-            //GUI.Label(new Rect(20, 20, 500, 30), $"State: {_stateMachine.CurrentStateName}", new GUIStyle());
+            if (e.playerID == OwnerClientId)
+            {
+                _playerDead = true;
+            }
+            
         }
     }
 }

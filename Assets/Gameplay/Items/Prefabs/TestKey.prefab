@@ -51,6 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.PlayerItemGestion.ItemPickup
   _id: 2
   _itemDataList: {fileID: 11400000, guid: df0916a98c32db14a94c86d5b932ce75, type: 2}
+  _outline: {fileID: 7065723315701362081}
 --- !u!65 &6673382014620735687
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -157,8 +158,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 4113447948
-  InScenePlacedSourceGlobalObjectIdHash: 0
+  GlobalObjectIdHash: 1263461750
+  InScenePlacedSourceGlobalObjectIdHash: 544025646
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -183,6 +184,7 @@ GameObject:
   - component: {fileID: 1470628913798695259}
   - component: {fileID: 7975943933691098850}
   - component: {fileID: 389091109797784747}
+  - component: {fileID: 7065723315701362081}
   m_Layer: 0
   m_Name: VisualKey
   m_TagString: Untagged
@@ -262,3 +264,21 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &7065723315701362081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9164917341506656706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 7
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
