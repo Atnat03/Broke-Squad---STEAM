@@ -1855,7 +1855,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00037327543}
+  m_AnchoredPosition: {x: 0, y: 0.000048456066}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &709989895
@@ -2957,7 +2957,7 @@ MonoBehaviour:
   _parentList: {fileID: 709989894}
   _playerNotifPrefab: {fileID: 8058203150638908989, guid: 741782e10df26f64fa3ff6ec905c5731, type: 3}
   _playerNotifParent: {fileID: 963720479}
-  _lobbyNameText: {fileID: 0}
+  _lobbyNameText: {fileID: 423622547}
   _startGameButton: {fileID: 1880321351}
 --- !u!114 &1187572932
 MonoBehaviour:
@@ -3007,7 +3007,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00037327543}
+  m_AnchoredPosition: {x: 0, y: 0.00007170374}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1292845508
@@ -3080,9 +3080,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab06fc6a0db0bb042b5244d12a6b1b33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LobbyManager
-  _sceneNameToPlayTogether: 
+  _sceneNameToPlayTogether: TestItem
   _lobbyUpdateTimerMax: 1
-  _heartbeatTimerMax: 3
+  _heartbeatTimerMax: 15
   _lobbyListUpdateTimerMax: 1.5
 --- !u!1 &1385530456
 GameObject:
@@ -4619,7 +4619,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1354779340}
         m_TargetAssemblyTypeName: Network.HUB.LobbyManager, Assembly-CSharp
-        m_MethodName: StartGame
+        m_MethodName: StartingGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

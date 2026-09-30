@@ -37,6 +37,7 @@ namespace Network.HUB
 
         //Other variables
         private string _playerName;
+        private bool _relayJoined;
 
         //Actions
         public Action<Lobby, bool> OnJoinLobby;
@@ -48,11 +49,13 @@ namespace Network.HUB
             try
             {
                 await UnityServices.InitializeAsync();
-
+                
                 AuthenticationService.Instance.SignedIn += () =>
                 {
                     Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
                 };
+                
+                AuthenticationService.Instance.SwitchProfile("player_" + UnityEngine.Random.Range(0, 100000));
 
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
@@ -108,25 +111,30 @@ namespace Network.HUB
         //Catch the new Lobby with the modification that was applies to it (synchronize update)
         private async void HandleLobbyPollForUpdates()
         {
+            if (_joinedLobby == null) return;
+
+            _lobbyUpdateTimer -= Time.deltaTime;
+            if (_lobbyUpdateTimer >= 0) return;
+            _lobbyUpdateTimer = _lobbyUpdateTimerMax;
+
             try
             {
-                if (_joinedLobby != null)
-                {
-                    _lobbyUpdateTimer -= Time.deltaTime;
-                    if (_lobbyUpdateTimer < 0)
-                    {
-                        _lobbyUpdateTimer = _lobbyUpdateTimerMax;
+                _joinedLobby = await LobbyService.Instance.GetLobbyAsync(_joinedLobby.Id);
 
-                        Lobby lobby = await LobbyService.Instance.GetLobbyAsync(_joinedLobby.Id);
-                        _joinedLobby = lobby;
-                        
-                        OnUpdateLobbyInfo.Invoke(_joinedLobby);
-                    }
+                OnUpdateLobbyInfo?.Invoke(_joinedLobby);
+                
+                if (IsLobbyHost() || _relayJoined) return;
+
+                if (_joinedLobby.Data.TryGetValue("Relay", out var relayData) && relayData.Value != "0")
+                {
+                    _relayJoined = true;
+                    _relayJoined = await RelayManager.instance.JoinRelay(relayData.Value);
                 }
             }
             catch (Exception e)
             {
-                // ignored
+                _relayJoined = false;
+                Debug.LogException(e);
             }
         }
 
@@ -142,36 +150,44 @@ namespace Network.HUB
         }
 
         #endregion
-
+        
+        public void StartingGame() => StartGame();
+    
         public async void StartGame()
         {
             if (!IsLobbyHost()) return;
 
             try
             {
-                ABPrint.Print("Start Game", ABColor.Yellow);
-
-                int    mySkin  = 0;
-                string myName  = _playerName;
-                Player me = _joinedLobby.Players.Find(p => p.Id == AuthenticationService.Instance.PlayerId);
-                
                 string relayCode = await RelayManager.instance.CreateRelay();
-
-                Lobby lobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, new UpdateLobbyOptions
+                if (string.IsNullOrEmpty(relayCode))
                 {
+                    Debug.LogError("CreateRelay a échoué");
+                    return;
+                }
+
+                _joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, new UpdateLobbyOptions
+                {
+                    IsLocked = true,
                     Data = new Dictionary<string, DataObject>
                     {
                         { "Relay", new DataObject(DataObject.VisibilityOptions.Member, relayCode) }
                     }
                 });
 
-                _joinedLobby = lobby;
-                
+                int expected = _joinedLobby.Players.Count;
+                float timeout = 20f;
+                while (NetworkManager.Singleton.ConnectedClientsIds.Count < expected && timeout > 0f)
+                {
+                    timeout -= Time.deltaTime;
+                    await System.Threading.Tasks.Task.Yield();
+                }
+
                 NetworkManager.Singleton.SceneManager.LoadScene(_sceneNameToPlayTogether, LoadSceneMode.Single);
             }
-            catch (LobbyServiceException e)
+            catch (Exception e)
             {
-                Debug.Log(e);
+                Debug.LogException(e);
             }
         }
 
@@ -200,7 +216,7 @@ namespace Network.HUB
                 _hostLobby = lobby;
                 _joinedLobby = lobby;
 
-                OnJoinLobby.Invoke(_joinedLobby, true);
+                OnJoinLobby?.Invoke(_joinedLobby, true);
 
                 Debug.Log("Lobby created !! " + lobby.Name + " / " + lobby.Id);
             }
@@ -226,7 +242,7 @@ namespace Network.HUB
 
                 Lobby lobby = await LobbyService.Instance.JoinLobbyByIdAsync(id, options);
                 _joinedLobby = lobby;
-
+                
                 OnJoinLobby.Invoke(_joinedLobby, false);
             }
             catch (LobbyServiceException e)
@@ -263,7 +279,7 @@ namespace Network.HUB
                 QueryResponse queryResponse = await LobbyService.Instance.QueryLobbiesAsync(options);
 
                 //Invoke the update UI delegate
-                OnUpdateJoinedLobby.Invoke(queryResponse.Results);
+                OnUpdateJoinedLobby?.Invoke(queryResponse.Results);
             }
             catch (LobbyServiceException e)
             {
