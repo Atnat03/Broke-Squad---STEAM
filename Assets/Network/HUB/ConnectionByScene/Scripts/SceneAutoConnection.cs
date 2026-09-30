@@ -93,7 +93,8 @@ namespace Network.HUB
         
             bool isServer = CurrentPlayer.Tags.Contains("Server_2") || 
                             CurrentPlayer.Tags.Contains("Server_3") ||
-                            CurrentPlayer.Tags.Contains("Server_4");
+                            CurrentPlayer.Tags.Contains("Server_4") ||
+                            CurrentPlayer.Tags.Contains("Server");
         
             if (isServer)
             {
