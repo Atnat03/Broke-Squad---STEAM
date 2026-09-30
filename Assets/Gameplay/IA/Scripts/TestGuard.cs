@@ -1,10 +1,11 @@
 ﻿using System;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace Gameplay.IA.Scripts
 {
-    public class TestGuard : MonoBehaviour
+    public class TestGuard : NetworkBehaviour
     {
         [SerializeField] private float _speedPatrol = 2;
         [SerializeField] private float _speedChase = 3;
@@ -18,41 +19,61 @@ namespace Gameplay.IA.Scripts
         [Header("Navigation")]
         [SerializeField] private NavMeshAgent _agent;
         [SerializeField] private Transform[] _patrolPoints;
-        private int _patrolPointIndex = 0;
+        
+        private readonly NetworkVariable<int> _patrolPointIndex = new NetworkVariable<int>();
+        private readonly NetworkVariable<bool> _isInChase = new NetworkVariable<bool>();
+
+        public override void OnNetworkSpawn()
+        {
+            _isInChase.OnValueChanged += GuardStateChange;
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            _isInChase.OnValueChanged -= GuardStateChange;
+        }
+
+        private void GuardStateChange(bool previousValue, bool newValue)
+        {
+            Color currentColor = newValue ? _colorChase : _colorPatrol;
+            
+            _meshRenderer.material.color = currentColor;
+        }
 
         void Update()
         {
+            if (!IsServer) return;
+            
             if (_guardFieldOfView.CanSeeTarget)
-            { 
+            {
+                _isInChase.Value = true;
                 Chase();
             }
             else
             {
+                _isInChase.Value = false;
                 Patrol();
             }
         }
 
         private void ReachTarget()
         {
-            _patrolPointIndex = (_patrolPointIndex + 1) % _patrolPoints.Length;
+            _patrolPointIndex.Value = (_patrolPointIndex.Value + 1) % _patrolPoints.Length;
         }
 
         private void Chase()
         {
             _agent.speed = _speedChase;
             _agent.SetDestination(_guardFieldOfView.Target.position);
-            
-            _meshRenderer.material.color = _colorChase;
         }
         
         private void Patrol()
         {
             _agent.speed = _speedPatrol;
-            _meshRenderer.material.color = _colorPatrol;
             
-            if (Vector3.Distance(transform.position, _patrolPoints[_patrolPointIndex].position) >= 2)
+            if (Vector3.Distance(transform.position, _patrolPoints[_patrolPointIndex.Value].position) >= 2)
             {
-                _agent.SetDestination(_patrolPoints[_patrolPointIndex].position);
+                _agent.SetDestination(_patrolPoints[_patrolPointIndex.Value].position);
             }
             else
             {

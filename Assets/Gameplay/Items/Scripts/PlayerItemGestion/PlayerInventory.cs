@@ -79,7 +79,7 @@ namespace Gameplay.Items.Scripts
             }
 
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
-                    out RaycastHit hit, _range, _layerMask)
+                    out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore)
                 && hit.transform.TryGetComponent(out ItemPickup pickup)
                 && pickup.TryGetComponent(out NetworkObject netObj))
             {
