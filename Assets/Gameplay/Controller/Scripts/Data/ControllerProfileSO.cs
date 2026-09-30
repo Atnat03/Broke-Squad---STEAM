@@ -9,6 +9,7 @@ namespace Gameplay.Controller
         public float walkSpeed = 4f;
         public float sprintSpeed = 7f;
         public float crouchSpeed = 2f;
+        public float backwardSpeedMultiplier = 0.7f;
         public float groundAcceleration = 60f;
         public float groundDeceleration = 70f;
         public float airAcceleration = 12f;

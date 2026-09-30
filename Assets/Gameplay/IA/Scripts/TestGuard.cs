@@ -9,7 +9,7 @@ using Gameplay.PlayerData;
 
 namespace Gameplay.IA.Scripts
 {
-    public class TestGuard : NetworkBehaviour, IDamageable
+    public class TestGuard : NetworkBehaviour, IDamageable, IStunnable
     {
         [SerializeField] private float _speedPatrol = 2;
         [SerializeField] private float _speedChase = 3;
@@ -36,8 +36,13 @@ namespace Gameplay.IA.Scripts
         [SerializeField] private Color _colorHit = Color.white;
         [SerializeField] private Image _currentHealthUI;
 
+        [Header("Stun")] 
+        [SerializeField] private Color _stunColor = Color.deepSkyBlue;
+        private Coroutine _stunCoroutine;
+        
         private readonly NetworkVariable<float> _currentHealth = new NetworkVariable<float>();
         private readonly NetworkVariable<bool> _isInChase = new NetworkVariable<bool>();
+        private readonly NetworkVariable<bool> _isStun = new NetworkVariable<bool>();
 
         private int _patrolPointIndex;
         private bool _isAttacking;
@@ -47,6 +52,7 @@ namespace Gameplay.IA.Scripts
         {
             _isInChase.OnValueChanged += GuardStateChange;
             _currentHealth.OnValueChanged += UpdateHP;
+            _isStun.OnValueChanged += StunStateChange;
             
             _currentHealth.Value = _maxHealth;
 
@@ -62,11 +68,13 @@ namespace Gameplay.IA.Scripts
             ApplyStateColor(_isInChase.Value);
             RefreshHealthUI(_currentHealth.Value);
         }
+        
 
         public override void OnNetworkDespawn()
         {
             _isInChase.OnValueChanged -= GuardStateChange;
             _currentHealth.OnValueChanged -= UpdateHP;
+            _isStun.OnValueChanged -= StunStateChange;
         }
 
         private void UpdateHP(float previousValue, float newValue)
@@ -88,6 +96,18 @@ namespace Gameplay.IA.Scripts
                 _currentHealthUI.fillAmount = Mathf.Clamp01(value / _maxHealth);
         }
 
+        private void StunStateChange(bool previousValue, bool newValue)
+        {
+            if (newValue)
+            {
+                _meshRenderer.material.color = _stunColor;
+            }
+            else
+            {
+                _meshRenderer.material.color = _colorPatrol;
+            }
+        }
+        
         private IEnumerator HitColor()
         {
             _meshRenderer.material.color = _colorHit;
@@ -112,6 +132,10 @@ namespace Gameplay.IA.Scripts
         private void Update()
         {
             if (!IsServer) return;
+
+            if (_isStun.Value)
+                return;
+            
 
             bool canSee = _guardFieldOfView.CanSeeTarget && _guardFieldOfView.Target != null;
 
@@ -203,6 +227,29 @@ namespace Gameplay.IA.Scripts
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, transform.position + Vector3.forward * _attackRange);
+        }
+
+        public void ApplyStun(float stunDuration)
+        {
+            if (!IsServer) return;
+
+            if (_stunCoroutine == null)
+            {
+                _stunCoroutine = StartCoroutine(Stun(stunDuration));
+            }
+        }
+
+        private IEnumerator Stun(float stunDuration)
+        {
+            _isStun.Value = true;
+            _agent.isStopped = true;
+            
+            yield return new WaitForSeconds(stunDuration);
+            
+            _agent.isStopped = false;
+            _isStun.Value = false;
+            
+            _stunCoroutine = null;
         }
     }
 }
