@@ -64,8 +64,11 @@ namespace Gameplay.Controller
         private Vector2 _moveInput;
         private bool _sprintHeld;
         private bool _crouchHeld;
+        private bool _leanLeftHeld;
+        private bool _leanRightHeld;
         private float _jumpBufferTimer;
         private float _coyoteTimer;
+        
         private Vector3 _groundNormal = Vector3.up;
        
         private float _bottomOffsetY;
@@ -73,6 +76,7 @@ namespace Gameplay.Controller
         
         private float ScaleY => Mathf.Abs(transform.lossyScale.y);
         private float WorldRadius => _capsule.radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.z));
+        public float LeanInput => (_leanRightHeld ? 1f : 0f) - (_leanLeftHeld ? 1f : 0f);
         public float ForwardDot
         {
             get
@@ -97,6 +101,7 @@ namespace Gameplay.Controller
 
         public void SetYaw(float yawDegrees) => _rb.MoveRotation(Quaternion.Euler(0f, yawDegrees, 0f));
         public Vector3 HorizontalVelocity => new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
+        
 
         private bool _playerDead;
         #endregion
@@ -162,6 +167,10 @@ namespace Gameplay.Controller
             _playerInput.OnCrouchInputCanceled += () => _crouchHeld = false;
             _playerInput.OnSprintInput += () => _sprintHeld = true;
             _playerInput.OnSprintInputCanceled += () => _sprintHeld = false;
+            _playerInput.OnLeanRightInput += () => _leanRightHeld = true;
+            _playerInput.OnLeanLeftInput += () => _leanLeftHeld = true;
+            _playerInput.OnLeanRightInputCanceled += () => _leanRightHeld = false;
+            _playerInput.OnLeanLeftInputCanceled += () => _leanLeftHeld = false;
         }
 
         private void SetUpStateMachine()
