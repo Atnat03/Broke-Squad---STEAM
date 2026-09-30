@@ -1,18 +1,20 @@
 ﻿using System;
 using Gameplay.Controller.States;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Gameplay.Controller
 {
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(CapsuleCollider))]
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : NetworkBehaviour
     {
         #region variables
 
         private PlayerInput _playerInput;
         private StateMachine _stateMachine;
         public PlayerCamera playerCamera;
+        public GameObject UI;
 
         [Header("Speed")]
         [SerializeField] private float walkSpeed = 4f;
@@ -57,7 +59,6 @@ namespace Gameplay.Controller
         private float _jumpBufferTimer;
         private float _coyoteTimer;
         private Vector3 _groundNormal = Vector3.up;
-
        
         private float _bottomOffsetY;
         private float _eyeStandLocalY;
@@ -80,11 +81,19 @@ namespace Gameplay.Controller
 
         #region Initialization
 
-        void Awake()
+        public override void OnNetworkSpawn()
         {
-            SetUpComponents();
-            SetUpInputs();
-            SetUpStateMachine();
+            if (!IsOwner)
+            {
+                playerCamera.gameObject.SetActive(false);
+                UI.SetActive(false);
+            }
+            else
+            {
+                SetUpComponents();
+                SetUpInputs();
+                SetUpStateMachine();
+            }
         }
 
         private void SetUpComponents()
@@ -158,12 +167,18 @@ namespace Gameplay.Controller
 
         private void Update()
         {
+            if(!IsOwner)
+                return;
+            
             _stateMachine.Update();
             UpdateEyeHeight();
         }
 
         void FixedUpdate()
         {
+            if(!IsOwner)
+                return;
+            
             _stateMachine.FixedUpdate();
             float dt = Time.fixedDeltaTime;
 
@@ -177,6 +192,9 @@ namespace Gameplay.Controller
 
         private void LateUpdate()
         {
+            if(!IsOwner)
+                return;
+            
             _stateMachine.LateUpdate();
         }
 
@@ -318,7 +336,7 @@ namespace Gameplay.Controller
         private void OnGUI()
         {
             GUI.Label(new Rect(40, 10, 500, 30), $"Grounded = {IsGrounded}", new GUIStyle());
-            GUI.Label(new Rect(20, 20, 500, 30), $"State: {_stateMachine.CurrentStateName}", new GUIStyle());
+            //GUI.Label(new Rect(20, 20, 500, 30), $"State: {_stateMachine.CurrentStateName}", new GUIStyle());
         }
     }
 }

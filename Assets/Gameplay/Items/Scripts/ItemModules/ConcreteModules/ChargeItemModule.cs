@@ -1,6 +1,6 @@
 ﻿using System;
 using Gameplay.Items.Scripts.PlayerItemGestion;
-using MyPrint;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
@@ -9,25 +9,31 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
     public class ChargeItemModule : ItemModule, ILeftClick
     {
         [SerializeField] private float _amountPercentChargePerClick = 25;
-        
+        [SerializeField] private float _range = 2f;
+
+        public float Range => _range;
+
         public void StartLeftClick()
         {
-            RaycastHit hit;
-            
-            if (Physics.Raycast(Context.Camera.transform.position, Context.Camera.transform.forward,out hit, 2))
+            Transform cam = Context.Camera.transform;
+
+            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, _range)
+                && hit.transform.TryGetComponent(out ItemPickup pickup)
+                && pickup.TryGetComponent(out NetworkObject netObj))
             {
-                if (hit.transform.TryGetComponent(out ItemPickup pickup))
-                {
-                    foreach (ICondition condition in pickup.Instance.Conditions)
-                    {
-                        if (condition is ElectricModule electric)
-                            electric.AddEnergy(_amountPercentChargePerClick);
-                    }
-                }
+                Context.Inventory.RequestChargePickup(netObj);
             }
         }
 
-        public void EndLeftClick()
-        { }
+        public void EndLeftClick() { }
+
+        public void ApplyCharge(ItemPickup pickup)
+        {
+            if (pickup.Instance == null) return;
+
+            foreach (ICondition c in pickup.Instance.Conditions)
+                if (c is ElectricModule electric)
+                    electric.AddEnergy(_amountPercentChargePerClick);
+        }
     }
 }
