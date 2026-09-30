@@ -44,7 +44,7 @@ namespace Gameplay.Items.Scripts
 
         private PlayerInput _input;
         private ItemCore _currentItem;
-        private ItemPickup _currentHoverItem = null;
+        private Outliner _currentHoverItem = null;
 
         public override void OnNetworkSpawn()
         {
@@ -115,7 +115,7 @@ namespace Gameplay.Items.Scripts
             
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
                     out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore)
-                && hit.transform.TryGetComponent(out ItemPickup pickup))
+                && hit.transform.TryGetComponent(out Outliner pickup))
             {
                 if(_currentHoverItem == null)
                 {

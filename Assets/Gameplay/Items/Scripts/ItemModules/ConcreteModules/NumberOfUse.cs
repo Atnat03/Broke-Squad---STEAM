@@ -9,6 +9,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
     {
         [SerializeField] private int _maxUse = 3;
         [SerializeField] private ItemInput _inputType;
+        [SerializeField] private bool _destroyWhenUsed = false;
         private int _currentUse = 0;
 
         public ItemInput InputType => _inputType;
@@ -26,6 +27,11 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
         public void UseItem()
         {
             _currentUse--;
+
+            if (_destroyWhenUsed && _currentUse == 0)
+            {
+                Context.Inventory.DestroyItemInHand();
+            }
         }
 
         public void ThrowItem()
