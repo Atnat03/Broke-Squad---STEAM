@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a25e583415c740d696418c1844fb897a, type: 3}
+  m_Name: SO_ITEM_Gravat
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.ItemData.SO_Item
+  id: 6
+  itemName: Gravat
+  visualPrefab: {fileID: 6257818723059611307, guid: e810128558743754c9475f1687f73ac1, type: 3}
+  pickUpPrefab: {fileID: 1986776034453942735, guid: 6b421c1c6c30fec4dab4333d278384fe, type: 3}
+  leftClicksActions: []
+  rightClicksActions:
+  - rid: 2255290332041183340
+  conditions: []
+  passif:
+  - rid: 2255290332041183343
+  references:
+    version: 2
+    RefIds:
+    - rid: 2255290332041183340
+      type: {class: ThrowModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _minThrowForce: {x: 0, y: 0, z: 0}
+        _maxThrowForce: {x: 0, y: 2, z: 12}
+        _durationToFullFill: 1
+        _torqueForce: {x: 5, y: 0, z: 0}
+        _spawnDistance: 0.7
+    - rid: 2255290332041183343
+      type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _minVelocityForDamage: 10
+        _X: 10
+        _weight: 5

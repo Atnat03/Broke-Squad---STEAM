@@ -32,7 +32,7 @@ MonoBehaviour:
         _minThrowForce: {x: 0, y: 0, z: 0}
         _maxThrowForce: {x: 0, y: 2, z: 15}
         _durationToFullFill: 2
-        _torqueForce: 10
+        _torqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: 0.5
     - rid: 2255290332041183343
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
@@ -43,4 +43,4 @@ MonoBehaviour:
     - rid: 2255290332041183551
       type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _strength: 10
+        _strength: 100

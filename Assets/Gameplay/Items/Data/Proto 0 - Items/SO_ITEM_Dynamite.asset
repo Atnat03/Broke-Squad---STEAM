@@ -33,7 +33,7 @@ MonoBehaviour:
         _minThrowForce: {x: 0, y: 0, z: 0}
         _maxThrowForce: {x: 0, y: 2, z: 12}
         _durationToFullFill: 1
-        _torqueForce: 25
+        _torqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: 0.7
     - rid: 2255290332041183342
       type: {class: NumberOfUse, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
@@ -49,4 +49,4 @@ MonoBehaviour:
     - rid: 2255290332041183615
       type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _strength: 10000
+        _strength: 100
