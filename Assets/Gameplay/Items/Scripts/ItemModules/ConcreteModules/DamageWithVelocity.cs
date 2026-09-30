@@ -1,6 +1,7 @@
 ﻿using System;
 using Gameplay.Items.Scripts.PlayerItemGestion;
 using Gameplay.LD.Scripts;
+using MyPrint;
 using UnityEngine;
 
 namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
@@ -19,6 +20,8 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
                 if (item.TryGetComponent(out Rigidbody rb))
                 {
                     float dmg = ((rb.linearVelocity.magnitude - _minVelocityForDamage) * _weight) / _X;
+                    ABPrint.Print(rb.linearVelocity.magnitude + " vitesse");
+                    if (dmg <= 0) return;
                         
                     damage.ApplyDamage(dmg);
                 }
