@@ -16,10 +16,12 @@ MonoBehaviour:
   itemName: Test
   visualPrefab: {fileID: 2517337150570892065, guid: 0140db76ebb5df24f921af7841261310, type: 3}
   pickUpPrefab: {fileID: 3642109076169085848, guid: 24f177f7526459e4c9e128fae0c282e5, type: 3}
-  leftClicksActions: []
+  leftClicksActions:
+  - rid: 7629053377233289478
   rightClicksActions:
   - rid: 7629053358023639123
-  conditions: []
+  conditions:
+  - rid: 7629053377233289477
   passif:
   - rid: 7629053358023639127
   references:
@@ -39,3 +41,13 @@ MonoBehaviour:
         _minVelocityForDamage: 1
         _X: 1
         _weight: 10
+    - rid: 7629053377233289477
+      type: {class: ElectricModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        type: 0
+        _batteryCapacity: 100
+        _useCost: 25
+    - rid: 7629053377233289478
+      type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _strength: 10
