@@ -1,4 +1,5 @@
-﻿using Bus;
+﻿using System;
+using Bus;
 using Gameplay.Controller;
 using Gameplay.Items.Scripts;
 using Gameplay.Items.Scripts.ItemData;
@@ -43,6 +44,7 @@ namespace Gameplay.Items.Scripts
 
         private PlayerInput _input;
         private ItemCore _currentItem;
+        private ItemPickup _currentHoverItem = null;
 
         public override void OnNetworkSpawn()
         {
@@ -85,6 +87,30 @@ namespace Gameplay.Items.Scripts
             {
                 PickUpRpc(netObj);
                 InvokeEvent(new OnInteractItemInWorld());
+            }
+        }
+
+        private void Update()
+        {
+            if (HasItemInHand()) return;
+            
+            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
+                    out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore)
+                && hit.transform.TryGetComponent(out ItemPickup pickup))
+            {
+                if(_currentHoverItem == null)
+                {
+                    _currentHoverItem = pickup;
+                    _currentHoverItem.SetOutline(true);
+                }
+            }
+            else
+            {
+                if (_currentHoverItem != null)
+                {
+                    _currentHoverItem.SetOutline(false);
+                    _currentHoverItem = null;
+                }
             }
         }
 

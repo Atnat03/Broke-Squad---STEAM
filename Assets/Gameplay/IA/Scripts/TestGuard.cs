@@ -37,7 +37,8 @@ namespace Gameplay.IA.Scripts
             _isInChase.OnValueChanged += GuardStateChange;
             _currentHealth.OnValueChanged += UpdateHP;
             
-            _currentHealth.Value = _maxHealth;
+            if(IsServer)
+                _currentHealth.Value = _maxHealth;
         }
 
         public override void OnNetworkDespawn()
