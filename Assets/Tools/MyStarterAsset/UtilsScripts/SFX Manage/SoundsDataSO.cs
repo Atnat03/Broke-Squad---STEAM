@@ -8,6 +8,8 @@ namespace ScriptableObjectsDefinitions
     public class SoundsDataSO : ScriptableObject
     {
         public List<SoundData> sounds = new List<SoundData>();
+
+        public string GetKey(SoundData s) => $"{name}/{s.soundName}";
     }
 
     [Serializable]
