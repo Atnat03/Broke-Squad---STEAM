@@ -21,11 +21,13 @@ namespace Gameplay.Controller
         
         public PlayerCamera playerCamera;
         public GameObject UI;
+        public MeshRenderer meshRenderer;
 
         [Header("Speed")]
         private float _walkSpeed = 4f;
         private float _sprintSpeed = 7f;
         private float _crouchSpeed = 2f;
+        private float _backwardSpeedMultiplier = 0.7f;
         private float _groundAcceleration = 60f;
         private float _groundDeceleration = 70f;
         private float _airAcceleration = 12f;
@@ -71,6 +73,19 @@ namespace Gameplay.Controller
         
         private float ScaleY => Mathf.Abs(transform.lossyScale.y);
         private float WorldRadius => _capsule.radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.z));
+        public float ForwardDot
+        {
+            get
+            {
+                Vector3 v = HorizontalVelocity;
+                if (v.sqrMagnitude < 0.01f) return 0f;
+                return Vector3.Dot(v.normalized, transform.forward);
+            }
+        }
+
+        public bool IsMovingForward => ForwardDot > 0.1f;
+        public bool IsMovingBackward => ForwardDot < -0.1f;
+        
         private Vector3 FeetPosition
         {
             get
@@ -114,7 +129,8 @@ namespace Gameplay.Controller
             _rb.interpolation = RigidbodyInterpolation.Interpolate;
             _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             _rb.useGravity = false; 
-
+            
+            meshRenderer.enabled = false;
             
             _capsule.sharedMaterial = new PhysicsMaterial("PlayerNoFriction")
             {
@@ -221,6 +237,7 @@ namespace Gameplay.Controller
             _walkSpeed = profile.walkSpeed;
             _sprintSpeed = profile.sprintSpeed;
             _crouchSpeed = profile.crouchSpeed;
+            _backwardSpeedMultiplier = profile.backwardSpeedMultiplier;
             _groundAcceleration = profile.groundAcceleration;
             _groundDeceleration = profile.groundDeceleration;
             _airAcceleration = profile.airAcceleration;
@@ -280,7 +297,8 @@ namespace Gameplay.Controller
             IsSprinting = _sprintHeld && !IsCrouching && _moveInput.y > 0.1f;
 
             float targetSpeed = IsCrouching ? _crouchSpeed : (IsSprinting ? _sprintSpeed : _walkSpeed);
-
+            targetSpeed *= IsMovingBackward ? _backwardSpeedMultiplier : 1f;
+            
             Vector3 input = Vector3.ClampMagnitude(new Vector3(_moveInput.x, 0f, _moveInput.y), 1f);
             Vector3 wishDir = transform.TransformDirection(input);
             Vector3 targetHorizontal = wishDir * targetSpeed;
