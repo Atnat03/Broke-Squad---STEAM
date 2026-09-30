@@ -160,7 +160,6 @@ namespace Gameplay.Items.Scripts
             ItemCore core = go.AddComponent<ItemCore>();
             GameObject visual = Instantiate(data.visualPrefab, core.transform);
             visual.transform.localPosition = Vector3.zero;
-            visual.transform.localRotation = Quaternion.identity;
 
             ItemInstance instance = IsServer ? _serverInstance : new ItemInstance(data);
             core.SetInstance(instance, this);
