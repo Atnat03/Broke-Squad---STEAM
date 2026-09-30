@@ -1,23 +1,29 @@
 ﻿using Bus;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Gameplay.LD.Scripts
 {
     public class Door : NetworkBusListener
     {
         [SerializeField] private int _doorID;
-        [SerializeField] private Animator _animator;
-        [SerializeField] private string _openStateName = "Open";
-
+        [SerializeField] private UnityEvent _eventOpen;
+        [SerializeField] private UnityEvent _eventClose;
+        [SerializeField] private bool _canOpenWithoutKey = false;
+        
+        private readonly NetworkVariable<bool> _canOpen = new(false);
         private readonly NetworkVariable<bool> _isOpen = new(false);
 
         public override void OnNetworkSpawn()
         {
             _isOpen.OnValueChanged += OnOpenChanged;
 
-            if (_isOpen.Value)
-                _animator.Play(_openStateName, 0, 1f);
+            if (IsServer)
+            {
+                _canOpen.Value = _canOpenWithoutKey;
+            }
         }
 
         public override void OnNetworkDespawn()
@@ -28,16 +34,30 @@ namespace Gameplay.LD.Scripts
         private void OnOpenChanged(bool previous, bool current)
         {
             if (current)
-                _animator.SetTrigger("Open");
+            {
+                _eventOpen?.Invoke();
+            }else
+            {
+                _eventClose?.Invoke();
+            }
         }
+        
+        public bool CanOpenWithoutKey { get => _canOpen.Value; }
 
         public bool TryOpen(int id)
         {
             if (!IsServer) return false;
-            if (_isOpen.Value) return false;
+
+            if (!_canOpen.Value)
+            {
+                _isOpen.Value = true;
+                _canOpen.Value = true;
+                return true;
+            }
+            
             if (id != _doorID && id != -1) return false;
 
-            _isOpen.Value = true;
+            _isOpen.Value = !_isOpen.Value;
             return true;
         }
     }

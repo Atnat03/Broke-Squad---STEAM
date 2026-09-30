@@ -287,6 +287,11 @@ MonoBehaviour:
   - {fileID: 1854818551}
   - {fileID: 1117598701}
   - {fileID: 1357653546}
+  _patrolPointReachDistance: 2
+  _damage: 10
+  _attackRange: 2
+  _attackCooldown: 1
+  _timeToStayInRangeToApplyDamage: 0.5
   _maxHealth: 100
   _colorHit: {r: 1, g: 1, b: 1, a: 1}
   _currentHealthUI: {fileID: 1460187021}
@@ -3069,6 +3074,10 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 2652445970
       objectReference: {fileID: 0}
+    - target: {fileID: 7946811543766618420, guid: 89113756ee8a8ab459b17590f66471c7, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 3427472561
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3470,8 +3479,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.Door
   ShowTopMostFoldoutHeaderGroup: 1
   _doorID: 1
-  _animator: {fileID: 1874917782}
-  _openStateName: Open
+  _eventOpen:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1874917782}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Open
+          m_BoolArgument: 0
+        m_CallState: 2
+  _eventClose:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1874917782}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Close
+          m_BoolArgument: 0
+        m_CallState: 2
+  _canOpenWithoutKey: 1
 --- !u!114 &1467233677
 MonoBehaviour:
   m_ObjectHideFlags: 0
