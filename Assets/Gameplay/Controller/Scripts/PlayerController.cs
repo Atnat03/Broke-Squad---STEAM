@@ -14,6 +14,7 @@ namespace Gameplay.Controller
         private PlayerInput _playerInput;
         private StateMachine _stateMachine;
         public PlayerCamera playerCamera;
+        public GameObject UI;
 
         [Header("Speed")]
         [SerializeField] private float walkSpeed = 4f;
@@ -85,6 +86,7 @@ namespace Gameplay.Controller
             if (!IsOwner)
             {
                 playerCamera.gameObject.SetActive(false);
+                UI.SetActive(false);
             }
             else
             {

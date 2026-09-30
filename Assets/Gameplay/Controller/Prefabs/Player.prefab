@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &590560353982461091
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6281260902401001668}
+  m_Layer: 7
+  m_Name: OtherHand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6281260902401001668
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 590560353982461091}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalPosition: {x: 0.32, y: 0.265, z: 0.459}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 7133925661517429810}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1730021997494121554
 GameObject:
   m_ObjectHideFlags: 0
@@ -114,6 +145,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4606863278405769456}
+  - {fileID: 6281260902401001668}
   - {fileID: 4747851042741189834}
   - {fileID: 4363694170265431080}
   m_Father: {fileID: 0}
@@ -249,7 +281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3967847732
+  GlobalObjectIdHash: 3075001378
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -278,6 +310,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
   playerCamera: {fileID: 8757740270961154763}
+  UI: {fileID: 3733190074482631680}
   walkSpeed: 4
   sprintSpeed: 7
   crouchSpeed: 2
@@ -312,7 +345,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae808d3c9a4847b390cbfcee942ac77e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.PlayerItemGestion.PlayerInventory
+  ShowTopMostFoldoutHeaderGroup: 1
   _parent: {fileID: 4999758875781058348}
+  _remoteParent: {fileID: 6281260902401001668}
+  _database: {fileID: 11400000, guid: df0916a98c32db14a94c86d5b932ce75, type: 2}
   _camera: {fileID: 8333721531469245462}
   _range: 5
   _layerMask:
