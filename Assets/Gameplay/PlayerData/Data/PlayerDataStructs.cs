@@ -10,4 +10,10 @@ namespace Gameplay.PlayerData
     {
         public ulong playerID;
     }
+
+    public struct StaminaChangedEvent
+    {
+        public float stamina;
+        public float maxStamina;
+    }
 }

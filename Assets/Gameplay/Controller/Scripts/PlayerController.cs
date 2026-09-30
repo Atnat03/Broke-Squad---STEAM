@@ -15,10 +15,12 @@ namespace Gameplay.Controller
 
         private PlayerInput _playerInput;
         private StateMachine _stateMachine;
-        [SerializeField] private ControllerProfileSO profile;
         
+        [Header("Profile")]
+        [SerializeField] private ControllerProfileSO profile;
         public bool autoUpdateProfileValue = true;
         
+        [Header("To Assign")]
         public PlayerCamera playerCamera;
         public GameObject UI;
         public MeshRenderer meshRenderer;
@@ -51,6 +53,12 @@ namespace Gameplay.Controller
         private float _crouchHeight = 1.0f;
         private float _crouchTransitionSpeed = 12f;
 
+        [Header("Stamina")]
+        [SerializeField] private float maxStamina = 100f;
+        [SerializeField] private float drainPerSecond = 10f;
+        [SerializeField] private float regenPerSecond = 10f;
+        [SerializeField] private float regenDelay = 2f;
+        
         [Header("Camera")]
         [SerializeField] private Transform eyeTarget;
 
@@ -68,6 +76,10 @@ namespace Gameplay.Controller
         private bool _leanRightHeld;
         private float _jumpBufferTimer;
         private float _coyoteTimer;
+        
+        private float _stamina;
+        private float _regenTimer;
+        private bool _exhausted;
         
         private Vector3 _groundNormal = Vector3.up;
        
@@ -102,7 +114,10 @@ namespace Gameplay.Controller
         public void SetYaw(float yawDegrees) => _rb.MoveRotation(Quaternion.Euler(0f, yawDegrees, 0f));
         public Vector3 HorizontalVelocity => new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
         
+        public float MaxStamina => maxStamina;
 
+        private float _lastSentStamina = -1f;
+        
         private bool _playerDead;
         #endregion
 
@@ -136,6 +151,7 @@ namespace Gameplay.Controller
             _rb.useGravity = false; 
             
             meshRenderer.enabled = false;
+            _stamina = maxStamina;
             
             _capsule.sharedMaterial = new PhysicsMaterial("PlayerNoFriction")
             {
@@ -220,6 +236,7 @@ namespace Gameplay.Controller
             UpdateTimers(dt);
             UpdateCrouch(dt);
             ApplyHorizontalMovement(dt);
+            UpdateStamina(dt);
             ApplyJump();
             ApplyGravity(dt);
         }
@@ -238,8 +255,44 @@ namespace Gameplay.Controller
             _jumpBufferTimer -= dt;
         }
 
+        private void UpdateStamina(float dt)
+        {
+            if (IsSprinting)
+            {
+                _stamina = Mathf.Max(0f, _stamina - drainPerSecond * dt);
+                _regenTimer = regenDelay;
+                
+                if(_stamina <= 0f) _exhausted = true;
+            }
+            else
+            {
+                if (_regenTimer > 0f)
+                {
+                    _regenTimer -= dt;
+                }
+                else
+                {
+                    _stamina = Mathf.Min(maxStamina, _stamina + regenPerSecond * dt);
+                }
+            }
+            
+            if(_exhausted && _stamina > 0) _exhausted = false;
+            
+            NotifyStamina();
+        }
+
         #endregion
 
+        private void NotifyStamina()
+        {
+            bool changedEnough = Mathf.Abs(_stamina - _lastSentStamina) >= maxStamina * 0.01f;
+            bool atBoundary = (_stamina <= 0f || _stamina >= maxStamina) && !Mathf.Approximately(_stamina, _lastSentStamina);
+
+            if (!changedEnough && !atBoundary) return;
+
+            _lastSentStamina = _stamina;
+            InvokeEvent(new StaminaChangedEvent { stamina = _stamina, maxStamina = maxStamina });
+        }
         void GetDataFromProfile()
         {
             if(profile == null) return;
@@ -303,7 +356,7 @@ namespace Gameplay.Controller
 
         private void ApplyHorizontalMovement(float dt)
         {
-            IsSprinting = _sprintHeld && !IsCrouching && _moveInput.y > 0.1f;
+            IsSprinting = _sprintHeld && !IsCrouching && _moveInput.y > 0.1f && !_exhausted && _stamina > 0f;
 
             float targetSpeed = IsCrouching ? _crouchSpeed : (IsSprinting ? _sprintSpeed : _walkSpeed);
             targetSpeed *= IsMovingBackward ? _backwardSpeedMultiplier : 1f;
