@@ -17,6 +17,8 @@ namespace Gameplay.Controller
         [Header("Look")]
         [SerializeField] private float sensX = 0.1f;
         [SerializeField] private float sensY = 0.1f;
+        private int _maxLookAngle = 90;
+        private int _minLookAngle = -90;
 
         [Header("Follow")]
         private float _verticalSmoothTime = 0.08f;
@@ -42,6 +44,7 @@ namespace Gameplay.Controller
         private BobProfile _walkBob = new BobProfile { amplitudeY = 0.025f, amplitudeX = 0.015f, roll = 0.3f, frequency = 1.6f };
         private BobProfile _sprintBob = new BobProfile { amplitudeY = 0.04f, amplitudeX = 0.025f, roll = 0.6f, frequency = 2.2f };
         private BobProfile _crouchBob = new BobProfile { amplitudeY = 0.015f, amplitudeX = 0.01f, roll = 0.2f, frequency = 1.1f };
+        private float _backwardBobMultiplier = 0f;
         private float _profileLerpSpeed = 6f;
         private float _bobFadeIn = 0.15f;
         private float _bobFadeOut = 0.25f;
@@ -59,6 +62,7 @@ namespace Gameplay.Controller
         private BobProfile _bob;
         private float _bobPhase;
         private float _bobWeight;
+        private float _backwardFactor;
 
         private void Awake()
         {
@@ -82,7 +86,7 @@ namespace Gameplay.Controller
             
             _yRotation += _mouseMovement.x * sensX;
             _xRotation -= _mouseMovement.y * sensY;
-            _xRotation = Mathf.Clamp(_xRotation, -90f, 90f);
+            _xRotation = Mathf.Clamp(_xRotation, _minLookAngle, _maxLookAngle);
 
             player.SetYaw(_yRotation);
         }
@@ -145,21 +149,29 @@ namespace Gameplay.Controller
             roll = 0f;
             if (!_bobEnabled) return Vector3.zero;
 
-            bool moving = player.IsGrounded && player.HorizontalVelocity.magnitude > 0.1f;
+            Vector3 horizVel = player.HorizontalVelocity;
+            bool moving = player.IsGrounded && horizVel.magnitude > 0.1f;
 
             BobProfile targetProfile = player.IsCrouching ? _crouchBob
                 : player.IsSprinting ? _sprintBob
                 : _walkBob;
             _bob = BobProfile.Lerp(_bob, targetProfile, 1f - Mathf.Exp(-_profileLerpSpeed * dt));
+            
+            float targetBackward = moving ? Mathf.Clamp01(-player.ForwardDot) : 0f; 
+            _backwardFactor = Mathf.Lerp(_backwardFactor, targetBackward, 1f - Mathf.Exp(-_profileLerpSpeed * dt));
+            
+            float backwardScale = Mathf.Lerp(1f, _backwardBobMultiplier, _backwardFactor);
 
             float fade = Mathf.Max(0.01f, moving ? _bobFadeIn : _bobFadeOut);
             _bobWeight = Mathf.MoveTowards(_bobWeight, moving ? 1f : 0f, dt / fade);
 
             _bobPhase = (_bobPhase + _bob.frequency * dt * Mathf.PI * 2f) % (Mathf.PI * 2f);
 
-            float x = Mathf.Sin(_bobPhase) * _bob.amplitudeX * _bobWeight;
-            float y = Mathf.Sin(_bobPhase * 2f) * _bob.amplitudeY * _bobWeight;
-            roll = Mathf.Sin(_bobPhase) * _bob.roll * _bobWeight;
+            float weight = _bobWeight * backwardScale;
+
+            float x = Mathf.Sin(_bobPhase) * _bob.amplitudeX * weight;
+            float y = Mathf.Sin(_bobPhase * 2f) * _bob.amplitudeY * weight;
+            roll = Mathf.Sin(_bobPhase) * _bob.roll * weight;
 
             return new Vector3(x, y, 0f);
         }
@@ -186,7 +198,11 @@ namespace Gameplay.Controller
             _fovLerpSpeed = profile.fovLerpSpeed;
             _bobFadeIn = profile.bobFadeIn;
             _bobFadeOut = profile.bobFadeOut;
-            
+            _profileLerpSpeed = profile.profileLerpSpeed;
+            _backwardBobMultiplier = profile.backwardBobMultiplier;
+            _maxLookAngle = profile.maxLookAngle;
+            _minLookAngle = profile.minLookAngle;
+
         }
     }
 }
