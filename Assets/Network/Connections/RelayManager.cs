@@ -23,16 +23,8 @@ namespace Network.Connections
 
         async Task InitializeServices()
         {
-            if (UnityServices.State != ServicesInitializationState.Initialized)
-            {
-                await UnityServices.InitializeAsync();
-                
-            } 
-            if (!AuthenticationService.Instance.IsSignedIn) 
-            { 
-                await AuthenticationService.Instance.SignInAnonymouslyAsync(); 
-                Debug.Log("Signed In: " + AuthenticationService.Instance.PlayerId); 
-            }
+            while (!AuthenticationService.Instance.IsSignedIn)
+                await Task.Yield();
         }
         
         #region Create a relay
@@ -67,24 +59,25 @@ namespace Network.Connections
         
         #region Join a relay
         
-        public async Task JoinRelay(string joinCode)
+        public async Task<bool> JoinRelay(string joinCode)
         {
             try
             {
                 await InitializeServices();
-                if (string.IsNullOrEmpty(joinCode)) return;
+                if (string.IsNullOrEmpty(joinCode) || joinCode == "0") return false;
 
                 JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
                 var utp = NetworkManager.Singleton.GetComponent<UnityTransport>();
-                var relayServerData = AllocationUtils.ToRelayServerData(joinAllocation, "dtls");
-                utp.SetRelayServerData(relayServerData);
-                
-                NetworkManager.Singleton.StartClient();
-                StartCoroutine(CheckConnectionAfterDelay());
+                utp.SetRelayServerData(AllocationUtils.ToRelayServerData(joinAllocation, "dtls"));
+
+                bool ok = NetworkManager.Singleton.StartClient();
+                if (ok) StartCoroutine(CheckConnectionAfterDelay());
+                return ok;
             }
             catch (Exception e)
             {
                 Debug.LogError("Erreur dans JoinRelay: " + e.Message);
+                return false;
             }
         }
         
