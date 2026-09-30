@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SO_ITEM_Key
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.ItemData.SO_Item
   id: 0
-  itemName: 
+  itemName: Key
   visualPrefab: {fileID: 8520415380908492573, guid: 4478016ce38cafc48aefa6844866a202, type: 3}
   pickUpPrefab: {fileID: 3642109076169085848, guid: 0c0720dadfec41c439d531db0a6a63c9, type: 3}
   leftClicksActions:
@@ -32,8 +32,8 @@ MonoBehaviour:
       data:
         _minThrowForce: {x: 0, y: 0, z: 0}
         _maxThrowForce: {x: 0, y: 2, z: 12}
-        _durationToFullFill: 2
-        _torqueForce: 5
+        _durationToFullFill: 1
+        _torqueForce: 25
         _spawnDistance: 0.7
     - rid: 2255290332041183341
       type: {class: OpenDoorModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
