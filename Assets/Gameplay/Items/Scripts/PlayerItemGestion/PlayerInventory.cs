@@ -44,7 +44,7 @@ namespace Gameplay.Items.Scripts
 
         private PlayerInput _input;
         private ItemCore _currentItem;
-        private ItemPickup _currentHoverItem = null;
+        private Outliner _currentHoverItem = null;
 
         public override void OnNetworkSpawn()
         {
@@ -61,8 +61,10 @@ namespace Gameplay.Items.Scripts
 
             EnableBar(false);
             EnableElectricInfo(false);
-        }
 
+            _input.OnStartLeftInput += CheckOpenDoor;
+        }
+        
         public override void OnNetworkDespawn()
         {
             _heldItemId.OnValueChanged -= OnHeldItemChanged;
@@ -70,6 +72,8 @@ namespace Gameplay.Items.Scripts
 
             if (IsOwner && _input != null)
                 _input.OnInteractInput -= OnInteract;
+            
+            _input.OnStartLeftInput -= CheckOpenDoor;
         }
 
         private void OnInteract()
@@ -80,15 +84,30 @@ namespace Gameplay.Items.Scripts
                 return;
             }
 
-            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
-                    out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore)
-                && hit.transform.TryGetComponent(out ItemPickup pickup)
-                && pickup.TryGetComponent(out NetworkObject netObj))
+            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore))
             {
-                PickUpRpc(netObj);
-                InvokeEvent(new OnInteractItemInWorld());
+                if(hit.transform.TryGetComponent(out ItemPickup pickup) && pickup.TryGetComponent(out NetworkObject netObj))
+                {
+                    PickUpRpc(netObj);
+                    InvokeEvent(new OnInteractItemInWorld());
+                }
             }
         }
+        
+        private void CheckOpenDoor()
+        {
+            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.transform.TryGetComponent(out Door door))
+                {
+                    if (!door.CanOpenWithoutKey)
+                        return;
+                    
+                    door.TryOpen(-1);
+                }
+            }
+        }
+
 
         private void Update()
         {
@@ -96,7 +115,7 @@ namespace Gameplay.Items.Scripts
             
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
                     out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore)
-                && hit.transform.TryGetComponent(out ItemPickup pickup))
+                && hit.transform.TryGetComponent(out Outliner pickup))
             {
                 if(_currentHoverItem == null)
                 {
