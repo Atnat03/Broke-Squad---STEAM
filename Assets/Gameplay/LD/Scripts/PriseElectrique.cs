@@ -20,15 +20,12 @@ namespace Gameplay.LD.Scripts
 
         public void OnTriggerStay(Collider collision)
         {
-            if (collision.TryGetComponent(out PlayerInventory inventory))
+            if (collision.TryGetComponent(out ItemPickup item))
             {
-                if(inventory == null)
+                if(item == null)
                     return;
                 
-                if(inventory.CurrentItem.Instance == null)
-                    return;
-                
-                ElectricModule elect = inventory.CurrentItem.Instance.Conditions.OfType<ElectricModule>().FirstOrDefault();
+                ElectricModule elect = item.Instance.Conditions.OfType<ElectricModule>().FirstOrDefault();
 
                 if (elect != null)
                     elect.AddEnergy(_chargePerSeconde * Time.deltaTime);

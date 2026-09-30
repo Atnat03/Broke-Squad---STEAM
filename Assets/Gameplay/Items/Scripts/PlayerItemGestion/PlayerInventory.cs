@@ -79,7 +79,7 @@ namespace Gameplay.Items.Scripts
             }
 
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
-                    out RaycastHit hit, _range, _layerMask)
+                    out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore)
                 && hit.transform.TryGetComponent(out ItemPickup pickup)
                 && pickup.TryGetComponent(out NetworkObject netObj))
             {
@@ -160,7 +160,6 @@ namespace Gameplay.Items.Scripts
             ItemCore core = go.AddComponent<ItemCore>();
             GameObject visual = Instantiate(data.visualPrefab, core.transform);
             visual.transform.localPosition = Vector3.zero;
-            visual.transform.localRotation = Quaternion.identity;
 
             ItemInstance instance = IsServer ? _serverInstance : new ItemInstance(data);
             core.SetInstance(instance, this);

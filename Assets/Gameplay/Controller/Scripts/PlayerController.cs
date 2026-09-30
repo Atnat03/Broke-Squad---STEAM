@@ -13,23 +13,27 @@ namespace Gameplay.Controller
 
         private PlayerInput _playerInput;
         private StateMachine _stateMachine;
+        [SerializeField] private ControllerProfileSO profile;
+        
+        public bool autoUpdateProfileValue = true;
+        
         public PlayerCamera playerCamera;
         public GameObject UI;
 
         [Header("Speed")]
-        [SerializeField] private float walkSpeed = 4f;
-        [SerializeField] private float sprintSpeed = 7f;
-        [SerializeField] private float crouchSpeed = 2f;
-        [SerializeField] private float groundAcceleration = 60f;
-        [SerializeField] private float groundDeceleration = 70f;
-        [SerializeField] private float airAcceleration = 12f;
-
-        [Header("Jump/Gravity")]
-        [SerializeField] private float jumpHeight = 1.3f;
-        [SerializeField] private float gravityMultiplier = 2f;
-        [SerializeField] private float fallGravityMultiplier = 1.5f; 
-        [SerializeField] private float coyoteTime = 0.12f;
-        [SerializeField] private float jumpBufferTime = 0.12f;
+        private float _walkSpeed = 4f;
+        private float _sprintSpeed = 7f;
+        private float _crouchSpeed = 2f;
+        private float _groundAcceleration = 60f;
+        private float _groundDeceleration = 70f;
+        private float _airAcceleration = 12f;
+                                       
+        [Header("Jump/Gravity")]       
+        private float _jumpHeight = 1.3f;
+        private float _gravityMultiplier = 2f;
+        private float _fallGravityMultiplier = 1.5f; 
+        private float _coyoteTime = 0.12f;
+        private float _jumpBufferTime = 0.12f;
         [SerializeField] private LayerMask groundLayer;
 
         [Header("Ground Check")]
@@ -39,9 +43,9 @@ namespace Gameplay.Controller
         [SerializeField] private float maxSlopeAngle = 50f;
 
         [Header("Crouch")]
-        [SerializeField] private float standHeight = 1.8f;
-        [SerializeField] private float crouchHeight = 1.0f;
-        [SerializeField] private float crouchTransitionSpeed = 12f;
+        private float _standHeight = 1.8f;
+        private float _crouchHeight = 1.0f;
+        private float _crouchTransitionSpeed = 12f;
 
         [Header("Camera")]
         [SerializeField] private Transform eyeTarget;
@@ -118,7 +122,7 @@ namespace Gameplay.Controller
             
             _bottomOffsetY = _capsule.center.y - _capsule.height / 2f;
 
-            _capsule.height = standHeight;
+            _capsule.height = _standHeight;
             RecenterCapsule();
 
             if (eyeTarget != null)
@@ -132,7 +136,7 @@ namespace Gameplay.Controller
             _playerInput = TryGetComponent(out PlayerInput playerInput) ? playerInput : gameObject.AddComponent<PlayerInput>();
 
             _playerInput.OnMoveInput += value => _moveInput = value;
-            _playerInput.OnJumpInput += () => _jumpBufferTimer = jumpBufferTime;
+            _playerInput.OnJumpInput += () => _jumpBufferTimer = _jumpBufferTime;
             _playerInput.OnCrouchInput += () => _crouchHeld = true;
             _playerInput.OnCrouchInputCanceled += () => _crouchHeld = false;
             _playerInput.OnSprintInput += () => _sprintHeld = true;
@@ -169,7 +173,7 @@ namespace Gameplay.Controller
         {
             if(!IsOwner)
                 return;
-            
+            if(autoUpdateProfileValue) GetDataFromProfile();
             _stateMachine.Update();
             UpdateEyeHeight();
         }
@@ -200,20 +204,41 @@ namespace Gameplay.Controller
 
         private void UpdateTimers(float dt)
         {
-            _coyoteTimer = IsGrounded ? coyoteTime : _coyoteTimer - dt;
+            _coyoteTimer = IsGrounded ? _coyoteTime : _coyoteTimer - dt;
             _jumpBufferTimer -= dt;
         }
 
         #endregion
 
+        void GetDataFromProfile()
+        {
+            if(profile == null) return;
+            _walkSpeed = profile.walkSpeed;
+            _sprintSpeed = profile.sprintSpeed;
+            _crouchSpeed = profile.crouchSpeed;
+            _groundAcceleration = profile.groundAcceleration;
+            _groundDeceleration = profile.groundDeceleration;
+            _airAcceleration = profile.airAcceleration;
+            
+            _jumpHeight = profile.jumpHeight; 
+            _gravityMultiplier = profile.gravityMultiplier;
+            _fallGravityMultiplier = profile.fallGravityMultiplier;
+            _coyoteTime = profile.coyoteTime;
+            _jumpBufferTime = profile.jumpBufferTime;
+            
+            _standHeight = profile.standHeight;
+            _crouchHeight = profile.crouchHeight;
+            _crouchTransitionSpeed = profile.crouchTransitionSpeed;
+        }
+        
         #region Movement
 
         private void UpdateCrouch(float dt)
         {
             IsCrouching = _crouchHeld || (IsCrouching && !CanStandUp());
 
-            float target = IsCrouching ? crouchHeight : standHeight;
-            _capsule.height = Mathf.MoveTowards(_capsule.height, target, crouchTransitionSpeed * dt);
+            float target = IsCrouching ? _crouchHeight : _standHeight;
+            _capsule.height = Mathf.MoveTowards(_capsule.height, target, _crouchTransitionSpeed * dt);
             RecenterCapsule();
         }
         
@@ -221,11 +246,11 @@ namespace Gameplay.Controller
         {
             if (eyeTarget == null) return;
 
-            float targetHeight = IsCrouching ? crouchHeight : standHeight;
-            float targetY = _eyeStandLocalY - (standHeight - targetHeight);
+            float targetHeight = IsCrouching ? _crouchHeight : _standHeight;
+            float targetY = _eyeStandLocalY - (_standHeight - targetHeight);
 
             Vector3 p = eyeTarget.localPosition;
-            p.y = Mathf.MoveTowards(p.y, targetY, crouchTransitionSpeed * Time.deltaTime);
+            p.y = Mathf.MoveTowards(p.y, targetY, _crouchTransitionSpeed * Time.deltaTime);
             eyeTarget.localPosition = p;
         }
 
@@ -234,7 +259,7 @@ namespace Gameplay.Controller
             float radius = WorldRadius * 0.95f;
             Vector3 feet = FeetPosition;
             Vector3 bottom = feet + Vector3.up * (radius + 0.05f);
-            Vector3 top = feet + Vector3.up * (standHeight * ScaleY - radius);
+            Vector3 top = feet + Vector3.up * (_standHeight * ScaleY - radius);
             return !Physics.CheckCapsule(bottom, top, radius, groundLayer, QueryTriggerInteraction.Ignore);
         }
         
@@ -249,7 +274,7 @@ namespace Gameplay.Controller
         {
             IsSprinting = _sprintHeld && !IsCrouching && _moveInput.y > 0.1f;
 
-            float targetSpeed = IsCrouching ? crouchSpeed : (IsSprinting ? sprintSpeed : walkSpeed);
+            float targetSpeed = IsCrouching ? _crouchSpeed : (IsSprinting ? _sprintSpeed : _walkSpeed);
 
             Vector3 input = Vector3.ClampMagnitude(new Vector3(_moveInput.x, 0f, _moveInput.y), 1f);
             Vector3 wishDir = transform.TransformDirection(input);
@@ -257,9 +282,9 @@ namespace Gameplay.Controller
 
             float accel;
             if (IsGrounded)
-                accel = input.sqrMagnitude > 0.01f ? groundAcceleration : groundDeceleration;
+                accel = input.sqrMagnitude > 0.01f ? _groundAcceleration : _groundDeceleration;
             else
-                accel = airAcceleration;
+                accel = _airAcceleration;
 
             Vector3 v = _rb.linearVelocity;
             Vector3 h = Vector3.MoveTowards(new Vector3(v.x, 0f, v.z), targetHorizontal, accel * dt);
@@ -271,8 +296,8 @@ namespace Gameplay.Controller
         {
             if (_jumpBufferTimer > 0f && _coyoteTimer > 0f && !IsCrouching)
             {
-                float g = Mathf.Abs(Physics.gravity.y) * gravityMultiplier;
-                float jumpVel = Mathf.Sqrt(2f * g * jumpHeight);
+                float g = Mathf.Abs(Physics.gravity.y) * _gravityMultiplier;
+                float jumpVel = Mathf.Sqrt(2f * g * _jumpHeight);
 
                 _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, jumpVel, _rb.linearVelocity.z);
 
@@ -289,7 +314,7 @@ namespace Gameplay.Controller
             
             if (IsGrounded && noInput && v.y <= 0.01f) return;
 
-            float mult = gravityMultiplier * (v.y < 0f ? fallGravityMultiplier : 1f);
+            float mult = _gravityMultiplier * (v.y < 0f ? _fallGravityMultiplier : 1f);
             v.y += Physics.gravity.y * mult * dt;
             _rb.linearVelocity = v;
         }

@@ -309,19 +309,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
+  profile: {fileID: 11400000, guid: 2899da67ff8e2904583cbfe73ee02cdf, type: 2}
+  autoUpdateProfileValue: 1
   playerCamera: {fileID: 8757740270961154763}
   UI: {fileID: 3733190074482631680}
-  walkSpeed: 4
-  sprintSpeed: 7
-  crouchSpeed: 2
-  groundAcceleration: 60
-  groundDeceleration: 70
-  airAcceleration: 12
-  jumpHeight: 0.7
-  gravityMultiplier: 1
-  fallGravityMultiplier: 1.5
-  coyoteTime: 0.12
-  jumpBufferTime: 0.12
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -329,9 +320,6 @@ MonoBehaviour:
   groundCheckRadiusMultiplier: 0.9
   groundCheckSkin: 0.1
   maxSlopeAngle: 50
-  standHeight: 2
-  crouchHeight: 1.3
-  crouchTransitionSpeed: 8
   eyeTarget: {fileID: 4606863278405769456}
 --- !u!114 &1310361133901699229
 MonoBehaviour:
@@ -1021,38 +1009,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d5c699f0a114a8c8b00af7f7fefac28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.PlayerCamera
+  profile: {fileID: 11400000, guid: 3d6c6598434a90742a55fbc084988155, type: 2}
+  autoUpdateProfileValue: 1
   playerInput: {fileID: 88644022890520242}
   player: {fileID: 7696705341883764508}
   eyeTarget: {fileID: 4606863278405769456}
   sensX: 0.1
   sensY: 0.1
-  verticalSmoothTime: 0.08
-  followReferenceSpeed: 7
-  speedFactorLerp: 12
-  horizontalSmoothTimeStill: 0.1
-  maxHorizontalLagStill: 0.15
-  horizontalSmoothTimeFast: 0
-  maxHorizontalLagFast: 0.02
-  baseFov: 70
-  crouchFov: 62
-  sprintFov: 78
-  fovLerpSpeed: 8
-  bobEnabled: 1
-  walkBob:
-    amplitudeY: 0.025
-    amplitudeX: 0.015
-    roll: 0.3
-    frequency: 1.6
-  sprintBob:
-    amplitudeY: 0.04
-    amplitudeX: 0.025
-    roll: 0.6
-    frequency: 2.2
-  crouchBob:
-    amplitudeY: 0.015
-    amplitudeX: 0.01
-    roll: 0.2
-    frequency: 1.1
-  profileLerpSpeed: 6
-  bobFadeIn: 0.15
-  bobFadeOut: 0.25
