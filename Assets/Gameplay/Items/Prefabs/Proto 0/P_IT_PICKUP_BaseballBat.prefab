@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 8674231492000054124}
   - component: {fileID: 8665236263163189900}
   - component: {fileID: 1143582335237900294}
+  - component: {fileID: 416916612854782912}
   m_Layer: 0
   m_Name: P_IT_PICKUP_BaseballBat
   m_TagString: Untagged
@@ -52,6 +53,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.PlayerItemGestion.ItemPickup
   _id: 1
   _itemDataList: {fileID: 11400000, guid: 18b2d5bb76685644288ae15dd4f47f1a, type: 2}
+  _outline: {fileID: 416916612854782912}
 --- !u!54 &1947064686131065841
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -91,7 +93,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 392048233
+  GlobalObjectIdHash: 3651800364
   InScenePlacedSourceGlobalObjectIdHash: 1933468832
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -230,3 +232,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.09799426, y: 1.1150899, z: 0.09799425}
   m_Center: {x: 0, y: 0.3161565, z: -0.00000033527613}
+--- !u!114 &416916612854782912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3142363071224636461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 10
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
