@@ -1,32 +1,32 @@
-﻿using Gameplay.LD.Scripts;
-using MyPrint;
+﻿using System;
+using Gameplay.LD.Scripts;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
 {
+    [Serializable]
     public class OpenDoorModule : ItemModule, ILeftClick
     {
         [SerializeField] private int _doorId;
-        
+        [SerializeField] private float _range = 2f;
+
+        public float Range => _range;
+
         public void StartLeftClick()
         {
-            RaycastHit hit;
-            
-            if (Physics.Raycast(Context.Camera.transform.position, Context.Camera.transform.forward,out hit, 2))
+            Transform cam = Context.Camera.transform;
+
+            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, _range)
+                && hit.transform.TryGetComponent(out Door door)
+                && door.TryGetComponent(out NetworkObject netObj))
             {
-                ABPrint.Print("Hit " + hit.transform.name, ABColor.Green);
-                
-                if (hit.transform.TryGetComponent(out Door door))
-                {
-                    if (door.TryOpen(_doorId))
-                    {
-                        Context.Inventory.DestroyItemInHand();
-                    }
-                }
+                Context.Inventory.RequestOpenDoor(netObj);
             }
         }
 
-        public void EndLeftClick()
-        { }
+        public void EndLeftClick() { }
+
+        public bool ApplyOpen(Door door) => door.TryOpen(_doorId);
     }
 }

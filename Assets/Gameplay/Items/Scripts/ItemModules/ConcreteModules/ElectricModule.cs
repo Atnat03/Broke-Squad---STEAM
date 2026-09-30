@@ -7,57 +7,45 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
     public class ElectricModule : ItemModule, ICondition
     {
         public ItemInput InputType => type;
-        
+
         [SerializeField] private ItemInput type;
         [SerializeField] private float _batteryCapacity = 100;
         [SerializeField] private float _useCost = 25;
 
-        private bool _alreadyBind = false;
-        
-        private float _currentBatteryCapacity;
-        
-        public bool CheckCondition()
+        private float _current;
+
+        public override void ResetState()
         {
-            return _batteryCapacity-_useCost >= 0;
+            _current = _batteryCapacity;
+            base.ResetState();
         }
+
+        public bool CheckCondition() => _current >= _useCost;
 
         public void UseItem()
         {
-            if (_currentBatteryCapacity <= 0)
-                return;
-            
-            _currentBatteryCapacity -= _useCost;
-            
-            Context.Inventory.UpdateElectricInfo(_currentBatteryCapacity);
+            _current = Mathf.Max(0f, _current - _useCost);
+            PushToUI();
+        }
+
+        public void AddEnergy(float amount)
+        {
+            _current = Mathf.Min(_batteryCapacity, _current + amount);
+            PushToUI();
         }
 
         protected override void OnBind()
         {
-            if(!_alreadyBind)
-            {
-                _currentBatteryCapacity = _batteryCapacity;
-                _alreadyBind = true;
-            }
-            
             Context.Inventory.EnableElectricInfo(true);
-            
-            Context.Inventory.UpdateElectricInfo(_currentBatteryCapacity);
+            PushToUI();
         }
-        
-        public void ThrowItem()
+
+        public void ThrowItem() { }
+
+        private void PushToUI()
         {
-            Context.Inventory.EnableElectricInfo(false);
+            if (Context?.Inventory != null && Context.Inventory.IsServer)
+                Context.Inventory.SetElectricPercent(_current / _batteryCapacity * 100f);
         }
-        
-        public void AddEnergy(float amount)
-        {
-            _currentBatteryCapacity += amount;
-            
-            if(_currentBatteryCapacity > _batteryCapacity)
-                _currentBatteryCapacity = _batteryCapacity;
-            
-            Context.Inventory.UpdateElectricInfo(_currentBatteryCapacity);
-        }
-        
     }
 }

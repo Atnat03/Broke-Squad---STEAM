@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Gameplay.Items.Scripts.ItemData;
 using Gameplay.Items.Scripts.ItemModules;
+using UnityEngine;
 
 namespace Gameplay.Items.Scripts.PlayerItemGestion
 {
@@ -15,13 +16,48 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
         public ItemInstance(SO_Item data)
         {
             Data = data;
-            LeftClicks  = new List<ILeftClick>(data.leftClicksActions);
-            RightClicks = new List<IRightClick>(data.rightClicksActions);
-            Conditions  = new List<ICondition>(data.conditions);
-            Passifs = new List<IPassif>(data.passif);
+            LeftClicks  = CloneAll(data.leftClicksActions);
+            RightClicks = CloneAll(data.rightClicksActions);
+            Conditions  = CloneAll(data.conditions);
+            Passifs     = CloneAll(data.passif);
 
             foreach (var m in AllModules())
                 m?.ResetState();
+        }
+
+        private ItemInstance(ItemInstance source)
+        {
+            Data = source.Data;
+            LeftClicks  = CloneAll(source.LeftClicks);
+            RightClicks = CloneAll(source.RightClicks);
+            Conditions  = CloneAll(source.Conditions);
+            Passifs     = CloneAll(source.Passifs);
+        }
+
+        public ItemInstance Clone() => new ItemInstance(this);
+
+        private static List<T> CloneAll<T>(IEnumerable<T> source) where T : class
+        {
+            var list = new List<T>();
+            if (source == null) return list;
+
+            foreach (var m in source)
+            {
+                if (m == null) continue;
+
+                if (m is ScriptableObject so)
+                    list.Add(Object.Instantiate(so) as T);
+                else
+                    list.Add(m);
+            }
+            return list;
+        }
+
+        public void Cleanup()
+        {
+            foreach (var m in AllModules())
+                if (m is Object o && o != null)
+                    Object.Destroy(o);
         }
 
         public IEnumerable<IItemModule> AllModules()

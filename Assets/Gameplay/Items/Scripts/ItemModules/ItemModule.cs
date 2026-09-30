@@ -10,7 +10,7 @@ namespace Gameplay.Items.Scripts.ItemModules
     {
         protected ItemContext Context { get; private set; }
 
-        public void ResetState() => SetModule();
+        public virtual void ResetState() => SetModule();
 
         public void Initialize(ItemContext context)
         {
