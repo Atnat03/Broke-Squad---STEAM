@@ -12,7 +12,7 @@ namespace VFX_Manage
         [SerializeField] private int maxPerVfx = 20;
 
         private readonly Dictionary<string, GameObject> prefabs = new();
-        private readonly Dictionary<string, Queue<PoolVfx>> free = new();
+        private readonly Dictionary<string, Queue<PoolVFX>> free = new();
         private readonly Dictionary<string, int> created = new();
         private bool vfxEnabled = true;
     }
