@@ -194,6 +194,9 @@ namespace Gameplay.Items.Scripts
 
         private ItemPickup ServerSpawnPickup(Vector3 pos, Quaternion rot)
         {
+            if(_serverInstance.Data.pickUpPrefab == null)
+                return null;
+            
             ItemPickup pickup = Instantiate(_serverInstance.Data.pickUpPrefab, pos, rot);
             pickup.Setup(_serverInstance);
             pickup.GetComponent<NetworkObject>().Spawn();
