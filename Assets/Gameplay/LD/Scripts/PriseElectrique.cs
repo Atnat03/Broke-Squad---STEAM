@@ -24,6 +24,9 @@ namespace Gameplay.LD.Scripts
                 if(inventory == null)
                     return;
                 
+                if(inventory.CurrentItem.Instance == null)
+                    return;
+                
                 ElectricModule elect = inventory.CurrentItem.Instance.Conditions.OfType<ElectricModule>().FirstOrDefault();
 
                 if (elect != null)
