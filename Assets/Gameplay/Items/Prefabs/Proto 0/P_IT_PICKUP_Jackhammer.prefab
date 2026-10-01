@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: f6ea2372d138aa54c95d4dfe17c47195, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.748
+      value: -2.4299068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f6ea2372d138aa54c95d4dfe17c47195, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.254
+      value: 0.386
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f6ea2372d138aa54c95d4dfe17c47195, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 11.23804
+      value: -2.8529978
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f6ea2372d138aa54c95d4dfe17c47195, type: 3}
       propertyPath: m_LocalRotation.w
@@ -75,6 +75,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f6ea2372d138aa54c95d4dfe17c47195, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5288484290867722223}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f6ea2372d138aa54c95d4dfe17c47195, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 377487258180918744}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f6ea2372d138aa54c95d4dfe17c47195, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4803623723835272532}
   m_SourcePrefab: {fileID: 100100000, guid: f6ea2372d138aa54c95d4dfe17c47195, type: 3}
 --- !u!1 &3014254146047721310 stripped
 GameObject:
@@ -134,14 +140,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2334515818
-  InScenePlacedSourceGlobalObjectIdHash: 0
+  GlobalObjectIdHash: 2691700773
+  InScenePlacedSourceGlobalObjectIdHash: 2334515818
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 0
+  m_InScenePlaced: 1
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -216,3 +222,34 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.002570529, y: 0.0018061214, z: 0.013162835}
   m_Center: {x: 0.00018222444, y: -0.00003605173, z: -0.00035421993}
+--- !u!114 &377487258180918744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3014254146047721310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 10
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
+--- !u!114 &4803623723835272532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3014254146047721310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66559d7f60f743d69bc18b29cd97dccb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.Outliner
+  _outline: {fileID: 377487258180918744}

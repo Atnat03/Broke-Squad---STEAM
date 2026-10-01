@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4da51cc69f5c4f80b4f1337ab3448777, type: 3}
   m_Name: CameraValues V0.1
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.CameraProfileSO
+  maxLookAngle: 90
+  minLookAngle: -90
   verticalSmoothTime: 0.08
   followReferenceSpeed: 7
   speedFactorLerp: 12
@@ -39,6 +41,7 @@ MonoBehaviour:
     amplitudeX: 0.01
     roll: 0.2
     frequency: 1.1
+  backwardBobMultiplier: 0.5
   profileLerpSpeed: 6
   bobFadeIn: 0.15
   bobFadeOut: 0.25
