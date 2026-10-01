@@ -107,7 +107,7 @@ namespace Gameplay.Items.Scripts
                     if (!door.CanOpenWithoutKey)
                         return;
                     
-                    door.TryOpen(-1);
+                    door.TryOpen(new Vector2Int(-1, -1));
                 }
             }
         }
@@ -305,7 +305,7 @@ namespace Gameplay.Items.Scripts
             if (Vector3.Distance(transform.position, netObj.transform.position) > module.Range + 1.5f) return;
 
             if (module.ApplyOpen(door))
-                DestroyItemInHand();
+            { }
         }
     }
 }

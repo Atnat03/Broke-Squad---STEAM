@@ -17,7 +17,7 @@ MonoBehaviour:
   visualPrefab: {fileID: 3736102883660515363, guid: 67f819c4f9f07eb4cab4c589612ff89c, type: 3}
   pickUpPrefab: {fileID: 5992760678564257085, guid: 3f638c4f71babcf4bb9e7193d3bb854d, type: 3}
   leftClicksActions:
-  - rid: 7629053358023639126
+  - rid: 7203100815024980099
   rightClicksActions:
   - rid: 7629053358023639120
   conditions: []
@@ -25,6 +25,12 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 7203100815024980099
+      type: {class: OpenDoorModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _doorIdRange: {x: 0, y: 5}
+        _range: 2
+        _openAllDoors: 0
     - rid: 7629053358023639120
       type: {class: ThrowModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
@@ -33,9 +39,3 @@ MonoBehaviour:
         _durationToFullFill: 2
         _torqueForce: {x: 0, y: 0, z: 10}
         _spawnDistance: 0.7
-    - rid: 7629053358023639126
-      type: {class: OpenDoorModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
-      data:
-        _doorId: 0
-        _range: 2
-        _openAllDoors: 0
