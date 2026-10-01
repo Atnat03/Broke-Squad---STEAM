@@ -52,6 +52,7 @@ namespace Gameplay.Controller
         private float _standHeight = 1.8f;
         private float _crouchHeight = 1.0f;
         private float _crouchTransitionSpeed = 12f;
+        [SerializeField] private LayerMask ceilingLayer;
 
         [Header("Stamina")]
         [SerializeField] private float maxStamina = 100f;
@@ -320,7 +321,7 @@ namespace Gameplay.Controller
         private void UpdateCrouch(float dt)
         {
             IsCrouching = _crouchHeld || (IsCrouching && !CanStandUp());
-
+            
             float target = IsCrouching ? _crouchHeight : _standHeight;
             _capsule.height = Mathf.MoveTowards(_capsule.height, target, _crouchTransitionSpeed * dt);
             RecenterCapsule();
@@ -344,7 +345,8 @@ namespace Gameplay.Controller
             Vector3 feet = FeetPosition;
             Vector3 bottom = feet + Vector3.up * (radius + 0.05f);
             Vector3 top = feet + Vector3.up * (_standHeight * ScaleY - radius);
-            return !Physics.CheckCapsule(bottom, top, radius, groundLayer, QueryTriggerInteraction.Ignore);
+            Debug.DrawLine(bottom, top, Color.red);
+            return !Physics.CheckCapsule(bottom, top, radius, ceilingLayer, QueryTriggerInteraction.Ignore);
         }
         
         private void RecenterCapsule()
