@@ -1,6 +1,5 @@
 ﻿using Bus;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,8 +11,8 @@ namespace Gameplay.LD.Scripts
         [SerializeField] private UnityEvent _eventOpen;
         [SerializeField] private UnityEvent _eventClose;
         [SerializeField] private bool _canOpenWithoutKey = false;
-        
-        private readonly NetworkVariable<bool> _canOpen = new(false);
+
+        private readonly NetworkVariable<bool> _isUnlocked = new(false);
         private readonly NetworkVariable<bool> _isOpen = new(false);
 
         public override void OnNetworkSpawn()
@@ -22,7 +21,7 @@ namespace Gameplay.LD.Scripts
 
             if (IsServer)
             {
-                _canOpen.Value = _canOpenWithoutKey;
+                _isUnlocked.Value = _canOpenWithoutKey;
             }
         }
 
@@ -33,39 +32,34 @@ namespace Gameplay.LD.Scripts
 
         private void OnOpenChanged(bool previous, bool current)
         {
-            if (current)
-            {
-                _eventOpen?.Invoke();
-            }else
-            {
-                _eventClose?.Invoke();
-            }
+            if (current) _eventOpen?.Invoke();
+            else _eventClose?.Invoke();
         }
-        
-        public bool CanOpenWithoutKey { get => _canOpen.Value; }
+
+        public bool CanOpenWithoutKey => _isUnlocked.Value;
 
         public bool TryOpen(Vector2Int idRange)
         {
             if (!IsServer) return false;
 
-            if (!_canOpen.Value)
+            if (!_isUnlocked.Value)
             {
-                _isOpen.Value = true;
-                _canOpen.Value = true;
-                return true;
-            }
-
-            if(!_canOpenWithoutKey)
-            {
-                if (idRange is { x: -1, y: -1 })
+                if (!IsKeyValid(idRange))
                     return false;
 
-                if ((_doorID < idRange.x || _doorID > idRange.y))
-                    return false;
+                _isUnlocked.Value = true;
             }
 
             _isOpen.Value = !_isOpen.Value;
             return true;
+        }
+
+        private bool IsKeyValid(Vector2Int idRange)
+        {
+            if (idRange.x == -1 && idRange.y == -1)
+                return false;
+
+            return _doorID >= idRange.x && _doorID <= idRange.y;
         }
     }
 }
