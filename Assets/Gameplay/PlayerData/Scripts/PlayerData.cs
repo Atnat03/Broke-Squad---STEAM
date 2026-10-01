@@ -29,6 +29,7 @@ namespace Gameplay.PlayerData
         {
             base.OnNetworkSpawn();
 
+            ListenToEvent<PlayerRevivedEvent>(Revive);
             _playerHp.OnValueChanged += OnHpChanged;
         }
 
@@ -94,6 +95,12 @@ namespace Gameplay.PlayerData
                 maxHp = MaxHpValue
             });
         }
+
+        private void Revive(PlayerRevivedEvent e)
+        {
+            _playerHp.Value = MaxHp;
+            _playerDead.Value = false;
+        }
         
         [Rpc(SendTo.Owner)]
         private void NotifyDeathOwnerRpc()
@@ -102,6 +109,8 @@ namespace Gameplay.PlayerData
             {
                 playerID = OwnerClientId
             });
+            
+            
         }
     }
 }
