@@ -59,6 +59,11 @@ namespace Gameplay.Controller
         [SerializeField] private float drainPerSecond = 10f;
         [SerializeField] private float regenPerSecond = 10f;
         [SerializeField] private float regenDelay = 2f;
+
+        [Header("Tied Up")] 
+        [SerializeField] private float tiedUpSpeed = 1f;
+        [SerializeField] private float tiedUpHeight = 0.8f;
+        private bool _playerDead;
         
         [Header("Camera")]
         [SerializeField] private Transform eyeTarget;
@@ -119,7 +124,6 @@ namespace Gameplay.Controller
 
         private float _lastSentStamina = -1f;
         
-        private bool _playerDead;
         #endregion
 
         
@@ -218,7 +222,7 @@ namespace Gameplay.Controller
 
         private void Update()
         {
-            if(!IsOwner || _playerDead)
+            if(!IsOwner)
                 return;
             if(autoUpdateProfileValue) GetDataFromProfile();
             _stateMachine.Update();
@@ -227,7 +231,7 @@ namespace Gameplay.Controller
 
         void FixedUpdate()
         {
-            if(!IsOwner || _playerDead)
+            if(!IsOwner)
                 return;
             
             _stateMachine.FixedUpdate();
@@ -244,7 +248,7 @@ namespace Gameplay.Controller
 
         private void LateUpdate()
         {
-            if(!IsOwner || _playerDead)
+            if(!IsOwner)
                 return;
             
             _stateMachine.LateUpdate();
@@ -321,8 +325,11 @@ namespace Gameplay.Controller
         private void UpdateCrouch(float dt)
         {
             IsCrouching = _crouchHeld || (IsCrouching && !CanStandUp());
+            IsCrouching = !_playerDead && IsCrouching;
             
             float target = IsCrouching ? _crouchHeight : _standHeight;
+            target = _playerDead ? tiedUpHeight : target;
+            
             _capsule.height = Mathf.MoveTowards(_capsule.height, target, _crouchTransitionSpeed * dt);
             RecenterCapsule();
         }
@@ -332,6 +339,7 @@ namespace Gameplay.Controller
             if (eyeTarget == null) return;
 
             float targetHeight = IsCrouching ? _crouchHeight : _standHeight;
+            targetHeight = _playerDead ? tiedUpHeight : targetHeight;
             float targetY = _eyeStandLocalY - (_standHeight - targetHeight);
 
             Vector3 p = eyeTarget.localPosition;
@@ -359,8 +367,10 @@ namespace Gameplay.Controller
         private void ApplyHorizontalMovement(float dt)
         {
             IsSprinting = _sprintHeld && !IsCrouching && _moveInput.y > 0.1f && !_exhausted && _stamina > 0f;
-
+            IsSprinting = IsSprinting &&  !_playerDead;
+            
             float targetSpeed = IsCrouching ? _crouchSpeed : (IsSprinting ? _sprintSpeed : _walkSpeed);
+            targetSpeed = _playerDead ? tiedUpSpeed : targetSpeed;
             targetSpeed *= IsMovingBackward ? _backwardSpeedMultiplier : 1f;
             
             Vector3 input = Vector3.ClampMagnitude(new Vector3(_moveInput.x, 0f, _moveInput.y), 1f);
@@ -381,7 +391,8 @@ namespace Gameplay.Controller
 
         private void ApplyJump()
         {
-            if (_jumpBufferTimer > 0f && _coyoteTimer > 0f && !IsCrouching)
+            
+            if (_jumpBufferTimer > 0f && _coyoteTimer > 0f && !IsCrouching && !_playerDead)
             {
                 float g = Mathf.Abs(Physics.gravity.y) * _gravityMultiplier;
                 float jumpVel = Mathf.Sqrt(2f * g * _jumpHeight);
@@ -450,8 +461,14 @@ namespace Gameplay.Controller
             if (e.playerID == OwnerClientId)
             {
                 _playerDead = true;
+                _rb.linearVelocity = Vector3.zero;
             }
             
+        }
+
+        public void Revive()
+        {
+            _playerDead = false;
         }
     }
 }

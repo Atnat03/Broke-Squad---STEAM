@@ -16,4 +16,9 @@ namespace Gameplay.PlayerData
         public float stamina;
         public float maxStamina;
     }
+    
+    public struct PlayerRevivedEvent
+    {
+        public ulong playerID;
+    }
 }
