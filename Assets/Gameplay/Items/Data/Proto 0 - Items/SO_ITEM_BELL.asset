@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a25e583415c740d696418c1844fb897a, type: 3}
   m_Name: SO_ITEM_BELL
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.ItemData.SO_Item
-  id: 0
-  itemName: 
-  visualPrefab: {fileID: 0}
-  pickUpPrefab: {fileID: 0}
+  id: 18
+  itemName: bell
+  visualPrefab: {fileID: 334136715745549489, guid: 96811ef7f75209e4b82065c6025da762, type: 3}
+  pickUpPrefab: {fileID: 9169351829143082219, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
   icon: {fileID: 0}
   leftClicksActions: []
   rightClicksActions:
@@ -70,4 +70,6 @@ MonoBehaviour:
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
-        _weight: 2
+        _weightFactor: 1
+        _mass: 1
+        _canDamagePlayer: 0
