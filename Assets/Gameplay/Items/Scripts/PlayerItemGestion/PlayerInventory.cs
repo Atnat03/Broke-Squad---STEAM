@@ -24,6 +24,7 @@ namespace Gameplay.Items.Scripts
         [SerializeField] private Transform _parent;
         [SerializeField] private Transform _remoteParent;
         [SerializeField] private SO_ItemList _database;
+        [SerializeField] private PlayerController _playerController;
 
         [Header("Picking")]
         [SerializeField] private Camera _camera;
@@ -62,6 +63,7 @@ namespace Gameplay.Items.Scripts
         
         public override void OnNetworkSpawn()
         {
+            if(_playerController ==null) _playerController.GetComponent<PlayerController>();
             _slots = new ItemInstance[Mathf.Max(1, _itemCount)];
             _slotsUIList = new ItemSlotUI[_slots.Length];
             _input = GetComponent<PlayerInput>();
@@ -112,6 +114,7 @@ namespace Gameplay.Items.Scripts
 
         private void OnInteract()
         {
+            if(_playerController.IsDown) return;
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
                     out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore))
             {

@@ -64,6 +64,7 @@ namespace Gameplay.Controller
         [SerializeField] private float tiedUpSpeed = 1f;
         [SerializeField] private float tiedUpHeight = 0.8f;
         private bool _playerDead;
+        public bool IsDown => _playerDead;
         
         [Header("Camera")]
         [SerializeField] private Transform eyeTarget;
