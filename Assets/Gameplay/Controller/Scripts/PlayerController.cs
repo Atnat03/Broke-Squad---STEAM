@@ -1,5 +1,7 @@
 ﻿using System;
+using Bus;
 using Gameplay.Controller.States;
+using Gameplay.PlayerData;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,7 +9,7 @@ namespace Gameplay.Controller
 {
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(CapsuleCollider))]
-    public class PlayerController : NetworkBehaviour
+    public class PlayerController : NetworkBusListener
     {
         #region variables
 
@@ -19,11 +21,13 @@ namespace Gameplay.Controller
         
         public PlayerCamera playerCamera;
         public GameObject UI;
+        public MeshRenderer meshRenderer;
 
         [Header("Speed")]
         private float _walkSpeed = 4f;
         private float _sprintSpeed = 7f;
         private float _crouchSpeed = 2f;
+        private float _backwardSpeedMultiplier = 0.7f;
         private float _groundAcceleration = 60f;
         private float _groundDeceleration = 70f;
         private float _airAcceleration = 12f;
@@ -69,6 +73,19 @@ namespace Gameplay.Controller
         
         private float ScaleY => Mathf.Abs(transform.lossyScale.y);
         private float WorldRadius => _capsule.radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.z));
+        public float ForwardDot
+        {
+            get
+            {
+                Vector3 v = HorizontalVelocity;
+                if (v.sqrMagnitude < 0.01f) return 0f;
+                return Vector3.Dot(v.normalized, transform.forward);
+            }
+        }
+
+        public bool IsMovingForward => ForwardDot > 0.1f;
+        public bool IsMovingBackward => ForwardDot < -0.1f;
+        
         private Vector3 FeetPosition
         {
             get
@@ -81,8 +98,10 @@ namespace Gameplay.Controller
         public void SetYaw(float yawDegrees) => _rb.MoveRotation(Quaternion.Euler(0f, yawDegrees, 0f));
         public Vector3 HorizontalVelocity => new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 
+        private bool _playerDead;
         #endregion
 
+        
         #region Initialization
 
         public override void OnNetworkSpawn()
@@ -97,6 +116,7 @@ namespace Gameplay.Controller
                 SetUpComponents();
                 SetUpInputs();
                 SetUpStateMachine();
+                ListenToEvent<PlayerDeathEvent>(SetPlayerDead);
             }
         }
 
@@ -109,7 +129,8 @@ namespace Gameplay.Controller
             _rb.interpolation = RigidbodyInterpolation.Interpolate;
             _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             _rb.useGravity = false; 
-
+            
+            meshRenderer.enabled = false;
             
             _capsule.sharedMaterial = new PhysicsMaterial("PlayerNoFriction")
             {
@@ -171,7 +192,7 @@ namespace Gameplay.Controller
 
         private void Update()
         {
-            if(!IsOwner)
+            if(!IsOwner || _playerDead)
                 return;
             if(autoUpdateProfileValue) GetDataFromProfile();
             _stateMachine.Update();
@@ -180,7 +201,7 @@ namespace Gameplay.Controller
 
         void FixedUpdate()
         {
-            if(!IsOwner)
+            if(!IsOwner || _playerDead)
                 return;
             
             _stateMachine.FixedUpdate();
@@ -196,7 +217,7 @@ namespace Gameplay.Controller
 
         private void LateUpdate()
         {
-            if(!IsOwner)
+            if(!IsOwner || _playerDead)
                 return;
             
             _stateMachine.LateUpdate();
@@ -216,6 +237,7 @@ namespace Gameplay.Controller
             _walkSpeed = profile.walkSpeed;
             _sprintSpeed = profile.sprintSpeed;
             _crouchSpeed = profile.crouchSpeed;
+            _backwardSpeedMultiplier = profile.backwardSpeedMultiplier;
             _groundAcceleration = profile.groundAcceleration;
             _groundDeceleration = profile.groundDeceleration;
             _airAcceleration = profile.airAcceleration;
@@ -275,7 +297,8 @@ namespace Gameplay.Controller
             IsSprinting = _sprintHeld && !IsCrouching && _moveInput.y > 0.1f;
 
             float targetSpeed = IsCrouching ? _crouchSpeed : (IsSprinting ? _sprintSpeed : _walkSpeed);
-
+            targetSpeed *= IsMovingBackward ? _backwardSpeedMultiplier : 1f;
+            
             Vector3 input = Vector3.ClampMagnitude(new Vector3(_moveInput.x, 0f, _moveInput.y), 1f);
             Vector3 wishDir = transform.TransformDirection(input);
             Vector3 targetHorizontal = wishDir * targetSpeed;
@@ -358,10 +381,13 @@ namespace Gameplay.Controller
         void At(IState from, IState to, IPredicate condition) => _stateMachine.AddTransition(from, to, condition);
         void Any(IState to, IPredicate condition) => _stateMachine.AddAnyTransition(to, condition);
 
-        private void OnGUI()
+        void SetPlayerDead(PlayerDeathEvent e)
         {
-            GUI.Label(new Rect(40, 10, 500, 30), $"Grounded = {IsGrounded}", new GUIStyle());
-            //GUI.Label(new Rect(20, 20, 500, 30), $"State: {_stateMachine.CurrentStateName}", new GUIStyle());
+            if (e.playerID == OwnerClientId)
+            {
+                _playerDead = true;
+            }
+            
         }
     }
 }

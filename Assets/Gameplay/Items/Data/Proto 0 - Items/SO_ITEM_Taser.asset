@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a25e583415c740d696418c1844fb897a, type: 3}
+  m_Name: SO_ITEM_Taser
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.ItemData.SO_Item
+  id: 10
+  itemName: Taser
+  visualPrefab: {fileID: 3877111975626216204, guid: b835684831d3bd34b8ff31158b2e9a17, type: 3}
+  pickUpPrefab: {fileID: 3625028513685346578, guid: 16abdbb905da0024eac281b9af2eb053, type: 3}
+  leftClicksActions: []
+  rightClicksActions:
+  - rid: 2255290332041183340
+  conditions: []
+  passif:
+  - rid: 2255290332041183343
+  - rid: 2255290332041183621
+  references:
+    version: 2
+    RefIds:
+    - rid: 2255290332041183340
+      type: {class: ThrowModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _minThrowForce: {x: 0, y: 0, z: 0}
+        _maxThrowForce: {x: 0, y: 2, z: 15}
+        _durationToFullFill: 2
+        _torqueForce: {x: 5, y: 0, z: 0}
+        _spawnDistance: 0.5
+    - rid: 2255290332041183343
+      type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _minVelocityForDamage: 10
+        _X: 10
+        _weight: 5
+    - rid: 2255290332041183621
+      type: {class: StunModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _minVelocityForStun: 3
+        _stunDuration: 8

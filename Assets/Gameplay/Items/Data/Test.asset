@@ -23,7 +23,7 @@ MonoBehaviour:
   conditions:
   - rid: 7629053377233289477
   passif:
-  - rid: 7629053358023639127
+  - rid: 7629053377233289735
   references:
     version: 2
     RefIds:
@@ -33,14 +33,8 @@ MonoBehaviour:
         _minThrowForce: {x: 0, y: 0, z: 0}
         _maxThrowForce: {x: 0, y: 2, z: 12}
         _durationToFullFill: 0.5
-        _torqueForce: 5
+        _torqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: 0.7
-    - rid: 7629053358023639127
-      type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
-      data:
-        _minVelocityForDamage: 1
-        _X: 1
-        _weight: 10
     - rid: 7629053377233289477
       type: {class: ElectricModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
@@ -51,3 +45,8 @@ MonoBehaviour:
       type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _strength: 10
+    - rid: 7629053377233289735
+      type: {class: StunModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _minVelocityForStun: 2
+        _stunDuration: 1

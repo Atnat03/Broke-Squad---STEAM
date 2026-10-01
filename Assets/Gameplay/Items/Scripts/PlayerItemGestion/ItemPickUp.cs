@@ -1,4 +1,6 @@
 ﻿using Gameplay.Items.Scripts.ItemData;
+using NUnit.Framework.Constraints;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Gameplay.Items.Scripts.PlayerItemGestion
@@ -7,9 +9,9 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
     {
         [SerializeField] int _id = 0;
         [SerializeField] SO_ItemList _itemDataList;
-        
-        private ItemInstance _instance;
 
+        private ItemInstance _instance;
+        
         public ItemInstance Instance
         {
             get
@@ -22,7 +24,7 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
         }
 
         public void Setup(ItemInstance instance) => _instance = instance;
-
+        
         public void OnCollisionEnter(Collision collision)
         {
             if(_instance == null)

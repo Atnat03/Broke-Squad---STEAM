@@ -1,4 +1,5 @@
-﻿using Bus;
+﻿using System;
+using Bus;
 using Gameplay.Controller;
 using Gameplay.Items.Scripts;
 using Gameplay.Items.Scripts.ItemData;
@@ -43,6 +44,7 @@ namespace Gameplay.Items.Scripts
 
         private PlayerInput _input;
         private ItemCore _currentItem;
+        private Outliner _currentHoverItem = null;
 
         public override void OnNetworkSpawn()
         {
@@ -59,8 +61,10 @@ namespace Gameplay.Items.Scripts
 
             EnableBar(false);
             EnableElectricInfo(false);
-        }
 
+            _input.OnStartLeftInput += CheckOpenDoor;
+        }
+        
         public override void OnNetworkDespawn()
         {
             _heldItemId.OnValueChanged -= OnHeldItemChanged;
@@ -68,6 +72,8 @@ namespace Gameplay.Items.Scripts
 
             if (IsOwner && _input != null)
                 _input.OnInteractInput -= OnInteract;
+            
+            _input.OnStartLeftInput -= CheckOpenDoor;
         }
 
         private void OnInteract()
@@ -78,13 +84,52 @@ namespace Gameplay.Items.Scripts
                 return;
             }
 
+            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore))
+            {
+                if(hit.transform.TryGetComponent(out ItemPickup pickup) && pickup.TryGetComponent(out NetworkObject netObj))
+                {
+                    PickUpRpc(netObj);
+                    InvokeEvent(new OnInteractItemInWorld());
+                }
+            }
+        }
+        
+        private void CheckOpenDoor()
+        {
+            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.transform.TryGetComponent(out Door door))
+                {
+                    if (!door.CanOpenWithoutKey)
+                        return;
+                    
+                    door.TryOpen(-1);
+                }
+            }
+        }
+
+
+        private void Update()
+        {
+            if (HasItemInHand()) return;
+            
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
                     out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore)
-                && hit.transform.TryGetComponent(out ItemPickup pickup)
-                && pickup.TryGetComponent(out NetworkObject netObj))
+                && hit.transform.TryGetComponent(out Outliner pickup))
             {
-                PickUpRpc(netObj);
-                InvokeEvent(new OnInteractItemInWorld());
+                if(_currentHoverItem == null)
+                {
+                    _currentHoverItem = pickup;
+                    _currentHoverItem.SetOutline(true);
+                }
+            }
+            else
+            {
+                if (_currentHoverItem != null)
+                {
+                    _currentHoverItem.SetOutline(false);
+                    _currentHoverItem = null;
+                }
             }
         }
 
@@ -194,6 +239,9 @@ namespace Gameplay.Items.Scripts
 
         private ItemPickup ServerSpawnPickup(Vector3 pos, Quaternion rot)
         {
+            if(_serverInstance.Data.pickUpPrefab == null)
+                return null;
+            
             ItemPickup pickup = Instantiate(_serverInstance.Data.pickUpPrefab, pos, rot);
             pickup.Setup(_serverInstance);
             pickup.GetComponent<NetworkObject>().Spawn();

@@ -10,6 +10,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
     {
         [SerializeField] private int _doorId;
         [SerializeField] private float _range = 2f;
+        [SerializeField] private bool _openAllDoors = false;
 
         public float Range => _range;
 
@@ -27,6 +28,11 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
 
         public void EndLeftClick() { }
 
-        public bool ApplyOpen(Door door) => door.TryOpen(_doorId);
+        public bool ApplyOpen(Door door)
+        {
+            int id = _openAllDoors ? -1 : _doorId;
+            
+            return door.TryOpen(id);
+        }
     }
 }
