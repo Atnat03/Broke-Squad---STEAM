@@ -187,7 +187,7 @@ namespace Gameplay.IA.Scripts
             }
 
             if (_target != null && _target.TryGetComponent(out PlayerData.PlayerData player))
-                player.TakeDamage(_damage);
+                player.ApplyDamage(_damage);
 
             yield return new WaitForSeconds(_attackCooldown);
 

@@ -55,11 +55,14 @@ namespace Gameplay.LD.Scripts
                 return true;
             }
 
-            if (idRange is { x: -1, y: -1 })
-                return false;
+            if(!_canOpenWithoutKey)
+            {
+                if (idRange is { x: -1, y: -1 })
+                    return false;
 
-            if ((_doorID < idRange.x || _doorID > idRange.y))
-                return false;
+                if ((_doorID < idRange.x || _doorID > idRange.y))
+                    return false;
+            }
 
             _isOpen.Value = !_isOpen.Value;
             return true;

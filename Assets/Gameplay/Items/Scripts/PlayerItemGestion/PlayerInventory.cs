@@ -49,6 +49,9 @@ namespace Gameplay.Items.Scripts
         [Header("Electic")]
         [SerializeField] private GameObject _electicUI;
         [SerializeField] private TextMeshProUGUI _electicPercent;
+        
+        [Header("Use")]
+        [SerializeField] private TextMeshProUGUI _useAmountText;
 
         private readonly NetworkVariable<int> _heldItemId = new(-1);
         private readonly NetworkVariable<float> _electricPercent = new(0f);
@@ -86,6 +89,7 @@ namespace Gameplay.Items.Scripts
 
             EnableBar(false);
             EnableElectricInfo(false);
+            EnableUseText(false);
 
             _input.OnStartLeftInput += CheckOpenDoor;
             _input.OnMouseRoll += OnSelectedItemChange;
@@ -149,6 +153,7 @@ namespace Gameplay.Items.Scripts
         private void Update()
         {
             if (HasItemInHand()) return;
+            if (!IsOwner) return;
             
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
                     out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore)
@@ -368,6 +373,8 @@ namespace Gameplay.Items.Scripts
         public void UpdateElectricInfo(float percent) => _electicPercent.text = (int)percent + " %";
         public void EnableElectricInfo(bool state) { if (IsOwner) _electicUI.SetActive(state); }
         public void EnableBar(bool state)          { if (IsOwner) _throwUI.SetActive(state); }
+        public void EnableUseText(bool state) => _useAmountText.transform.parent.gameObject.SetActive(state);
+        public void UpdateTextUse(string str) {if(IsOwner)  _useAmountText.text = str; }
         
         public void RequestOpenDoor(NetworkObjectReference door) => OpenDoorRpc(door);
 
@@ -443,6 +450,7 @@ namespace Gameplay.Items.Scripts
         }
         
         private void OnSelectedSlotChanged(int prev, int cur) => _uiDirty = true;
+
 
         #endregion    
     }
