@@ -13,6 +13,7 @@ namespace Gameplay.IA.Scripts
     {
         [SerializeField] private float _speedPatrol = 2;
         [SerializeField] private float _speedChase = 3;
+        [SerializeField] private float _distanceToStopChasing = 5;
         [SerializeField] private GuardFieldOfView _guardFieldOfView;
 
         [Header("Color")]
@@ -67,6 +68,8 @@ namespace Gameplay.IA.Scripts
 
             ApplyStateColor(_isInChase.Value);
             RefreshHealthUI(_currentHealth.Value);
+            
+            Patrol();
         }
         
 
@@ -141,7 +144,7 @@ namespace Gameplay.IA.Scripts
 
             if (_isInChase.Value != canSee)
                 _isInChase.Value = canSee;
-
+            
             if (canSee)
             {
                 Chase();
@@ -151,7 +154,8 @@ namespace Gameplay.IA.Scripts
             }
             else
             {
-                Patrol();
+                if(Vector3.Distance(_guardFieldOfView.Target.position, transform.position) > _distanceToStopChasing)
+                    Patrol();
             }
         }
 
