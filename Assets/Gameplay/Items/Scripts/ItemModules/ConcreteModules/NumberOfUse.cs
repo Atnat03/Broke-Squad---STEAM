@@ -31,7 +31,22 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
             if (_destroyWhenUsed && _currentUse == 0)
             {
                 Context.Inventory.DestroyItemInHand();
+                Context.Inventory.EnableUseText(false);
             }
+            
+            PushToUI();
+        }
+        
+        protected override void OnBind()
+        {
+            Context.Inventory.EnableUseText(true);
+            PushToUI();
+        }
+        
+        private void PushToUI()
+        {
+            if (Context?.Inventory != null && Context.Inventory.IsServer)
+                Context.Inventory.UpdateTextUse(_currentUse + "/" + _maxUse);
         }
 
         public void ThrowItem()

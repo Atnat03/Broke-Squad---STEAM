@@ -71,7 +71,7 @@ namespace Assets.Gameplay.LD.Scripts
 
             isArmed.Value = false;
 
-            if (player != null) player.TakeDamage(damage);
+            if (player != null) player.ApplyDamage(damage);
 
             SnapClientRpc();
         }
