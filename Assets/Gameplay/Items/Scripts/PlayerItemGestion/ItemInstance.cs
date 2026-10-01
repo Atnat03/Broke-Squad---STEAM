@@ -47,6 +47,8 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
 
                 if (m is ScriptableObject so)
                     list.Add(Object.Instantiate(so) as T);
+                else if (m is IItemModule im)
+                    list.Add(im.Clone() as T);
                 else
                     list.Add(m);
             }
