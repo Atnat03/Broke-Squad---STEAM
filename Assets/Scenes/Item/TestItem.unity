@@ -890,6 +890,7 @@ MonoBehaviour:
   autoUpdateProfileValue: 1
   playerCamera: {fileID: 1197007964}
   UI: {fileID: 0}
+  meshRenderer: {fileID: 0}
   groundLayer:
     serializedVersion: 2
     m_Bits: 0
@@ -897,6 +898,10 @@ MonoBehaviour:
   groundCheckRadiusMultiplier: 0.9
   groundCheckSkin: 0.1
   maxSlopeAngle: 50
+  maxStamina: 100
+  drainPerSecond: 10
+  regenPerSecond: 10
+  regenDelay: 2
   eyeTarget: {fileID: 0}
 --- !u!54 &244986481
 Rigidbody:
@@ -2468,6 +2473,9 @@ MonoBehaviour:
   eyeTarget: {fileID: 865599346}
   sensX: 0.1
   sensY: 0.1
+  leanObstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &1197007965
 MonoBehaviour:
   m_ObjectHideFlags: 0

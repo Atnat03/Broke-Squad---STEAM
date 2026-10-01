@@ -59,12 +59,19 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
 
             Vector3 force = Vector3.Lerp(_minThrowForce, _maxThrowForce, Mathf.Clamp01(charge01));
 
-            Vector3 right   = camRot * Vector3.right;
-            Vector3 up      = camRot * Vector3.up;
+            Vector3 right = camRot * Vector3.right;
+            Vector3 up = camRot * Vector3.up;
             Vector3 forward = camRot * Vector3.forward;
 
+            Transform t = Context.Camera.transform;
+            
             rb.AddForce(right * force.x + up * force.y + forward * force.z, ForceMode.VelocityChange);
-            rb.AddTorque(_torqueForce, ForceMode.VelocityChange);
+            rb.AddTorque(t.rotation * _torqueForce, ForceMode.VelocityChange);
+
+            foreach (IPassif passif in thrown.Instance.Passifs)
+            {
+                passif.OnThrow(rb);
+            }
         }
     }
 }
