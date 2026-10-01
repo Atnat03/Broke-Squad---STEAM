@@ -37,5 +37,14 @@ namespace Gameplay.Controller
         public float profileLerpSpeed = 6f;
         public float bobFadeIn = 0.15f;
         public float bobFadeOut = 0.25f;
+        
+        [Header("Lean")]
+        public bool leanEnabled = true;
+        public float leanDistance = 0.45f;    
+        public float leanRollAngle = 12f;      
+        public float leanDip = 0.01f;          
+        public float leanSmoothTime = 0.08f;
+        public float leanCameraRadius = 0.15f;
+        public float leanWallPadding = 0.05f;
     }
 }

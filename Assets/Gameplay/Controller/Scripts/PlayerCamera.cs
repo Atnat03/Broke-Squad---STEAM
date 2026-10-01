@@ -48,6 +48,19 @@ namespace Gameplay.Controller
         private float _profileLerpSpeed = 6f;
         private float _bobFadeIn = 0.15f;
         private float _bobFadeOut = 0.25f;
+        
+        [Header("Lean")]
+        private bool _leanEnabled = true;
+        private float _leanDistance = 0.45f;    
+        private float _leanRollAngle = 12f;      
+        private float _leanDip = 0.01f;          
+        private float _leanSmoothTime = 0.08f;
+        private float _leanCameraRadius = 0.15f;
+        private float _leanWallPadding = 0.05f;
+        [SerializeField] private LayerMask leanObstacleMask; 
+        
+        private float _leanAmount;  
+        private float _leanVel;
 
         private Camera _cam;
         private Vector2 _mouseMovement;
@@ -97,13 +110,16 @@ namespace Gameplay.Controller
 
             UpdateFov(dt);
             UpdateFollow(dt);
+            
             Vector3 bobOffset = UpdateBob(dt, out float bobRoll);
 
-            Quaternion look = Quaternion.Euler(_xRotation, _yRotation, 0f);
-            transform.rotation = look * Quaternion.Euler(0f, 0f, bobRoll);
-
             Quaternion yawOnly = Quaternion.Euler(0f, _yRotation, 0f);
-            transform.position = _smoothPos + yawOnly * bobOffset;
+            Vector3 leanOffset = UpdateLean(dt, yawOnly, out float leanRoll);
+
+            Quaternion look = Quaternion.Euler(_xRotation, _yRotation, 0f);
+            transform.rotation = look * Quaternion.Euler(0f, 0f, bobRoll + leanRoll);
+
+            transform.position = _smoothPos + yawOnly * (bobOffset + leanOffset);
         }
 
         private void UpdateFov(float dt)
@@ -176,6 +192,30 @@ namespace Gameplay.Controller
             return new Vector3(x, y, 0f);
         }
 
+        private Vector3 UpdateLean(float dt, Quaternion yawOnly, out float roll)
+        {
+            float target = _leanEnabled && !player.IsSprinting ? player.LeanInput : 0f;
+            _leanAmount = Mathf.SmoothDamp(_leanAmount, target, ref _leanVel, _leanSmoothTime);
+
+            roll = 0f;
+            if (Mathf.Abs(_leanAmount) < 0.001f) return Vector3.zero;
+
+            float side = Mathf.Sign(_leanAmount);
+            float wanted = Mathf.Abs(_leanAmount) * _leanDistance;
+            float allowed = wanted;
+            
+            Vector3 dir = yawOnly * Vector3.right * side;
+            if (Physics.SphereCast(_smoothPos, _leanCameraRadius, dir, out RaycastHit hit,
+                    wanted + _leanWallPadding, leanObstacleMask, QueryTriggerInteraction.Ignore))
+            {
+                allowed = Mathf.Max(0f, hit.distance - _leanWallPadding);
+            }
+            
+            float effective = _leanDistance > 0f ? allowed / _leanDistance : 0f;
+
+            roll = -side * effective * _leanRollAngle;
+            return new Vector3(side * allowed, -effective * _leanDip, 0f);
+        }
 
         void GetDataFromProfile()
         {
@@ -202,6 +242,13 @@ namespace Gameplay.Controller
             _backwardBobMultiplier = profile.backwardBobMultiplier;
             _maxLookAngle = profile.maxLookAngle;
             _minLookAngle = profile.minLookAngle;
+            _leanEnabled = profile.leanEnabled;
+            _leanDistance = profile.leanDistance;
+            _leanRollAngle = profile.leanRollAngle;
+            _leanDip = profile.leanDip;
+            _leanSmoothTime = profile.leanSmoothTime;
+            _leanCameraRadius = profile.leanCameraRadius;
+            _leanWallPadding = profile.leanWallPadding;
 
         }
     }

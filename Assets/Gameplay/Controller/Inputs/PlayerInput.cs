@@ -25,6 +25,11 @@ namespace Gameplay.Controller
         
         public Action OnInteractInput;
 
+        public  Action OnLeanLeftInput;
+        public  Action OnLeanLeftInputCanceled;
+        public  Action OnLeanRightInput;
+        public  Action OnLeanRightInputCanceled;
+
         public Action<Vector2> OnMoveInput;
         public Action<Vector2> OnMouseMovement;
 
@@ -55,6 +60,11 @@ namespace Gameplay.Controller
             _playerInputs.Gameplay.Crouch.canceled += PerformCrouchCanceled;
             
             _playerInputs.Gameplay.Interact.performed += PerformInteract;
+            
+            _playerInputs.Gameplay.RightLean.performed += PerformRightLean;
+            _playerInputs.Gameplay.RightLean.canceled += PerformRightLeanCanceled;
+            _playerInputs.Gameplay.LeftLean.performed += PerformLeftLean;
+            _playerInputs.Gameplay.LeftLean.canceled += PerformLeftLeanCanceled;
             
             _playerInputs.Gameplay.MouseMovement.performed += PerformeMouseMovement;
             _playerInputs.Gameplay.MouseMovement.canceled += PerformeMouseMovement;
@@ -152,6 +162,26 @@ namespace Gameplay.Controller
         private void PerformeMouseMovement(InputAction.CallbackContext context)
         {
             OnMouseMovement?.Invoke(context.ReadValue<Vector2>());
+        }
+
+        private void PerformRightLean(InputAction.CallbackContext context)
+        {
+            OnLeanRightInput?.Invoke();
+        }
+
+        private void PerformRightLeanCanceled(InputAction.CallbackContext context)
+        {
+            OnLeanRightInputCanceled?.Invoke();
+        }
+
+        private void PerformLeftLean(InputAction.CallbackContext context)
+        {
+            OnLeanLeftInput?.Invoke();
+        }
+
+        private void PerformLeftLeanCanceled(InputAction.CallbackContext context)
+        {
+            OnLeanLeftInputCanceled?.Invoke();
         }
         
         private void OnDestroy() => _playerInputs.Dispose();
