@@ -462,6 +462,27 @@ namespace Gameplay.Items.Scripts
         
         #region Inventory
 
+        public void RequestHeal(NetworkObjectReference target) => HealRpc(target);
+
+        [Rpc(SendTo.Server)]
+        private void HealRpc(NetworkObjectReference targetRef)
+        {
+            if (GetCurrentItemInHand() == null) return;
+
+            HealModule module = GetCurrentItemInHand().LeftClicks.OfType<HealModule>().FirstOrDefault();
+            if (module == null) return;
+
+            NumberOfUse uses = GetCurrentItemInHand().Conditions.OfType<NumberOfUse>().FirstOrDefault();
+            if (uses != null && uses.CurrentUse <= 0) return;
+
+            if (!targetRef.TryGet(out NetworkObject netObj)) return;
+            if (!netObj.TryGetComponent(out PlayerData.PlayerData target)) return;
+
+            if (Vector3.Distance(transform.position, netObj.transform.position) > module.Range + 1.5f) return;
+
+            module.ApplyHeal(target);
+        }
+        
         private ItemInstance GetCurrentItemInHand()
             => _slots[_selectedSlot.Value];
 
