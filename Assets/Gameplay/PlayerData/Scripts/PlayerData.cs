@@ -40,7 +40,7 @@ namespace Gameplay.PlayerData
         [ContextMenu("Test")]
         public void Test()
         {
-            TakeDamage(10);
+            TakeDamage(100);
         }
         
         public void TakeDamage(int damage)
