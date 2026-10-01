@@ -16,12 +16,14 @@ MonoBehaviour:
   itemName: Plate
   visualPrefab: {fileID: 7937215792387532064, guid: 9920a290dc6e1bc42a32d35a395d3af1, type: 3}
   pickUpPrefab: {fileID: 2527299284075693021, guid: fc2529790519543479d63961d51dba5e, type: 3}
+  icon: {fileID: 21300000, guid: b4cd618e171bd2542be68b4fe92cc9c8, type: 3}
   leftClicksActions: []
   rightClicksActions:
   - rid: 2255290332041183340
   conditions: []
   passif:
   - rid: 2255290332041183343
+  - rid: 7202345451130192119
   references:
     version: 2
     RefIds:
@@ -37,5 +39,34 @@ MonoBehaviour:
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 10
-        _X: 10
+        _maxVelocity: 15
+        _maxDamage: 15
+        _damageCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
         _weight: 5
+    - rid: 7202345451130192119
+      type: {class: DestroyWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _minVelocityForDestroy: 50

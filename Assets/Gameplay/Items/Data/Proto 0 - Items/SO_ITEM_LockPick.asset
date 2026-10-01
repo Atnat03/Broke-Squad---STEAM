@@ -16,6 +16,7 @@ MonoBehaviour:
   itemName: LockPick
   visualPrefab: {fileID: 7937333189203846997, guid: dd1a236e42aa4944998e6678ea4e4640, type: 3}
   pickUpPrefab: {fileID: 5918889806640921603, guid: 0c624b13728883a49a6e5aeeb0a60b0d, type: 3}
+  icon: {fileID: 0}
   leftClicksActions:
   - rid: 2255290332041183341
   rightClicksActions:
@@ -38,17 +39,43 @@ MonoBehaviour:
     - rid: 2255290332041183341
       type: {class: OpenDoorModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _doorId: 0
+        _doorIdRange: {x: 0, y: 20}
         _range: 2
-        _openAllDoors: 1
+        _openAllDoors: 0
     - rid: 2255290332041183342
       type: {class: NumberOfUse, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _maxUse: 1
         _inputType: 0
+        _destroyWhenUsed: 0
     - rid: 2255290332041183343
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 10
-        _X: 10
+        _maxVelocity: 15
+        _maxDamage: 15
+        _damageCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
         _weight: 5
