@@ -55,10 +55,10 @@ namespace Gameplay.Controller
         [SerializeField] private LayerMask ceilingLayer;
 
         [Header("Stamina")]
-        [SerializeField] private float maxStamina = 100f;
-        [SerializeField] private float drainPerSecond = 10f;
-        [SerializeField] private float regenPerSecond = 10f;
-        [SerializeField] private float regenDelay = 2f;
+        private float _maxStamina = 100f;
+        private float _drainPerSecond = 10f;
+        private float _regenPerSecond = 10f;
+        private float _regenDelay = 2f;
 
         [Header("Tied Up")] 
         [SerializeField] private float tiedUpSpeed = 1f;
@@ -121,7 +121,7 @@ namespace Gameplay.Controller
         public void SetYaw(float yawDegrees) => _rb.MoveRotation(Quaternion.Euler(0f, yawDegrees, 0f));
         public Vector3 HorizontalVelocity => new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
         
-        public float MaxStamina => maxStamina;
+        public float MaxStamina => _maxStamina;
 
         private float _lastSentStamina = -1f;
         
@@ -157,7 +157,7 @@ namespace Gameplay.Controller
             _rb.useGravity = false; 
             
             meshRenderer.enabled = false;
-            _stamina = maxStamina;
+            _stamina = _maxStamina;
             
             _capsule.sharedMaterial = new PhysicsMaterial("PlayerNoFriction")
             {
@@ -265,8 +265,8 @@ namespace Gameplay.Controller
         {
             if (IsSprinting)
             {
-                _stamina = Mathf.Max(0f, _stamina - drainPerSecond * dt);
-                _regenTimer = regenDelay;
+                _stamina = Mathf.Max(0f, _stamina - _drainPerSecond * dt);
+                _regenTimer = _regenDelay;
                 
                 if(_stamina <= 0f) _exhausted = true;
             }
@@ -278,7 +278,7 @@ namespace Gameplay.Controller
                 }
                 else
                 {
-                    _stamina = Mathf.Min(maxStamina, _stamina + regenPerSecond * dt);
+                    _stamina = Mathf.Min(_maxStamina, _stamina + _regenPerSecond * dt);
                 }
             }
             
@@ -291,13 +291,13 @@ namespace Gameplay.Controller
 
         private void NotifyStamina()
         {
-            bool changedEnough = Mathf.Abs(_stamina - _lastSentStamina) >= maxStamina * 0.01f;
-            bool atBoundary = (_stamina <= 0f || _stamina >= maxStamina) && !Mathf.Approximately(_stamina, _lastSentStamina);
+            bool changedEnough = Mathf.Abs(_stamina - _lastSentStamina) >= _maxStamina * 0.01f;
+            bool atBoundary = (_stamina <= 0f || _stamina >= _maxStamina) && !Mathf.Approximately(_stamina, _lastSentStamina);
 
             if (!changedEnough && !atBoundary) return;
 
             _lastSentStamina = _stamina;
-            InvokeEvent(new StaminaChangedEvent { stamina = _stamina, maxStamina = maxStamina });
+            InvokeEvent(new StaminaChangedEvent { stamina = _stamina, maxStamina = _maxStamina });
         }
         void GetDataFromProfile()
         {
@@ -319,6 +319,11 @@ namespace Gameplay.Controller
             _standHeight = profile.standHeight;
             _crouchHeight = profile.crouchHeight;
             _crouchTransitionSpeed = profile.crouchTransitionSpeed;
+            
+            _maxStamina = profile.maxStamina;
+            _drainPerSecond = profile.drainPerSecond;
+            _regenPerSecond = profile.regenPerSecond;
+            _regenDelay = profile.regenDelay;
         }
         
         #region Movement
