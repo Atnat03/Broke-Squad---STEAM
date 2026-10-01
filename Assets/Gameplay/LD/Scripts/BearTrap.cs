@@ -111,7 +111,7 @@ namespace Assets.Gameplay.LD.Scripts
         [Rpc(SendTo.ClientsAndHost)]
         private void SnapClientRpc()
         {
-            //triggerAnimator.Play(triggerStateName, 0);
+            triggerAnimator.Play(triggerStateName, 0);
             // TODO : Ici pour sfx + vfx
         }
 
