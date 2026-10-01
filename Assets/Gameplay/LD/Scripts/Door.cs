@@ -11,9 +11,14 @@ namespace Gameplay.LD.Scripts
         [SerializeField] private UnityEvent _eventOpen;
         [SerializeField] private UnityEvent _eventClose;
         [SerializeField] private bool _canOpenWithoutKey = false;
+        [SerializeField] private float _toggleCooldown = 0.3f;
 
         private readonly NetworkVariable<bool> _isUnlocked = new(false);
         private readonly NetworkVariable<bool> _isOpen = new(false);
+        
+        public bool CanOpenWithoutKey => _isUnlocked.Value;
+
+        private float _lastToggleTime = -10f;
 
         public override void OnNetworkSpawn()
         {
@@ -36,11 +41,12 @@ namespace Gameplay.LD.Scripts
             else _eventClose?.Invoke();
         }
 
-        public bool CanOpenWithoutKey => _isUnlocked.Value;
-
         public bool TryOpen(Vector2Int idRange)
         {
             if (!IsServer) return false;
+
+            if (Time.time - _lastToggleTime < _toggleCooldown)
+                return false;
 
             if (!_isUnlocked.Value)
             {
@@ -50,6 +56,7 @@ namespace Gameplay.LD.Scripts
                 _isUnlocked.Value = true;
             }
 
+            _lastToggleTime = Time.time;
             _isOpen.Value = !_isOpen.Value;
             return true;
         }
