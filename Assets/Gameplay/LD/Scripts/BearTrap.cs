@@ -5,21 +5,24 @@ using UnityEngine;
 
 namespace Assets.Gameplay.LD.Scripts
 {
-    public class BearTrap : NetworkBusListener
+    public class BearTrap : NetworkBusListener, IInteractable
     {
         [SerializeField] private int damage;
-        [SerializeField] private float rangeDection;
+        [SerializeField] private float rangeDetection;
         [SerializeField] private float triggerTime;
         [SerializeField] private Animator triggerAnimator;
         [SerializeField] private string triggerStateName = "Trigger";
 
-        private readonly NetworkVariable<bool> isArmed = new(false);
+        [Tooltip("Distance max joueur-piège acceptée par le serveur. Doit être supérieure à la portée du raycast du joueur.")]
+        [SerializeField] private float interactionRange = 4f;
+
+        private readonly NetworkVariable<bool> isArmed = new(true);
 
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
             isArmed.OnValueChanged += OnArmedChanged;
-            ApplyVisualState(isArmed.Value);
+            ApplyVisualTrap(isArmed.Value);
         }
 
         public override void OnNetworkDespawn()
@@ -30,32 +33,37 @@ namespace Assets.Gameplay.LD.Scripts
 
         private void OnArmedChanged(bool previous, bool current)
         {
-            if (!current) return;
-
-            ApplyVisualState(current);
+            ApplyVisualTrap(current);
         }
 
         private void OnTriggerEnter(Collider other)
         {
             if (!IsServer || !isArmed.Value) return;
 
-            PlayerData player = other.GetComponent<PlayerData>();
+            PlayerData player = other.GetComponentInParent<PlayerData>();
             if (player == null) return;
 
             isArmed.Value = false;
 
             player.TakeDamage(damage);
-
             SnapClientRpc();
         }
 
-        // Call le script pour la touche E 
-        public void RequestToggle() => ToggleServerRpc();
+        // Touche E
+        public void Interact() => ToggleArmedServerRpc();
 
         [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
-        private void ToggleServerRpc()
+        private void ToggleArmedServerRpc(RpcParams rpcParams = default)
         {
-            // Check avec antoine 
+            ulong senderClientId = rpcParams.Receive.SenderClientId;
+            if (!NetworkManager.ConnectedClients.TryGetValue(senderClientId, out NetworkClient client)) return;
+
+            NetworkObject playerNetworkObject = client.PlayerObject;
+            if (playerNetworkObject == null) return;
+
+            float distanceToTrap = Vector3.Distance(playerNetworkObject.transform.position, transform.position);
+            if (distanceToTrap > interactionRange) return;
+
             isArmed.Value = !isArmed.Value;
         }
 
@@ -66,9 +74,9 @@ namespace Assets.Gameplay.LD.Scripts
             // TODO : Ici pour sfx + vfx
         }
 
-        private void ApplyVisualState(bool armed)
+        private void ApplyVisualTrap(bool armed)
         {
-            //ouvert si amorcé / fermé sinon  voir avec l'animator
+            // ouvert si amorcé / fermé sinon, voir avec l'animator
         }
     }
 }
