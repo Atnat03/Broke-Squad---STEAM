@@ -7,6 +7,7 @@ using Gameplay.Items.Scripts.ItemModules.ConcreteModules;
 using Gameplay.Items.Scripts.PlayerItemGestion;
 using Gameplay.LD.Scripts;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using Unity.Netcode;
@@ -29,6 +30,17 @@ namespace Gameplay.Items.Scripts
         [SerializeField] private float _range;
         [SerializeField] private LayerMask _layerMask;
 
+        [Header("Inventory")]
+        [SerializeField] private int _itemCount = 3;
+        private ItemInstance[] _slots;
+        private readonly NetworkVariable<int> _selectedSlot = new(0);
+        
+        [SerializeField] private ItemSlotUI _slotPrefabUI;
+        [SerializeField] private Transform _parentInventory;
+        [SerializeField] private Sprite _emptyIcon;
+        private ItemSlotUI[] _slotsUIList;
+        private bool _uiDirty;
+        
         [Header("UI")]
         [Header("Throw")]
         [SerializeField] private GameObject _throwUI;
@@ -37,65 +49,90 @@ namespace Gameplay.Items.Scripts
         [Header("Electic")]
         [SerializeField] private GameObject _electicUI;
         [SerializeField] private TextMeshProUGUI _electicPercent;
+        
+        [Header("Use")]
+        [SerializeField] private TextMeshProUGUI _useAmountText;
 
         private readonly NetworkVariable<int> _heldItemId = new(-1);
         private readonly NetworkVariable<float> _electricPercent = new(0f);
         
-        private ItemInstance _serverInstance;
-
         private PlayerInput _input;
         private ItemCore _currentItem;
         private Outliner _currentHoverItem = null;
-
+        
         public override void OnNetworkSpawn()
         {
+            _slots = new ItemInstance[Mathf.Max(1, _itemCount)];
+            _slotsUIList = new ItemSlotUI[_slots.Length];
             _input = GetComponent<PlayerInput>();
 
             _heldItemId.OnValueChanged += OnHeldItemChanged;
             _electricPercent.OnValueChanged += OnElectricPercentChanged;
 
+            _selectedSlot.OnValueChanged += OnSelectedSlotChanged;
+
             if (_heldItemId.Value != -1)
                 OnHeldItemChanged(-1, _heldItemId.Value);
 
             if (IsOwner)
+            {
                 _input.OnInteractInput += OnInteract;
+
+                for (int i = 0; i < _slotsUIList.Length; i++)
+                {
+                    _slotsUIList[i] = Instantiate(_slotPrefabUI, _parentInventory);
+                    _slotsUIList[i].SetIcon(_emptyIcon);
+                }
+
+                _uiDirty = true;
+            }
 
             EnableBar(false);
             EnableElectricInfo(false);
+            EnableUseText(false);
 
             _input.OnStartLeftInput += CheckOpenDoor;
+            _input.OnMouseRoll += OnSelectedItemChange;
         }
-        
+
         public override void OnNetworkDespawn()
         {
             _heldItemId.OnValueChanged -= OnHeldItemChanged;
             _electricPercent.OnValueChanged -= OnElectricPercentChanged;
-
-            if (IsOwner && _input != null)
-                _input.OnInteractInput -= OnInteract;
+            _input.OnMouseRoll -= OnSelectedItemChange;
             
-            _input.OnStartLeftInput -= CheckOpenDoor;
+            _selectedSlot.OnValueChanged -= OnSelectedSlotChanged;
+
+            if (_input != null)
+            {
+                if (IsOwner) _input.OnInteractInput -= OnInteract;
+                _input.OnStartLeftInput -= CheckOpenDoor;
+            }
         }
 
         private void OnInteract()
         {
-            if (HasItemInHand())
+            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
+                    out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore))
             {
-                DropItemRpc();
-                return;
-            }
-
-            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore))
-            {
-                if(hit.transform.TryGetComponent(out ItemPickup pickup) && pickup.TryGetComponent(out NetworkObject netObj))
+                if (hit.transform.TryGetComponent(out ItemPickup pickup) &&
+                    pickup.TryGetComponent(out NetworkObject netObj))
                 {
                     PickUpRpc(netObj);
                     InvokeEvent(new OnInteractItemInWorld());
+                    return;
+                }
+
+                IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
+                if (interactable != null)
+                {
+                    interactable.Interact();
+                    return;
                 }
             }
 
-            IInteractable interactable = hit.collider?.GetComponentInParent<IInteractable>();
-            interactable?.Interact();
+            if (HasItemInHand())
+                DropItemRpc();
         }
         
         private void CheckOpenDoor()
@@ -107,7 +144,7 @@ namespace Gameplay.Items.Scripts
                     if (!door.CanOpenWithoutKey)
                         return;
                     
-                    door.TryOpen(-1);
+                    door.TryOpen(new Vector2Int(-1, -1));
                 }
             }
         }
@@ -116,6 +153,7 @@ namespace Gameplay.Items.Scripts
         private void Update()
         {
             if (HasItemInHand()) return;
+            if (!IsOwner) return;
             
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
                     out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore)
@@ -140,44 +178,64 @@ namespace Gameplay.Items.Scripts
         [Rpc(SendTo.Server)]
         private void PickUpRpc(NetworkObjectReference pickupRef)
         {
-            if (_heldItemId.Value != -1) return;
             if (!pickupRef.TryGet(out NetworkObject netObj)) return;
             if (!netObj.TryGetComponent(out ItemPickup pickup)) return;
             if (pickup.Instance == null) return;
             if (Vector3.Distance(transform.position, netObj.transform.position) > _range + 1.5f) return;
 
-            _serverInstance = pickup.Instance;
-            _heldItemId.Value = pickup.Instance.Data.id;
+            int slot = FindFreeSlot();
+            if (slot == -1) return;
+
+            _slots[slot] = pickup.Instance;
             netObj.Despawn();
+
+            SelectSlot(slot);
         }
+        
+        private int FindFreeSlot()
+        {
+            if (_slots[_selectedSlot.Value] == null)
+                return _selectedSlot.Value;
+
+            for (int i = 0; i < _slots.Length; i++)
+                if (_slots[i] == null) return i;
+
+            return -1;
+        }
+
 
         [Rpc(SendTo.Server)]
         private void DropItemRpc()
         {
-            if (_serverInstance == null) return;
+            ItemInstance item = GetCurrentItemInHand();
+            if (item == null) return;
 
             Vector3 pos = _parent.position + transform.forward * 0.5f;
-            ItemPickup pickup = Instantiate(_serverInstance.Data.pickUpPrefab, pos, transform.rotation);
-            pickup.Setup(_serverInstance);
+            ItemPickup pickup = Instantiate(item.Data.pickUpPrefab, pos, transform.rotation);
+            pickup.Setup(item);
             pickup.GetComponent<NetworkObject>().Spawn();
 
-            _serverInstance = null;
-            _heldItemId.Value = -1;
+            ClearCurrentSlot();
         }
+
 
         public void DestroyItemInHand()
         {
-            if (!IsServer || _serverInstance == null) return;
+            if (!IsServer) return;
+
+            ItemInstance item = GetCurrentItemInHand();
+            if (item == null) return;
 
             _currentItem?.ThrowItem();
+            item.Cleanup();
 
-            _serverInstance.Cleanup();
-            _serverInstance = null;
-            _heldItemId.Value = -1;
+            ClearCurrentSlot();
         }
 
         private void OnHeldItemChanged(int oldId, int newId)
         {
+            if (IsOwner) _uiDirty = true;
+            
             if (_currentItem != null)
             {
                 if (IsOwner) 
@@ -210,7 +268,7 @@ namespace Gameplay.Items.Scripts
             GameObject visual = Instantiate(data.visualPrefab, core.transform);
             visual.transform.localPosition = Vector3.zero;
 
-            ItemInstance instance = IsServer ? _serverInstance : new ItemInstance(data);
+            ItemInstance instance = IsServer ? GetCurrentItemInHand() : new ItemInstance(data);
             core.SetInstance(instance, this);
             
             if (IsOwner) 
@@ -221,15 +279,41 @@ namespace Gameplay.Items.Scripts
                 _currentItem.SubscribeToInput(_input);
         }
         
+        private void LateUpdate()
+        {
+            if (!IsOwner || !_uiDirty || _slotsUIList == null) return;
+            _uiDirty = false;
+
+            int selected = _selectedSlot.Value;
+            if (selected < 0 || selected >= _slotsUIList.Length) return;
+
+            for (int i = 0; i < _slotsUIList.Length; i++)
+                _slotsUIList[i].SetSelectedImage(i == selected);
+
+            Sprite icon = _emptyIcon;
+
+            int id = _heldItemId.Value;
+            if (id != -1)
+            {
+                SO_Item data = _database.GetItem(id);
+                if (data != null && data.icon != null)
+                    icon = data.icon;
+                else
+                    Debug.LogWarning($"L'item {id} n'a pas d'icône assignée.", this);
+            }
+            
+            _slotsUIList[selected].SetIcon(icon);
+        }
+        
         public void RequestThrow(float charge01, Vector3 camPos, Quaternion camRot)
             => ThrowRpc(charge01, camPos, camRot);
 
         [Rpc(SendTo.Server)]
         private void ThrowRpc(float charge01, Vector3 camPos, Quaternion camRot)
         {
-            if (_serverInstance == null) return;
+            if (GetCurrentItemInHand() == null) return;
 
-            ThrowModule module = _serverInstance.RightClicks.OfType<ThrowModule>().FirstOrDefault();
+            ThrowModule module = GetCurrentItemInHand().RightClicks.OfType<ThrowModule>().FirstOrDefault();
             if (module == null) return;
 
             if (Vector3.Distance(camPos, transform.position) > 3f)
@@ -241,17 +325,18 @@ namespace Gameplay.Items.Scripts
             module.ApplyThrow(thrown, charge01, camRot);
         }
 
+
         private ItemPickup ServerSpawnPickup(Vector3 pos, Quaternion rot)
         {
-            if(_serverInstance.Data.pickUpPrefab == null)
+            ItemInstance item = GetCurrentItemInHand();
+            if (item == null || item.Data.pickUpPrefab == null)
                 return null;
-            
-            ItemPickup pickup = Instantiate(_serverInstance.Data.pickUpPrefab, pos, rot);
-            pickup.Setup(_serverInstance);
+
+            ItemPickup pickup = Instantiate(item.Data.pickUpPrefab, pos, rot);
+            pickup.Setup(item);
             pickup.GetComponent<NetworkObject>().Spawn();
 
-            _serverInstance = null;
-            _heldItemId.Value = -1;
+            ClearCurrentSlot();
             return pickup;
         }
         
@@ -270,9 +355,9 @@ namespace Gameplay.Items.Scripts
         [Rpc(SendTo.Server)]
         private void ChargePickupRpc(NetworkObjectReference target)
         {
-            if (_serverInstance == null) return;
+            if (GetCurrentItemInHand() == null) return;
 
-            ChargeItemModule module = _serverInstance.LeftClicks.OfType<ChargeItemModule>().FirstOrDefault();
+            ChargeItemModule module = GetCurrentItemInHand().LeftClicks.OfType<ChargeItemModule>().FirstOrDefault();
             if (module == null) return;
 
             if (!target.TryGet(out NetworkObject netObj)) return;
@@ -288,15 +373,17 @@ namespace Gameplay.Items.Scripts
         public void UpdateElectricInfo(float percent) => _electicPercent.text = (int)percent + " %";
         public void EnableElectricInfo(bool state) { if (IsOwner) _electicUI.SetActive(state); }
         public void EnableBar(bool state)          { if (IsOwner) _throwUI.SetActive(state); }
+        public void EnableUseText(bool state) => _useAmountText.transform.parent.gameObject.SetActive(state);
+        public void UpdateTextUse(string str) {if(IsOwner)  _useAmountText.text = str; }
         
         public void RequestOpenDoor(NetworkObjectReference door) => OpenDoorRpc(door);
 
         [Rpc(SendTo.Server)]
         private void OpenDoorRpc(NetworkObjectReference doorRef)
         {
-            if (_serverInstance == null) return;
+            if (GetCurrentItemInHand() == null) return;
 
-            OpenDoorModule module = _serverInstance.LeftClicks.OfType<OpenDoorModule>().FirstOrDefault();
+            OpenDoorModule module = GetCurrentItemInHand().LeftClicks.OfType<OpenDoorModule>().FirstOrDefault();
             if (module == null) return;
 
             if (!doorRef.TryGet(out NetworkObject netObj)) return;
@@ -305,7 +392,66 @@ namespace Gameplay.Items.Scripts
             if (Vector3.Distance(transform.position, netObj.transform.position) > module.Range + 1.5f) return;
 
             if (module.ApplyOpen(door))
-                DestroyItemInHand();
+            { }
         }
+        
+        #region Inventory
+
+        private ItemInstance GetCurrentItemInHand()
+            => _slots[_selectedSlot.Value];
+
+        private void ClearCurrentSlot()
+        {
+            _slots[_selectedSlot.Value] = null;
+            RefreshHeldItem();
+        }
+
+        private void SelectSlot(int index)
+        {
+            _selectedSlot.Value = index;
+            RefreshHeldItem();
+        }
+
+        private void RefreshHeldItem()
+        {
+            ItemInstance item = GetCurrentItemInHand();
+            int newId = item != null ? item.Data.id : -1;
+
+            if (_heldItemId.Value == newId && newId != -1)
+                OnHeldItemChanged(newId, newId);
+
+            _heldItemId.Value = newId;
+        }
+
+        public void OnSelectedItemChange(int ratio)
+        {
+            if (!IsOwner) return;
+            AskForChangeSelectedItemRpc(ratio);
+        }
+
+        [Rpc(SendTo.Server)]
+        private void AskForChangeSelectedItemRpc(int ratio)
+        {
+            int next = ((_selectedSlot.Value + ratio) % _itemCount + _itemCount) % _itemCount;
+            SelectSlot(next);
+        }
+
+        public void SelectSlotDirect(int index)
+        {
+            if (!IsOwner || index < 0 || index >= _itemCount) return;
+            SelectSlotRpc(index);
+        }
+
+        [Rpc(SendTo.Server)]
+        private void SelectSlotRpc(int index)
+        {
+            if (index < 0 || index >= _itemCount) return;
+            SelectSlot(index);
+        }
+        
+        private void OnSelectedSlotChanged(int prev, int cur) => _uiDirty = true;
+
+
+        #endregion    
     }
 }

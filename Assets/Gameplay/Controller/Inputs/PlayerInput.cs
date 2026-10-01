@@ -31,6 +31,8 @@ namespace Gameplay.Controller
         public  Action OnLeanRightInput;
         public  Action OnLeanRightInputCanceled;
 
+        public Action<int> OnMouseRoll;
+
         public Action<Vector2> OnMoveInput;
         public Action<Vector2> OnMouseMovement;
 
@@ -70,7 +72,10 @@ namespace Gameplay.Controller
             
             _playerInputs.Gameplay.MouseMovement.performed += PerformeMouseMovement;
             _playerInputs.Gameplay.MouseMovement.canceled += PerformeMouseMovement;
+
+            _playerInputs.Gameplay.MouseRoll.performed += PerformMouseRoll;
         }
+        
 
         private void OnDisable()
         {
@@ -189,6 +194,20 @@ namespace Gameplay.Controller
         private void PerformLeftLeanCanceled(InputAction.CallbackContext context)
         {
             OnLeanLeftInputCanceled?.Invoke();
+        }
+        
+        private void PerformMouseRoll(InputAction.CallbackContext obj)
+        {
+            float value = obj.ReadValue<float>();
+
+            if (value > 0)
+            {
+                OnMouseRoll?.Invoke(-1);
+            }
+            else
+            {
+                OnMouseRoll?.Invoke(1);
+            }
         }
         
         private void OnDestroy() => _playerInputs.Dispose();

@@ -12,7 +12,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
             
         }
 
-        public void OnThrow()
+        public void OnThrow(Rigidbody rb)
         {
             
         }

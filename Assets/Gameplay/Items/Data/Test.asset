@@ -16,37 +16,67 @@ MonoBehaviour:
   itemName: Test
   visualPrefab: {fileID: 2517337150570892065, guid: 0140db76ebb5df24f921af7841261310, type: 3}
   pickUpPrefab: {fileID: 3642109076169085848, guid: 24f177f7526459e4c9e128fae0c282e5, type: 3}
+  icon: {fileID: 21300000, guid: b4cd618e171bd2542be68b4fe92cc9c8, type: 3}
   leftClicksActions:
-  - rid: 7629053377233289478
+  - rid: 7203100815024980320
   rightClicksActions:
   - rid: 7629053358023639123
   conditions:
-  - rid: 7629053377233289477
+  - rid: 7203100815024980321
   passif:
-  - rid: 7629053377233289735
+  - rid: 7203100815024980284
   references:
     version: 2
     RefIds:
+    - rid: 7203100815024980284
+      type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _minVelocityForDamage: 1
+        _maxVelocity: 15
+        _maxDamage: 50
+        _damageCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        _weightFactor: 1
+        _mass: 1
+        _canDamagePlayer: 1
+    - rid: 7203100815024980320
+      type: {class: HealModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _healAmount: 10
+        _distanceToHeal: 2
+    - rid: 7203100815024980321
+      type: {class: NumberOfUse, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _maxUse: 3
+        _inputType: 0
+        _destroyWhenUsed: 0
     - rid: 7629053358023639123
       type: {class: ThrowModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minThrowForce: {x: 0, y: 0, z: 0}
-        _maxThrowForce: {x: 0, y: 2, z: 12}
+        _maxThrowForce: {x: 0, y: 0, z: 12}
         _durationToFullFill: 0.5
         _torqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: 0.7
-    - rid: 7629053377233289477
-      type: {class: ElectricModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
-      data:
-        type: 0
-        _batteryCapacity: 100
-        _useCost: 25
-    - rid: 7629053377233289478
-      type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
-      data:
-        _strength: 10
-    - rid: 7629053377233289735
-      type: {class: StunModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
-      data:
-        _minVelocityForStun: 2
-        _stunDuration: 1

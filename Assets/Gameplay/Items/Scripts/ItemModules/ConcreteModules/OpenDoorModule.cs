@@ -8,7 +8,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
     [Serializable]
     public class OpenDoorModule : ItemModule, ILeftClick
     {
-        [SerializeField] private int _doorId;
+        [SerializeField, MinMaxSlider(0, 500)] private Vector2Int _doorIdRange = new Vector2Int(0, 100);
         [SerializeField] private float _range = 2f;
         [SerializeField] private bool _openAllDoors = false;
 
@@ -30,7 +30,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
 
         public bool ApplyOpen(Door door)
         {
-            int id = _openAllDoors ? -1 : _doorId;
+            Vector2Int id = _openAllDoors ? new Vector2Int(-1, -1) : _doorIdRange;
             
             return door.TryOpen(id);
         }

@@ -6,7 +6,7 @@ namespace Gameplay.Items.Scripts.ItemModules
     public interface IPassif : IItemModule
     {
         public void OnCollide(Collision collision, ItemPickup item);
-        public void OnThrow();
+        public void OnThrow(Rigidbody rb);
         public void OnUpdateState();
     }
 }

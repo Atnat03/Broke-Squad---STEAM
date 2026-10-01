@@ -7,6 +7,7 @@ public class Breakable : NetworkBehaviour
 {
     [SerializeField] private GameObject _normalMesh;
     [SerializeField] private Rigidbody[] _breakMesh;
+    [SerializeField] private bool _dropPickableItem = false;
 
     public override void OnNetworkSpawn()
     {
@@ -19,7 +20,14 @@ public class Breakable : NetworkBehaviour
     [Rpc(SendTo.Server)]
     void AskServerToBreakRpc(float force)
     {
-        ReplicateBreakRpc(force);
+        if (_dropPickableItem)
+        {
+            _normalMesh.GetComponent<NetworkObject>().Spawn();
+        }
+        else
+        {
+            ReplicateBreakRpc(force);
+        }
     }
 
     [Rpc(SendTo.Everyone)]

@@ -44,7 +44,7 @@ namespace Gameplay.LD.Scripts
         
         public bool CanOpenWithoutKey { get => _canOpen.Value; }
 
-        public bool TryOpen(int id)
+        public bool TryOpen(Vector2Int idRange)
         {
             if (!IsServer) return false;
 
@@ -54,8 +54,15 @@ namespace Gameplay.LD.Scripts
                 _canOpen.Value = true;
                 return true;
             }
-            
-            if (id != _doorID && id != -1) return false;
+
+            if(!_canOpenWithoutKey)
+            {
+                if (idRange is { x: -1, y: -1 })
+                    return false;
+
+                if ((_doorID < idRange.x || _doorID > idRange.y))
+                    return false;
+            }
 
             _isOpen.Value = !_isOpen.Value;
             return true;

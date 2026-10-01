@@ -88,6 +88,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d859e8869f752f44098022ae5802989e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4936983801975621915}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d859e8869f752f44098022ae5802989e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 959106439813151100}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d859e8869f752f44098022ae5802989e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2141171502203508454}
   m_SourcePrefab: {fileID: 100100000, guid: d859e8869f752f44098022ae5802989e, type: 3}
 --- !u!1 &5649482149248009159 stripped
 GameObject:
@@ -141,8 +147,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3457874622
-  InScenePlacedSourceGlobalObjectIdHash: 0
+  GlobalObjectIdHash: 967328550
+  InScenePlacedSourceGlobalObjectIdHash: 3378528711
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -229,3 +235,34 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &959106439813151100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5649482149248009159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 10
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
+--- !u!114 &2141171502203508454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5649482149248009159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66559d7f60f743d69bc18b29cd97dccb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.Outliner
+  _outline: {fileID: 959106439813151100}

@@ -12,6 +12,7 @@ namespace Gameplay.Items.Scripts.ItemData
         [SerializeField] public string itemName;
         [SerializeField] public GameObject visualPrefab;
         [SerializeField] public ItemPickup pickUpPrefab;
+        [SerializeField] public Sprite icon;
         [SerializeReference] public List<ILeftClick> leftClicksActions;
         [SerializeReference] public List<IRightClick> rightClicksActions;
         [SerializeReference] public List<ICondition> conditions;
