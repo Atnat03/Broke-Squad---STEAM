@@ -16,6 +16,7 @@ MonoBehaviour:
   itemName: Test
   visualPrefab: {fileID: 2517337150570892065, guid: 0140db76ebb5df24f921af7841261310, type: 3}
   pickUpPrefab: {fileID: 3642109076169085848, guid: 24f177f7526459e4c9e128fae0c282e5, type: 3}
+  icon: {fileID: 21300000, guid: b4cd618e171bd2542be68b4fe92cc9c8, type: 3}
   leftClicksActions:
   - rid: 7629053377233289478
   rightClicksActions:
@@ -23,15 +24,19 @@ MonoBehaviour:
   conditions:
   - rid: 7629053377233289477
   passif:
-  - rid: 7629053377233289735
+  - rid: 7203100815024980098
   references:
     version: 2
     RefIds:
+    - rid: 7203100815024980098
+      type: {class: DestroyWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _minVelocityForDestroy: 5
     - rid: 7629053358023639123
       type: {class: ThrowModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minThrowForce: {x: 0, y: 0, z: 0}
-        _maxThrowForce: {x: 0, y: 2, z: 12}
+        _maxThrowForce: {x: 0, y: 0, z: 12}
         _durationToFullFill: 0.5
         _torqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: 0.7
@@ -45,8 +50,3 @@ MonoBehaviour:
       type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _strength: 10
-    - rid: 7629053377233289735
-      type: {class: StunModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
-      data:
-        _minVelocityForStun: 2
-        _stunDuration: 1

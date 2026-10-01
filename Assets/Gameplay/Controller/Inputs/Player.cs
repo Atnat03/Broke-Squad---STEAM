@@ -191,6 +191,36 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": true,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""RightLean"",
+                    ""type"": ""Button"",
+                    ""id"": ""7390eba6-7217-4df9-9779-d1a07590da99"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
+                    ""name"": ""LeftLean"",
+                    ""type"": ""Button"",
+                    ""id"": ""5c1cd1ad-a541-4712-8cdf-79c398b862b0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
+                    ""name"": ""MouseRoll"",
+                    ""type"": ""Value"",
+                    ""id"": ""16fd4ae5-f1f2-4b51-bc51-c6f5a90bf51d"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -347,6 +377,61 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""action"": ""MouseMovement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d35678a4-42f3-4449-8eda-39fa8ad5ac40"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RightLean"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cb2126e1-69fc-467c-9eca-39000ce03967"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LeftLean"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""2310293f-6ded-41bf-a5f0-f41f57fca6fc"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseRoll"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""b9c28fba-5b31-4621-b831-63284dc3e47f"",
+                    ""path"": ""<Mouse>/scroll/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseRoll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""a37ead18-1580-4188-a783-c859c39371c1"",
+                    ""path"": ""<Mouse>/scroll/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseRoll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -365,6 +450,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
         m_Gameplay_Crouch = m_Gameplay.FindAction("Crouch", throwIfNotFound: true);
         m_Gameplay_Interact = m_Gameplay.FindAction("Interact", throwIfNotFound: true);
         m_Gameplay_MouseMovement = m_Gameplay.FindAction("MouseMovement", throwIfNotFound: true);
+        m_Gameplay_RightLean = m_Gameplay.FindAction("RightLean", throwIfNotFound: true);
+        m_Gameplay_LeftLean = m_Gameplay.FindAction("LeftLean", throwIfNotFound: true);
+        m_Gameplay_MouseRoll = m_Gameplay.FindAction("MouseRoll", throwIfNotFound: true);
     }
 
     ~@Player()
@@ -455,6 +543,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Crouch;
     private readonly InputAction m_Gameplay_Interact;
     private readonly InputAction m_Gameplay_MouseMovement;
+    private readonly InputAction m_Gameplay_RightLean;
+    private readonly InputAction m_Gameplay_LeftLean;
+    private readonly InputAction m_Gameplay_MouseRoll;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -506,6 +597,18 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Gameplay/MouseMovement".
         /// </summary>
         public InputAction @MouseMovement => m_Wrapper.m_Gameplay_MouseMovement;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/RightLean".
+        /// </summary>
+        public InputAction @RightLean => m_Wrapper.m_Gameplay_RightLean;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/LeftLean".
+        /// </summary>
+        public InputAction @LeftLean => m_Wrapper.m_Gameplay_LeftLean;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/MouseRoll".
+        /// </summary>
+        public InputAction @MouseRoll => m_Wrapper.m_Gameplay_MouseRoll;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -562,6 +665,15 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @MouseMovement.started += instance.OnMouseMovement;
             @MouseMovement.performed += instance.OnMouseMovement;
             @MouseMovement.canceled += instance.OnMouseMovement;
+            @RightLean.started += instance.OnRightLean;
+            @RightLean.performed += instance.OnRightLean;
+            @RightLean.canceled += instance.OnRightLean;
+            @LeftLean.started += instance.OnLeftLean;
+            @LeftLean.performed += instance.OnLeftLean;
+            @LeftLean.canceled += instance.OnLeftLean;
+            @MouseRoll.started += instance.OnMouseRoll;
+            @MouseRoll.performed += instance.OnMouseRoll;
+            @MouseRoll.canceled += instance.OnMouseRoll;
         }
 
         /// <summary>
@@ -603,6 +715,15 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @MouseMovement.started -= instance.OnMouseMovement;
             @MouseMovement.performed -= instance.OnMouseMovement;
             @MouseMovement.canceled -= instance.OnMouseMovement;
+            @RightLean.started -= instance.OnRightLean;
+            @RightLean.performed -= instance.OnRightLean;
+            @RightLean.canceled -= instance.OnRightLean;
+            @LeftLean.started -= instance.OnLeftLean;
+            @LeftLean.performed -= instance.OnLeftLean;
+            @LeftLean.canceled -= instance.OnLeftLean;
+            @MouseRoll.started -= instance.OnMouseRoll;
+            @MouseRoll.performed -= instance.OnMouseRoll;
+            @MouseRoll.canceled -= instance.OnMouseRoll;
         }
 
         /// <summary>
@@ -713,5 +834,26 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMouseMovement(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RightLean" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRightLean(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "LeftLean" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLeftLean(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MouseRoll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMouseRoll(InputAction.CallbackContext context);
     }
 }

@@ -13,6 +13,7 @@ namespace Gameplay.IA.Scripts
     {
         [SerializeField] private float _speedPatrol = 2;
         [SerializeField] private float _speedChase = 3;
+        [SerializeField] private float _distanceToStopChasing = 5;
         [SerializeField] private GuardFieldOfView _guardFieldOfView;
 
         [Header("Color")]
@@ -48,6 +49,8 @@ namespace Gameplay.IA.Scripts
         private bool _isAttacking;
         private Coroutine _hitColorCoroutine;
 
+        private Transform _target;
+        
         public override void OnNetworkSpawn()
         {
             _isInChase.OnValueChanged += GuardStateChange;
@@ -67,6 +70,8 @@ namespace Gameplay.IA.Scripts
 
             ApplyStateColor(_isInChase.Value);
             RefreshHealthUI(_currentHealth.Value);
+            
+            Patrol();
         }
         
 
@@ -132,17 +137,26 @@ namespace Gameplay.IA.Scripts
         private void Update()
         {
             if (!IsServer) return;
+            if (_isStun.Value) return;
 
-            if (_isStun.Value)
-                return;
-            
+            // Si je la vois, je (re)prends la cible
+            if (_guardFieldOfView.CanSeeTarget && _guardFieldOfView.Target != null)
+            {
+                _target = _guardFieldOfView.Target;
+            }
+            // Sinon je la garde tant qu'elle est assez proche, je la perds si elle est trop loin
+            else if (_target != null &&
+                     Vector3.Distance(_target.position, transform.position) > _distanceToStopChasing)
+            {
+                _target = null;
+            }
 
-            bool canSee = _guardFieldOfView.CanSeeTarget && _guardFieldOfView.Target != null;
+            bool isChasing = _target != null;
 
-            if (_isInChase.Value != canSee)
-                _isInChase.Value = canSee;
+            if (_isInChase.Value != isChasing)
+                _isInChase.Value = isChasing;
 
-            if (canSee)
+            if (isChasing)
             {
                 Chase();
 
@@ -172,8 +186,7 @@ namespace Gameplay.IA.Scripts
                 yield return null;
             }
 
-            Transform target = _guardFieldOfView.Target;
-            if (target != null && target.TryGetComponent(out PlayerData.PlayerData player))
+            if (_target != null && _target.TryGetComponent(out PlayerData.PlayerData player))
                 player.TakeDamage(_damage);
 
             yield return new WaitForSeconds(_attackCooldown);
@@ -183,20 +196,19 @@ namespace Gameplay.IA.Scripts
 
         private bool IsTargetInAttackRange()
         {
-            Transform target = _guardFieldOfView.Target;
-            if (target == null) 
+            if (_target == null) 
                 return false;
 
-            return Vector3.Distance(target.position, transform.position) < _attackRange;
+            return Vector3.Distance(_target.position, transform.position) < _attackRange;
         }
 
         private void Chase()
         {
-            if (IsTargetInAttackRange())
+            if (_target == null ||IsTargetInAttackRange())
                 return;
             
             _agent.speed = _speedChase;
-            _agent.SetDestination(_guardFieldOfView.Target.position);
+            _agent.SetDestination(_target.position);
         }
 
         private void Patrol()
