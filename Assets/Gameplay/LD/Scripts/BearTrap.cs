@@ -106,14 +106,13 @@ namespace Assets.Gameplay.LD.Scripts
 
             if (!willBeArmed)
                 CancelCountDown(); // désamorcé : plus de dégâts prévus
-            triggerAnimator.SetTrigger(triggerDisarmStateName);
+            //triggerAnimator.SetTrigger(triggerDisarmStateName);
             isArmed.Value = willBeArmed;
         }
 
         [Rpc(SendTo.ClientsAndHost)]
         private void SnapClientRpc()
         {
-            triggerAnimator.SetTrigger(triggerArmStateName);
             // TODO : Ici pour sfx + vfx
         }
 
@@ -143,7 +142,9 @@ namespace Assets.Gameplay.LD.Scripts
 
             foreach (Renderer meshRenderer in renderers)
                 meshRenderer.sharedMaterial = material;
-
+            
+            triggerAnimator.SetTrigger(isArmed.Value ? triggerArmStateName : triggerDisarmStateName);
+            
             // ouvert si amorcé / fermé sinon, voir avec l'animator
         }
     }
