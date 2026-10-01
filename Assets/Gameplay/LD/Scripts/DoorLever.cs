@@ -70,7 +70,7 @@ namespace Assets.Gameplay.LD.Scripts
                 return;
             }
 
-            if (!door.TryOpen(_doorID)) return;
+            if (!door.TryOpen(new Vector2Int(_doorID, _doorID))) return;
 
             _isActivated.Value = !_isActivated.Value;
         }
