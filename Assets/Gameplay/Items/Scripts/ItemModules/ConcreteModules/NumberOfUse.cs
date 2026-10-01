@@ -1,5 +1,4 @@
 ﻿using System;
-using MyPrint;
 using UnityEngine;
 
 namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
@@ -10,46 +9,33 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
         [SerializeField] private int _maxUse = 3;
         [SerializeField] private ItemInput _inputType;
         [SerializeField] private bool _destroyWhenUsed = false;
-        private int _currentUse = 0;
+        private int _currentUse;
 
         public ItemInput InputType => _inputType;
-        
-        protected override void SetModule()
-        {
-            _currentUse = _maxUse;
-        }
+        public int MaxUse => _maxUse;
+        public int CurrentUse => _currentUse;
+        public bool ShouldDestroy => _destroyWhenUsed && _currentUse <= 0;
 
-        public bool CheckCondition()
-        {
-            return _currentUse > 0;
-        }
+        protected override void SetModule() => _currentUse = _maxUse;
 
-        public void UseItem()
+        public bool CheckCondition() => Context.Inventory.Uses.x > 0;
+
+        public void UseItem() => Context.Inventory.RequestUseItem();
+
+        public bool Consume()
         {
+            if (_currentUse <= 0) return false;
             _currentUse--;
-
-            if (_destroyWhenUsed && _currentUse == 0)
-            {
-                Context.Inventory.DestroyItemInHand();
-                Context.Inventory.EnableUseText(false);
-            }
-            
-            PushToUI();
+            return true;
         }
-        
+
         protected override void OnBind()
         {
             Context.Inventory.EnableUseText(true);
-            PushToUI();
-        }
-        
-        private void PushToUI()
-        {
-            if (Context?.Inventory != null && Context.Inventory.IsServer)
-                Context.Inventory.UpdateTextUse(_currentUse + "/" + _maxUse);
+            Vector2Int u = Context.Inventory.Uses;
+            if (u.y > 0) Context.Inventory.UpdateTextUse(u.x + "/" + u.y);
         }
 
-        public void ThrowItem()
-        { }
+        public void ThrowItem() { }
     }
 }
