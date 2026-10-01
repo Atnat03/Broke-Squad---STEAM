@@ -1,16 +1,17 @@
-﻿using System;
+﻿using Assets.Gameplay.LD.Scripts;
 using Bus;
 using Gameplay.Controller;
 using Gameplay.Items.Scripts;
 using Gameplay.Items.Scripts.ItemData;
 using Gameplay.Items.Scripts.ItemModules.ConcreteModules;
 using Gameplay.Items.Scripts.PlayerItemGestion;
+using Gameplay.LD.Scripts;
+using System;
+using System.Linq;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
-using Gameplay.LD.Scripts;
 
 namespace Gameplay.Items.Scripts
 {
@@ -92,6 +93,9 @@ namespace Gameplay.Items.Scripts
                     InvokeEvent(new OnInteractItemInWorld());
                 }
             }
+
+            IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
+            interactable?.Interact();
         }
         
         private void CheckOpenDoor()
