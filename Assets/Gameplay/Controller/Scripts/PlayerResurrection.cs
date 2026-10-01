@@ -192,7 +192,12 @@ namespace Gameplay.Controller
 
             if (TryGetComponent(out PlayerController controller))
                 controller.Revive();
+            ReviveServerRpc();
+        }
 
+        [Rpc(SendTo.Server)]
+        private void ReviveServerRpc()
+        {
             InvokeEvent(new PlayerRevivedEvent { playerID = OwnerClientId });
         }
     }
