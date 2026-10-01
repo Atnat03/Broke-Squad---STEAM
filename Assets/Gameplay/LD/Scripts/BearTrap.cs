@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace Assets.Gameplay.LD.Scripts
 {
+    [RequireComponent(typeof(NetworkObject))]
     public class BearTrap : NetworkBusListener, IInteractable
     {
         [SerializeField] private int damage;
@@ -14,7 +15,8 @@ namespace Assets.Gameplay.LD.Scripts
         [Tooltip("Temps en secondes avant que le piège se déclenche après qu'un joueur soit entré dans la zone de détection.")]
         [SerializeField] private float triggerTime;
         [SerializeField] private Animator triggerAnimator;
-        [SerializeField] private string triggerStateName = "Trigger";
+        [SerializeField] private string triggerArmStateName = "Trigger";
+        [SerializeField] private string triggerDisarmStateName = "Trigger";
 
         [SerializeField] private float interactionRange = 4f;
 
@@ -71,7 +73,7 @@ namespace Assets.Gameplay.LD.Scripts
 
             isArmed.Value = false;
 
-            if (player != null) player.TakeDamage(damage);
+            if (player != null) player.ApplyDamage(damage);
 
             SnapClientRpc();
         }
@@ -104,14 +106,14 @@ namespace Assets.Gameplay.LD.Scripts
 
             if (!willBeArmed)
                 CancelCountDown(); // désamorcé : plus de dégâts prévus
-
+            triggerAnimator.SetTrigger(triggerDisarmStateName);
             isArmed.Value = willBeArmed;
         }
 
         [Rpc(SendTo.ClientsAndHost)]
         private void SnapClientRpc()
         {
-            //triggerAnimator.Play(triggerStateName, 0);
+            triggerAnimator.SetTrigger(triggerArmStateName);
             // TODO : Ici pour sfx + vfx
         }
 

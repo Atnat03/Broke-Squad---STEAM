@@ -18,7 +18,7 @@ MonoBehaviour:
   pickUpPrefab: {fileID: 6331364238040384090, guid: 89113756ee8a8ab459b17590f66471c7, type: 3}
   icon: {fileID: 21300000, guid: 8df04a7fb27ff394baf99d9567cd5136, type: 3}
   leftClicksActions:
-  - rid: 7629053377233289476
+  - rid: 7203100815024980319
   rightClicksActions:
   - rid: 7629053358023639120
   conditions: []
@@ -26,6 +26,11 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 7203100815024980319
+      type: {class: HealModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _healAmount: 10
+        _distanceToHeal: 2
     - rid: 7629053358023639120
       type: {class: ThrowModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
@@ -34,8 +39,3 @@ MonoBehaviour:
         _durationToFullFill: 2
         _torqueForce: {x: 0, y: 15, z: 0}
         _spawnDistance: 0.7
-    - rid: 7629053377233289476
-      type: {class: ChargeItemModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
-      data:
-        _amountPercentChargePerClick: 25
-        _range: 2

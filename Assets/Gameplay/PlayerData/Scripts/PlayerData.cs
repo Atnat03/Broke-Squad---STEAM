@@ -1,10 +1,12 @@
+using System;
 using Bus;
+using Gameplay.LD.Scripts;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace Gameplay.PlayerData
 {
-    public class PlayerData : NetworkBusListener
+    public class PlayerData : NetworkBusListener, IDamageable
     {
         public const int MaxHpValue = 100;
 
@@ -40,18 +42,29 @@ namespace Gameplay.PlayerData
         [ContextMenu("Test")]
         public void Test()
         {
-            TakeDamage(10);
+            ApplyDamage(10);
         }
         
-        public void TakeDamage(int damage)
+        public void ApplyDamage(float damage)
         {
             if (!IsServer || damage <= 0 || _playerDead.Value)
                 return;
 
-            _playerHp.Value = Mathf.Max(0, _playerHp.Value - damage);
+            _playerHp.Value = Mathf.Max(0, _playerHp.Value - (int)damage);
 
             if (_playerHp.Value <= 0)
                 SetPlayerDead(true);
+        }
+
+        public void Heal(float amount)
+        {
+            if (!IsServer || amount <= 0 || _playerDead.Value)
+                return;
+            
+            _playerHp.Value += (int)amount;
+            
+            if(_playerHp.Value >= MaxHpValue)
+                _playerHp.Value = MaxHpValue;
         }
 
         private void SetPlayerDead(bool dead)
