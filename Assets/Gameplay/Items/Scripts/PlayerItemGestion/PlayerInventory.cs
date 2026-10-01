@@ -94,7 +94,7 @@ namespace Gameplay.Items.Scripts
                 }
             }
 
-            IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
+            IInteractable interactable = hit.collider?.GetComponentInParent<IInteractable>();
             interactable?.Interact();
         }
         

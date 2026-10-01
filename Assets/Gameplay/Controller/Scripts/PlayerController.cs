@@ -461,8 +461,14 @@ namespace Gameplay.Controller
             if (e.playerID == OwnerClientId)
             {
                 _playerDead = true;
+                _rb.linearVelocity = Vector3.zero;
             }
             
+        }
+
+        public void Revive()
+        {
+            _playerDead = false;
         }
     }
 }

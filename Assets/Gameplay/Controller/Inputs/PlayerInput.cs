@@ -24,6 +24,7 @@ namespace Gameplay.Controller
         public Action OnCrouchInputCanceled;
         
         public Action OnInteractInput;
+        public Action OnInteractInputCanceled;
 
         public  Action OnLeanLeftInput;
         public  Action OnLeanLeftInputCanceled;
@@ -60,6 +61,7 @@ namespace Gameplay.Controller
             _playerInputs.Gameplay.Crouch.canceled += PerformCrouchCanceled;
             
             _playerInputs.Gameplay.Interact.performed += PerformInteract;
+            _playerInputs.Gameplay.Interact.canceled += PerformInteractCanceled;
             
             _playerInputs.Gameplay.RightLean.performed += PerformRightLean;
             _playerInputs.Gameplay.RightLean.canceled += PerformRightLeanCanceled;
@@ -157,6 +159,11 @@ namespace Gameplay.Controller
         private void PerformInteract(InputAction.CallbackContext context)
         {
             OnInteractInput?.Invoke();
+        }
+
+        private void PerformInteractCanceled(InputAction.CallbackContext context)
+        {
+            OnInteractInputCanceled?.Invoke();
         }
         
         private void PerformeMouseMovement(InputAction.CallbackContext context)
