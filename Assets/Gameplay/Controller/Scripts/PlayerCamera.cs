@@ -44,6 +44,7 @@ namespace Gameplay.Controller
         private BobProfile _walkBob = new BobProfile { amplitudeY = 0.025f, amplitudeX = 0.015f, roll = 0.3f, frequency = 1.6f };
         private BobProfile _sprintBob = new BobProfile { amplitudeY = 0.04f, amplitudeX = 0.025f, roll = 0.6f, frequency = 2.2f };
         private BobProfile _crouchBob = new BobProfile { amplitudeY = 0.015f, amplitudeX = 0.01f, roll = 0.2f, frequency = 1.1f };
+        private BobProfile _downBob = new BobProfile { amplitudeY = 0.015f, amplitudeX = 0.01f, roll = 0.2f, frequency = 0.7f };
         private float _backwardBobMultiplier = 0f;
         private float _profileLerpSpeed = 6f;
         private float _bobFadeIn = 0.15f;
@@ -171,6 +172,8 @@ namespace Gameplay.Controller
             BobProfile targetProfile = player.IsCrouching ? _crouchBob
                 : player.IsSprinting ? _sprintBob
                 : _walkBob;
+            if (player.IsDown) targetProfile = _downBob;
+            
             _bob = BobProfile.Lerp(_bob, targetProfile, 1f - Mathf.Exp(-_profileLerpSpeed * dt));
             
             float targetBackward = moving ? Mathf.Clamp01(-player.ForwardDot) : 0f; 
@@ -249,6 +252,7 @@ namespace Gameplay.Controller
             _leanSmoothTime = profile.leanSmoothTime;
             _leanCameraRadius = profile.leanCameraRadius;
             _leanWallPadding = profile.leanWallPadding;
+            _downBob = profile.downBob;
 
         }
     }

@@ -43,7 +43,7 @@
             [ContextMenu("Test")]
             public void Test()
             {
-                ApplyDamage(10);
+                ApplyDamage(100);
             }
             
             public void ApplyDamage(float damage)

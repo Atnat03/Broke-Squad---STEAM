@@ -18,12 +18,14 @@ namespace Network.HUB
     {
         public static int MAX_PLAYER_COUNT => MAX_PLAYER;
         const int MAX_PLAYER = 4;
-
-        [SerializeField] private string _sceneNameToPlayTogether;
         
         //Lobby var
         private Lobby _hostLobby;
         private Lobby _joinedLobby;
+        
+        //KeyDataName
+        private string KEY_RELAY = "Relay";
+        private string KEY_MAP = "Map";
 
         //Current time before update Lobbies
         private float _heartbeatTimer;
@@ -34,6 +36,10 @@ namespace Network.HUB
         [SerializeField] private float _lobbyUpdateTimerMax = 2f;
         [SerializeField] private float _heartbeatTimerMax = 3f;
         [SerializeField] private float _lobbyListUpdateTimerMax = 1.5f;
+        
+        //In Lobby
+        private string _sceneNameToPlayTogether;
+        private string _selectedMap;
 
         //Other variables
         private string _playerName;
@@ -43,6 +49,8 @@ namespace Network.HUB
         public Action<Lobby, bool> OnJoinLobby;
         public Action<List<Lobby>> OnUpdateJoinedLobby;
         public Action<Lobby> OnUpdateLobbyInfo;
+        public Action<string> OnMapUpdated;
+        public Action OnTryToJoinGame;
 
         private async void Start()
         {
@@ -60,6 +68,10 @@ namespace Network.HUB
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
                 _playerName = "Player " + Random.Range(0, 99);
+                
+                string _sceneName = SceneUtility.GetScenePathByBuildIndex(1);
+                _sceneNameToPlayTogether = System.IO.Path.GetFileNameWithoutExtension(_sceneName);
+                _selectedMap = _sceneNameToPlayTogether;
             }
             catch (Exception e)
             {
@@ -125,8 +137,10 @@ namespace Network.HUB
                 
                 if (IsLobbyHost() || _relayJoined) return;
 
-                if (_joinedLobby.Data.TryGetValue("Relay", out var relayData) && relayData.Value != "0")
+                if (_joinedLobby.Data.TryGetValue(KEY_RELAY, out var relayData) && relayData.Value != "0")
                 {
+                    OnTryToJoinGame?.Invoke();
+                    
                     _relayJoined = true;
                     _relayJoined = await RelayManager.instance.JoinRelay(relayData.Value);
                 }
@@ -171,8 +185,9 @@ namespace Network.HUB
                     IsLocked = true,
                     Data = new Dictionary<string, DataObject>
                     {
-                        { "Relay", new DataObject(DataObject.VisibilityOptions.Member, relayCode) }
-                    }
+                        { KEY_RELAY, new DataObject(DataObject.VisibilityOptions.Member, relayCode) },
+                        { KEY_MAP,  new DataObject(DataObject.VisibilityOptions.Member, _selectedMap) }
+                }
                 });
 
                 int expected = _joinedLobby.Players.Count;
@@ -183,7 +198,9 @@ namespace Network.HUB
                     await System.Threading.Tasks.Task.Yield();
                 }
 
-                NetworkManager.Singleton.SceneManager.LoadScene(_sceneNameToPlayTogether, LoadSceneMode.Single);
+                string map = _joinedLobby.Data[KEY_MAP].Value;
+                
+                NetworkManager.Singleton.SceneManager.LoadScene(map, LoadSceneMode.Single);
             }
             catch (Exception e)
             {
@@ -204,7 +221,8 @@ namespace Network.HUB
                     Player = GetNewPlayer(),
                     Data = new Dictionary<string, DataObject>
                     {
-                        { "Relay", new DataObject(DataObject.VisibilityOptions.Member, "0") },
+                        { KEY_RELAY, new DataObject(DataObject.VisibilityOptions.Member, "0") },
+                        { KEY_MAP, new DataObject(DataObject.VisibilityOptions.Member, _selectedMap) },
                     }
                 };
 
@@ -366,6 +384,36 @@ namespace Network.HUB
 
             return false;
         }
+        
+        public void SetMapButton(string id) => SetMap(id);
+  
+        public async void SetMap(string newMapName)
+        {
+            if (!IsLobbyHost()) return;
+
+            try
+            {
+                ABPrint.Print("try to update map : " + newMapName, ABColor.Red);
+                
+                await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, new UpdateLobbyOptions
+                {
+                    Data = new Dictionary<string, DataObject>
+                    {
+                        { KEY_MAP, new DataObject(DataObject.VisibilityOptions.Member, newMapName) }
+                    }
+                });
+
+                _selectedMap = newMapName;
+                OnMapUpdated?.Invoke(newMapName);
+                
+                ABPrint.Print("Map updated : " + newMapName, ABColor.Yellow);
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+        }
+
 
         #endregion
     }
