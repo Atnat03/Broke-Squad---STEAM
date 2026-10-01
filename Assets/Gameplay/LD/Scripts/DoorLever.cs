@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Assets.Gameplay.LD.Scripts
 {
+    [RequireComponent(typeof(NetworkObject))]
     public class DoorLever : NetworkBusListener, IInteractable
     {
         [SerializeField] private int _doorID;
