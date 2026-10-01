@@ -1,4 +1,5 @@
 ﻿using Bus;
+using Gameplay.LD.Scripts;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ namespace Assets.Gameplay.LD.Scripts
     public class DoorLever : NetworkBusListener, IInteractable
     {
         [SerializeField] private int _doorID;
+        [SerializeField] private GameObject _door;
         [SerializeField] private Animator _animator;
         [SerializeField] private string _activateStateName = "Activate";
         [SerializeField] private string _deactivateStateName = "Deactivate";
@@ -37,6 +39,13 @@ namespace Assets.Gameplay.LD.Scripts
         private void PlayLeverAnimation(bool activated, float normalizedTime)
         {
             string stateName = activated ? _activateStateName : _deactivateStateName;
+
+            if (!_animator.HasState(0, Animator.StringToHash(stateName)))
+            {
+                Debug.LogWarning($"DoorLever: état '{stateName}' introuvable dans l'Animator", this);
+                return;
+            }
+
             _animator.Play(stateName, 0, normalizedTime);
         }
 
@@ -54,6 +63,14 @@ namespace Assets.Gameplay.LD.Scripts
 
             float distanceToLever = Vector3.Distance(playerNetworkObject.transform.position, transform.position);
             if (distanceToLever > _interactionRange) return;
+
+            if (_door == null || !_door.TryGetComponent(out Door door))
+            {
+                Debug.LogWarning("DoorLever: la porte assignée est vide ou n'a pas de script Door", this);
+                return;
+            }
+
+            if (!door.TryOpen(_doorID)) return;
 
             _isActivated.Value = !_isActivated.Value;
         }
