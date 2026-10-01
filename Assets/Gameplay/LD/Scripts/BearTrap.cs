@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace Assets.Gameplay.LD.Scripts
 {
+    [RequireComponent(typeof(NetworkObject))]
     public class BearTrap : NetworkBusListener, IInteractable
     {
         [SerializeField] private int damage;
