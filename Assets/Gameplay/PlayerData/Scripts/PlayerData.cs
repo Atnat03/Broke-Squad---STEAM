@@ -1,116 +1,114 @@
-using System;
-using Bus;
-using Gameplay.LD.Scripts;
-using Unity.Netcode;
-using UnityEngine;
+    using System;
+    using Bus;
+    using Gameplay.LD.Scripts;
+    using Unity.Netcode;
+    using UnityEngine;
 
-namespace Gameplay.PlayerData
-{
-    public class PlayerData : NetworkBusListener, IDamageable
+    namespace Gameplay.PlayerData
     {
-        public const int MaxHpValue = 100;
-
-        private readonly NetworkVariable<int> _playerHp =
-            new NetworkVariable<int>(
-                MaxHpValue,
-                NetworkVariableReadPermission.Everyone,
-                NetworkVariableWritePermission.Server);
-
-        private readonly NetworkVariable<bool> _playerDead =
-            new NetworkVariable<bool>(
-                false,
-                NetworkVariableReadPermission.Everyone,
-                NetworkVariableWritePermission.Server);
-        
-        public int CurrentHp => _playerHp.Value;
-        public int MaxHp => MaxHpValue;
-
-        public override void OnNetworkSpawn()
+        public class PlayerData : NetworkBusListener, IDamageable
         {
-            base.OnNetworkSpawn();
+            public const int MaxHpValue = 100;
 
-            ListenToEvent<PlayerRevivedEvent>(Revive);
-            _playerHp.OnValueChanged += OnHpChanged;
-        }
+            private readonly NetworkVariable<int> _playerHp =
+                new NetworkVariable<int>(
+                    MaxHpValue,
+                    NetworkVariableReadPermission.Everyone,
+                    NetworkVariableWritePermission.Server);
 
-        public override void OnNetworkDespawn()
-        {
-            _playerHp.OnValueChanged -= OnHpChanged;
-
-            base.OnNetworkDespawn();
-        }
-
-        [ContextMenu("Test")]
-        public void Test()
-        {
-            ApplyDamage(10);
-        }
-        
-        public void ApplyDamage(float damage)
-        {
-            if (!IsServer || damage <= 0 || _playerDead.Value)
-                return;
-
-            _playerHp.Value = Mathf.Max(0, _playerHp.Value - (int)damage);
-
-            if (_playerHp.Value <= 0)
-                SetPlayerDead(true);
-        }
-
-        public void Heal(float amount)
-        {
-            if (!IsServer || amount <= 0 || _playerDead.Value)
-                return;
+            private readonly NetworkVariable<bool> _playerDead =
+                new NetworkVariable<bool>(
+                    false,
+                    NetworkVariableReadPermission.Everyone,
+                    NetworkVariableWritePermission.Server);
             
-            _playerHp.Value += (int)amount;
-            
-            if(_playerHp.Value >= MaxHpValue)
-                _playerHp.Value = MaxHpValue;
-        }
+            public int CurrentHp => _playerHp.Value;
+            public int MaxHp => MaxHpValue;
 
-        private void SetPlayerDead(bool dead)
-        {
-            if (_playerDead.Value == dead)
-                return;
-
-            _playerDead.Value = dead;
-
-            if (dead)
-                NotifyDeathOwnerRpc();
-        }
-        
-        private void OnHpChanged(int previousHp, int newHp)
-        {
-            if (!IsOwner)
-                return;
-
-            PublishHp();
-        }
-
-        private void PublishHp()
-        {
-            InvokeEvent(new PlayerDataEvent
+            public override void OnNetworkSpawn()
             {
-                playerHp = _playerHp.Value,
-                maxHp = MaxHpValue
-            });
-        }
+                base.OnNetworkSpawn();
 
-        private void Revive(PlayerRevivedEvent e)
-        {
-            _playerHp.Value = MaxHp;
-            _playerDead.Value = false;
-        }
-        
-        [Rpc(SendTo.Owner)]
-        private void NotifyDeathOwnerRpc()
-        {
-            InvokeEvent(new PlayerDeathEvent
+                ListenToEvent<PlayerRevivedEvent>(Revive);
+                _playerHp.OnValueChanged += OnHpChanged;
+            }
+
+            public override void OnNetworkDespawn()
             {
-                playerID = OwnerClientId
-            });
+                _playerHp.OnValueChanged -= OnHpChanged;
+
+                base.OnNetworkDespawn();
+            }
+
+            [ContextMenu("Test")]
+            public void Test()
+            {
+                ApplyDamage(10);
+            }
             
+            public void ApplyDamage(float damage)
+            {
+                if (!IsServer || damage <= 0 || _playerDead.Value)
+                    return;
+
+                _playerHp.Value = Mathf.Max(0, _playerHp.Value - (int)damage);
+
+                if (_playerHp.Value <= 0)
+                    SetPlayerDead(true);
+            }
+
+            public void Heal(float amount)
+            {
+                if (!IsServer || amount <= 0 || _playerDead.Value)
+                    return;
+
+                _playerHp.Value = Mathf.Min(_playerHp.Value + (int)amount, MaxHpValue);
+            }
             
+
+            private void SetPlayerDead(bool dead)
+            {
+                if (_playerDead.Value == dead)
+                    return;
+
+                _playerDead.Value = dead;
+
+                if (dead)
+                    NotifyDeathOwnerRpc();
+            }
+            
+            private void OnHpChanged(int previousHp, int newHp)
+            {
+                if (!IsOwner)
+                    return;
+
+                PublishHp();
+            }
+
+            private void PublishHp()
+            {
+                InvokeEvent(new PlayerDataEvent
+                {
+                    playerHp = _playerHp.Value,
+                    maxHp = MaxHpValue
+                });
+            }
+
+            private void Revive(PlayerRevivedEvent e)
+            {
+                _playerHp.Value = MaxHp;
+                _playerDead.Value = false;
+            }
+            
+            [Rpc(SendTo.Owner)]
+            private void NotifyDeathOwnerRpc()
+            {
+                InvokeEvent(new PlayerDeathEvent
+                {
+                    playerID = OwnerClientId
+                });
+                
+                
+            }
         }
     }
-}

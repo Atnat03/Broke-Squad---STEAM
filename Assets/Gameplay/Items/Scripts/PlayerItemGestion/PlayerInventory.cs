@@ -57,6 +57,9 @@ namespace Gameplay.Items.Scripts
         private readonly NetworkVariable<int> _heldItemId = new(-1);
         private readonly NetworkVariable<float> _electricPercent = new(0f);
         
+        private readonly NetworkVariable<Vector2Int> _uses = new(new Vector2Int(-1, -1));
+        public Vector2Int Uses => _uses.Value;
+        
         private PlayerInput _input;
         private ItemCore _currentItem;
         private Outliner _currentHoverItem = null;
@@ -72,6 +75,8 @@ namespace Gameplay.Items.Scripts
             _electricPercent.OnValueChanged += OnElectricPercentChanged;
 
             _selectedSlot.OnValueChanged += OnSelectedSlotChanged;
+            
+            _uses.OnValueChanged += OnUsesChanged;
 
             if (_heldItemId.Value != -1)
                 OnHeldItemChanged(-1, _heldItemId.Value);
@@ -79,7 +84,8 @@ namespace Gameplay.Items.Scripts
             if (IsOwner)
             {
                 _input.OnInteractInput += OnInteract;
-
+                _input.OnInteractInput += CheckOpenDoor;
+                
                 for (int i = 0; i < _slotsUIList.Length; i++)
                 {
                     _slotsUIList[i] = Instantiate(_slotPrefabUI, _parentInventory);
@@ -93,7 +99,6 @@ namespace Gameplay.Items.Scripts
             EnableElectricInfo(false);
             EnableUseText(false);
 
-            _input.OnStartLeftInput += CheckOpenDoor;
             _input.OnMouseRoll += OnSelectedItemChange;
         }
 
@@ -105,10 +110,15 @@ namespace Gameplay.Items.Scripts
             
             _selectedSlot.OnValueChanged -= OnSelectedSlotChanged;
 
+            _uses.OnValueChanged -= OnUsesChanged;
+
             if (_input != null)
             {
-                if (IsOwner) _input.OnInteractInput -= OnInteract;
-                _input.OnStartLeftInput -= CheckOpenDoor;
+                if (IsOwner)
+                {
+                    _input.OnInteractInput -= CheckOpenDoor;
+                    _input.OnInteractInput -= OnInteract;
+                }
             }
         }
 
@@ -140,42 +150,53 @@ namespace Gameplay.Items.Scripts
         
         private void CheckOpenDoor()
         {
-            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
+                    out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore))
             {
-                if (hit.transform.TryGetComponent(out Door door))
-                {
-                    if (!door.CanOpenWithoutKey)
-                        return;
-                    
-                    door.TryOpen(new Vector2Int(-1, -1));
-                }
+                Door door = hit.collider.GetComponentInParent<Door>();
+                if (door == null) return;
+
+                if (!door.CanOpenWithoutKey) return;
+
+                if (door.TryGetComponent(out NetworkObject netObj))
+                    ToggleDoorRpc(netObj);
             }
         }
 
+        [Rpc(SendTo.Server)]
+        private void ToggleDoorRpc(NetworkObjectReference doorRef)
+        {
+            if (!doorRef.TryGet(out NetworkObject netObj)) return;
+            if (!netObj.TryGetComponent(out Door door)) return;
+            if (Vector3.Distance(transform.position, netObj.transform.position) > _range + 1.5f) return;
 
+            door.TryOpen(new Vector2Int(-1, -1));
+        }
+        
         private void Update()
         {
-            if (HasItemInHand()) return;
-            if (!IsOwner) return;
-            
+            if (!IsOwner || _camera == null) return;
+
+            Outliner target = null;
+
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
-                    out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore)
-                && hit.transform.TryGetComponent(out Outliner pickup))
+                    out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore))
             {
-                if(_currentHoverItem == null)
-                {
-                    _currentHoverItem = pickup;
-                    _currentHoverItem.SetOutline(true);
-                }
+                target = hit.collider.GetComponentInParent<Outliner>();
+
+                if (target != null && _parent != null && target.transform.IsChildOf(_parent))
+                    target = null;
             }
-            else
-            {
-                if (_currentHoverItem != null)
-                {
-                    _currentHoverItem.SetOutline(false);
-                    _currentHoverItem = null;
-                }
-            }
+
+            if (target == _currentHoverItem) return;
+
+            if (_currentHoverItem != null)
+                _currentHoverItem.SetOutline(false);
+
+            _currentHoverItem = target;
+
+            if (_currentHoverItem != null)
+                _currentHoverItem.SetOutline(true);
         }
 
         [Rpc(SendTo.Server)]
@@ -220,11 +241,14 @@ namespace Gameplay.Items.Scripts
 
             ClearCurrentSlot();
         }
-
-
+        
         public void DestroyItemInHand()
         {
-            if (!IsServer) return;
+            if (!IsServer)
+            {
+                DestroyItemInHandRpc();
+                return;
+            }
 
             ItemInstance item = GetCurrentItemInHand();
             if (item == null) return;
@@ -234,6 +258,9 @@ namespace Gameplay.Items.Scripts
 
             ClearCurrentSlot();
         }
+
+        [Rpc(SendTo.Server)]
+        private void DestroyItemInHandRpc() => DestroyItemInHand();
 
         private void OnHeldItemChanged(int oldId, int newId)
         {
@@ -249,6 +276,7 @@ namespace Gameplay.Items.Scripts
 
                 EnableBar(false);
                 EnableElectricInfo(false);
+                EnableUseText(false);
                 
                 Destroy(_currentItem.gameObject);
                 _currentItem = null;
@@ -280,6 +308,35 @@ namespace Gameplay.Items.Scripts
             _currentItem = core;
             if (IsOwner) 
                 _currentItem.SubscribeToInput(_input);
+        }
+        
+        private void OnUsesChanged(Vector2Int prev, Vector2Int cur)
+        {
+            if (IsOwner && cur.y > 0)
+                UpdateTextUse(cur.x + "/" + cur.y);
+        }
+
+        public void RequestUseItem() => UseItemRpc();
+
+        [Rpc(SendTo.Server)]
+        private void UseItemRpc()
+        {
+            ItemInstance item = GetCurrentItemInHand();
+            if (item == null) return;
+
+            NumberOfUse module = item.Conditions.OfType<NumberOfUse>().FirstOrDefault();
+            if (module == null || !module.Consume()) return;
+
+            PublishUses();
+
+            if (module.ShouldDestroy)
+                DestroyItemInHand();
+        }
+
+        private void PublishUses()
+        {
+            NumberOfUse m = GetCurrentItemInHand()?.Conditions.OfType<NumberOfUse>().FirstOrDefault();
+            _uses.Value = m != null ? new Vector2Int(m.CurrentUse, m.MaxUse) : new Vector2Int(-1, -1);
         }
         
         private void LateUpdate()
@@ -376,7 +433,12 @@ namespace Gameplay.Items.Scripts
         public void UpdateElectricInfo(float percent) => _electicPercent.text = (int)percent + " %";
         public void EnableElectricInfo(bool state) { if (IsOwner) _electicUI.SetActive(state); }
         public void EnableBar(bool state)          { if (IsOwner) _throwUI.SetActive(state); }
-        public void EnableUseText(bool state) => _useAmountText.transform.parent.gameObject.SetActive(state);
+
+        public void EnableUseText(bool state)
+        {
+            if (IsOwner) _useAmountText.transform.parent.gameObject.SetActive(state);
+        }
+
         public void UpdateTextUse(string str) {if(IsOwner)  _useAmountText.text = str; }
         
         public void RequestOpenDoor(NetworkObjectReference door) => OpenDoorRpc(door);
@@ -419,6 +481,8 @@ namespace Gameplay.Items.Scripts
         {
             ItemInstance item = GetCurrentItemInHand();
             int newId = item != null ? item.Data.id : -1;
+
+            PublishUses();
 
             if (_heldItemId.Value == newId && newId != -1)
                 OnHeldItemChanged(newId, newId);
