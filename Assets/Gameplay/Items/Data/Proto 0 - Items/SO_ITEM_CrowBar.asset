@@ -16,6 +16,7 @@ MonoBehaviour:
   itemName: Crowbar
   visualPrefab: {fileID: 8770613592973639626, guid: 3d0d59bf43b3dd04e92e5fa75b54a2f0, type: 3}
   pickUpPrefab: {fileID: 6136794228241759054, guid: 821569a89cf532949ae9771ba0e79499, type: 3}
+  icon: {fileID: 21300000, guid: 8df04a7fb27ff394baf99d9567cd5136, type: 3}
   leftClicksActions:
   - rid: 2255290332041183341
   - rid: 7202345451130192107
@@ -38,14 +39,39 @@ MonoBehaviour:
     - rid: 2255290332041183341
       type: {class: OpenDoorModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _doorId: 0
+        _doorIdRange: {x: 0, y: 100}
         _range: 2
         _openAllDoors: 1
     - rid: 2255290332041183343
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 10
-        _X: 10
+        _maxVelocity: 15
+        _maxDamage: 15
+        _damageCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
         _weight: 5
     - rid: 7202345451130192107
       type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}

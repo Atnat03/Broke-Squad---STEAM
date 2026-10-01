@@ -16,12 +16,14 @@ MonoBehaviour:
   itemName: BeerMug
   visualPrefab: {fileID: 926291473085221488, guid: 3fe9289b94011534180aa9f7f43d7390, type: 3}
   pickUpPrefab: {fileID: 4488062842739282999, guid: 0c956020943e3594faba2016a8efa22f, type: 3}
+  icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   leftClicksActions: []
   rightClicksActions:
   - rid: 2255290332041183340
   conditions: []
   passif:
   - rid: 2255290332041183343
+  - rid: 7202345451130192155
   references:
     version: 2
     RefIds:
@@ -37,5 +39,34 @@ MonoBehaviour:
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 10
-        _X: 10
+        _maxVelocity: 15
+        _maxDamage: 15
+        _damageCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
         _weight: 20
+    - rid: 7202345451130192155
+      type: {class: DestroyWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _minVelocityForDestroy: 10

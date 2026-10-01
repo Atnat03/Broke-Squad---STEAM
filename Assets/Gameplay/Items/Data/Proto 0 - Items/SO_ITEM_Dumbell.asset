@@ -16,6 +16,7 @@ MonoBehaviour:
   itemName: Dumbell
   visualPrefab: {fileID: 5428509443149367144, guid: cea6dca334a14d549b4feb9088dd17b8, type: 3}
   pickUpPrefab: {fileID: 4516843033113166200, guid: 0bc3766d156b7334cbf97d7f28b66975, type: 3}
+  icon: {fileID: 0}
   leftClicksActions: []
   rightClicksActions:
   - rid: 2255290332041183340
@@ -37,5 +38,30 @@ MonoBehaviour:
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 10
-        _X: 10
+        _maxVelocity: 15
+        _maxDamage: 100
+        _damageCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
         _weight: 5
