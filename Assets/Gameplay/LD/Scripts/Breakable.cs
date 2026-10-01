@@ -7,6 +7,7 @@ public class Breakable : NetworkBehaviour
 {
     [SerializeField] private GameObject _normalMesh;
     [SerializeField] private Rigidbody[] _breakMesh;
+    [SerializeField] private float solidity = 20f;
     [SerializeField] private bool _dropPickableItem = false;
 
     public override void OnNetworkSpawn()
@@ -47,6 +48,7 @@ public class Breakable : NetworkBehaviour
     
     public void Break(float force)
     {
+        if(force < solidity) return;
         AskServerToBreakRpc(force);
     }
 }
