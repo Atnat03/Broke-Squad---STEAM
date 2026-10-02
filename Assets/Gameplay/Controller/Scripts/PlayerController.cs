@@ -2,6 +2,8 @@
 using Bus;
 using Gameplay.Controller.States;
 using Gameplay.PlayerData;
+using Network.Connections;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -20,11 +22,14 @@ namespace Gameplay.Controller
         [Header("Profile")]
         [SerializeField] private ControllerProfileSO profile;
         public bool autoUpdateProfileValue = true;
+        private int _syncedColor;
+        private string _syncedName = "";
         
         [Header("To Assign")]
         public PlayerCamera playerCamera;
         public GameObject UI;
-        public MeshRenderer meshRenderer;
+        public MeshRenderer[] meshRenderer;
+        public TextMeshProUGUI pseudoText;
 
         [Header("Speed")]
         private float _walkSpeed = 4f;
@@ -148,9 +153,14 @@ namespace Gameplay.Controller
             {
                 playerCamera.gameObject.SetActive(false);
                 UI.SetActive(false);
+                RequestPersonalisationRpc();
             }
             else
             {
+                pseudoText.gameObject.SetActive(false);
+                
+                SendPersonalisation();
+                
                 SetUpComponents();
                 SetUpInputs();
                 SetUpStateMachine();
@@ -166,9 +176,12 @@ namespace Gameplay.Controller
             _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             _rb.interpolation = RigidbodyInterpolation.Interpolate;
             _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-            _rb.useGravity = false; 
-            
-            meshRenderer.enabled = false;
+            _rb.useGravity = false;
+
+            foreach (var mesh in meshRenderer)
+            {
+                mesh.enabled = false;
+            }
             _stamina = _maxStamina;
             
             _capsule.sharedMaterial = new PhysicsMaterial("PlayerNoFriction")
@@ -544,6 +557,37 @@ namespace Gameplay.Controller
                 volume = volumeToPlay,
                 pitch = Random.Range(0.95f, 1.05f) 
             });
+        }
+        
+        public void SendPersonalisation()
+        {
+            if (!IsOwner) return;
+            SubmitPersonalisationRpc(PlayerLocalData.instance.PlayerColor,
+                PlayerLocalData.instance.PlayerName);
+        }
+        
+        [Rpc(SendTo.Server)]
+        private void SubmitPersonalisationRpc(int colorId, string playerName)
+        {
+            _syncedColor = colorId;
+            _syncedName = playerName;
+            ReplicatePersonalisationRpc(colorId, playerName);
+        }
+
+        [Rpc(SendTo.Server, RequireOwnership = false)]
+        private void RequestPersonalisationRpc()
+        {
+            ReplicatePersonalisationRpc(_syncedColor, _syncedName);
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void ReplicatePersonalisationRpc(int colorId, string playerName)
+        {
+            if (PlayerLocalData.instance == null)
+                return;
+
+            meshRenderer[0].material.color = PlayerLocalData.instance.PossibleColor[colorId];
+            pseudoText.text = playerName;
         }
     }
 }

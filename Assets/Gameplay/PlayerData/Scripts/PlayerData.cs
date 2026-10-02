@@ -28,6 +28,10 @@
                     false,
                     NetworkVariableReadPermission.Everyone,
                     NetworkVariableWritePermission.Server);
+
+            public NetworkVariable<bool> invincibility =
+                new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone,
+                    NetworkVariableWritePermission.Server);
             
             public int CurrentHp => _playerHp.Value;
             public int MaxHp => MaxHpValue;
@@ -38,12 +42,13 @@
 
                 ListenToEvent<PlayerRevivedEvent>(Revive);
                 _playerHp.OnValueChanged += OnHpChanged;
+                invincibility.OnValueChanged += OnInvincibilityChanged;
             }
 
             public override void OnNetworkDespawn()
             {
                 _playerHp.OnValueChanged -= OnHpChanged;
-
+                
                 base.OnNetworkDespawn();
             }
 
@@ -55,7 +60,7 @@
             
             public void ApplyDamage(float damage)
             {
-                if (!IsServer || damage <= 0 || _playerDead.Value)
+                if (!IsServer || damage <= 0 || _playerDead.Value || invincibility.Value)
                     return;
 
                 _playerHp.Value = Mathf.Max(0, _playerHp.Value - (int)damage);
@@ -118,6 +123,14 @@
                 PublishHp();
             }
 
+            private void OnInvincibilityChanged(bool previousBool, bool newBool)
+            {
+                if (!IsOwner)
+                    return;
+                
+                PublishHp();
+            }
+
             private void PublishHp()
             {
                 InvokeEvent(new PlayerDataEvent
@@ -125,12 +138,22 @@
                     playerHp = _playerHp.Value,
                     maxHp = MaxHpValue
                 });
+                
+                InvokeEvent(new PlayerStatusChangedEvent()
+                {
+                    invincible = invincibility.Value,
+                    playerID = OwnerClientId
+                });
             }
 
             private void Revive(PlayerRevivedEvent e)
             {
-                _playerHp.Value = MaxHp;
-                _playerDead.Value = false;
+                if (_playerDead.Value == true)
+                {
+                    _playerHp.Value = MaxHp;
+                    _playerDead.Value = false;
+                }
+               
             }
             
             [Rpc(SendTo.Owner)]

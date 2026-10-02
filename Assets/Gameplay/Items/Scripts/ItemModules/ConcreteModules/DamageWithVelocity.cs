@@ -11,6 +11,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
     {
         [SerializeField] private float _minVelocityForDamage = 1;
         [SerializeField] private float _maxVelocity = 15f;
+        [SerializeField] private float _minDamage = 1f;
         [SerializeField] private float _maxDamage = 15f;
         [SerializeField] private AnimationCurve _damageCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
         [SerializeField] private float _weightFactor = 1;
@@ -38,7 +39,9 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
                 
                 float speedFactor = _damageCurve.Evaluate(t);
                 
-                float dmg = _maxDamage * t * speedFactor * _weightFactor;
+                float rawDmg = Mathf.Lerp(_minDamage, _maxDamage, t);
+                
+                float dmg = rawDmg * speedFactor * _weightFactor;
                 
                 ABPrint.Print("Speed : " + speed + " / Dmg : " + dmg, ABColor.Purple);
 
