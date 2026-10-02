@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 912795312662998047}
   - component: {fileID: 672464408613200302}
   m_Layer: 0
-  m_Name: Guard
+  m_Name: P_Guard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2872803796
+  GlobalObjectIdHash: 567607107
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -183,9 +183,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.IA.Scripts.TestGuard
   ShowTopMostFoldoutHeaderGroup: 1
-  _speedPatrol: 1
-  _speedChase: 3
-  _distanceToStopChasing: 5
+  _speedPatrol: 1.5
+  _speedChase: 2.5
+  _distanceToStopChasing: 11
   _guardFieldOfView: {fileID: 912795312662998047}
   _detectionProgression: {fileID: 7549203978002669314}
   _meshRenderer: {fileID: 7068530013210466901}
@@ -206,8 +206,8 @@ MonoBehaviour:
   _colorHit: {r: 1, g: 1, b: 1, a: 1}
   _currentHealthUI: {fileID: 9014024171845573316}
   _stunColor: {r: 0, g: 0.7490196, b: 1, a: 1}
-  _timeBeforeReturnToPatrol: 3
-  _radiusToAutoDetectWhenAttacking: 10
+  _timeBeforeReturnToPatrol: 4
+  _radiusToAutoDetectWhenAttacking: 15
   _detectedSound: Garde/Detected By Guard
   _hitSound: Garde/Gard Hit Player
   _dieSound: Garde/Gard Die
@@ -224,11 +224,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ce0130b5fee47ec9c814e898a23bebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.IA.Scripts.GuardFieldOfView
-  _radius: 5
-  _angle: 35
+  _radius: 10
+  _angle: 125
   _eyeHeight: 3.11
   _checkInterval: 0.5
-  _detectionDuration: 2
+  _detectionDuration: 3
   _targetMask:
     serializedVersion: 2
     m_Bits: 128
