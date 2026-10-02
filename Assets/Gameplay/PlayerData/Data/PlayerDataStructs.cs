@@ -21,4 +21,10 @@ namespace Gameplay.PlayerData
     {
         public ulong playerID;
     }
+    
+    public struct PlayerStatusChangedEvent
+    {
+        public ulong playerID;
+        public bool invincible;
+    }
 }

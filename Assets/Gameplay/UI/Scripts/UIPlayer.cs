@@ -12,6 +12,10 @@ namespace Gameplay.PlayerData
         [Header("Health")]
         [SerializeField] private Slider pvSlider;
         [SerializeField] private TextMeshProUGUI playerHpText;
+        [SerializeField] private Color pvColor;
+        [SerializeField] private Color invincibleColor;
+        [SerializeField] private Image sliderColor;
+        
 
         [Header("Stamina Bar")]
         [SerializeField] private Slider playerStaminaSlider;
@@ -19,6 +23,7 @@ namespace Gameplay.PlayerData
         [SerializeField] private float staminaSmoothSpeed = 12f;
         [SerializeField] private float staminaHideDelay = 1.5f;  
         [SerializeField] private float staminaFadeSpeed = 4f;   
+        
         [Header("References")]
         [SerializeField] private PlayerData playerData;
         [SerializeField] private PlayerController playerController;
@@ -44,6 +49,7 @@ namespace Gameplay.PlayerData
 
             ListenToEvent<PlayerDataEvent>(UpdateUI);
             ListenToEvent<StaminaChangedEvent>(UpdateUI);
+            ListenToEvent<PlayerStatusChangedEvent>(UpdateUI);
 
             if (playerData == null)
                 playerData = GetComponent<PlayerData>();
@@ -109,6 +115,11 @@ namespace Gameplay.PlayerData
 
             if (playerStaminaSlider != null)
                 playerStaminaSlider.maxValue = e.maxStamina;
+        }
+        
+        private void UpdateUI(PlayerStatusChangedEvent e)
+        {
+           sliderColor.color = e.invincible ?  invincibleColor : pvColor;
         }
     }
 }

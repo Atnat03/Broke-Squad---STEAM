@@ -628,6 +628,7 @@ GameObject:
   - component: {fileID: 9082422610625771}
   - component: {fileID: 3693059238044370886}
   - component: {fileID: -885208385869510881}
+  - component: {fileID: 6055858451122925003}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -942,6 +943,11 @@ MonoBehaviour:
   - Joueur/Take Damage 3
   _deathSound: Joueur/Death
   _rezSound: Joueur/Rez
+  invincibility:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
 --- !u!114 &7357652632305383726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1105,6 +1111,21 @@ MonoBehaviour:
   _pingPrefab: {fileID: 2982990455922578794, guid: bb563a411001eb343935c2de124014f5, type: 3}
   _cooldownLifePing: 5
   _timerBetweenPing: 2
+--- !u!114 &6055858451122925003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2574743083563287450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b775a6ef6fd24e259c7d5d2ec214c702, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.CheatsManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  playerData: {fileID: 7777815450667916752}
+  playerResurrection: {fileID: 7357652632305383726}
 --- !u!1 &2683151830643941304
 GameObject:
   m_ObjectHideFlags: 0
@@ -1333,6 +1354,9 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   pvSlider: {fileID: 4639189184447105916}
   playerHpText: {fileID: 3526673465744200816}
+  pvColor: {r: 0, g: 1, b: 0.078431375, a: 1}
+  invincibleColor: {r: 0.24528301, g: 0.2233001, b: 0.2233001, a: 1}
+  sliderColor: {fileID: 4143715951008408683}
   playerStaminaSlider: {fileID: 5053621595964100940}
   staminaGroup: {fileID: 7710661931890576653}
   staminaSmoothSpeed: 12
