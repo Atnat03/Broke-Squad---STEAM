@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4733906163717167803}
   - component: {fileID: 7644171857610566502}
   - component: {fileID: 8333518466730772489}
-  - component: {fileID: 2385404587154575628}
+  - component: {fileID: 9021254505612249525}
   m_Layer: 0
   m_Name: P_Window
   m_TagString: Untagged
@@ -384,7 +384,7 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &2385404587154575628
+--- !u!114 &9021254505612249525
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -393,14 +393,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5133981459284622115}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e8558c60f7de694797c107455228d43, type: 3}
+  m_Script: {fileID: 11500000, guid: ced3977df5de6194fa985c6a6ea4e0f7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Breakable
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Gameplay.LD.Scripts.BrokenWindow
   ShowTopMostFoldoutHeaderGroup: 1
-  _normalMesh: {fileID: 5133981459284622115}
-  solidity: 20
-  _dropPickableItem: 0
-  _breakMesh: []
-  _dropItemPrefabs: {fileID: 0}
-  _pickupSpawnPoints: []
+  solidity: 100
+  _brokenEvent:
+    m_PersistentCalls:
+      m_Calls: []
   _breakSound: Enviro/Break Window
