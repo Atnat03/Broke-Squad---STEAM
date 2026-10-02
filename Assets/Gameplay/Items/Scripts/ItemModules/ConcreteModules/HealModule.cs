@@ -7,6 +7,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
     {
         [SerializeField] private int _healAmount = 10;
         [SerializeField] private float _distanceToHeal = 2f;
+        [SerializeField, SoundName] private string _healingSound;
         
         public float Range => _distanceToHeal;
         
@@ -18,6 +19,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
                 && hit.collider.GetComponentInParent<PlayerData.PlayerData>() is { } player
                 && player.TryGetComponent(out NetworkObject netObj))
             {
+                Context.Inventory.TryPlaySound(_healingSound);
                 Context.Inventory.RequestHeal(netObj);
             }
         }

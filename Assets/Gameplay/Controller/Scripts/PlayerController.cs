@@ -69,6 +69,11 @@ namespace Gameplay.Controller
         [Header("Camera")]
         [SerializeField] private Transform eyeTarget;
 
+        [Header("SFX")] 
+        [SerializeField, SoundName] private string[] _walkSound;
+        [SerializeField, SoundName] private string _jumpSound;
+        [SerializeField, SoundName] private string _crouchSound;
+
         private Rigidbody _rb;
         private CapsuleCollider _capsule;
 

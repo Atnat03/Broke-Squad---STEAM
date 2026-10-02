@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Bus;
 using Gameplay.LD.Scripts;
 using Unity.Netcode;
 using UnityEngine;
@@ -9,7 +10,7 @@ using Gameplay.PlayerData;
 
 namespace Gameplay.IA.Scripts
 {
-    public class TestGuard : NetworkBehaviour, IDamageable, IStunnable
+    public class TestGuard : NetworkBusListener, IDamageable, IStunnable
     {
         [SerializeField] private float _speedPatrol = 2;
         [SerializeField] private float _speedChase = 3;
@@ -40,6 +41,12 @@ namespace Gameplay.IA.Scripts
         [Header("Stun")] 
         [SerializeField] private Color _stunColor = Color.deepSkyBlue;
         private Coroutine _stunCoroutine;
+
+        [Header("SFX")] 
+        [SerializeField, SoundName] private string _detectedSound;
+        [SerializeField, SoundName] private string _hitSound;
+        [SerializeField, SoundName] private string _dieSound;
+        [SerializeField, SoundName] private string _takeDamageSound;
         
         private readonly NetworkVariable<float> _currentHealth = new NetworkVariable<float>();
         private readonly NetworkVariable<bool> _isInChase = new NetworkVariable<bool>();
@@ -73,7 +80,6 @@ namespace Gameplay.IA.Scripts
             
             Patrol();
         }
-        
 
         public override void OnNetworkDespawn()
         {
@@ -116,6 +122,13 @@ namespace Gameplay.IA.Scripts
         private IEnumerator HitColor()
         {
             _meshRenderer.material.color = _colorHit;
+            
+            InvokeEvent(new PlaySoundEvent
+            {
+                soundName = _takeDamageSound,
+                position = transform.position,
+                volume = 0.3f
+            });
 
             yield return new WaitForSeconds(0.25f);
 
@@ -139,12 +152,10 @@ namespace Gameplay.IA.Scripts
             if (!IsServer) return;
             if (_isStun.Value) return;
 
-            // Si je la vois, je (re)prends la cible
             if (_guardFieldOfView.CanSeeTarget && _guardFieldOfView.Target != null)
             {
                 _target = _guardFieldOfView.Target;
             }
-            // Sinon je la garde tant qu'elle est assez proche, je la perds si elle est trop loin
             else if (_target != null &&
                      Vector3.Distance(_target.position, transform.position) > _distanceToStopChasing)
             {
@@ -152,6 +163,11 @@ namespace Gameplay.IA.Scripts
             }
 
             bool isChasing = _target != null;
+
+            if (isChasing && !_isInChase.Value)
+            {
+                ReplicateDetectTargetRpc();
+            }
 
             if (_isInChase.Value != isChasing)
                 _isInChase.Value = isChasing;
@@ -189,10 +205,13 @@ namespace Gameplay.IA.Scripts
             if (_target != null && _target.TryGetComponent(out PlayerData.PlayerData player))
                 player.ApplyDamage(_damage);
 
+            ReplicateAttackGuardRpc();
+
             yield return new WaitForSeconds(_attackCooldown);
 
             _isAttacking = false;
         }
+
 
         private bool IsTargetInAttackRange()
         {
@@ -232,7 +251,10 @@ namespace Gameplay.IA.Scripts
             _currentHealth.Value -= damage;
 
             if (_currentHealth.Value <= 0)
+            {
+                ReplicateDeathRpc();
                 NetworkObject.Despawn();
+            }
         }
 
         public void OnDrawGizmos()
@@ -263,5 +285,42 @@ namespace Gameplay.IA.Scripts
             
             _stunCoroutine = null;
         }
+        
+        #region Replication
+        
+        [Rpc(SendTo.Everyone)]
+        private void ReplicateAttackGuardRpc()
+        {
+            InvokeEvent(new PlaySoundEvent
+            {
+                soundName = _hitSound,
+                position = transform.position,
+                volume = 0.3f
+            });
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void ReplicateDetectTargetRpc()
+        {
+            InvokeEvent(new PlaySoundEvent
+            {
+                soundName = _detectedSound,
+                position = transform.position,
+                volume = 0.3f
+            });
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void ReplicateDeathRpc()
+        {
+            InvokeEvent(new PlaySoundEvent
+            {
+                soundName = _detectedSound,
+                position = transform.position,
+                volume = 0.3f
+            });
+        }
+        
+        #endregion
     }
 }

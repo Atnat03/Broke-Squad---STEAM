@@ -10,6 +10,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
     {
         [SerializeField] private float _amountPercentChargePerClick = 25;
         [SerializeField] private float _range = 2f;
+        [SerializeField, SoundName] private string _chargeSound;
 
         public float Range => _range;
 
@@ -21,6 +22,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
                 && hit.transform.TryGetComponent(out ItemPickup pickup)
                 && pickup.TryGetComponent(out NetworkObject netObj))
             {
+                Context.Inventory.TryPlaySound(_chargeSound);
                 Context.Inventory.RequestChargePickup(netObj);
             }
         }

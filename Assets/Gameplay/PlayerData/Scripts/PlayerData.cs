@@ -3,12 +3,19 @@
     using Gameplay.LD.Scripts;
     using Unity.Netcode;
     using UnityEngine;
+    using Random = UnityEngine.Random;
 
     namespace Gameplay.PlayerData
     {
         public class PlayerData : NetworkBusListener, IDamageable
         {
-            public const int MaxHpValue = 100;
+            [SerializeField] private const int MaxHpValue = 100;
+            
+            [Header("SFX")] 
+            [SerializeField, SoundName] private string[] _takeDamageSound;
+            private int _previousTakeDamageSoundPlayed = -1;
+            [SerializeField, SoundName] private string _deathSound;
+            [SerializeField, SoundName] private string _rezSound;
 
             private readonly NetworkVariable<int> _playerHp =
                 new NetworkVariable<int>(
@@ -53,8 +60,31 @@
 
                 _playerHp.Value = Mathf.Max(0, _playerHp.Value - (int)damage);
 
+                ReplicateTakingDamageRpc();
+                
                 if (_playerHp.Value <= 0)
                     SetPlayerDead(true);
+            }
+
+            [Rpc(SendTo.Everyone)]
+            private void ReplicateTakingDamageRpc()
+            {
+                int newIdForTakeDamage;
+
+                do
+                {
+                    newIdForTakeDamage = Random.Range(0, _takeDamageSound.Length);
+                } 
+                while (newIdForTakeDamage == _previousTakeDamageSoundPlayed);
+                
+                InvokeEvent(new PlaySoundEvent
+                {
+                    soundName = _takeDamageSound[newIdForTakeDamage],
+                    position = transform.position,
+                    volume = 0.3f
+                });
+                
+                _previousTakeDamageSoundPlayed = newIdForTakeDamage;
             }
 
             public void Heal(float amount)
@@ -74,7 +104,10 @@
                 _playerDead.Value = dead;
 
                 if (dead)
+                {
                     NotifyDeathOwnerRpc();
+                    ReplicateDeathRpc();
+                }
             }
             
             private void OnHpChanged(int previousHp, int newHp)
@@ -107,8 +140,17 @@
                 {
                     playerID = OwnerClientId
                 });
-                
-                
+            }
+
+            [Rpc(SendTo.Everyone)]
+            private void ReplicateDeathRpc()
+            {
+                InvokeEvent(new PlaySoundEvent
+                {
+                    soundName = _deathSound,
+                    position = transform.position,
+                    volume = 0.5f
+                });
             }
         }
     }

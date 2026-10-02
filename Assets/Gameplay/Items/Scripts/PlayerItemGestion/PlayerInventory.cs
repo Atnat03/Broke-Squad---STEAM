@@ -9,9 +9,11 @@ using Gameplay.LD.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MyPrint;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 namespace Gameplay.Items.Scripts
@@ -53,6 +55,9 @@ namespace Gameplay.Items.Scripts
         
         [Header("Use")]
         [SerializeField] private TextMeshProUGUI _useAmountText;
+
+        [Header("Audio")] 
+        [SerializeField, SoundName] private string _pickUpSFX;
 
         private readonly NetworkVariable<int> _heldItemId = new(-1);
         private readonly NetworkVariable<float> _electricPercent = new(0f);
@@ -132,7 +137,7 @@ namespace Gameplay.Items.Scripts
                     pickup.TryGetComponent(out NetworkObject netObj))
                 {
                     PickUpRpc(netObj);
-                    InvokeEvent(new OnInteractItemInWorld());
+                    
                     return;
                 }
 
@@ -364,9 +369,20 @@ namespace Gameplay.Items.Scripts
             
             _slotsUIList[selected].SetIcon(icon);
         }
-        
+
         public void RequestThrow(float charge01, Vector3 camPos, Quaternion camRot)
-            => ThrowRpc(charge01, camPos, camRot);
+        {
+            //Audio
+            InvokeEvent(new PlaySoundEvent
+            {
+                soundName = _pickUpSFX,
+                position = transform.position,
+                volume = 0.5f,
+            });
+            
+            ThrowRpc(charge01, camPos, camRot);
+        }
+           
 
         [Rpc(SendTo.Server)]
         private void ThrowRpc(float charge01, Vector3 camPos, Quaternion camRot)
@@ -539,6 +555,24 @@ namespace Gameplay.Items.Scripts
         
         private void OnSelectedSlotChanged(int prev, int cur) => _uiDirty = true;
 
+        public void TryPlaySound(string sound)
+        {
+            if (!IsServer)
+            {
+                AskServerToPlaySoundRpc(sound);
+                return;
+            }
+            
+            InvokeEvent(new PlaySoundEvent
+            {
+                soundName = sound,
+                position = transform.position,
+                volume = 0.25f,
+            });
+        }
+
+        [Rpc(SendTo.Server)]
+        private void AskServerToPlaySoundRpc(string sound) => TryPlaySound(sound);
 
         #endregion    
     }

@@ -24,7 +24,6 @@ MonoBehaviour:
   conditions: []
   passif:
   - rid: 2255290332041183343
-  - rid: 2255290332041183621
   references:
     version: 2
     RefIds:
@@ -39,7 +38,7 @@ MonoBehaviour:
     - rid: 2255290332041183343
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _minVelocityForDamage: 10
+        _minVelocityForDamage: 1
         _maxVelocity: 15
         _maxDamage: 15
         _damageCurve:
@@ -68,13 +67,8 @@ MonoBehaviour:
           m_RotationOrder: 4
         _weightFactor: 1
         _mass: 1
-        _canDamagePlayer: 1
+        _canDamagePlayer: 0
     - rid: 2255290332041183551
       type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _strength: 100
-    - rid: 2255290332041183621
-      type: {class: StunModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
-      data:
-        _minVelocityForStun: 8
-        _stunDuration: 2.5

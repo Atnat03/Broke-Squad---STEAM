@@ -13,6 +13,11 @@ namespace Gameplay.LD.Scripts
         [SerializeField] private bool _canOpenWithoutKey = false;
         [SerializeField] private float _toggleCooldown = 0.3f;
 
+        [Header("SFX")]
+        [SerializeField, SoundName] private string _openSound;
+        [SerializeField, SoundName] private string _closeSound;
+        [SerializeField, SoundName] private string _tryToOpenClosedDoorSound;
+        
         private readonly NetworkVariable<bool> _isUnlocked = new(false);
         private readonly NetworkVariable<bool> _isOpen = new(false);
         
@@ -37,8 +42,25 @@ namespace Gameplay.LD.Scripts
 
         private void OnOpenChanged(bool previous, bool current)
         {
-            if (current) _eventOpen?.Invoke();
-            else _eventClose?.Invoke();
+            string currentAction;
+            
+            if (current)
+            {
+                _eventOpen?.Invoke();
+                currentAction = _openSound;
+            }
+            else
+            {
+                _eventClose?.Invoke();
+                currentAction = _closeSound;
+            }
+            
+            InvokeEvent(new PlaySoundEvent
+            {
+                soundName = currentAction,
+                position = transform.position,
+                volume = 0.5f
+            });
         }
 
         public bool TryOpen(Vector2Int idRange)
@@ -51,7 +73,10 @@ namespace Gameplay.LD.Scripts
             if (!_isUnlocked.Value)
             {
                 if (!IsKeyValid(idRange))
+                {
+                    ReplicateTryToOpenClosedDoorRpc();
                     return false;
+                }
 
                 _isUnlocked.Value = true;
             }
@@ -67,6 +92,17 @@ namespace Gameplay.LD.Scripts
                 return false;
 
             return _doorID >= idRange.x && _doorID <= idRange.y;
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void ReplicateTryToOpenClosedDoorRpc()
+        {
+            InvokeEvent(new PlaySoundEvent
+            {
+                soundName = _tryToOpenClosedDoorSound,
+                position = transform.position,
+                volume = 0.5f
+            });
         }
     }
 }

@@ -16,13 +16,20 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
         [SerializeField] private float _weightFactor = 1;
         [SerializeField] private float _mass = 1;
         [SerializeField] private bool _canDamagePlayer = false;
+        [SerializeField] private float _minVelocityForSound = 3;
+        [SerializeField, SoundName] private string _hitSound;
         
         public void OnCollide(Collision collision, ItemPickup item)
         {
+            float speed = collision.relativeVelocity.magnitude;
+
+            if (speed >= _minVelocityForSound)
+            {
+                Context.Inventory.TryPlaySound(_hitSound);
+            }
+            
             if (collision.gameObject.TryGetComponent<IDamageable>(out var damage))
             {
-                float speed = collision.relativeVelocity.magnitude;
-                
                 ABPrint.Print("Speed : " + speed, ABColor.Purple);
                 
                 if (speed <= _minVelocityForDamage) return;
@@ -35,8 +42,10 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
                 
                 ABPrint.Print("Speed : " + speed + " / Dmg : " + dmg, ABColor.Purple);
 
-                if (typeof(IDamageable).IsAssignableFrom(typeof(PlayerData.PlayerData)))
+                if (collision.gameObject.TryGetComponent<PlayerData.PlayerData>(out var damageable))
                 {
+                    ABPrint.Print("Is a player", ABColor.Purple);
+                    
                     if (!_canDamagePlayer)
                         return;
                 }

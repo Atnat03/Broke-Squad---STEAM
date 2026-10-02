@@ -11,6 +11,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
         [SerializeField, MinMaxSlider(0, 500)] private Vector2Int _doorIdRange = new Vector2Int(0, 100);
         [SerializeField] private float _range = 2f;
         [SerializeField] private bool _openAllDoors = false;
+        [SerializeField, SoundName] private string _useKeySound;
 
         public float Range => _range;
 
@@ -22,6 +23,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
                 && hit.transform.TryGetComponent(out Door door)
                 && door.TryGetComponent(out NetworkObject netObj))
             {
+                Context.Inventory.TryPlaySound(_useKeySound);
                 Context.Inventory.RequestOpenDoor(netObj);
             }
         }
