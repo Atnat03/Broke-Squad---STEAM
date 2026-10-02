@@ -25,6 +25,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
         public void UseItem()
         {
             _current = Mathf.Max(0f, _current - _useCost);
+            Context.Core.UseCondition();
             PushToUI();
         }
 

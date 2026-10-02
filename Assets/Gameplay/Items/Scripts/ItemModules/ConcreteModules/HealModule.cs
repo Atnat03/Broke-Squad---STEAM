@@ -21,6 +21,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
             {
                 Context.Inventory.TryPlaySound(_healingSound);
                 Context.Inventory.RequestHeal(netObj);
+                Context.Core.UseCondition();
             }
         }
 

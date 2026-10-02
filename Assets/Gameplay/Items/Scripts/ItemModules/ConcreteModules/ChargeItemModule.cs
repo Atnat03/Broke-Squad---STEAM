@@ -24,6 +24,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
             {
                 Context.Inventory.TryPlaySound(_chargeSound);
                 Context.Inventory.RequestChargePickup(netObj);
+                Context.Core.UseCondition();
             }
         }
 
