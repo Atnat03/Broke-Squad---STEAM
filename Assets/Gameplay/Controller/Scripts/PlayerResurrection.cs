@@ -177,16 +177,13 @@ namespace Gameplay.Controller
             if (reviver.IsDowned.Value) return false;
 
             float maxDist = reviveDistance * 1.5f;
-            Debug.Log($"Validity of revive : {  (reviver.transform.position - transform.position).sqrMagnitude <= maxDist * maxDist}");
-            Debug.Log("CHELOU" + (reviver.transform.position ));
-            Debug.Log("ETRANGE" + ( transform.position));
             return (reviver.transform.position - transform.position).sqrMagnitude <= maxDist * maxDist;
         }
 
         #endregion
 
         [Rpc(SendTo.Owner)]
-        private void ReviveOwnerRpc()
+        public void ReviveOwnerRpc()
         {
             IsDowned.Value = false;
 
