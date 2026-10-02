@@ -63,6 +63,7 @@ namespace Gameplay.IA.Scripts
         private Coroutine _hitColorCoroutine;
 
         private Transform _target;
+        private PlayerData.PlayerData _targetData;
         
         public override void OnNetworkSpawn()
         {
@@ -159,9 +160,19 @@ namespace Gameplay.IA.Scripts
             if (!IsServer) return;
             if (_isStun.Value) return;
 
+            if (_targetData != null)
+            {
+                if (_targetData.IsDead())
+                {
+                    _targetData = null;
+                    _target = null;
+                }
+            }
+            
             if (_guardFieldOfView.CanSeeTarget && _guardFieldOfView.Target != null)
             {
                 _target = _guardFieldOfView.Target;
+                _targetData = _target.GetComponent<PlayerData.PlayerData>();
 
                 if (_returnToPatrolCoroutine != null)
                 {
@@ -250,6 +261,9 @@ namespace Gameplay.IA.Scripts
         {
             if (_patrolPoints == null || _patrolPoints.Length == 0) return;
 
+            _target = null;
+            _targetData = null;
+            
             _agent.speed = _speedPatrol;
 
             Transform point = _patrolPoints[_patrolPointIndex];
