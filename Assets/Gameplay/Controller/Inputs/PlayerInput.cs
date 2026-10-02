@@ -36,6 +36,8 @@ namespace Gameplay.Controller
         public Action<Vector2> OnMoveInput;
         public Action<Vector2> OnMouseMovement;
 
+        public Action OnPinging;
+
         private void Awake()
         {
             _playerInputs = new Player();
@@ -74,6 +76,8 @@ namespace Gameplay.Controller
             _playerInputs.Gameplay.MouseMovement.canceled += PerformeMouseMovement;
 
             _playerInputs.Gameplay.MouseRoll.performed += PerformMouseRoll;
+
+            _playerInputs.Gameplay.Ping.performed += PerformPing;
         }
         
 
@@ -100,6 +104,10 @@ namespace Gameplay.Controller
             
             _playerInputs.Gameplay.MouseMovement.performed -= PerformeMouseMovement;
             _playerInputs.Gameplay.MouseMovement.canceled -= PerformeMouseMovement;
+            
+            _playerInputs.Gameplay.MouseRoll.performed -= PerformMouseRoll;
+            
+            _playerInputs.Gameplay.Ping.performed -= PerformPing;
 
             _playerInputs.Disable();
         }
@@ -208,6 +216,11 @@ namespace Gameplay.Controller
             {
                 OnMouseRoll?.Invoke(1);
             }
+        }
+        
+        private void PerformPing(InputAction.CallbackContext obj)
+        {
+            OnPinging?.Invoke();
         }
         
         private void OnDestroy() => _playerInputs.Dispose();

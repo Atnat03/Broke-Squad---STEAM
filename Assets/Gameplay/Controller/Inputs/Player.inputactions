@@ -135,6 +135,16 @@
                     "interactions": "",
                     "initialStateCheck": true,
                     "priority": 0
+                },
+                {
+                    "name": "Ping",
+                    "type": "Button",
+                    "id": "ed4e293e-3ddc-4cf0-a28c-ef36bd51a4af",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -346,6 +356,17 @@
                     "action": "MouseRoll",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "ae01bae1-918a-4b32-ab66-63146ca2f5af",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Ping",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
