@@ -23,6 +23,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
                 {
                     Context.Inventory.TryPlaySound(_breakSound);
                     wall.Break(_strength);
+                    Context.Core.UseCondition();
                 }
             }
         }

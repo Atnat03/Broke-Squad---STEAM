@@ -25,6 +25,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
             {
                 Context.Inventory.TryPlaySound(_useKeySound);
                 Context.Inventory.RequestOpenDoor(netObj);
+                Context.Core.UseCondition();
             }
         }
 
