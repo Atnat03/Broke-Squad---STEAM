@@ -1,8 +1,9 @@
+using Bus;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class Breakable : NetworkBehaviour
+public class Breakable : NetworkBusListener
 {
     [SerializeField] private GameObject _normalMesh;
     [SerializeField] private float solidity = 20f;
@@ -15,6 +16,9 @@ public class Breakable : NetworkBehaviour
     [SerializeField] private NetworkObject _dropItemPrefabs;
     [SerializeField] private Transform[] _pickupSpawnPoints;
 
+    [Header("SFX")]
+    [SerializeField, SoundName] private string _breakSound;
+    
     public override void OnNetworkSpawn()
     {
         _normalMesh.SetActive(true);
@@ -53,6 +57,13 @@ public class Breakable : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     private void ReplicateBreakRpc(float force)
     {
+        InvokeEvent(new PlaySoundEvent
+        {
+            position = transform.position,
+            soundName = _breakSound,
+            volume = 0.3f
+        });
+        
         _normalMesh.SetActive(false);
 
         if (_dropPickableItem) return;

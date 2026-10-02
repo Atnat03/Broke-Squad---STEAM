@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Bus;
 using Gameplay.LD.Scripts;
 using Unity.Netcode;
 using UnityEngine;
@@ -9,13 +10,14 @@ using Gameplay.PlayerData;
 
 namespace Gameplay.IA.Scripts
 {
-    public class TestGuard : NetworkBehaviour, IDamageable, IStunnable
+    public class TestGuard : NetworkBusListener, IDamageable, IStunnable
     {
         [SerializeField] private float _speedPatrol = 2;
         [SerializeField] private float _speedChase = 3;
         [SerializeField] private float _distanceToStopChasing = 5;
         [SerializeField] private GuardFieldOfView _guardFieldOfView;
-
+        [SerializeField] private Image _detectionProgression;
+        
         [Header("Color")]
         [SerializeField] private MeshRenderer _meshRenderer;
         [SerializeField] private Color _colorPatrol;
@@ -41,6 +43,17 @@ namespace Gameplay.IA.Scripts
         [SerializeField] private Color _stunColor = Color.deepSkyBlue;
         private Coroutine _stunCoroutine;
         
+        [Header("Chase")]
+        [SerializeField] private float _timeBeforeReturnToPatrol = 3f;
+        [SerializeField] private float _radiusToAutoDetectWhenAttacking = 10;
+        private Coroutine _returnToPatrolCoroutine;
+
+        [Header("SFX")] 
+        [SerializeField, SoundName] private string _detectedSound;
+        [SerializeField, SoundName] private string _hitSound;
+        [SerializeField, SoundName] private string _dieSound;
+        [SerializeField, SoundName] private string _takeDamageSound;
+        
         private readonly NetworkVariable<float> _currentHealth = new NetworkVariable<float>();
         private readonly NetworkVariable<bool> _isInChase = new NetworkVariable<bool>();
         private readonly NetworkVariable<bool> _isStun = new NetworkVariable<bool>();
@@ -50,12 +63,14 @@ namespace Gameplay.IA.Scripts
         private Coroutine _hitColorCoroutine;
 
         private Transform _target;
+        private PlayerData.PlayerData _targetData;
         
         public override void OnNetworkSpawn()
         {
             _isInChase.OnValueChanged += GuardStateChange;
             _currentHealth.OnValueChanged += UpdateHP;
             _isStun.OnValueChanged += StunStateChange;
+            _guardFieldOfView.OnDetectionProgressChanged += UpdateDetection;
             
             _currentHealth.Value = _maxHealth;
 
@@ -73,7 +88,6 @@ namespace Gameplay.IA.Scripts
             
             Patrol();
         }
-        
 
         public override void OnNetworkDespawn()
         {
@@ -116,6 +130,13 @@ namespace Gameplay.IA.Scripts
         private IEnumerator HitColor()
         {
             _meshRenderer.material.color = _colorHit;
+            
+            InvokeEvent(new PlaySoundEvent
+            {
+                soundName = _takeDamageSound,
+                position = transform.position,
+                volume = 0.3f
+            });
 
             yield return new WaitForSeconds(0.25f);
 
@@ -139,19 +160,41 @@ namespace Gameplay.IA.Scripts
             if (!IsServer) return;
             if (_isStun.Value) return;
 
-            // Si je la vois, je (re)prends la cible
+            if (_targetData != null)
+            {
+                if (_targetData.IsDead())
+                {
+                    _targetData = null;
+                    _target = null;
+                }
+            }
+            
             if (_guardFieldOfView.CanSeeTarget && _guardFieldOfView.Target != null)
             {
                 _target = _guardFieldOfView.Target;
+                _targetData = _target.GetComponent<PlayerData.PlayerData>();
+
+                if (_returnToPatrolCoroutine != null)
+                {
+                    StopCoroutine(_returnToPatrolCoroutine);
+                    _returnToPatrolCoroutine = null;
+                }
             }
-            // Sinon je la garde tant qu'elle est assez proche, je la perds si elle est trop loin
-            else if (_target != null &&
-                     Vector3.Distance(_target.position, transform.position) > _distanceToStopChasing)
+            else if (_target != null && Vector3.Distance(_target.position, transform.position) > _distanceToStopChasing)
             {
-                _target = null;
+                if (_returnToPatrolCoroutine == null)
+                {
+                    _returnToPatrolCoroutine =
+                        StartCoroutine(ReturnToPatrolAfterDelay());
+                }
             }
 
             bool isChasing = _target != null;
+
+            if (isChasing && !_isInChase.Value)
+            {
+                ReplicateDetectTargetRpc();
+            }
 
             if (_isInChase.Value != isChasing)
                 _isInChase.Value = isChasing;
@@ -189,10 +232,13 @@ namespace Gameplay.IA.Scripts
             if (_target != null && _target.TryGetComponent(out PlayerData.PlayerData player))
                 player.ApplyDamage(_damage);
 
+            ReplicateAttackGuardRpc();
+
             yield return new WaitForSeconds(_attackCooldown);
 
             _isAttacking = false;
         }
+
 
         private bool IsTargetInAttackRange()
         {
@@ -215,6 +261,9 @@ namespace Gameplay.IA.Scripts
         {
             if (_patrolPoints == null || _patrolPoints.Length == 0) return;
 
+            _target = null;
+            _targetData = null;
+            
             _agent.speed = _speedPatrol;
 
             Transform point = _patrolPoints[_patrolPointIndex];
@@ -231,14 +280,51 @@ namespace Gameplay.IA.Scripts
 
             _currentHealth.Value -= damage;
 
+            if (_target == null)
+            {
+                GetNearestTarget();
+            }
+
             if (_currentHealth.Value <= 0)
+            {
+                ReplicateDeathRpc();
                 NetworkObject.Despawn();
+            }
         }
 
-        public void OnDrawGizmos()
+        private void GetNearestTarget()
+        {
+            Collider[] colliders = Physics.OverlapSphere(transform.position, _radiusToAutoDetectWhenAttacking);
+            float minDist = float.MaxValue;
+            Transform nearestTarget = null;
+            
+            foreach (var c in colliders)
+            {
+                if (c.TryGetComponent(out PlayerData.PlayerData player))
+                {
+                    float dist = (player.transform.position - transform.position).sqrMagnitude;
+                
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        nearestTarget = player.transform;
+                    }
+                }
+            }
+
+            if (nearestTarget != null)
+            {
+                _target = nearestTarget;
+            }
+        }
+
+        public void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, transform.position + Vector3.forward * _attackRange);
+            
+            Gizmos.color = Color.blueViolet;
+            Gizmos.DrawWireSphere(transform.position, _radiusToAutoDetectWhenAttacking);
         }
 
         public void ApplyStun(float stunDuration)
@@ -263,5 +349,77 @@ namespace Gameplay.IA.Scripts
             
             _stunCoroutine = null;
         }
+
+        [Rpc(SendTo.Server)]
+        private void UpdateDetectionServerRpc(float ratio)
+        {
+            UpdateDetection(ratio);
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void UpdateDetectionClientRpc(float ratio)
+        {
+            _detectionProgression.fillAmount = ratio;
+        }
+        
+        private void UpdateDetection(float ratio)
+        {
+            if (!IsServer)
+            {
+                UpdateDetectionServerRpc(ratio);
+                return;
+            }
+
+            UpdateDetectionClientRpc(ratio);
+        }
+        
+        private IEnumerator ReturnToPatrolAfterDelay()
+        {
+            yield return new WaitForSeconds(_timeBeforeReturnToPatrol);
+
+            if (_target != null && Vector3.Distance(_target.position, transform.position) > _distanceToStopChasing && !_guardFieldOfView.CanSeeTarget)
+            {
+                _target = null;
+            }
+
+            _returnToPatrolCoroutine = null;
+        }
+        
+        #region Replication
+        
+        [Rpc(SendTo.Everyone)]
+        private void ReplicateAttackGuardRpc()
+        {
+            InvokeEvent(new PlaySoundEvent
+            {
+                soundName = _hitSound,
+                position = transform.position,
+                volume = 0.3f
+            });
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void ReplicateDetectTargetRpc()
+        {
+            InvokeEvent(new PlaySoundEvent
+            {
+                soundName = _detectedSound,
+                position = transform.position,
+                volume = 0.3f
+            });
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void ReplicateDeathRpc()
+        {
+            InvokeEvent(new PlaySoundEvent
+            {
+                soundName = _detectedSound,
+                position = transform.position,
+                volume = 0.3f
+            });
+        }
+        
+        #endregion
     }
 }

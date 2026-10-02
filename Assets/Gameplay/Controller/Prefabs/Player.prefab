@@ -626,6 +626,7 @@ GameObject:
   - component: {fileID: 7777815450667916752}
   - component: {fileID: 7357652632305383726}
   - component: {fileID: 9082422610625771}
+  - component: {fileID: 3693059238044370886}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -827,13 +828,22 @@ MonoBehaviour:
   ceilingLayer:
     serializedVersion: 2
     m_Bits: 119
-  maxStamina: 100
-  drainPerSecond: 10
-  regenPerSecond: 10
-  regenDelay: 2
   tiedUpSpeed: 0.6
   tiedUpHeight: 0.8
   eyeTarget: {fileID: 4606863278405769456}
+  walkStepInterval: 0.5
+  sprintStepInterval: 0.35
+  crouchStepInterval: 0.8
+  walkStepVolume: 0.3
+  sprintStepVolume: 0.5
+  crouchStepVolume: 0.1
+  _walkSound:
+  - Joueur/Walk 1
+  - Joueur/Walk 2
+  - Joueur/Walk 3
+  - Joueur/Walk 4
+  _jumpSound: Joueur/Jump
+  _crouchSound: Joueur/Crouch
 --- !u!114 &1310361133901699229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -865,6 +875,7 @@ MonoBehaviour:
   _electicUI: {fileID: 3771218236746138740}
   _electicPercent: {fileID: 8027119305052795742}
   _useAmountText: {fileID: 7156752449948875134}
+  _pickUpSFX: Joueur/Throw Item
 --- !u!114 &1106711488819986003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -924,6 +935,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.PlayerData.PlayerData
   ShowTopMostFoldoutHeaderGroup: 1
+  _takeDamageSound:
+  - Joueur/Take Damage 1
+  - Joueur/Take Damage 2
+  - Joueur/Take Damage 3
+  _deathSound: Joueur/Death
+  _rezSound: Joueur/Rez
 --- !u!114 &7357652632305383726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -969,6 +986,103 @@ MonoBehaviour:
   fillImage: {fileID: 6671424585055807126}
   smoothSpeed: 10
   worldOffset: {x: 0, y: 0.75, z: 0}
+--- !u!82 &3693059238044370886
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2574743083563287450}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &2683151830643941304
 GameObject:
   m_ObjectHideFlags: 0
