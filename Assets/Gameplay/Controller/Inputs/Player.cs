@@ -221,6 +221,16 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": true,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""Ping"",
+                    ""type"": ""Button"",
+                    ""id"": ""ed4e293e-3ddc-4cf0-a28c-ef36bd51a4af"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -432,6 +442,17 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""action"": ""MouseRoll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ae01bae1-918a-4b32-ab66-63146ca2f5af"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": ""Tap"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Ping"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -453,6 +474,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
         m_Gameplay_RightLean = m_Gameplay.FindAction("RightLean", throwIfNotFound: true);
         m_Gameplay_LeftLean = m_Gameplay.FindAction("LeftLean", throwIfNotFound: true);
         m_Gameplay_MouseRoll = m_Gameplay.FindAction("MouseRoll", throwIfNotFound: true);
+        m_Gameplay_Ping = m_Gameplay.FindAction("Ping", throwIfNotFound: true);
     }
 
     ~@Player()
@@ -546,6 +568,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_RightLean;
     private readonly InputAction m_Gameplay_LeftLean;
     private readonly InputAction m_Gameplay_MouseRoll;
+    private readonly InputAction m_Gameplay_Ping;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -609,6 +632,10 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Gameplay/MouseRoll".
         /// </summary>
         public InputAction @MouseRoll => m_Wrapper.m_Gameplay_MouseRoll;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Ping".
+        /// </summary>
+        public InputAction @Ping => m_Wrapper.m_Gameplay_Ping;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -674,6 +701,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @MouseRoll.started += instance.OnMouseRoll;
             @MouseRoll.performed += instance.OnMouseRoll;
             @MouseRoll.canceled += instance.OnMouseRoll;
+            @Ping.started += instance.OnPing;
+            @Ping.performed += instance.OnPing;
+            @Ping.canceled += instance.OnPing;
         }
 
         /// <summary>
@@ -724,6 +754,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @MouseRoll.started -= instance.OnMouseRoll;
             @MouseRoll.performed -= instance.OnMouseRoll;
             @MouseRoll.canceled -= instance.OnMouseRoll;
+            @Ping.started -= instance.OnPing;
+            @Ping.performed -= instance.OnPing;
+            @Ping.canceled -= instance.OnPing;
         }
 
         /// <summary>
@@ -855,5 +888,12 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMouseRoll(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Ping" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPing(InputAction.CallbackContext context);
     }
 }

@@ -627,6 +627,7 @@ GameObject:
   - component: {fileID: 7357652632305383726}
   - component: {fileID: 9082422610625771}
   - component: {fileID: 3693059238044370886}
+  - component: {fileID: -885208385869510881}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -1083,6 +1084,27 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-885208385869510881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2574743083563287450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70713428074f40f2b9236942a1220185, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.UI.Scripts.PlayerPing
+  ShowTopMostFoldoutHeaderGroup: 1
+  _playerInput: {fileID: 88644022890520242}
+  _cam: {fileID: 8333721531469245462}
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _pingPrefab: {fileID: 2982990455922578794, guid: bb563a411001eb343935c2de124014f5, type: 3}
+  _cooldownLifePing: 5
+  _timerBetweenPing: 2
 --- !u!1 &2683151830643941304
 GameObject:
   m_ObjectHideFlags: 0
