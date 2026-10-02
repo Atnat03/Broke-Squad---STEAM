@@ -16,6 +16,7 @@ MonoBehaviour:
   itemName: Knife
   visualPrefab: {fileID: 4548959425825740067, guid: 76cd151fb0fe03049ad6d85d9f62c992, type: 3}
   pickUpPrefab: {fileID: 7624254829841783720, guid: 99a38e16aeaee074790d1b3824ceaaca, type: 3}
+  icon: {fileID: 21300000, guid: 78c50f16d5d24f047adc35858832dfb3, type: 3}
   leftClicksActions: []
   rightClicksActions:
   - rid: 2255290332041183340
@@ -37,5 +38,32 @@ MonoBehaviour:
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 10
-        _X: 10
-        _weight: 20
+        _maxVelocity: 15
+        _maxDamage: 15
+        _damageCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        _weightFactor: 1
+        _mass: 1
+        _canDamagePlayer: 0

@@ -8,18 +8,23 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
         [SerializeField] private int _healAmount = 10;
         [SerializeField] private float _distanceToHeal = 2f;
         
+        public float Range => _distanceToHeal;
+        
         public void StartLeftClick()
         {
             Transform cam = Context.Camera.transform;
 
             if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, _distanceToHeal)
-                && hit.transform.TryGetComponent(out PlayerData.PlayerData player))
+                && hit.collider.GetComponentInParent<PlayerData.PlayerData>() is { } player
+                && player.TryGetComponent(out NetworkObject netObj))
             {
-                player.Heal(_healAmount);
+                Context.Inventory.RequestHeal(netObj);
             }
         }
 
         public void EndLeftClick()
         { }
+        
+        public void ApplyHeal(PlayerData.PlayerData target) => target.Heal(_healAmount);
     }
 }

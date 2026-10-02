@@ -25,5 +25,12 @@ namespace Gameplay.Controller
         public float standHeight = 1.8f;
         public float crouchHeight = 1.0f;
         public float crouchTransitionSpeed = 12f;
+        
+        
+        [Header("Stamina")]
+        public float maxStamina = 100f;
+        public float drainPerSecond = 10f;
+        public float regenPerSecond = 10f;
+        public float regenDelay = 2f;
     }
 }

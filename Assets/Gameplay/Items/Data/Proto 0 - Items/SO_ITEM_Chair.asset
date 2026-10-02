@@ -16,6 +16,7 @@ MonoBehaviour:
   itemName: Chair
   visualPrefab: {fileID: 6673524164190926093, guid: 4f30b0da09403ec468ce71350574416c, type: 3}
   pickUpPrefab: {fileID: 6198608965859654617, guid: 5e64badb6aaacf04da7cdbb5e50d4c45, type: 3}
+  icon: {fileID: 21300000, guid: a8855993029093f439615c2dab138b2a, type: 3}
   leftClicksActions: []
   rightClicksActions:
   - rid: 2255290332041183340
@@ -37,5 +38,32 @@ MonoBehaviour:
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 10
-        _X: 10
-        _weight: 1
+        _maxVelocity: 15
+        _maxDamage: 15
+        _damageCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        _weightFactor: 1
+        _mass: 1
+        _canDamagePlayer: 0

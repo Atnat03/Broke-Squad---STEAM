@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: Crowbar
   visualPrefab: {fileID: 8770613592973639626, guid: 3d0d59bf43b3dd04e92e5fa75b54a2f0, type: 3}
   pickUpPrefab: {fileID: 6136794228241759054, guid: 821569a89cf532949ae9771ba0e79499, type: 3}
-  icon: {fileID: 21300000, guid: 8df04a7fb27ff394baf99d9567cd5136, type: 3}
+  icon: {fileID: 21300000, guid: 7987f2946dd1a90459ee9c0166eb4bd6, type: 3}
   leftClicksActions:
   - rid: 2255290332041183341
   - rid: 7202345451130192107
@@ -72,7 +72,9 @@ MonoBehaviour:
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
-        _weight: 5
+        _weightFactor: 1
+        _mass: 1
+        _canDamagePlayer: 0
     - rid: 7202345451130192107
       type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
