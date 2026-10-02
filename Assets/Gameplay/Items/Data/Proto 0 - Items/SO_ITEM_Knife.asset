@@ -30,16 +30,17 @@ MonoBehaviour:
       type: {class: ThrowModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minThrowForce: {x: 0, y: 0, z: 0}
-        _maxThrowForce: {x: 0, y: 2, z: 12}
-        _durationToFullFill: 1
+        _maxThrowForce: {x: 0, y: 2, z: 10}
+        _durationToFullFill: 2
         _torqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: 0.7
     - rid: 2255290332041183343
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _minVelocityForDamage: 10
+        _minVelocityForDamage: 5
         _maxVelocity: 15
-        _maxDamage: 15
+        _minDamage: 10
+        _maxDamage: 30
         _damageCurve:
           serializedVersion: 2
           m_Curve:
@@ -65,5 +66,7 @@ MonoBehaviour:
           m_PostInfinity: 2
           m_RotationOrder: 4
         _weightFactor: 1
-        _mass: 1
+        _mass: 0.5
         _canDamagePlayer: 0
+        _minVelocityForSound: 3
+        _hitSound: 
