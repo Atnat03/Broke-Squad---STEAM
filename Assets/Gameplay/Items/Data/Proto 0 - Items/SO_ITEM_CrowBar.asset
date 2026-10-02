@@ -19,10 +19,11 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 7987f2946dd1a90459ee9c0166eb4bd6, type: 3}
   leftClicksActions:
   - rid: 2255290332041183341
-  - rid: 7202345451130192107
+  - rid: 7202345451130192311
   rightClicksActions:
   - rid: 2255290332041183340
-  conditions: []
+  conditions:
+  - rid: 7202345451130192310
   passif:
   - rid: 2255290332041183343
   references:
@@ -39,7 +40,7 @@ MonoBehaviour:
     - rid: 2255290332041183341
       type: {class: OpenDoorModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _doorIdRange: {x: 0, y: 100}
+        _doorIdRange: {x: 0, y: 500}
         _range: 2
         _openAllDoors: 1
     - rid: 2255290332041183343
@@ -75,7 +76,13 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 1
         _canDamagePlayer: 0
-    - rid: 7202345451130192107
+    - rid: 7202345451130192310
+      type: {class: NumberOfUse, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data:
+        _maxUse: 1
+        _inputType: 0
+        _destroyWhenUsed: 1
+    - rid: 7202345451130192311
       type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _strength: 10
+        _strength: 15
