@@ -33,8 +33,8 @@ MonoBehaviour:
       type: {class: ThrowModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minThrowForce: {x: 0, y: 0, z: 0}
-        _maxThrowForce: {x: 0, y: 2, z: 12}
-        _durationToFullFill: 1
+        _maxThrowForce: {x: 0, y: 2, z: 8}
+        _durationToFullFill: 1.5
         _torqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: 0.7
     - rid: 2255290332041183341
@@ -43,12 +43,13 @@ MonoBehaviour:
         _doorIdRange: {x: 0, y: 500}
         _range: 2
         _openAllDoors: 1
+        _useKeySound: 
     - rid: 2255290332041183343
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _minVelocityForDamage: 10
-        _maxVelocity: 15
-        _maxDamage: 15
+        _minVelocityForDamage: 3
+        _maxVelocity: 9
+        _maxDamage: 35
         _damageCurve:
           serializedVersion: 2
           m_Curve:
@@ -76,6 +77,8 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 1
         _canDamagePlayer: 0
+        _minVelocityForSound: 3
+        _hitSound: 
     - rid: 7202345451130192310
       type: {class: NumberOfUse, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
@@ -86,3 +89,4 @@ MonoBehaviour:
       type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _strength: 15
+        _breakSound: 

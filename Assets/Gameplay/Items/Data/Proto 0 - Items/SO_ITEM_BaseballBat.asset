@@ -32,16 +32,16 @@ MonoBehaviour:
       type: {class: ThrowModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minThrowForce: {x: 0, y: 0, z: 0}
-        _maxThrowForce: {x: 0, y: 2, z: 15}
+        _maxThrowForce: {x: 0, y: 2, z: 7}
         _durationToFullFill: 2
         _torqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: 0.5
     - rid: 2255290332041183343
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _minVelocityForDamage: 10
-        _maxVelocity: 15
-        _maxDamage: 15
+        _minVelocityForDamage: 3
+        _maxVelocity: 12
+        _maxDamage: 60
         _damageCurve:
           serializedVersion: 2
           m_Curve:
@@ -67,12 +67,15 @@ MonoBehaviour:
           m_PostInfinity: 2
           m_RotationOrder: 4
         _weightFactor: 1
-        _mass: 1
+        _mass: 2
         _canDamagePlayer: 1
+        _minVelocityForSound: 3
+        _hitSound: Joueur/Throw Item
     - rid: 2255290332041183551
       type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _strength: 30
+        _breakSound: 
     - rid: 2255290332041183621
       type: {class: StunModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
