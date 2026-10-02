@@ -28,6 +28,10 @@
                     false,
                     NetworkVariableReadPermission.Everyone,
                     NetworkVariableWritePermission.Server);
+
+            public NetworkVariable<bool> invincibility =
+                new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone,
+                    NetworkVariableWritePermission.Server);
             
             public int CurrentHp => _playerHp.Value;
             public int MaxHp => MaxHpValue;
@@ -55,7 +59,7 @@
             
             public void ApplyDamage(float damage)
             {
-                if (!IsServer || damage <= 0 || _playerDead.Value)
+                if (!IsServer || damage <= 0 || _playerDead.Value || invincibility.Value)
                     return;
 
                 _playerHp.Value = Mathf.Max(0, _playerHp.Value - (int)damage);
@@ -129,8 +133,12 @@
 
             private void Revive(PlayerRevivedEvent e)
             {
-                _playerHp.Value = MaxHp;
-                _playerDead.Value = false;
+                if (_playerDead.Value == true)
+                {
+                    _playerHp.Value = MaxHp;
+                    _playerDead.Value = false;
+                }
+               
             }
             
             [Rpc(SendTo.Owner)]
