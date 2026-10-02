@@ -183,7 +183,7 @@ namespace Gameplay.Controller
         #endregion
 
         [Rpc(SendTo.Owner)]
-        private void ReviveOwnerRpc()
+        public void ReviveOwnerRpc()
         {
             IsDowned.Value = false;
 

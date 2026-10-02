@@ -42,12 +42,13 @@
 
                 ListenToEvent<PlayerRevivedEvent>(Revive);
                 _playerHp.OnValueChanged += OnHpChanged;
+                invincibility.OnValueChanged += OnInvincibilityChanged;
             }
 
             public override void OnNetworkDespawn()
             {
                 _playerHp.OnValueChanged -= OnHpChanged;
-
+                
                 base.OnNetworkDespawn();
             }
 
@@ -122,12 +123,26 @@
                 PublishHp();
             }
 
+            private void OnInvincibilityChanged(bool previousBool, bool newBool)
+            {
+                if (!IsOwner)
+                    return;
+                
+                PublishHp();
+            }
+
             private void PublishHp()
             {
                 InvokeEvent(new PlayerDataEvent
                 {
                     playerHp = _playerHp.Value,
                     maxHp = MaxHpValue
+                });
+                
+                InvokeEvent(new PlayerStatusChangedEvent()
+                {
+                    invincible = invincibility.Value,
+                    playerID = OwnerClientId
                 });
             }
 

@@ -11,6 +11,7 @@ namespace Gameplay.Controller
     {
         private Player _playerInputs;
         public PlayerData.PlayerData  playerData; 
+        public PlayerResurrection playerResurrection;
         
         public Action OnInvincibility;
         public Action OnRevive;
@@ -23,40 +24,66 @@ namespace Gameplay.Controller
             _playerInputs = new Player();
         }
 
-        void OnEnable()
+        public override void OnNetworkSpawn()
         {
-            _playerInputs.Enable();
+            base.OnNetworkSpawn();
+            if (!IsOwner) return;
 
-            _playerInputs.Cheats.Invicibility.performed += InvincibilityServerRpc;
-            _playerInputs.Cheats.Heal.performed += HealServerRpc;
-            _playerInputs.Cheats.Revive.performed += ReviveServerRpc;
-            _playerInputs.Cheats.TakeDamage.performed += DamageServerRpc;
-            
+            _playerInputs.Enable();
+            _playerInputs.Cheats.Invicibility.performed += Invicibility;
+            _playerInputs.Cheats.Heal.performed += Heal;
+            _playerInputs.Cheats.Revive.performed += Revive;
+            _playerInputs.Cheats.TakeDamage.performed += Damage;
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            if (IsOwner)
+            {
+                _playerInputs.Cheats.Invicibility.performed -= Invicibility;
+                _playerInputs.Cheats.Heal.performed -= Heal;
+                _playerInputs.Cheats.Revive.performed -= Revive;
+                _playerInputs.Cheats.TakeDamage.performed -= Damage;
+                _playerInputs.Disable();
+            }
+            base.OnNetworkDespawn();
+        }
+
+        private void Invicibility(InputAction.CallbackContext context)
+        {
+            InvincibilityServerRpc();
         }
         
-        
         [Rpc(SendTo.Server)]
-        private void InvincibilityServerRpc(InputAction.CallbackContext context)
+        private void InvincibilityServerRpc()
         {
             playerData.invincibility.Value = !playerData.invincibility.Value;
         }
 
+        private void Damage(InputAction.CallbackContext context)
+        {
+            DamageServerRpc();
+        }
         [Rpc(SendTo.Server)]
-        private void DamageServerRpc(InputAction.CallbackContext context)
+        private void DamageServerRpc()
         {
             playerData.ApplyDamage(50);
         }
 
+        private void Heal(InputAction.CallbackContext context)
+        {
+            HealServerRpc();
+        }
         [Rpc(SendTo.Server)]
-        private void HealServerRpc(InputAction.CallbackContext context)
+        private void HealServerRpc()
         {
             playerData.Heal(playerData.MaxHp);
         }
 
-        [Rpc(SendTo.Server)]
-        private void ReviveServerRpc(InputAction.CallbackContext context)
+        private void Revive(InputAction.CallbackContext context)
         {
-            InvokeEvent(new PlayerRevivedEvent { playerID = OwnerClientId });
+            playerResurrection.ReviveOwnerRpc();
         }
+        
     }
 }
