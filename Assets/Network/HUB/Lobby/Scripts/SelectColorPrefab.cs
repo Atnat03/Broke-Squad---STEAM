@@ -11,9 +11,9 @@ public class SelectColorPrefab : MonoBehaviour
     [SerializeField] private Image _selectedImage;
     [SerializeField] private Button _buttonSelected;
 
-    public void SetUpColor(Color color, PlayerLocalPersonalisation manager)
+    public void SetUpColor(int color, PlayerLocalPersonalisation manager)
     {
-        _colorImage.color = color;
+        _colorImage.color = PlayerLocalData.instance.PossibleColor[color];
         
         _buttonSelected.onClick.AddListener(() =>
         {

@@ -9,21 +9,23 @@ namespace Network.Connections
     {
         [Header("Pseudo")]
         [SerializeField] private TextMeshProUGUI _playerName;
+        [SerializeField] private TMP_InputField _playerInputField;
         
         [Header("Color")]
-        [SerializeField] private Color[] _colors;
         [SerializeField] private Transform _parentSpawn;
         [SerializeField] private SelectColorPrefab _selectColorPrefab;
         List<SelectColorPrefab> _selectColorList = new();
 
         void Start()
         {
-            foreach (var color in _colors)
+            for(int i = 0; i < PlayerLocalData.instance.PossibleColor.Length; i++)
             {
                 SelectColorPrefab colorInstance = Instantiate(_selectColorPrefab, _parentSpawn);
-                colorInstance.SetUpColor(color, this);
+                colorInstance.SetUpColor(i, this);
                 _selectColorList.Add(colorInstance);
             }
+
+            DisableAllSelectionUI();
         }
         
         public void DisableAllSelectionUI()
@@ -36,7 +38,8 @@ namespace Network.Connections
         
         public void ChangeName()
         {
-            PlayerLocalData.instance.PlayerName = _playerName.text;
+            PlayerLocalData.instance.PlayerName = _playerInputField.text;
+            _playerName.text = _playerInputField.text;
         }
     }
 }
