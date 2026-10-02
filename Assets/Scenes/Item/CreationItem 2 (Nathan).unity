@@ -1552,10 +1552,6 @@ MonoBehaviour:
   ceilingLayer:
     serializedVersion: 2
     m_Bits: 0
-  maxStamina: 100
-  drainPerSecond: 10
-  regenPerSecond: 10
-  regenDelay: 2
   tiedUpSpeed: 1
   tiedUpHeight: 0.8
   eyeTarget: {fileID: 0}
@@ -3454,6 +3450,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Breakable
   ShowTopMostFoldoutHeaderGroup: 1
   _normalMesh: {fileID: 770669599}
+  solidity: 20
+  _dropPickableItem: 0
   _breakMesh:
   - {fileID: 952997267}
   - {fileID: 1285072836}
@@ -3471,8 +3469,8 @@ MonoBehaviour:
   - {fileID: 1647983771}
   - {fileID: 2002462874}
   - {fileID: 1374145394}
-  solidity: 20
-  _dropPickableItem: 0
+  _dropItemPrefabs: {fileID: 0}
+  _pickupSpawnPoints: []
 --- !u!114 &770669604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4766,6 +4764,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Breakable
   ShowTopMostFoldoutHeaderGroup: 1
   _normalMesh: {fileID: 923033108}
+  solidity: 20
+  _dropPickableItem: 0
   _breakMesh:
   - {fileID: 95523466}
   - {fileID: 190615450}
@@ -4783,8 +4783,8 @@ MonoBehaviour:
   - {fileID: 1283259377}
   - {fileID: 1574203455}
   - {fileID: 979458720}
-  solidity: 20
-  _dropPickableItem: 0
+  _dropItemPrefabs: {fileID: 0}
+  _pickupSpawnPoints: []
 --- !u!114 &923033113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6423,6 +6423,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   _canOpenWithoutKey: 0
+  _toggleCooldown: 0.3
 --- !u!114 &1243329169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7078,6 +7079,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Breakable
   ShowTopMostFoldoutHeaderGroup: 1
   _normalMesh: {fileID: 1262818770}
+  solidity: 20
+  _dropPickableItem: 0
   _breakMesh:
   - {fileID: 1514552753}
   - {fileID: 1885479677}
@@ -7095,8 +7098,8 @@ MonoBehaviour:
   - {fileID: 1017339335}
   - {fileID: 1714573298}
   - {fileID: 99105221}
-  solidity: 20
-  _dropPickableItem: 0
+  _dropItemPrefabs: {fileID: 0}
+  _pickupSpawnPoints: []
 --- !u!114 &1262818777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8648,6 +8651,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   _canOpenWithoutKey: 0
+  _toggleCooldown: 0.3
 --- !u!114 &1467233677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9461,6 +9465,75 @@ Transform:
   - {fileID: 1495328915}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1552069678
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 288752709049604590, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.38792768
+      objectReference: {fileID: 0}
+    - target: {fileID: 288752709049604590, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.257
+      objectReference: {fileID: 0}
+    - target: {fileID: 288752709049604590, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -5.4297824
+      objectReference: {fileID: 0}
+    - target: {fileID: 288752709049604590, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 288752709049604590, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.000000016660005
+      objectReference: {fileID: 0}
+    - target: {fileID: 288752709049604590, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 7.4476023e-16
+      objectReference: {fileID: 0}
+    - target: {fileID: 288752709049604590, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.000000044703484
+      objectReference: {fileID: 0}
+    - target: {fileID: 288752709049604590, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 288752709049604590, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 288752709049604590, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 334136715745549489, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
+      propertyPath: m_Name
+      value: P_IT_PICKUP_Bell
+      objectReference: {fileID: 0}
+    - target: {fileID: 3631984432561315677, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3631984432561315677, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1905287721
+      objectReference: {fileID: 0}
+    - target: {fileID: 3631984432561315677, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 422324442
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 59d6eec768ac0614eab5e3d8a5b5f2d7, type: 3}
 --- !u!1 &1574203453
 GameObject:
   m_ObjectHideFlags: 0
@@ -14114,7 +14187,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5430142514703455139, guid: 0c624b13728883a49a6e5aeeb0a60b0d, type: 3}
   m_PrefabInstance: {fileID: 4126008848190177320}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 4126008848190177321}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
@@ -16062,3 +16135,4 @@ SceneRoots:
   - {fileID: 2617509736163564520}
   - {fileID: 4388081722130200641}
   - {fileID: 7450033531057990350}
+  - {fileID: 1552069678}
