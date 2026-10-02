@@ -9,6 +9,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
     public class BreakThings : ItemModule, ILeftClick
     {
         [SerializeField] private float _strength = 10;
+        [SerializeField, SoundName] private string _breakSound;
         
         public void StartLeftClick()
         {
@@ -20,6 +21,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
                 
                 if (hit.transform.TryGetComponent(out Breakable wall))
                 {
+                    Context.Inventory.TryPlaySound(_breakSound);
                     wall.Break(_strength);
                 }
             }

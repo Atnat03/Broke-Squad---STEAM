@@ -11,6 +11,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
     public class DestroyWithVelocity : ItemModule, IPassif
     {
         [SerializeField] private float _minVelocityForDestroy = 1;
+        [SerializeField, SoundName] private string _breakSound;
         
         public void OnCollide(Collision collision, ItemPickup item)
         {
@@ -20,6 +21,8 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
             
             if (speed <= _minVelocityForDestroy) return;
 
+            Context.Inventory.TryPlaySound(_breakSound);
+            
             if (item.TryGetComponent<NetworkObject>(out var obj))
             {
                 obj.Despawn();
@@ -29,7 +32,9 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
         public void OnThrow(Rigidbody rb)
         { }
 
-        public void OnUpdateState()
+        public void OnStartHolding()
         { }
+        
+        public void OnStopHolding(){}
     }
 }

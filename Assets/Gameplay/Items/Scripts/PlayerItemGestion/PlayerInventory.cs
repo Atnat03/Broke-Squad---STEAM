@@ -9,9 +9,12 @@ using Gameplay.LD.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Gameplay.Items.Scripts.ItemModules;
+using MyPrint;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 namespace Gameplay.Items.Scripts
@@ -53,6 +56,9 @@ namespace Gameplay.Items.Scripts
         
         [Header("Use")]
         [SerializeField] private TextMeshProUGUI _useAmountText;
+
+        [Header("Audio")] 
+        [SerializeField, SoundName] private string _pickUpSFX;
 
         private readonly NetworkVariable<int> _heldItemId = new(-1);
         private readonly NetworkVariable<float> _electricPercent = new(0f);
@@ -132,7 +138,7 @@ namespace Gameplay.Items.Scripts
                     pickup.TryGetComponent(out NetworkObject netObj))
                 {
                     PickUpRpc(netObj);
-                    InvokeEvent(new OnInteractItemInWorld());
+                    
                     return;
                 }
 
@@ -209,7 +215,7 @@ namespace Gameplay.Items.Scripts
 
             int slot = FindFreeSlot();
             if (slot == -1) return;
-
+            
             _slots[slot] = pickup.Instance;
             netObj.Despawn();
 
@@ -233,7 +239,7 @@ namespace Gameplay.Items.Scripts
         {
             ItemInstance item = GetCurrentItemInHand();
             if (item == null) return;
-
+            
             Vector3 pos = _parent.position + transform.forward * 0.5f;
             ItemPickup pickup = Instantiate(item.Data.pickUpPrefab, pos, transform.rotation);
             pickup.Setup(item);
@@ -268,11 +274,17 @@ namespace Gameplay.Items.Scripts
             
             if (_currentItem != null)
             {
+                foreach (IPassif passif in _currentItem.Instance.Passifs)
+                {
+                    passif.OnStopHolding();
+                }
+                
                 if (IsOwner) 
                     _currentItem.UnsubscribeFromInput(_input);
 
                 if (!IsServer) 
                     _currentItem.Instance?.Cleanup();
+                
 
                 EnableBar(false);
                 EnableElectricInfo(false);
@@ -301,6 +313,11 @@ namespace Gameplay.Items.Scripts
 
             ItemInstance instance = IsServer ? GetCurrentItemInHand() : new ItemInstance(data);
             core.SetInstance(instance, this);
+            
+            foreach (IPassif passif in instance.Passifs)
+            {
+                passif.OnStartHolding();
+            }
             
             if (IsOwner) 
                 UpdateElectricInfo(_electricPercent.Value); 
@@ -364,9 +381,20 @@ namespace Gameplay.Items.Scripts
             
             _slotsUIList[selected].SetIcon(icon);
         }
-        
+
         public void RequestThrow(float charge01, Vector3 camPos, Quaternion camRot)
-            => ThrowRpc(charge01, camPos, camRot);
+        {
+            //Audio
+            InvokeEvent(new PlaySoundEvent
+            {
+                soundName = _pickUpSFX,
+                position = transform.position,
+                volume = 0.5f,
+            });
+            
+            ThrowRpc(charge01, camPos, camRot);
+        }
+           
 
         [Rpc(SendTo.Server)]
         private void ThrowRpc(float charge01, Vector3 camPos, Quaternion camRot)
@@ -424,7 +452,7 @@ namespace Gameplay.Items.Scripts
             if (!netObj.TryGetComponent(out ItemPickup pickup)) return;
 
             if (Vector3.Distance(transform.position, netObj.transform.position) > module.Range + 1.5f) return;
-
+            
             module.ApplyCharge(pickup);
         }
         
@@ -539,7 +567,57 @@ namespace Gameplay.Items.Scripts
         
         private void OnSelectedSlotChanged(int prev, int cur) => _uiDirty = true;
 
+        public void TryPlaySound(string sound)
+        {
+            if (!IsServer)
+            {
+                AskServerToPlaySoundRpc(sound);
+                return;
+            }
+            
+            InvokeEvent(new PlaySoundEvent
+                {
+                soundName = sound,
+                position = transform.position,
+                volume = 0.25f,
+            });
+        }
 
-        #endregion    
+        [Rpc(SendTo.Server)]
+        private void AskServerToPlaySoundRpc(string sound) => TryPlaySound(sound);
+
+        #endregion
+
+        #region Goal
+
+        public void TryNotifyGoal(bool hasGoal)
+        {
+            if (!IsServer)
+            {
+                TryNotifyGoalServerRpc(hasGoal);
+                return;
+            }
+            
+            TryNotifyGoalClientRpc(hasGoal);
+        }
+
+        [Rpc(SendTo.Server)]
+        private void TryNotifyGoalServerRpc(bool hasGoal)
+        {
+            TryNotifyGoal(hasGoal);
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void TryNotifyGoalClientRpc(bool hasGoal)
+        {
+            if(hasGoal)
+                InvokeEvent(new OnGrabGoal());
+            else
+            {
+                InvokeEvent(new OnDropGoal());
+            }
+        }
+
+        #endregion
     }
 }
