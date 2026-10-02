@@ -31,17 +31,14 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
             
             if (collision.gameObject.TryGetComponent<IDamageable>(out var damage))
             {
+                
                 ABPrint.Print("Speed : " + speed, ABColor.Purple);
                 
                 if (speed <= _minVelocityForDamage) return;
 
                 float t = Mathf.InverseLerp(_minVelocityForDamage, _maxVelocity, speed);
-                
-                float speedFactor = _damageCurve.Evaluate(t);
-                
-                float rawDmg = Mathf.Lerp(_minDamage, _maxDamage, t);
-                
-                float dmg = rawDmg * speedFactor * _weightFactor;
+                float curved = _damageCurve.Evaluate(t);
+                float dmg = Mathf.Lerp(_minDamage, _maxDamage, curved) * _weightFactor;
                 
                 ABPrint.Print("Speed : " + speed + " / Dmg : " + dmg, ABColor.Purple);
 
