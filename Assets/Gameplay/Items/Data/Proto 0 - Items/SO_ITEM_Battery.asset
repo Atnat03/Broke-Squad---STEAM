@@ -16,6 +16,7 @@ MonoBehaviour:
   itemName: Battery
   visualPrefab: {fileID: 2204866871762245141, guid: 8de3083b4223fbd43ab98fb004c9662c, type: 3}
   pickUpPrefab: {fileID: 5438614079893959749, guid: d0436cfb9f696ab45b022632b1939e67, type: 3}
+  icon: {fileID: 21300000, guid: cbf4aff0f9ca4fc4487c1988fb98daf6, type: 3}
   leftClicksActions:
   - rid: 2255290332041183622
   rightClicksActions:
@@ -45,8 +46,35 @@ MonoBehaviour:
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 10
-        _X: 10
-        _weight: 5
+        _maxVelocity: 15
+        _maxDamage: 15
+        _damageCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        _weightFactor: 1
+        _mass: 1
+        _canDamagePlayer: 0
     - rid: 2255290332041183622
       type: {class: ChargeItemModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:

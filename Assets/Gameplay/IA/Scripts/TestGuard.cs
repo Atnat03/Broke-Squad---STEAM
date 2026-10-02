@@ -16,7 +16,8 @@ namespace Gameplay.IA.Scripts
         [SerializeField] private float _speedChase = 3;
         [SerializeField] private float _distanceToStopChasing = 5;
         [SerializeField] private GuardFieldOfView _guardFieldOfView;
-
+        [SerializeField] private Image _detectionProgression;
+        
         [Header("Color")]
         [SerializeField] private MeshRenderer _meshRenderer;
         [SerializeField] private Color _colorPatrol;
@@ -41,6 +42,11 @@ namespace Gameplay.IA.Scripts
         [Header("Stun")] 
         [SerializeField] private Color _stunColor = Color.deepSkyBlue;
         private Coroutine _stunCoroutine;
+        
+        [Header("Chase")]
+        [SerializeField] private float _timeBeforeReturnToPatrol = 3f;
+        [SerializeField] private float _radiusToAutoDetectWhenAttacking = 10;
+        private Coroutine _returnToPatrolCoroutine;
 
         [Header("SFX")] 
         [SerializeField, SoundName] private string _detectedSound;
@@ -63,6 +69,7 @@ namespace Gameplay.IA.Scripts
             _isInChase.OnValueChanged += GuardStateChange;
             _currentHealth.OnValueChanged += UpdateHP;
             _isStun.OnValueChanged += StunStateChange;
+            _guardFieldOfView.OnDetectionProgressChanged += UpdateDetection;
             
             _currentHealth.Value = _maxHealth;
 
@@ -155,11 +162,20 @@ namespace Gameplay.IA.Scripts
             if (_guardFieldOfView.CanSeeTarget && _guardFieldOfView.Target != null)
             {
                 _target = _guardFieldOfView.Target;
+
+                if (_returnToPatrolCoroutine != null)
+                {
+                    StopCoroutine(_returnToPatrolCoroutine);
+                    _returnToPatrolCoroutine = null;
+                }
             }
-            else if (_target != null &&
-                     Vector3.Distance(_target.position, transform.position) > _distanceToStopChasing)
+            else if (_target != null && Vector3.Distance(_target.position, transform.position) > _distanceToStopChasing)
             {
-                _target = null;
+                if (_returnToPatrolCoroutine == null)
+                {
+                    _returnToPatrolCoroutine =
+                        StartCoroutine(ReturnToPatrolAfterDelay());
+                }
             }
 
             bool isChasing = _target != null;
@@ -250,6 +266,11 @@ namespace Gameplay.IA.Scripts
 
             _currentHealth.Value -= damage;
 
+            if (_target == null)
+            {
+                GetNearestTarget();
+            }
+
             if (_currentHealth.Value <= 0)
             {
                 ReplicateDeathRpc();
@@ -257,10 +278,39 @@ namespace Gameplay.IA.Scripts
             }
         }
 
-        public void OnDrawGizmos()
+        private void GetNearestTarget()
+        {
+            Collider[] colliders = Physics.OverlapSphere(transform.position, _radiusToAutoDetectWhenAttacking);
+            float minDist = float.MaxValue;
+            Transform nearestTarget = null;
+            
+            foreach (var c in colliders)
+            {
+                if (c.TryGetComponent(out PlayerData.PlayerData player))
+                {
+                    float dist = (player.transform.position - transform.position).sqrMagnitude;
+                
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        nearestTarget = player.transform;
+                    }
+                }
+            }
+
+            if (nearestTarget != null)
+            {
+                _target = nearestTarget;
+            }
+        }
+
+        public void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, transform.position + Vector3.forward * _attackRange);
+            
+            Gizmos.color = Color.blueViolet;
+            Gizmos.DrawWireSphere(transform.position, _radiusToAutoDetectWhenAttacking);
         }
 
         public void ApplyStun(float stunDuration)
@@ -284,6 +334,41 @@ namespace Gameplay.IA.Scripts
             _isStun.Value = false;
             
             _stunCoroutine = null;
+        }
+
+        [Rpc(SendTo.Server)]
+        private void UpdateDetectionServerRpc(float ratio)
+        {
+            UpdateDetection(ratio);
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void UpdateDetectionClientRpc(float ratio)
+        {
+            _detectionProgression.fillAmount = ratio;
+        }
+        
+        private void UpdateDetection(float ratio)
+        {
+            if (!IsServer)
+            {
+                UpdateDetectionServerRpc(ratio);
+                return;
+            }
+
+            UpdateDetectionClientRpc(ratio);
+        }
+        
+        private IEnumerator ReturnToPatrolAfterDelay()
+        {
+            yield return new WaitForSeconds(_timeBeforeReturnToPatrol);
+
+            if (_target != null && Vector3.Distance(_target.position, transform.position) > _distanceToStopChasing && !_guardFieldOfView.CanSeeTarget)
+            {
+                _target = null;
+            }
+
+            _returnToPatrolCoroutine = null;
         }
         
         #region Replication

@@ -9,6 +9,7 @@ using Gameplay.LD.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Gameplay.Items.Scripts.ItemModules;
 using MyPrint;
 using TMPro;
 using Unity.Netcode;
@@ -214,7 +215,7 @@ namespace Gameplay.Items.Scripts
 
             int slot = FindFreeSlot();
             if (slot == -1) return;
-
+            
             _slots[slot] = pickup.Instance;
             netObj.Despawn();
 
@@ -238,7 +239,7 @@ namespace Gameplay.Items.Scripts
         {
             ItemInstance item = GetCurrentItemInHand();
             if (item == null) return;
-
+            
             Vector3 pos = _parent.position + transform.forward * 0.5f;
             ItemPickup pickup = Instantiate(item.Data.pickUpPrefab, pos, transform.rotation);
             pickup.Setup(item);
@@ -273,11 +274,17 @@ namespace Gameplay.Items.Scripts
             
             if (_currentItem != null)
             {
+                foreach (IPassif passif in _currentItem.Instance.Passifs)
+                {
+                    passif.OnStopHolding();
+                }
+                
                 if (IsOwner) 
                     _currentItem.UnsubscribeFromInput(_input);
 
                 if (!IsServer) 
                     _currentItem.Instance?.Cleanup();
+                
 
                 EnableBar(false);
                 EnableElectricInfo(false);
@@ -306,6 +313,11 @@ namespace Gameplay.Items.Scripts
 
             ItemInstance instance = IsServer ? GetCurrentItemInHand() : new ItemInstance(data);
             core.SetInstance(instance, this);
+            
+            foreach (IPassif passif in instance.Passifs)
+            {
+                passif.OnStartHolding();
+            }
             
             if (IsOwner) 
                 UpdateElectricInfo(_electricPercent.Value); 
@@ -440,7 +452,7 @@ namespace Gameplay.Items.Scripts
             if (!netObj.TryGetComponent(out ItemPickup pickup)) return;
 
             if (Vector3.Distance(transform.position, netObj.transform.position) > module.Range + 1.5f) return;
-
+            
             module.ApplyCharge(pickup);
         }
         
@@ -564,7 +576,7 @@ namespace Gameplay.Items.Scripts
             }
             
             InvokeEvent(new PlaySoundEvent
-            {
+                {
                 soundName = sound,
                 position = transform.position,
                 volume = 0.25f,
@@ -574,6 +586,38 @@ namespace Gameplay.Items.Scripts
         [Rpc(SendTo.Server)]
         private void AskServerToPlaySoundRpc(string sound) => TryPlaySound(sound);
 
-        #endregion    
+        #endregion
+
+        #region Goal
+
+        public void TryNotifyGoal(bool hasGoal)
+        {
+            if (!IsServer)
+            {
+                TryNotifyGoalServerRpc(hasGoal);
+                return;
+            }
+            
+            TryNotifyGoalClientRpc(hasGoal);
+        }
+
+        [Rpc(SendTo.Server)]
+        private void TryNotifyGoalServerRpc(bool hasGoal)
+        {
+            TryNotifyGoal(hasGoal);
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void TryNotifyGoalClientRpc(bool hasGoal)
+        {
+            if(hasGoal)
+                InvokeEvent(new OnGrabGoal());
+            else
+            {
+                InvokeEvent(new OnDropGoal());
+            }
+        }
+
+        #endregion
     }
 }

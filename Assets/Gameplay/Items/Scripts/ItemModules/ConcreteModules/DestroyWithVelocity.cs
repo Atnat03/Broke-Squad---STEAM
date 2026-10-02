@@ -32,7 +32,9 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
         public void OnThrow(Rigidbody rb)
         { }
 
-        public void OnUpdateState()
+        public void OnStartHolding()
         { }
+        
+        public void OnStopHolding(){}
     }
 }

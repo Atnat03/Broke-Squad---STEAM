@@ -16,6 +16,7 @@ MonoBehaviour:
   itemName: Key
   visualPrefab: {fileID: 8520415380908492573, guid: 4478016ce38cafc48aefa6844866a202, type: 3}
   pickUpPrefab: {fileID: 3642109076169085848, guid: 0c0720dadfec41c439d531db0a6a63c9, type: 3}
+  icon: {fileID: 21300000, guid: a0d14db13341bd14c88ca2930b84b6c6, type: 3}
   leftClicksActions:
   - rid: 2255290332041183341
   rightClicksActions:
@@ -33,21 +34,50 @@ MonoBehaviour:
         _minThrowForce: {x: 0, y: 0, z: 0}
         _maxThrowForce: {x: 0, y: 2, z: 12}
         _durationToFullFill: 1
-        _torqueForce: 25
+        _torqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: 0.7
     - rid: 2255290332041183341
       type: {class: OpenDoorModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
-        _doorId: 0
+        _doorIdRange: {x: 0, y: 100}
         _range: 2
+        _openAllDoors: 0
     - rid: 2255290332041183342
       type: {class: NumberOfUse, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _maxUse: 1
         _inputType: 0
+        _destroyWhenUsed: 0
     - rid: 2255290332041183343
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 10
-        _X: 10
-        _weight: 5
+        _maxVelocity: 15
+        _maxDamage: 15
+        _damageCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        _weightFactor: 1
+        _mass: 1
+        _canDamagePlayer: 0
