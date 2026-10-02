@@ -92,6 +92,8 @@ namespace Gameplay.Items.Scripts
                 _input.OnInteractInput += OnInteract;
                 _input.OnInteractInput += CheckOpenDoor;
                 
+                _input.OnDropInput += OnDrop;
+                
                 for (int i = 0; i < _slotsUIList.Length; i++)
                 {
                     _slotsUIList[i] = Instantiate(_slotPrefabUI, _parentInventory);
@@ -124,13 +126,15 @@ namespace Gameplay.Items.Scripts
                 {
                     _input.OnInteractInput -= CheckOpenDoor;
                     _input.OnInteractInput -= OnInteract;
+                    _input.OnDropInput -= OnDrop;
                 }
             }
         }
 
         private void OnInteract()
         {
-            if(_playerController.IsDown) return;
+            if (_playerController.IsDown) return;
+
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
                     out RaycastHit hit, _range, _layerMask, QueryTriggerInteraction.Ignore))
             {
@@ -138,17 +142,18 @@ namespace Gameplay.Items.Scripts
                     pickup.TryGetComponent(out NetworkObject netObj))
                 {
                     PickUpRpc(netObj);
-                    
                     return;
                 }
 
                 IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
                 if (interactable != null)
-                {
                     interactable.Interact();
-                    return;
-                }
             }
+        }
+
+        private void OnDrop()
+        {
+            if (_playerController.IsDown) return;
 
             if (HasItemInHand())
                 DropItemRpc();
