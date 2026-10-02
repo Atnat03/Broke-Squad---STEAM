@@ -785,7 +785,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1942329737
+  GlobalObjectIdHash: 3075001378
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -831,9 +831,19 @@ MonoBehaviour:
   tiedUpSpeed: 0.6
   tiedUpHeight: 0.8
   eyeTarget: {fileID: 4606863278405769456}
-  _walkSound: []
-  _jumpSound: 
-  _crouchSound: 
+  walkStepInterval: 0.5
+  sprintStepInterval: 0.35
+  crouchStepInterval: 0.8
+  walkStepVolume: 0.3
+  sprintStepVolume: 0.5
+  crouchStepVolume: 0.1
+  _walkSound:
+  - Joueur/Walk 1
+  - Joueur/Walk 2
+  - Joueur/Walk 3
+  - Joueur/Walk 4
+  _jumpSound: Joueur/Jump
+  _crouchSound: Joueur/Crouch
 --- !u!114 &1310361133901699229
 MonoBehaviour:
   m_ObjectHideFlags: 0

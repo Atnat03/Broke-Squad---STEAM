@@ -11,7 +11,7 @@
         {
             [SerializeField] private const int MaxHpValue = 100;
             
-            [Header("SFX")] 
+            [Header("SFX")]
             [SerializeField, SoundName] private string[] _takeDamageSound;
             private int _previousTakeDamageSoundPlayed = -1;
             [SerializeField, SoundName] private string _deathSound;
@@ -152,5 +152,7 @@
                     volume = 0.5f
                 });
             }
+            
+            public bool IsDead() => _playerDead.Value;
         }
     }

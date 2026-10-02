@@ -4,6 +4,7 @@ using Gameplay.Controller.States;
 using Gameplay.PlayerData;
 using Unity.Netcode;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Gameplay.Controller
 {
@@ -70,6 +71,12 @@ namespace Gameplay.Controller
         [SerializeField] private Transform eyeTarget;
 
         [Header("SFX")] 
+        [SerializeField] private float walkStepInterval = 0.5f;
+        [SerializeField] private float sprintStepInterval = 0.35f;
+        [SerializeField] private float crouchStepInterval = 0.8f;
+        [SerializeField] private float walkStepVolume = 0.3f;
+        [SerializeField] private float sprintStepVolume = 0.5f;
+        [SerializeField] private float crouchStepVolume = 0.1f;
         [SerializeField, SoundName] private string[] _walkSound;
         [SerializeField, SoundName] private string _jumpSound;
         [SerializeField, SoundName] private string _crouchSound;
@@ -250,6 +257,7 @@ namespace Gameplay.Controller
             UpdateStamina(dt);
             ApplyJump();
             ApplyGravity(dt);
+            UpdateFootsteps(dt);
         }
 
         private void LateUpdate()
@@ -335,6 +343,7 @@ namespace Gameplay.Controller
 
         private void UpdateCrouch(float dt)
         {
+            if(!IsCrouching && _crouchHeld || (IsCrouching && !CanStandUp())) PlaySound(_crouchSound, 0.5f);
             IsCrouching = _crouchHeld || (IsCrouching && !CanStandUp());
             IsCrouching = !_playerDead && IsCrouching;
             
@@ -380,6 +389,7 @@ namespace Gameplay.Controller
             IsSprinting = _sprintHeld && !IsCrouching && _moveInput.y > 0.1f && !_exhausted && _stamina > 0f;
             IsSprinting = IsSprinting &&  !_playerDead;
             
+            
             float targetSpeed = IsCrouching ? _crouchSpeed : (IsSprinting ? _sprintSpeed : _walkSpeed);
             targetSpeed = _playerDead ? tiedUpSpeed : targetSpeed;
             targetSpeed *= IsMovingBackward ? _backwardSpeedMultiplier : 1f;
@@ -413,6 +423,7 @@ namespace Gameplay.Controller
                 _jumpBufferTimer = 0f;
                 _coyoteTimer = 0f;
                 IsGrounded = false;
+                PlaySound(_jumpSound, 0.5f);
             }
         }
 
@@ -480,6 +491,59 @@ namespace Gameplay.Controller
         public void Revive()
         {
             _playerDead = false;
+        }
+        
+        private float stepTimer;
+        private bool _wasMoving;
+
+        private void UpdateFootsteps(float dt)
+        {
+            bool isMoving = IsGrounded && _moveInput.sqrMagnitude > 0.01f;
+
+            if (!isMoving)
+            {
+                stepTimer = 0f;
+                _wasMoving = false;
+                return;
+            }
+
+            float interval = IsCrouching ? crouchStepInterval : IsSprinting ? sprintStepInterval : walkStepInterval;
+            float volume = IsCrouching ? crouchStepVolume : IsSprinting ? sprintStepVolume : walkStepVolume;
+            
+            if (!_wasMoving)
+            {
+                PlaySound(
+                    _walkSound[Random.Range(0, _walkSound.Length)],
+                    volume
+                );
+
+                _wasMoving = true;
+                stepTimer = 0f;
+                return;
+            }
+            
+            stepTimer += dt;
+
+            if (stepTimer >= interval)
+            {
+                stepTimer -= interval;
+
+                PlaySound(
+                    _walkSound[Random.Range(0, _walkSound.Length)],
+                    volume
+                );
+            }
+        }
+        
+        public void PlaySound(String clip, float volumeToPlay)
+        {
+            InvokeEvent(new PlaySoundEvent
+            {
+                soundName = clip,
+                position = transform.position,
+                volume = volumeToPlay,
+                pitch = Random.Range(0.95f, 1.05f) 
+            });
         }
     }
 }
