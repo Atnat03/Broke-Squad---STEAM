@@ -16,6 +16,7 @@ MonoBehaviour:
   itemName: Gravat
   visualPrefab: {fileID: 6257818723059611307, guid: e810128558743754c9475f1687f73ac1, type: 3}
   pickUpPrefab: {fileID: 1986776034453942735, guid: 6b421c1c6c30fec4dab4333d278384fe, type: 3}
+  icon: {fileID: 21300000, guid: 770f05e22d18fd849912136c5a53566d, type: 3}
   leftClicksActions: []
   rightClicksActions:
   - rid: 2255290332041183340
@@ -38,8 +39,35 @@ MonoBehaviour:
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 10
-        _X: 10
-        _weight: 5
+        _maxVelocity: 15
+        _maxDamage: 15
+        _damageCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        _weightFactor: 1
+        _mass: 1
+        _canDamagePlayer: 0
     - rid: 2255290332041183623
       type: {class: StunModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
