@@ -21,8 +21,7 @@ MonoBehaviour:
   - rid: 2255290332041183341
   rightClicksActions:
   - rid: 2255290332041183340
-  conditions:
-  - rid: 2255290332041183342
+  conditions: []
   passif:
   - rid: 2255290332041183343
   references:
@@ -43,17 +42,12 @@ MonoBehaviour:
         _range: 2
         _openAllDoors: 0
         _useKeySound: 
-    - rid: 2255290332041183342
-      type: {class: NumberOfUse, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
-      data:
-        _maxUse: 1
-        _inputType: 0
-        _destroyWhenUsed: 0
     - rid: 2255290332041183343
       type: {class: DamageWithVelocity, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 5
         _maxVelocity: 10
+        _minDamage: 1
         _maxDamage: 5
         _damageCurve:
           serializedVersion: 2

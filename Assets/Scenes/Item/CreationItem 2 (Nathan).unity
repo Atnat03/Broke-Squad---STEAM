@@ -1924,7 +1924,9 @@ MonoBehaviour:
   autoUpdateProfileValue: 1
   playerCamera: {fileID: 1197007964}
   UI: {fileID: 0}
-  meshRenderer: {fileID: 0}
+  meshRenderer:
+  - {fileID: 0}
+  pseudoText: {fileID: 0}
   groundLayer:
     serializedVersion: 2
     m_Bits: 0
@@ -1947,6 +1949,8 @@ MonoBehaviour:
   _walkSound: []
   _jumpSound: 
   _crouchSound: 
+  visual: {fileID: 0}
+  tiedVisual: {fileID: 0}
 --- !u!54 &244986481
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -17887,6 +17891,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2013851294}
     m_Modifications:
+    - target: {fileID: -7830063957090585088, guid: 08ef89287cb17984b9dac3785df396f2, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7830063957090585088, guid: 08ef89287cb17984b9dac3785df396f2, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1851786258
+      objectReference: {fileID: 0}
+    - target: {fileID: -7830063957090585088, guid: 08ef89287cb17984b9dac3785df396f2, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7830063957090585088, guid: 08ef89287cb17984b9dac3785df396f2, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 3546251683
+      objectReference: {fileID: 0}
     - target: {fileID: 1106497380845668977, guid: 08ef89287cb17984b9dac3785df396f2, type: 3}
       propertyPath: m_Name
       value: P_Prise
