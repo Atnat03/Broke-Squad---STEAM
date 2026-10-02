@@ -59,7 +59,10 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
             rb.mass = _mass;
         }
 
-        public void OnUpdateState()
+        public void OnStartHolding()
+        { }
+
+        public void OnStopHolding()
         { }
     }
 }

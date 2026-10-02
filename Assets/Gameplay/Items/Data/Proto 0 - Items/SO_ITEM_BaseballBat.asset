@@ -24,6 +24,7 @@ MonoBehaviour:
   conditions: []
   passif:
   - rid: 2255290332041183343
+  - rid: 7203100836063084853
   references:
     version: 2
     RefIds:
@@ -68,7 +69,13 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 1
         _canDamagePlayer: 0
+        _minVelocityForSound: 3
+        _hitSound: 
     - rid: 2255290332041183551
       type: {class: BreakThings, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
       data:
         _strength: 100
+        _breakSound: 
+    - rid: 7203100836063084853
+      type: {class: GoalModule, ns: Gameplay.Items.Scripts.ItemModules.ConcreteModules, asm: Assembly-CSharp}
+      data: 
