@@ -30,6 +30,7 @@ namespace Gameplay.Controller
         public GameObject UI;
         public MeshRenderer[] meshRenderer;
         public TextMeshProUGUI pseudoText;
+        
 
         [Header("Speed")]
         private float _walkSpeed = 4f;
@@ -85,7 +86,12 @@ namespace Gameplay.Controller
         [SerializeField, SoundName] private string[] _walkSound;
         [SerializeField, SoundName] private string _jumpSound;
         [SerializeField, SoundName] private string _crouchSound;
-
+        
+        [Header("Visual")]
+        [SerializeField] private Transform visual;
+        [SerializeField] private GameObject tiedVisual;
+        private Vector3 _visualBaseScale = Vector3.one;
+        private float _initialHeight;
         private Rigidbody _rb;
         private CapsuleCollider _capsule;
 
@@ -142,6 +148,10 @@ namespace Gameplay.Controller
 
         private float _lastSentStamina = -1f;
         
+        private readonly NetworkVariable<bool> _netCrouching = new(false,
+            NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        private readonly NetworkVariable<bool> _netDown = new(false,
+            NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         #endregion
 
         
@@ -149,6 +159,8 @@ namespace Gameplay.Controller
 
         public override void OnNetworkSpawn()
         {
+            SetUpComponents();
+            
             if (!IsOwner)
             {
                 playerCamera.gameObject.SetActive(false);
@@ -157,11 +169,11 @@ namespace Gameplay.Controller
             }
             else
             {
+                foreach (var mesh in meshRenderer) mesh.enabled = false;
                 pseudoText.gameObject.SetActive(false);
                 
                 SendPersonalisation();
                 
-                SetUpComponents();
                 SetUpInputs();
                 SetUpStateMachine();
                 ListenToEvent<PlayerDeathEvent>(SetPlayerDead);
@@ -177,11 +189,7 @@ namespace Gameplay.Controller
             _rb.interpolation = RigidbodyInterpolation.Interpolate;
             _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             _rb.useGravity = false;
-
-            foreach (var mesh in meshRenderer)
-            {
-                mesh.enabled = false;
-            }
+            
             _stamina = _maxStamina;
             
             _capsule.sharedMaterial = new PhysicsMaterial("PlayerNoFriction")
@@ -194,7 +202,9 @@ namespace Gameplay.Controller
             };
             
             _bottomOffsetY = _capsule.center.y - _capsule.height / 2f;
-
+            _initialHeight = _capsule.height;
+            if (visual != null) _visualBaseScale = visual.localScale;
+            
             _capsule.height = _standHeight;
             RecenterCapsule();
 
@@ -248,9 +258,13 @@ namespace Gameplay.Controller
 
         private void Update()
         {
-            if(!IsOwner)
-                return;
             if(autoUpdateProfileValue) GetDataFromProfile();
+            if (!IsOwner)
+            {
+                UpdateBodyShape(Time.deltaTime, _netCrouching.Value, _netDown.Value);
+                return;
+            }
+            
             _stateMachine.Update();
             UpdateEyeHeight();
         }
@@ -352,6 +366,22 @@ namespace Gameplay.Controller
             _regenDelay = profile.regenDelay;
         }
         
+        private void UpdateBodyShape(float dt, bool crouching, bool down)
+        {
+            float target = down ? tiedUpHeight : (crouching ? _crouchHeight : _standHeight);
+            _capsule.height = Mathf.MoveTowards(_capsule.height, target, _crouchTransitionSpeed * dt);
+            RecenterCapsule();
+            tiedVisual.SetActive(down);
+            if (visual != null)
+            {
+                float ratio = _capsule.height / _initialHeight;
+                visual.localScale = new Vector3(_visualBaseScale.x, _visualBaseScale.y * ratio, _visualBaseScale.z);
+                Vector3 p = visual.localPosition;
+                p.y = _bottomOffsetY + _capsule.height / 2f;
+                visual.localPosition = p;
+            }
+        }
+        
         #region Movement
 
         private void UpdateCrouch(float dt)
@@ -360,11 +390,9 @@ namespace Gameplay.Controller
             IsCrouching = _crouchHeld || (IsCrouching && !CanStandUp());
             IsCrouching = !_playerDead && IsCrouching;
             
-            float target = IsCrouching ? _crouchHeight : _standHeight;
-            target = _playerDead ? tiedUpHeight : target;
-            
-            _capsule.height = Mathf.MoveTowards(_capsule.height, target, _crouchTransitionSpeed * dt);
-            RecenterCapsule();
+            _netCrouching.Value = IsCrouching;
+            _netDown.Value = _playerDead;
+            UpdateBodyShape(dt, IsCrouching, _playerDead);
         }
         
         private void UpdateEyeHeight()
