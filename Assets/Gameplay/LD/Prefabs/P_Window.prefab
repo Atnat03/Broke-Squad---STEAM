@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 3143531926420158926}
   - component: {fileID: 4733906163717167803}
   - component: {fileID: 7644171857610566502}
-  - component: {fileID: 5996413202042802101}
+  - component: {fileID: 8333518466730772489}
+  - component: {fileID: 2385404587154575628}
   m_Layer: 0
   m_Name: P_Window
   m_TagString: Untagged
@@ -356,7 +357,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5996413202042802101
+--- !u!114 &8333518466730772489
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -365,7 +366,41 @@ MonoBehaviour:
   m_GameObject: {fileID: 5133981459284622115}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83fb6bfa9c474e77a7fde73d2b852c9f, type: 3}
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.BreakableWindow
-  _health: 1
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 1690499005
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  m_InScenePlacedDisabledByDefault: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  m_InScenePlaced: 0
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &2385404587154575628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5133981459284622115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e8558c60f7de694797c107455228d43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Breakable
+  ShowTopMostFoldoutHeaderGroup: 1
+  _normalMesh: {fileID: 5133981459284622115}
+  solidity: 20
+  _dropPickableItem: 0
+  _breakMesh: []
+  _dropItemPrefabs: {fileID: 0}
+  _pickupSpawnPoints: []
+  _breakSound: Enviro/Break Window
