@@ -183,6 +183,16 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""priority"": 0
                 },
                 {
+                    ""name"": ""Drop"",
+                    ""type"": ""Button"",
+                    ""id"": ""77508b1f-037c-421e-b798-32f65efb719a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
                     ""name"": ""MouseMovement"",
                     ""type"": ""Value"",
                     ""id"": ""575ca3c8-7805-4ad8-8913-16253cf67e3f"",
@@ -363,6 +373,17 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""72bac483-e58e-45a7-8574-3723b9d18549"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drop"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -573,6 +594,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
         m_Gameplay_Sprint = m_Gameplay.FindAction("Sprint", throwIfNotFound: true);
         m_Gameplay_Crouch = m_Gameplay.FindAction("Crouch", throwIfNotFound: true);
         m_Gameplay_Interact = m_Gameplay.FindAction("Interact", throwIfNotFound: true);
+        m_Gameplay_Drop = m_Gameplay.FindAction("Drop", throwIfNotFound: true);
         m_Gameplay_MouseMovement = m_Gameplay.FindAction("MouseMovement", throwIfNotFound: true);
         m_Gameplay_RightLean = m_Gameplay.FindAction("RightLean", throwIfNotFound: true);
         m_Gameplay_LeftLean = m_Gameplay.FindAction("LeftLean", throwIfNotFound: true);
@@ -674,6 +696,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Sprint;
     private readonly InputAction m_Gameplay_Crouch;
     private readonly InputAction m_Gameplay_Interact;
+    private readonly InputAction m_Gameplay_Drop;
     private readonly InputAction m_Gameplay_MouseMovement;
     private readonly InputAction m_Gameplay_RightLean;
     private readonly InputAction m_Gameplay_LeftLean;
@@ -726,6 +749,10 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Gameplay/Interact".
         /// </summary>
         public InputAction @Interact => m_Wrapper.m_Gameplay_Interact;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Drop".
+        /// </summary>
+        public InputAction @Drop => m_Wrapper.m_Gameplay_Drop;
         /// <summary>
         /// Provides access to the underlying input action "Gameplay/MouseMovement".
         /// </summary>
@@ -799,6 +826,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
+            @Drop.started += instance.OnDrop;
+            @Drop.performed += instance.OnDrop;
+            @Drop.canceled += instance.OnDrop;
             @MouseMovement.started += instance.OnMouseMovement;
             @MouseMovement.performed += instance.OnMouseMovement;
             @MouseMovement.canceled += instance.OnMouseMovement;
@@ -852,6 +882,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
+            @Drop.started -= instance.OnDrop;
+            @Drop.performed -= instance.OnDrop;
+            @Drop.canceled -= instance.OnDrop;
             @MouseMovement.started -= instance.OnMouseMovement;
             @MouseMovement.performed -= instance.OnMouseMovement;
             @MouseMovement.canceled -= instance.OnMouseMovement;
@@ -1099,6 +1132,13 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInteract(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Drop" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDrop(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "MouseMovement" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
