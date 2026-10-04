@@ -14,7 +14,7 @@ namespace Gameplay.Controller
     [RequireComponent(typeof(CapsuleCollider))]
     public class PlayerController : NetworkBusListener
     {
-        #region variables
+        #region Variables
 
         private PlayerInput _playerInput;
         private StateMachine _stateMachine;
@@ -30,7 +30,6 @@ namespace Gameplay.Controller
         public GameObject UI;
         public MeshRenderer[] meshRenderer;
         public TextMeshProUGUI pseudoText;
-        
 
         [Header("Speed")]
         private float _walkSpeed = 4f;
@@ -153,7 +152,6 @@ namespace Gameplay.Controller
         private readonly NetworkVariable<bool> _netDown = new(false,
             NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         #endregion
-
         
         #region Initialization
 
@@ -337,7 +335,11 @@ namespace Gameplay.Controller
             if (!changedEnough && !atBoundary) return;
 
             _lastSentStamina = _stamina;
-            InvokeEvent(new StaminaChangedEvent { stamina = _stamina, maxStamina = _maxStamina });
+            InvokeEvent(new StaminaChangedEvent
+            {
+                stamina = _stamina, 
+                maxStamina = _maxStamina
+            });
         }
         void GetDataFromProfile()
         {
