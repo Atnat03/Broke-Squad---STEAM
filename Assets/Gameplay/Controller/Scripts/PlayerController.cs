@@ -388,7 +388,7 @@ namespace Gameplay.Controller
 
         private void UpdateCrouch(float dt)
         {
-            if(!IsCrouching && _crouchHeld || (IsCrouching && !CanStandUp())) PlaySound(_crouchSound, 0.5f);
+            if(!IsCrouching && (_crouchHeld || (IsCrouching && !CanStandUp()))) PlaySound(_crouchSound, 0.5f);
             IsCrouching = _crouchHeld || (IsCrouching && !CanStandUp());
             IsCrouching = !_playerDead && IsCrouching;
             

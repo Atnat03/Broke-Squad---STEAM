@@ -60,7 +60,7 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
         
         void PerformLeftClick()
         {
-            if (!CanInput(ItemInput.Left)) 
+            if (!CanInput()) 
                 return;
             
             foreach (ILeftClick l in Instance.LeftClicks) 
@@ -69,20 +69,14 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
                 
         void PerformLeftRelease()
         {
-            if (!CanInput(ItemInput.Left)) return;
+            if (!CanInput()) return;
             
             foreach (ILeftClick l in Instance.LeftClicks)
                 l?.EndLeftClick();
-            
-            foreach (ICondition condition in Instance.Conditions)
-                condition?.UseItem();
         }
         
         void PerformRightClick()
         {
-            if (!CanInput(ItemInput.Right)) 
-                return;
-            
             foreach (IRightClick r in Instance.RightClicks) 
                 r?.StartRightClick();
         }
@@ -90,19 +84,22 @@ namespace Gameplay.Items.Scripts.PlayerItemGestion
 
         void PerformRightRelease()
         {
-            if (!CanInput(ItemInput.Right))
-                return;
-            
             foreach (IRightClick r in Instance.RightClicks)
                 r?.EndRightClick();
+        }
+
+        public void UseCondition()
+        {
+            foreach (ICondition cond in Instance.Conditions)
+                cond?.UseItem();
         }
         
         #endregion
 
-        bool CanInput(ItemInput type)
+        bool CanInput()
         {
             foreach (ICondition c in Instance.Conditions)
-                if (c.InputType == type && !c.CheckCondition())
+                if (!c.CheckCondition())
                     return false;
             return true;
         }
