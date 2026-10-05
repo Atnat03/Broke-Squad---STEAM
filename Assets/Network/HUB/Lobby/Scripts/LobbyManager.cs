@@ -49,7 +49,7 @@ namespace Network.HUB
         public Action<Lobby, bool> OnJoinLobby;
         public Action<List<Lobby>> OnUpdateJoinedLobby;
         public Action<Lobby> OnUpdateLobbyInfo;
-        public Action<string> OnMapUpdated;
+        public Action<string> OnUpdatedMap;
         public Action OnTryToJoinGame;
 
         private async void Start()
@@ -63,7 +63,7 @@ namespace Network.HUB
                     Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
                 };
                 
-                AuthenticationService.Instance.SwitchProfile("player_" + UnityEngine.Random.Range(0, 100000));
+                AuthenticationService.Instance.SwitchProfile("player_" + Random.Range(0, 100000));
 
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
@@ -165,6 +165,8 @@ namespace Network.HUB
 
         #endregion
         
+        #region StartGame
+        
         public void StartingGame() => StartGame();
     
         public async void StartGame()
@@ -207,6 +209,8 @@ namespace Network.HUB
                 Debug.LogException(e);
             }
         }
+        
+        #endregion
 
         #region Create Lobby
 
@@ -404,7 +408,7 @@ namespace Network.HUB
                 });
 
                 _selectedMap = newMapName;
-                OnMapUpdated?.Invoke(newMapName);
+                OnUpdatedMap?.Invoke(newMapName);
                 
                 ABPrint.Print("Map updated : " + newMapName, ABColor.Yellow);
             }

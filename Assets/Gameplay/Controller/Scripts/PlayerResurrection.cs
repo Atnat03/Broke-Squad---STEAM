@@ -181,7 +181,7 @@ namespace Gameplay.Controller
         }
 
         #endregion
-
+        
         [Rpc(SendTo.Owner)]
         public void ReviveOwnerRpc()
         {
