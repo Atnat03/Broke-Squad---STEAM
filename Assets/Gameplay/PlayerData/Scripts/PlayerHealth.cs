@@ -92,8 +92,6 @@
 
                 _playerHp.Value = MaxHpValue;
                 _playerDown.Value = false;
-                
-                InvokeEvent(new PlayerRevivedEvent { playerID = OwnerClientId });
             }
             #endregion
             
@@ -106,9 +104,6 @@
             private void OnDownedChanged(bool previous, bool downed)
             {
                 OnChangedDown?.Invoke(downed);
-                
-                if (downed && IsOwner)
-                    InvokeEvent(new PlayerDeathEvent { playerID = OwnerClientId });
             }
             
             #endregion

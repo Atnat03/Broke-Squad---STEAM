@@ -25,7 +25,6 @@ namespace Gameplay.PlayerData
         [SerializeField] private float staminaHideDelay = 1.5f;  
         [SerializeField] private float staminaFadeSpeed = 4f;   
         
-        [FormerlySerializedAs("playerData")]
         [Header("References")]
         [SerializeField] private PlayerHealth playerHealth;
         [SerializeField] private PlayerController playerController;
