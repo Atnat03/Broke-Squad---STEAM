@@ -9,7 +9,7 @@ namespace Gameplay.Controller.States
         public override void OnEnter()
         {
             Motor.JumpAllowed = false;
-            //playerController.PlayCrouchSound();
+            playerController.PlayCrouchSound();
         }
 
         public override void OnFixedUpdate()
