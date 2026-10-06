@@ -1,7 +1,5 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using Bus;
-using Gameplay.Items.Scripts.ItemModules.ConcreteModules;
 using UnityEngine;
 
 namespace Gameplay.Other.Sound.Music
@@ -15,8 +13,8 @@ namespace Gameplay.Other.Sound.Music
 
         private void Awake()
         {
-            ListenToEvent<OnGrabGoal>(ChangeMusicToDangerous);
-            ListenToEvent<OnDropGoal>(ChangeMusicToNormal);
+           /* ListenToEvent<OnGrabGoal>(ChangeMusicToDangerous);
+            ListenToEvent<OnDropGoal>(ChangeMusicToNormal);*/
         }
 
         private void Start()
@@ -24,7 +22,7 @@ namespace Gameplay.Other.Sound.Music
             PlayTheMusic(_normalMusic);
         }
 
-        private void ChangeMusicToDangerous(OnGrabGoal data)
+        /*private void ChangeMusicToDangerous(OnGrabGoal data)
         {
             PlayTheMusic(_dangerousMusic);
         }
@@ -33,7 +31,7 @@ namespace Gameplay.Other.Sound.Music
         {
             PlayTheMusic(_normalMusic);
         }
-
+*/
         private void PlayTheMusic(AudioClip clip)
         {
             if (clip == null || _audioSource == null)

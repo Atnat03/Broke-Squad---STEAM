@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Gameplay.Items.Scripts.CustomInspector
+namespace Gameplay.Items
 {
     public static class SerializeReferenceListDrawer
     {

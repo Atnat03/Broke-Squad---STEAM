@@ -1,10 +1,7 @@
 ﻿#if UNITY_EDITOR
-
-using Gameplay.Items.Scripts.ItemData;
-using Gameplay.Items.Scripts.ItemModules;
 using UnityEditor;
 
-namespace Gameplay.Items.Scripts.CustomInspector
+namespace Gameplay.Items
 {
     [CustomEditor(typeof(SO_Item))]
     public class CustomSO_Item : Editor
@@ -21,22 +18,19 @@ namespace Gameplay.Items.Scripts.CustomInspector
 
         private void OnEnable()
         {
-            _id           = serializedObject.FindProperty(nameof(SO_Item.id));
-            _itemName     = serializedObject.FindProperty(nameof(SO_Item.itemName));
-            _visualPrefab = serializedObject.FindProperty(nameof(SO_Item.visualPrefab));
-            _pickUpPrefab = serializedObject.FindProperty(nameof(SO_Item.pickUpPrefab));
-            _icon         = serializedObject.FindProperty(nameof(SO_Item.icon));
-            _leftClicks   = serializedObject.FindProperty(nameof(SO_Item.leftClicksActions));
-            _rightClicks  = serializedObject.FindProperty(nameof(SO_Item.rightClicksActions));
-            _conditions   = serializedObject.FindProperty(nameof(SO_Item.conditions));
-            _passif       = serializedObject.FindProperty(nameof(SO_Item.passif));
+            _itemName     = serializedObject.FindProperty(nameof(SO_Item.ItemName));
+            _visualPrefab = serializedObject.FindProperty(nameof(SO_Item.VisualPrefab));
+            _pickUpPrefab = serializedObject.FindProperty(nameof(SO_Item.PickupPrefab));
+            _icon         = serializedObject.FindProperty(nameof(SO_Item.Icon));
+            _leftClicks   = serializedObject.FindProperty(nameof(SO_Item.FirstActionList));
+            _rightClicks  = serializedObject.FindProperty(nameof(SO_Item.SecondActionList));
+            _passif       = serializedObject.FindProperty(nameof(SO_Item.PassifList));
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
-            EditorGUILayout.PropertyField(_id);
             EditorGUILayout.PropertyField(_itemName);
             EditorGUILayout.PropertyField(_visualPrefab);
             EditorGUILayout.PropertyField(_pickUpPrefab);
@@ -44,18 +38,14 @@ namespace Gameplay.Items.Scripts.CustomInspector
 
             EditorGUILayout.Space(4);
 
-            SerializeReferenceListDrawer.Draw(_leftClicks,  typeof(ILeftClick),  "Left Click Actions");
+            SerializeReferenceListDrawer.Draw(_leftClicks,  typeof(IFirstAction),  "First Actions");
             
             EditorGUILayout.Space(4);
 
-            SerializeReferenceListDrawer.Draw(_rightClicks, typeof(IRightClick), "Right Click Actions");
+            SerializeReferenceListDrawer.Draw(_rightClicks, typeof(ISecondAction), "Second Actions");
             
             EditorGUILayout.Space(4);
-
-            SerializeReferenceListDrawer.Draw(_conditions,  typeof(ICondition),  "Conditions");
             
-            EditorGUILayout.Space(4);
-
             SerializeReferenceListDrawer.Draw(_passif,      typeof(IPassif),     "Passifs");
 
             serializedObject.ApplyModifiedProperties();

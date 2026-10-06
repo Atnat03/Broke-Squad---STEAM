@@ -823,7 +823,6 @@ GameObject:
   - component: {fileID: 88644022890520242}
   - component: {fileID: 5237649265241363801}
   - component: {fileID: 7696705341883764508}
-  - component: {fileID: 1310361133901699229}
   - component: {fileID: 1106711488819986003}
   - component: {fileID: 7777815450667916752}
   - component: {fileID: 7357652632305383726}
@@ -859,6 +858,7 @@ Transform:
   - {fileID: 4104484149951414450}
   - {fileID: 5104489689690218889}
   - {fileID: 2503866950617896307}
+  - {fileID: 8007059420407012069}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8471785753695333050
@@ -1060,38 +1060,6 @@ MonoBehaviour:
   _crouchSound: Joueur/Crouch
   visual: {fileID: 4500784853519451236}
   tiedVisual: {fileID: 1389905725531348193}
---- !u!114 &1310361133901699229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2574743083563287450}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae808d3c9a4847b390cbfcee942ac77e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.PlayerItemGestion.PlayerInventory
-  ShowTopMostFoldoutHeaderGroup: 1
-  _parent: {fileID: 4999758875781058348}
-  _remoteParent: {fileID: 6281260902401001668}
-  _database: {fileID: 11400000, guid: 18b2d5bb76685644288ae15dd4f47f1a, type: 2}
-  _playerController: {fileID: 7696705341883764508}
-  _camera: {fileID: 8333721531469245462}
-  _range: 1.5
-  _layerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  _itemCount: 2
-  _slotPrefabUI: {fileID: 4364559486672441154, guid: 7e776f982d2166546b9a3d244bed5fce, type: 3}
-  _parentInventory: {fileID: 1796752271553554228}
-  _emptyIcon: {fileID: 21300000, guid: abcad81f89a6e3f4eb5276c2db0d595f, type: 3}
-  _throwUI: {fileID: 3152614203818353611}
-  _throwImage: {fileID: 599778181649812176}
-  _electicUI: {fileID: 3771218236746138740}
-  _electicPercent: {fileID: 8027119305052795742}
-  _useAmountText: {fileID: 7156752449948875134}
-  _pickUpSFX: Joueur/Throw Item
 --- !u!114 &1106711488819986003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1355,7 +1323,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7029803822717958095
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1583,7 +1551,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7893061326763229626
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1591,18 +1559,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3152614203818353611}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6852726861858118094}
   - {fileID: 971228185623617369}
-  m_Father: {fileID: 4363694170265431080}
+  m_Father: {fileID: 4874256371157005472}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 183, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &3388584239599020708
@@ -1759,7 +1727,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7893061326763229626}
+  - {fileID: 4874256371157005472}
   - {fileID: 8488744753459614403}
   - {fileID: 7029803822717958095}
   - {fileID: 7347278514556086626}
@@ -1876,7 +1844,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8488744753459614403
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2816,6 +2784,111 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!1 &6476577054440422801
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8007059420407012069}
+  - component: {fileID: 4309378300285620642}
+  - component: {fileID: 2799960827447269659}
+  - component: {fileID: 7894871096603363665}
+  - component: {fileID: 3563995297542329357}
+  m_Layer: 7
+  m_Name: Inventory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8007059420407012069
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6476577054440422801}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7133925661517429810}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4309378300285620642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6476577054440422801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fc2cc61c45744b48176995d8ed0becb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.PlayerInteract
+  ShowTopMostFoldoutHeaderGroup: 1
+  _playerInput: {fileID: 88644022890520242}
+  _camera: {fileID: 8333721531469245462}
+  _maxDistanceToInteract: 2
+  _interactableMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &2799960827447269659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6476577054440422801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f96f94d8ecbc46a49754e9cbd8e8eb8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.PlayerInventory
+  ShowTopMostFoldoutHeaderGroup: 1
+  _playerController: {fileID: 7696705341883764508}
+  _playerInput: {fileID: 88644022890520242}
+  _camera: {fileID: 8333721531469245462}
+  _database: {fileID: 11400000, guid: 0a8f81609699ce24382da7e527d91ec2, type: 2}
+  _localHand: {fileID: 4999758875781058348}
+  _remoteHand: {fileID: 6281260902401001668}
+  _itemCount: 3
+--- !u!114 &7894871096603363665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6476577054440422801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee24e44ef18f41078477b38995effe49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.PlayerInventoryReplication
+  ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &3563995297542329357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6476577054440422801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef74b9212dfb4108ad0d58b1ce33dfe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.PlayerInventoryView
+  _inventory: {fileID: 2799960827447269659}
+  _slotPrefabUI: {fileID: 9148357008862439477, guid: 7e776f982d2166546b9a3d244bed5fce, type: 3}
+  _parentInventory: {fileID: 1796752271553554228}
+  _emptyIcon: {fileID: 21300000, guid: eb225674fcbe23641b7b15b35b6a7406, type: 3}
+  _pickUpSound: 
+  _dropSound: 
 --- !u!1 &6491918330904054473
 GameObject:
   m_ObjectHideFlags: 0
@@ -3310,6 +3383,58 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &6974349032632674516
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4874256371157005472}
+  - component: {fileID: 380808434521537543}
+  m_Layer: 7
+  m_Name: ThrowBarLogic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &4874256371157005472
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6974349032632674516}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7893061326763229626}
+  m_Father: {fileID: 4363694170265431080}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 183, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &380808434521537543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6974349032632674516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc5a3aa0204308648b87af509286ec62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  _eventKey: UI_THROW_BAR
+  _uiThrow: {fileID: 3152614203818353611}
+  _throwImage: {fileID: 599778181649812176}
 --- !u!1 &9034689254952957922
 GameObject:
   m_ObjectHideFlags: 0

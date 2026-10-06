@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
+  m_Name: ItemA
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
+  ID: 0
+  ItemName: Item Test
+  VisualPrefab: {fileID: 1810510646809570900, guid: 3088c713771495643a003e04ffed39b0, type: 3}
+  PickupPrefab: {fileID: 5110332906644801116, guid: 12a4d097662054b489a13f9fd7f0c3df, type: 3}
+  Icon: {fileID: 21300000, guid: 7464c0a64b8ffa848af50a4c1827275d, type: 3}
+  FirstActionList: []
+  SecondActionList:
+  - rid: 7203100908838715965
+  PassifList: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 7203100908838715965
+      type: {class: ThrowModule, ns: Gameplay.Items.FirstAction, asm: Assembly-CSharp}
+      data:
+        _minThrowForce: {x: 0, y: 0, z: 0}
+        _maxThrowForce: {x: 0, y: 2, z: 12}
+        _durationToFullFill: 2
+        _minTorqueForce: {x: 0, y: 0, z: 0}
+        _maxTorqueForce: {x: 5, y: 0, z: 0}
+        _spawnDistance: 0.7
+        _conditionList: []
