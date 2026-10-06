@@ -174,6 +174,7 @@ namespace Gameplay.Controller
                 : _walkBob;
             if (player.IsDown) targetProfile = _downBob;
             
+            
             _bob = BobProfile.Lerp(_bob, targetProfile, 1f - Mathf.Exp(-_profileLerpSpeed * dt));
             
             float targetBackward = moving ? Mathf.Clamp01(-player.ForwardDot) : 0f; 
@@ -191,7 +192,7 @@ namespace Gameplay.Controller
             float x = Mathf.Sin(_bobPhase) * _bob.amplitudeX * weight;
             float y = Mathf.Sin(_bobPhase * 2f) * _bob.amplitudeY * weight;
             roll = Mathf.Sin(_bobPhase) * _bob.roll * weight;
-
+            
             return new Vector3(x, y, 0f);
         }
 
@@ -255,6 +256,7 @@ namespace Gameplay.Controller
             _downBob = profile.downBob;
 
         }
+        
     }
 }
 

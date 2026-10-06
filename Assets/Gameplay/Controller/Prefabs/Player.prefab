@@ -481,7 +481,6 @@ GameObject:
   - component: {fileID: 2503866950617896307}
   - component: {fileID: 6917946660854876128}
   - component: {fileID: 1231173746907598499}
-  - component: {fileID: 1874302850196995556}
   m_Layer: 0
   m_Name: Rope
   m_TagString: Untagged
@@ -561,27 +560,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &1874302850196995556
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1389905725531348193}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1730021997494121554
 GameObject:
   m_ObjectHideFlags: 0
@@ -1021,7 +999,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
   profile: {fileID: 11400000, guid: 8806d4a4bfbed3f4ea4161fbf516a103, type: 2}
-  autoUpdateProfileValue: 1
+  ground:
+    groundLayer:
+      serializedVersion: 2
+      m_Bits: 65
+    checkDist: 0.15
+    radiusMultiplier: 0.9
+    skin: 0.1
+    maxSlopeAngle: 50
+  body:
+    ceilingLayer:
+      serializedVersion: 2
+      m_Bits: 65
+    eyeTarget: {fileID: 4606863278405769456}
+    visual: {fileID: 4500784853519451236}
+    tiedVisual: {fileID: 1389905725531348193}
+    tiedUpHeight: 0.8
+  footsteps:
+    walkStepInterval: 0.5
+    sprintStepInterval: 0.35
+    crouchStepInterval: 0.8
+    walkStepVolume: 0.3
+    sprintStepVolume: 0.5
+    crouchStepVolume: 0.1
+    walkSound: []
   playerCamera: {fileID: 8757740270961154763}
   UI: {fileID: 3733190074482631680}
   meshRenderer:
@@ -1032,34 +1033,9 @@ MonoBehaviour:
   - {fileID: 8832456876510023412}
   - {fileID: 571483004779570370}
   pseudoText: {fileID: 6470272843315990809}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 65
-  groundCheckDist: 0.2
-  groundCheckRadiusMultiplier: 0.9
-  groundCheckSkin: 0.1
-  maxSlopeAngle: 50
-  ceilingLayer:
-    serializedVersion: 2
-    m_Bits: 119
   tiedUpSpeed: 0.6
-  tiedUpHeight: 0.8
-  eyeTarget: {fileID: 4606863278405769456}
-  walkStepInterval: 0.5
-  sprintStepInterval: 0.35
-  crouchStepInterval: 0.8
-  walkStepVolume: 0.3
-  sprintStepVolume: 0.5
-  crouchStepVolume: 0.1
-  _walkSound:
-  - Joueur/Walk 1
-  - Joueur/Walk 2
-  - Joueur/Walk 3
-  - Joueur/Walk 4
   _jumpSound: Joueur/Jump
   _crouchSound: Joueur/Crouch
-  visual: {fileID: 4500784853519451236}
-  tiedVisual: {fileID: 1389905725531348193}
 --- !u!114 &1310361133901699229
 MonoBehaviour:
   m_ObjectHideFlags: 0

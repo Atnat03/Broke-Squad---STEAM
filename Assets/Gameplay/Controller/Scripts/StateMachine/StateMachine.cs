@@ -2,63 +2,55 @@
 {
     using System;
     using System.Collections.Generic;
-    using NUnit.Framework;
     using UnityEngine;
     
     public class StateMachine
     {
-        private StateNode currentState;
-        Dictionary<Type, StateNode> nodes = new Dictionary<Type, StateNode>();
-        HashSet<ITransition> anyTransitions = new HashSet<ITransition>();
+        private StateNode _current;
+        private readonly Dictionary<Type, StateNode> _nodes = new Dictionary<Type, StateNode>();
+        private readonly List<ITransition> _anyTransitions = new List<ITransition>();
+        
+        public IState CurrentState => _current?.State;
+        public string CurrentStateName => _current?.State?.GetType().Name ?? "None";
     
-        public void Update()
-        {
-            ITransition transition = GetTransition();
-            if(transition != null) ChangeState(transition.TargetState);
-            currentState.State?.OnUpdate();
-        }
-    
+        public void Update() => _current?.State.OnUpdate();
+        
         public void FixedUpdate()
         {
-            currentState.State?.OnFixedUpdate();
+            ITransition transition = GetTransition();
+            if (transition != null) ChangeState(transition.TargetState);
+            _current?.State.OnFixedUpdate();
         }
     
-        public void LateUpdate()
-        {
-            currentState.State?.OnLateUpdate();
-        }
+        public void LateUpdate() => _current?.State.OnLateUpdate();
     
         public void SetState(IState newState)
         {
-            currentState = nodes[newState.GetType()];
-            currentState.State?.OnEnter();
+            _current = _nodes[newState.GetType()];
+            _current.State?.OnEnter();
         }
         
         private void ChangeState(IState state)
         {
-            if(state == currentState.State) return;
+            if(state == _current.State) return;
             
-            IState previousState = currentState.State;
-            IState nextState = nodes[state.GetType()].State;
+            IState previousState = _current.State;
+            IState nextState = _nodes[state.GetType()].State;
             
             previousState?.OnExit();
             nextState?.OnEnter();
-            currentState = nodes[state.GetType()];
+            _current = _nodes[state.GetType()];
         }
     
         private ITransition GetTransition()
         {
-            foreach (ITransition transition in anyTransitions)
-            {
-                if(transition.Condition.Evaluate())
-                    return transition;
-            }
-    
-            foreach (ITransition stateTransition in currentState.Transitions)
-            {
-                if(stateTransition.Condition.Evaluate())
-                    return stateTransition;
-            }
+            foreach (ITransition t in _anyTransitions)
+                if (t.TargetState != _current.State && t.Condition.Evaluate())
+                    return t;
+
+            foreach (ITransition t in _current.Transitions)
+                if (t.TargetState != _current.State && t.Condition.Evaluate())
+                    return t;
             
             return null;
         }
@@ -70,22 +62,21 @@
     
         public void AddAnyTransition(IState to, IPredicate condition)
         {
-            anyTransitions.Add(new Transition(GetOrAddNode(to).State, condition));
+            _anyTransitions.Add(new Transition(GetOrAddNode(to).State, condition));
         }
         
         private StateNode GetOrAddNode(IState state)
         {
-            StateNode node = nodes.GetValueOrDefault(state.GetType());
+            StateNode node = _nodes.GetValueOrDefault(state.GetType());
     
             if (node == null)
             {
                 node = new StateNode(state);
-                nodes.Add(state.GetType(), node);
+                _nodes.Add(state.GetType(), node);
             }
             return node;
         }
         
-        public string CurrentStateName => currentState?.State?.GetType().Name ?? "None";
     
         private class StateNode
         {
