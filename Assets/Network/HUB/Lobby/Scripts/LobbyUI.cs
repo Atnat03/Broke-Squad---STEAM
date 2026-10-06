@@ -1,14 +1,13 @@
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using MyPrint;
+using Unity.Services.Lobbies.Models;
+using UnityEngine;
 
 namespace Network.HUB
 {
-    using System.Collections.Generic;
-    using MyPrint;
-    using Unity.Services.Lobbies.Models;
-    using UnityEngine;
-
     public class LobbyUI : MonoBehaviour
     {
         [SerializeField] private LobbyManager _lobbyManager;
@@ -42,17 +41,16 @@ namespace Network.HUB
             _lobbyManager.OnJoinLobby += JoinLobbyUI;
             _lobbyManager.OnUpdateJoinedLobby += UpdateLobbyList;
             _lobbyManager.OnUpdateLobbyInfo += UpdateLobbyInfo;
-            _lobbyManager.OnMapUpdated += UpdateSelectedMapName;
-            _lobbyManager.OnTryToJoinGame += ActivateLoadingScreen; 
+            _lobbyManager.OnUpdatedMap += UpdateSelectedMapName;
+            _lobbyManager.OnTryToJoinGame += ActivateLoadingScreen;
         }
         
-
         private void OnDisable()
         {
             _lobbyManager.OnJoinLobby -= JoinLobbyUI;
             _lobbyManager.OnUpdateJoinedLobby -= UpdateLobbyList;
             _lobbyManager.OnUpdateLobbyInfo -= UpdateLobbyInfo;
-            _lobbyManager.OnMapUpdated -= UpdateSelectedMapName;
+            _lobbyManager.OnUpdatedMap -= UpdateSelectedMapName;
             _lobbyManager.OnTryToJoinGame -= ActivateLoadingScreen; 
             
             _elementList.Clear();
@@ -144,4 +142,3 @@ namespace Network.HUB
         }
     }
 }
-
