@@ -970,7 +970,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3075001378
+  GlobalObjectIdHash: 1942329737
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -1029,6 +1029,7 @@ MonoBehaviour:
     - Joueur/Walk 4
   playerCamera: {fileID: 8757740270961154763}
   UI: {fileID: 3733190074482631680}
+  health: {fileID: 7777815450667916752}
   meshRenderer:
   - {fileID: 7492072544680282039}
   - {fileID: 2045292591643088296}
@@ -1137,11 +1138,6 @@ MonoBehaviour:
   - Joueur/Take Damage 3
   _deathSound: Joueur/Death
   _rezSound: Joueur/Rez
-  invincibility:
-    UpdateTraits:
-      MinSecondsBetweenUpdates: 0
-      MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 0
 --- !u!114 &7357652632305383726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1160,16 +1156,6 @@ MonoBehaviour:
   progressDecayPerSecond: 0.5
   heartbeatInterval: 0.1
   heartbeatTimeout: 0.15
-  IsDowned:
-    UpdateTraits:
-      MinSecondsBetweenUpdates: 0
-      MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 0
-  ReviveProgress:
-    UpdateTraits:
-      MinSecondsBetweenUpdates: 0
-      MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 0
 --- !u!114 &9082422610625771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1182,7 +1168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5215ba40fc2649d1b84b35b49476d5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.UI.ReviveWorldUI
-  resurrection: {fileID: 7357652632305383726}
+  revive: {fileID: 7357652632305383726}
   root: {fileID: 4288772183155579016}
   fillImage: {fileID: 6671424585055807126}
   smoothSpeed: 10
@@ -1318,8 +1304,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.CheatsManager
   ShowTopMostFoldoutHeaderGroup: 1
-  playerData: {fileID: 7777815450667916752}
-  playerResurrection: {fileID: 7357652632305383726}
+  playerHealth: {fileID: 7777815450667916752}
+  playerRevive: {fileID: 7357652632305383726}
 --- !u!1 &2683151830643941304
 GameObject:
   m_ObjectHideFlags: 0
@@ -1839,7 +1825,7 @@ MonoBehaviour:
   staminaSmoothSpeed: 12
   staminaHideDelay: 0.5
   staminaFadeSpeed: 6
-  playerData: {fileID: 7777815450667916752}
+  playerHealth: {fileID: 7777815450667916752}
   playerController: {fileID: 7696705341883764508}
 --- !u!1 &3771218236746138740
 GameObject:

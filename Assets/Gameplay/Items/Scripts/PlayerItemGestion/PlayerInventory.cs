@@ -509,7 +509,7 @@ namespace Gameplay.Items.Scripts
             if (uses != null && uses.CurrentUse <= 0) return;
 
             if (!targetRef.TryGet(out NetworkObject netObj)) return;
-            if (!netObj.TryGetComponent(out PlayerData.PlayerData target)) return;
+            if (!netObj.TryGetComponent(out PlayerData.PlayerHealth target)) return;
 
             if (Vector3.Distance(transform.position, netObj.transform.position) > module.Range + 1.5f) return;
 

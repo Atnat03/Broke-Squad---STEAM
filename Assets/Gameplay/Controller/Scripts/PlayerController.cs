@@ -26,6 +26,7 @@ namespace Gameplay.Controller
         [Header("To Assign")]
         public PlayerCamera playerCamera;
         public GameObject UI;
+        [SerializeField] private PlayerHealth health;
         public MeshRenderer[] meshRenderer;
         public TextMeshProUGUI pseudoText;
 
@@ -47,17 +48,16 @@ namespace Gameplay.Controller
         private int _syncedColor;
         private string _syncedName = "";
 
-        private bool _playerDead;
+        
 
         private readonly NetworkVariable<bool> _netCrouching = new(false,
             NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-        private readonly NetworkVariable<bool> _netDown = new(false,
-            NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         
+        public PlayerHealth Health => health;
         public bool IsGrounded => ground.IsGrounded;
         public bool IsCrouching => IsOwner ? _stateMachine?.CurrentState is CrouchState : _netCrouching.Value;
         public bool IsSprinting => IsOwner && _stateMachine?.CurrentState is SprintState;
-        public bool IsDown      => IsOwner ? _stateMachine?.CurrentState is TiedUpState : _netDown.Value;
+        public bool IsDown => health != null && health.IsDowned;
         
         public float MaxStamina => profile.maxStamina;
         public float LeanInput => _input?.Lean ?? 0f;
@@ -85,7 +85,8 @@ namespace Gameplay.Controller
 
         public override void OnNetworkSpawn()
         {
-            if (profile == null)
+            if (health == null) health = GetComponent<PlayerHealth>();
+            if (profile == null || health == null)
             {
                 Debug.LogError("PlayerController: profile is not assigned.", this);
                 enabled = false;
@@ -108,7 +109,7 @@ namespace Gameplay.Controller
             SendPersonalisation();
             SetUpModules();
             SetUpStateMachine();
-            ListenToEvent<PlayerDeathEvent>(SetPlayerDead);
+            
         }
 
         public override void OnNetworkDespawn()
@@ -164,8 +165,8 @@ namespace Gameplay.Controller
             var crouchState   = new CrouchState(this);
             var tiedState     = new TiedUpState(this);
 
-            Any(tiedState, new FuncPredicate(() => _playerDead));
-            At(tiedState, movementState, new FuncPredicate(() => !_playerDead));
+            Any(tiedState, new FuncPredicate(() => health.IsDowned));
+            At(tiedState, movementState, new FuncPredicate(() => !health.IsDowned));
             
             At(movementState, crouchState,   new FuncPredicate(WantsCrouch));
             At(sprintState,   crouchState,   new FuncPredicate(WantsCrouch));
@@ -190,7 +191,7 @@ namespace Gameplay.Controller
 
             if (!IsOwner)
             {
-                body.ApplyRemote(Time.deltaTime, _netCrouching.Value, _netDown.Value);
+                body.ApplyRemote(Time.deltaTime, _netCrouching.Value, IsDown);
                 return;
             }
             
@@ -211,7 +212,6 @@ namespace Gameplay.Controller
             _stamina.Tick(dt);                    
 
             _netCrouching.Value = IsCrouching;
-            _netDown.Value = IsDown;
 
             footsteps.Tick(dt, IsGrounded, _input.Move.sqrMagnitude > 0.01f, IsCrouching, IsSprinting);
         }
@@ -223,17 +223,8 @@ namespace Gameplay.Controller
 
         #endregion
 
-        #region Death / Sound
-
-        private void SetPlayerDead(PlayerDeathEvent e)
-        {
-            if (e.playerID != OwnerClientId) return;
-            _playerDead = true;
-            _motor.StopMoving();
-        }
-
-        public void Revive() => _playerDead = false;
-
+        #region  Sound
+        
         public void PlaySound(string clip, float volumeToPlay)
         {
             InvokeEvent(new PlaySoundEvent

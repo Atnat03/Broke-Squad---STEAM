@@ -16,7 +16,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
             Transform cam = Context.Camera.transform;
 
             if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, _distanceToHeal)
-                && hit.collider.GetComponentInParent<PlayerData.PlayerData>() is { } player
+                && hit.collider.GetComponentInParent<PlayerData.PlayerHealth>() is { } player
                 && player.TryGetComponent(out NetworkObject netObj))
             {
                 Context.Inventory.TryPlaySound(_healingSound);
@@ -28,6 +28,6 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
         public void EndLeftClick()
         { }
         
-        public void ApplyHeal(PlayerData.PlayerData target) => target.Heal(_healAmount);
+        public void ApplyHeal(PlayerData.PlayerHealth target) => target.Heal(_healAmount);
     }
 }

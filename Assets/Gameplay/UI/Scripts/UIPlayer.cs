@@ -3,6 +3,7 @@ using Gameplay.Controller;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Gameplay.PlayerData
@@ -24,8 +25,9 @@ namespace Gameplay.PlayerData
         [SerializeField] private float staminaHideDelay = 1.5f;  
         [SerializeField] private float staminaFadeSpeed = 4f;   
         
+        [FormerlySerializedAs("playerData")]
         [Header("References")]
-        [SerializeField] private PlayerData playerData;
+        [SerializeField] private PlayerHealth playerHealth;
         [SerializeField] private PlayerController playerController;
 
         private float _targetStamina;
@@ -49,21 +51,16 @@ namespace Gameplay.PlayerData
 
             ListenToEvent<PlayerDataEvent>(UpdateUI);
             ListenToEvent<StaminaChangedEvent>(UpdateUI);
-            ListenToEvent<PlayerStatusChangedEvent>(UpdateUI);
 
-            if (playerData == null)
-                playerData = GetComponent<PlayerData>();
+            if (playerHealth == null) playerHealth = GetComponent<PlayerHealth>();
+            if (playerController == null) playerController = GetComponent<PlayerController>();
 
-            if (playerController == null)
-                playerController = GetComponent<PlayerController>();
-
-            if (playerData != null)
+            if (playerHealth != null)
             {
-                UpdateUI(new PlayerDataEvent
-                {
-                    playerHp = playerData.CurrentHp,
-                    maxHp = playerData.MaxHp
-                });
+                SetHp(playerHealth.CurrentHp);
+                SetInvincible(playerHealth.IsInvincible); 
+                playerHealth.OnChangeHp += OnHpChanged;
+                playerHealth.OnChangedInvincibility += SetInvincible;
             }
 
             if (playerStaminaSlider != null && playerController != null)
@@ -73,10 +70,34 @@ namespace Gameplay.PlayerData
                 playerStaminaSlider.maxValue = _maxStamina;
                 playerStaminaSlider.value = _maxStamina;
                 _hideTimer = 0f;
-
-                // Start hidden, since stamina is full
+                
                 if (staminaGroup != null) staminaGroup.alpha = 0f;
             }
+        }
+        
+        public override void OnNetworkDespawn()
+        {
+            if (playerHealth != null)
+            {
+                playerHealth.OnChangeHp -= OnHpChanged;
+                playerHealth.OnChangedInvincibility -= SetInvincible;
+            }
+            base.OnNetworkDespawn();
+        }
+
+        private void OnHpChanged(int previous, int current) => SetHp(current);
+
+        private void SetHp(int hp)
+        {
+            if (pvSlider == null || playerHpText == null) return;
+            pvSlider.maxValue = playerHealth.MaxHp;
+            pvSlider.value = hp;
+            playerHpText.text = hp.ToString();
+        }
+
+        private void SetInvincible(bool invincible)
+        {
+            if (sliderColor != null) sliderColor.color = invincible ? invincibleColor : pvColor;
         }
 
         private void Update()
@@ -117,9 +138,5 @@ namespace Gameplay.PlayerData
                 playerStaminaSlider.maxValue = e.maxStamina;
         }
         
-        private void UpdateUI(PlayerStatusChangedEvent e)
-        {
-           sliderColor.color = e.invincible ?  invincibleColor : pvColor;
-        }
     }
 }
