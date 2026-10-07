@@ -16,7 +16,7 @@ MonoBehaviour:
   ItemName: Item Test
   VisualPrefab: {fileID: 1810510646809570900, guid: 3088c713771495643a003e04ffed39b0, type: 3}
   PickupPrefab: {fileID: 5110332906644801116, guid: 12a4d097662054b489a13f9fd7f0c3df, type: 3}
-  Icon: {fileID: 21300000, guid: 7464c0a64b8ffa848af50a4c1827275d, type: 3}
+  Icon: {fileID: 21300000, guid: 609205cd0535c244592082bfaaeed852, type: 3}
   FirstActionList:
   - rid: 7203100951382327771
   SecondActionList:
@@ -26,13 +26,11 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
     - rid: 7203100951382327488
       type: {class: ThrowModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: -2
+          rid: 7203100956235923737
         _durationToFullFill: 0.5
         _minThrowForce: {x: 0, y: 0, z: 0}
         _maxThrowForce: {x: 0, y: 2, z: 12}
@@ -54,3 +52,8 @@ MonoBehaviour:
       type: {class: ElectricUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _electricNeededToUse: 10
+    - rid: 7203100956235923737
+      type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _numberOfUse: 3
+        _destroyWhenEmpty: 0

@@ -11,8 +11,7 @@ namespace Gameplay.Items
     public static class SerializeReferenceListDrawer
     {
         private static readonly Dictionary<Type, Type[]> TypeCache = new();
-
-        /// <summary>Retourne tous les types concrets implémentant baseType.</summary>
+        
         public static Type[] GetImplementations(Type baseType)
         {
             if (TypeCache.TryGetValue(baseType, out var cached))
@@ -23,7 +22,7 @@ namespace Gameplay.Items
                             && !t.IsInterface
                             && !t.IsGenericType
                             && !typeof(UnityEngine.Object).IsAssignableFrom(t)
-                            && t.GetConstructor(Type.EmptyTypes) != null) // ctor public sans param
+                            && t.GetConstructor(Type.EmptyTypes) != null)
                 .OrderBy(t => t.Name)
                 .ToArray();
 
@@ -33,17 +32,25 @@ namespace Gameplay.Items
 
         public static void Draw(SerializedProperty list, Type baseType, string label)
         {
+            Color oldColor =  GUI.color;
+            
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
-            // En-tête + bouton d'ajout
             EditorGUILayout.BeginHorizontal();
             list.isExpanded = EditorGUILayout.Foldout(list.isExpanded, $"{label} ({list.arraySize})", true);
 
+            oldColor = GUI.backgroundColor;
+            GUI.backgroundColor = Color.lightGreen;
+            
             if (GUILayout.Button("+ Ajouter", GUILayout.Width(80)))
                 ShowAddMenu(list, baseType);
+            
+            GUI.backgroundColor = oldColor;
 
             EditorGUILayout.EndHorizontal();
 
+            EditorGUILayout.Space(4);
+            
             if (list.isExpanded)
             {
                 EditorGUI.indentLevel++;
@@ -58,30 +65,42 @@ namespace Gameplay.Items
                     string typeName = GetTypeDisplayName(element);
                     element.isExpanded = EditorGUILayout.Foldout(element.isExpanded, typeName, true);
 
+                    int w = 24;
+                    int h = 16;
+                    
                     // Monter / descendre / supprimer
                     GUI.enabled = i > 0;
-                    if (GUILayout.Button("↑", GUILayout.Width(24)))
+                    
+                    oldColor = GUI.backgroundColor;
+                    GUI.backgroundColor = Color.dimGray;
+                    
+                    if (GUILayout.Button("↑", GUILayout.Width(w), GUILayout.Height(h)))
                     {
                         list.MoveArrayElement(i, i - 1);
                         break;
                     }
-
+                    
                     GUI.enabled = i < list.arraySize - 1;
-                    if (GUILayout.Button("↓", GUILayout.Width(24)))
+                    if (GUILayout.Button("↓", GUILayout.Width(w), GUILayout.Height(h)))
                     {
                         list.MoveArrayElement(i, i + 1);
                         break;
                     }
 
+                    GUI.backgroundColor = oldColor;
+                    
+                    oldColor = GUI.backgroundColor;
+                    GUI.backgroundColor = Color.softRed;
+                    
                     GUI.enabled = true;
-                    if (GUILayout.Button("X", GUILayout.Width(24)))
+                    if (GUILayout.Button("X", GUILayout.Width(w), GUILayout.Height(h)))
                     {
-                        // Sur un élément de type reference, un 1er Delete met la valeur à null,
-                        // un 2e supprime réellement l'entrée
                         list.DeleteArrayElementAtIndex(i);
                         break;
                     }
 
+                    GUI.backgroundColor = oldColor;
+                    
                     EditorGUILayout.EndHorizontal();
 
                     if (element.isExpanded)
@@ -92,11 +111,12 @@ namespace Gameplay.Items
                     }
 
                     EditorGUILayout.EndVertical();
+                    
+                    EditorGUILayout.Space(4);
                 }
 
                 EditorGUI.indentLevel--;
             }
-
             EditorGUILayout.EndVertical();
         }
 
@@ -130,7 +150,6 @@ namespace Gameplay.Items
             }
             else
             {
-                // Les SerializedProperty ne survivent pas au callback : on passe par le targetObject
                 SerializedObject so = list.serializedObject;
                 string path = list.propertyPath;
 
@@ -157,7 +176,7 @@ namespace Gameplay.Items
 
         private static string GetTypeDisplayName(SerializedProperty element)
         {
-            string full = element.managedReferenceFullTypename; // "Assembly Namespace.Type"
+            string full = element.managedReferenceFullTypename;
             if (string.IsNullOrEmpty(full))
                 return "Vide (null)";
 

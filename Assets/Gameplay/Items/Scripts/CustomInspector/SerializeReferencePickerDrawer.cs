@@ -32,7 +32,18 @@ namespace Gameplay.Items
             }
 
             EditorGUI.BeginProperty(position, label, property);
+            
+            Color backgroundColor = new Color(0.4f, 0.4f, 0.4f, 0.25f);
 
+            Rect backgroundRect = new Rect(
+                position.x,
+                position.y + 2,
+                position.width,
+                position.height
+            );
+
+            EditorGUI.DrawRect(backgroundRect, backgroundColor);
+            
             float line = EditorGUIUtility.singleLineHeight;
             float spacing = EditorGUIUtility.standardVerticalSpacing;
 
@@ -62,6 +73,8 @@ namespace Gameplay.Items
 
                 EditorGUI.indentLevel--;
             }
+            
+            GUILayout.Space(16);
 
             EditorGUI.EndProperty();
         }
