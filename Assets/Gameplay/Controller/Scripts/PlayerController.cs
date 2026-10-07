@@ -166,7 +166,8 @@ namespace Gameplay.Controller
             var tiedState     = new TiedUpState(this);
 
             Any(tiedState, new FuncPredicate(() => health.IsDowned));
-            At(tiedState, movementState, new FuncPredicate(() => !health.IsDowned));
+            At(tiedState, movementState, new FuncPredicate(() => !health.IsDowned && !body.CanStandUp()));
+            At(tiedState, crouchState, new FuncPredicate(() => !health.IsDowned && body.CanStandUp()));
             
             At(movementState, crouchState,   new FuncPredicate(WantsCrouch));
             At(sprintState,   crouchState,   new FuncPredicate(WantsCrouch));
