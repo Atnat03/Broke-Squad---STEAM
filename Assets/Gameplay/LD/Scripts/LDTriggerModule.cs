@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Assets.Gameplay.LD
+namespace Gameplay.LD
 {
-    public class LDTriggerModule : LDElementModule
+    public abstract class LDTriggerModule : LDElementModule
     {
-        protected override void OnInitialize(ModuleConfig config)
+        public event Action<LDActivation> Triggered;
+
+        protected void Raise(LDActivation activation)
         {
-            throw new NotImplementedException();
+            Triggered?.Invoke(activation);
         }
     }
 }

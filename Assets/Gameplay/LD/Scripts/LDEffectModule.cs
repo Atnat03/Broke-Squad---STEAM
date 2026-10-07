@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Assets.Gameplay.LD
+namespace Gameplay.LD
 {
-    public class LDEffectModule : LDElementModule
+    public abstract class LDEffectModule : LDElementModule
     {
         protected override void OnInitialize(ModuleConfig config)
         {
             throw new NotImplementedException();
+        }
+
+        public abstract void Activate(LDActivation activation);
+
+        public virtual void Stop()
+        {
+
         }
     }
 }

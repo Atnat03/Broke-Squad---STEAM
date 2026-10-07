@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Assets.Gameplay.LD
+namespace Gameplay.LD
 {
-    public class LDConditionModule : LDElementModule
+    public abstract class LDConditionModule : LDElementModule
     {
         protected override void OnInitialize(ModuleConfig config)
         {
             throw new NotImplementedException();
         }
+
+        public abstract bool CanActivate(LDActivation activation);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Gameplay.LD
+namespace Gameplay.LD
 {
     [CreateAssetMenu(fileName = "LDElementData", menuName = "LD/New Element Data")]
     public class LDElementData : ScriptableObject

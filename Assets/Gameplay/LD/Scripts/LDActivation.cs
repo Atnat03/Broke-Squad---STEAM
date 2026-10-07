@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 namespace Gameplay.LD
 {
-    [Serializable]
-    public class LDBindingData
+    public struct LDActivation
     {
-        public int TriggerID;
+        public Vector3 Position;
     }
 }
