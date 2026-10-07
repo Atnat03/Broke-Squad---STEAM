@@ -9,7 +9,7 @@ namespace Gameplay.Items
 {
     public class ElectricUseModuleView : MonoBusListener
     {
-        [SerializeField] private string _eventKey = "ELECTRIC_USE_MODULE";
+        private string _eventKey = "ELECTRIC_USE_MODULE";
     
         [Header("References")]
         [SerializeField] private GameObject _uiUse;

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class ThrowModuleView : MonoBusListener
 {
-    [SerializeField] private string _eventKey = "UI_THROW_BAR";
+    private string _eventKey = "UI_THROW_BAR";
     
     [Header("References")]
     [SerializeField] private GameObject _uiThrow;

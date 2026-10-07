@@ -12,9 +12,8 @@ namespace Gameplay.Items
     [RequireComponent(typeof(NetworkTransform))]
     public class ItemPickup : NetworkBusListener, IInteractable
     {
-        [SerializeField] private int _itemIndex = -1;
-        [SerializeField] SO_ItemDataBase _itemDataList;
-        [SerializeField] private Outline _outline;
+        [SerializeField] private SO_Item _itemIndex; 
+        private Outline _outline;
         
         public Outline outline => _outline;
         
@@ -24,11 +23,15 @@ namespace Gameplay.Items
         {
             get
             {
-                if (_instance == null && _itemDataList != null)
-                    _instance = new ItemInstance(_itemDataList.GetItemData(_itemIndex));
+                    _instance = new ItemInstance(_itemIndex);
 
                 return _instance;
             }
+        }
+
+        private void Awake()
+        {
+            _outline = GetComponentInChildren<Outline>();
         }
 
         public override void OnNetworkSpawn()
