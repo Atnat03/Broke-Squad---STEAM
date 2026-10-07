@@ -1030,6 +1030,7 @@ MonoBehaviour:
     - Joueur/Walk 4
   playerCamera: {fileID: 8757740270961154763}
   UI: {fileID: 3733190074482631680}
+  health: {fileID: 7777815450667916752}
   meshRenderer:
   - {fileID: 7492072544680282039}
   - {fileID: 2045292591643088296}
@@ -1138,11 +1139,6 @@ MonoBehaviour:
   - Joueur/Take Damage 3
   _deathSound: Joueur/Death
   _rezSound: Joueur/Rez
-  invincibility:
-    UpdateTraits:
-      MinSecondsBetweenUpdates: 0
-      MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 0
 --- !u!114 &7357652632305383726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1161,16 +1157,6 @@ MonoBehaviour:
   progressDecayPerSecond: 0.5
   heartbeatInterval: 0.1
   heartbeatTimeout: 0.15
-  IsDowned:
-    UpdateTraits:
-      MinSecondsBetweenUpdates: 0
-      MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 0
-  ReviveProgress:
-    UpdateTraits:
-      MinSecondsBetweenUpdates: 0
-      MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 0
 --- !u!114 &9082422610625771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1183,7 +1169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5215ba40fc2649d1b84b35b49476d5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.UI.ReviveWorldUI
-  resurrection: {fileID: 7357652632305383726}
+  revive: {fileID: 7357652632305383726}
   root: {fileID: 4288772183155579016}
   fillImage: {fileID: 6671424585055807126}
   smoothSpeed: 10
@@ -1319,8 +1305,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.CheatsManager
   ShowTopMostFoldoutHeaderGroup: 1
-  playerData: {fileID: 7777815450667916752}
-  playerResurrection: {fileID: 7357652632305383726}
+  playerHealth: {fileID: 7777815450667916752}
+  playerRevive: {fileID: 7357652632305383726}
 --- !u!1 &2683151830643941304
 GameObject:
   m_ObjectHideFlags: 0
@@ -1720,7 +1706,6 @@ GameObject:
   - component: {fileID: 1959911433720007506}
   - component: {fileID: 6159683007712173540}
   - component: {fileID: 6920109597034966347}
-  - component: {fileID: 3731673786537567935}
   m_Layer: 7
   m_Name: UI
   m_TagString: Untagged
@@ -1817,31 +1802,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &3731673786537567935
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3733190074482631680}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a584034d004740fcb6a22fcbc5e70482, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.PlayerData.UITest
-  ShowTopMostFoldoutHeaderGroup: 1
-  pvSlider: {fileID: 4639189184447105916}
-  playerHpText: {fileID: 3526673465744200816}
-  pvColor: {r: 0, g: 1, b: 0.078431375, a: 1}
-  invincibleColor: {r: 0.24528301, g: 0.2233001, b: 0.2233001, a: 1}
-  sliderColor: {fileID: 4143715951008408683}
-  playerStaminaSlider: {fileID: 5053621595964100940}
-  staminaGroup: {fileID: 7710661931890576653}
-  staminaSmoothSpeed: 12
-  staminaHideDelay: 0.5
-  staminaFadeSpeed: 6
-  playerData: {fileID: 7777815450667916752}
-  playerController: {fileID: 7696705341883764508}
 --- !u!1 &3771218236746138740
 GameObject:
   m_ObjectHideFlags: 0
@@ -2604,6 +2564,7 @@ GameObject:
   - component: {fileID: 6687425459849478861}
   - component: {fileID: 5053621595964100940}
   - component: {fileID: 7710661931890576653}
+  - component: {fileID: 6819939737695025584}
   m_Layer: 7
   m_Name: StaminaSlider
   m_TagString: Untagged
@@ -2695,6 +2656,23 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &6819939737695025584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6252269413399912945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45e48efe78794c00945ffae1a941dce3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.UI.StaminaBarView
+  playerStaminaSlider: {fileID: 5053621595964100940}
+  staminaGroup: {fileID: 7710661931890576653}
+  staminaSmoothSpeed: 12
+  staminaHideDelay: 1.5
+  staminaFadeSpeed: 4
 --- !u!1 &6309793586976150699
 GameObject:
   m_ObjectHideFlags: 0
@@ -2807,6 +2785,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7347278514556086626}
   - component: {fileID: 4639189184447105916}
+  - component: {fileID: 8522840132551020170}
   m_Layer: 7
   m_Name: PVSlider
   m_TagString: Untagged
@@ -2883,10 +2862,27 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 100
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 100
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8522840132551020170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6491918330904054473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dfb0e3356624c2995eee0671ad7f4aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.UI.Scripts.HealthBarView
+  pvSlider: {fileID: 4639189184447105916}
+  playerHpText: {fileID: 3526673465744200816}
+  pvColor: {r: 0.084590435, g: 1, b: 0, a: 1}
+  invincibleColor: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 1}
+  sliderColor: {fileID: 4143715951008408683}
 --- !u!1 &6520600150064567915
 GameObject:
   m_ObjectHideFlags: 0
@@ -3301,10 +3297,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3042942995402423090}
   - component: {fileID: 5039533217244883088}
-  - component: {fileID: 8556094871717405048}
-  - component: {fileID: 5894818356729885628}
-  - component: {fileID: 4118500093158319217}
-  - component: {fileID: 1001313368848335820}
+  - component: {fileID: 1229881186657216996}
   m_Layer: 7
   m_Name: VoiceChat
   m_TagString: Untagged
@@ -3384,7 +3377,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -3424,7 +3417,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &8556094871717405048
+--- !u!114 &1229881186657216996
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3433,77 +3426,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8570968164247386864}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6a9958e1fac70e42b5e45207ebcbc69, type: 3}
+  m_Script: {fileID: 11500000, guid: 9c7dbbedd0e16f343a64a519b2bda794, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MetaVoiceChat.MetaVc
-  audioInput: {fileID: 5894818356729885628}
-  audioOutput: {fileID: 4118500093158319217}
-  config:
-    application: 2048
-    complexity: 6
-    framesize: 5004
-    signal: 3001
-    jitterTimeWindow: 0.24
-    jitterMeanOffsetWindow: 100
-    outputMinBufferSize: 2
-  isEchoEnabled: 0
-  isSineOverrideEnabled: 0
-  maxCodecMilliseconds: 50
-  allowMultipleCodecWarningsPerFrame: 0
-  isDeafened:
-    value: 0
-  isInputMuted:
-    value: 0
-  isOutputMuted:
-    value: 0
-  isSpeaking:
-    value: 0
---- !u!114 &5894818356729885628
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8570968164247386864}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 566ca729670e5ae419457b7ce863e32f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MetaVoiceChat.Input.Mic.VcMicAudioInput
-  metaVc: {fileID: 8556094871717405048}
-  optionalFirstInputFilter: {fileID: 0}
---- !u!114 &4118500093158319217
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8570968164247386864}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b5c71e1860482b4a84309c4d7a199e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MetaVoiceChat.Output.AudioSource.VcAudioSourceOutput
-  metaVc: {fileID: 8556094871717405048}
-  optionalFirstOutputFilter: {fileID: 0}
-  audioSource: {fileID: 5039533217244883088}
-  frameLifetime: 0.5
-  maxNegativeLatency: 0.25
-  pitchProportionalGain: 1
-  pitchMaxCorrection: 0.2
---- !u!114 &1001313368848335820
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8570968164247386864}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 354ed1a00d59ee443b21d7564d8ee62d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MetaVoiceChat.NetProviders.NGO.NGONetProvider
+  m_EditorClassIdentifier: Assembly-CSharp::VoiceChat
   ShowTopMostFoldoutHeaderGroup: 1
+  _isProximityChat: 0
+  sampleRate: 16000
+  jitterBufferMs: 200
 --- !u!1 &9034689254952957922
 GameObject:
   m_ObjectHideFlags: 0

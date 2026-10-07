@@ -54,13 +54,13 @@ namespace Assets.Gameplay.LD.Scripts
         {
             if (!IsServer || !isArmed.Value || isCountingDown) return;
 
-            PlayerData player = other.GetComponentInParent<PlayerData>();
+            PlayerHealth player = other.GetComponentInParent<PlayerHealth>();
             if (player == null) return;
 
             triggerCoroutine = StartCoroutine(TriggerTrapCoroutine(player));
         }
 
-        private IEnumerator TriggerTrapCoroutine(PlayerData player)
+        private IEnumerator TriggerTrapCoroutine(PlayerHealth player)
         {
             isCountingDown = true;
 

@@ -15,6 +15,7 @@ namespace Gameplay.Controller
     public class PlayerController : NetworkBusListener
     {
         #region Variables
+        
         [Header("Profile")]
         [SerializeField] private ControllerProfileSO profile;
 
@@ -26,6 +27,7 @@ namespace Gameplay.Controller
         [Header("To Assign")]
         public PlayerCamera playerCamera;
         public GameObject UI;
+        [SerializeField] private PlayerHealth health;
         public MeshRenderer[] meshRenderer;
         public TextMeshProUGUI pseudoText;
 
@@ -36,6 +38,7 @@ namespace Gameplay.Controller
         [SerializeField, SoundName] private string _jumpSound;
         [SerializeField, SoundName] private string _crouchSound;
         
+        [Header("Components")]
         private Rigidbody _rb;
         private CapsuleCollider _capsule;
         private PlayerInput _playerInput;
@@ -46,18 +49,15 @@ namespace Gameplay.Controller
         
         private int _syncedColor;
         private string _syncedName = "";
-
-        private bool _playerDead;
-
+        
         private readonly NetworkVariable<bool> _netCrouching = new(false,
             NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-        private readonly NetworkVariable<bool> _netDown = new(false,
-            NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         
+        public PlayerHealth Health => health;
         public bool IsGrounded => ground.IsGrounded;
         public bool IsCrouching => IsOwner ? _stateMachine?.CurrentState is CrouchState : _netCrouching.Value;
         public bool IsSprinting => IsOwner && _stateMachine?.CurrentState is SprintState;
-        public bool IsDown      => IsOwner ? _stateMachine?.CurrentState is TiedUpState : _netDown.Value;
+        public bool IsDown => health != null && health.IsDowned;
         
         public float MaxStamina => profile.maxStamina;
         public float LeanInput => _input?.Lean ?? 0f;
@@ -78,14 +78,15 @@ namespace Gameplay.Controller
         public void PlayCrouchSound() => PlaySound(_crouchSound, 0.5f);
 
         public void SetYaw(float yawDegrees) => _rb.MoveRotation(Quaternion.Euler(0f, yawDegrees, 0f));
-
+        
         #endregion
 
         #region Initialization
 
         public override void OnNetworkSpawn()
         {
-            if (profile == null)
+            if (health == null) health = GetComponent<PlayerHealth>();
+            if (profile == null || health == null)
             {
                 Debug.LogError("PlayerController: profile is not assigned.", this);
                 enabled = false;
@@ -108,7 +109,7 @@ namespace Gameplay.Controller
             SendPersonalisation();
             SetUpModules();
             SetUpStateMachine();
-            ListenToEvent<PlayerDeathEvent>(SetPlayerDead);
+            
         }
 
         public override void OnNetworkDespawn()
@@ -146,7 +147,7 @@ namespace Gameplay.Controller
             _input = new PlayerInputReader(_playerInput);
 
             _stamina = new PlayerStamina(profile, (current, max) =>
-                InvokeEvent(new StaminaChangedEvent { stamina = current, maxStamina = max }));
+                InvokeEvent(new StaminaChanged_EVENT { Current = current, MaxStamina = max }));
 
             _motor = new PlayerMotor(_rb, transform, profile, ground, _input);
             _motor.OnJump += () => PlaySound(_jumpSound, 0.5f);
@@ -164,13 +165,13 @@ namespace Gameplay.Controller
             var crouchState   = new CrouchState(this);
             var tiedState     = new TiedUpState(this);
 
-            Any(tiedState, new FuncPredicate(() => _playerDead));
-            At(tiedState, movementState, new FuncPredicate(() => !_playerDead));
+            Any(tiedState, new FuncPredicate(() => health.IsDowned));
+            At(tiedState, movementState, new FuncPredicate(() => !health.IsDowned && !body.CanStandUp()));
+            At(tiedState, crouchState, new FuncPredicate(() => !health.IsDowned && body.CanStandUp()));
             
             At(movementState, crouchState,   new FuncPredicate(WantsCrouch));
             At(sprintState,   crouchState,   new FuncPredicate(WantsCrouch));
             At(crouchState,   movementState, new FuncPredicate(() => !WantsCrouch()));
-
             At(movementState, sprintState,   new FuncPredicate(WantsSprint));
             At(sprintState,   movementState, new FuncPredicate(() => !WantsSprint()));
 
@@ -190,7 +191,7 @@ namespace Gameplay.Controller
 
             if (!IsOwner)
             {
-                body.ApplyRemote(Time.deltaTime, _netCrouching.Value, _netDown.Value);
+                body.ApplyRemote(Time.deltaTime, _netCrouching.Value, IsDown);
                 return;
             }
             
@@ -211,7 +212,6 @@ namespace Gameplay.Controller
             _stamina.Tick(dt);                    
 
             _netCrouching.Value = IsCrouching;
-            _netDown.Value = IsDown;
 
             footsteps.Tick(dt, IsGrounded, _input.Move.sqrMagnitude > 0.01f, IsCrouching, IsSprinting);
         }
@@ -223,17 +223,8 @@ namespace Gameplay.Controller
 
         #endregion
 
-        #region Death / Sound
-
-        private void SetPlayerDead(PlayerDeathEvent e)
-        {
-            if (e.playerID != OwnerClientId) return;
-            _playerDead = true;
-            _motor.StopMoving();
-        }
-
-        public void Revive() => _playerDead = false;
-
+        #region  Sound
+        
         public void PlaySound(string clip, float volumeToPlay)
         {
             InvokeEvent(new PlaySoundEvent

@@ -22,6 +22,7 @@ namespace Gameplay.Controller
             _profile = profile;
             _onChangedStamina = onChanged;
             Current = Max;
+            _onChangedStamina.Invoke(Current, Max);
         }
         
         public void Drain(float dt)
@@ -29,7 +30,7 @@ namespace Gameplay.Controller
             Current = Mathf.Max(0f, Current - _profile.drainPerSecond * dt);
             _regenTimer = _profile.regenDelay;
             _drainedThisTick = true;
-            if(Current <= 0f) Exhausted = true;
+            //if(Current <= 0f) Exhausted = true;
         }
 
         public void Tick(float dt)

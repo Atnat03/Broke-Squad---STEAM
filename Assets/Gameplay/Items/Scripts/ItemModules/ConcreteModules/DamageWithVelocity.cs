@@ -42,7 +42,7 @@ namespace Gameplay.Items.Scripts.ItemModules.ConcreteModules
                 
                 ABPrint.Print("Speed : " + speed + " / Dmg : " + dmg, ABColor.Purple);
 
-                if (collision.gameObject.TryGetComponent<PlayerData.PlayerData>(out var damageable))
+                if (collision.gameObject.TryGetComponent<PlayerData.PlayerHealth>(out var damageable))
                 {
                     ABPrint.Print("Is a player", ABColor.Purple);
                     

@@ -6,9 +6,12 @@ using UnityEngine;
 
 namespace Gameplay.Controller
 {
-    public class PlayerResurrection : NetworkBusListener
+    public class PlayerRevive : NetworkBusListener
     {
-        public static readonly List<PlayerResurrection> All = new();
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() => All.Clear();
+
+        private static readonly List<PlayerRevive> All = new();
 
         [Header("Resurrection")]
         [SerializeField] private float reviveDistance = 2.5f;
@@ -17,24 +20,25 @@ namespace Gameplay.Controller
         [SerializeField] private float heartbeatInterval = 0.1f;
         [SerializeField] private float heartbeatTimeout = 0.35f;
 
-        [HideInInspector] public NetworkVariable<bool> IsDowned = new(false,
-            NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-
-        public NetworkVariable<float> ReviveProgress = new(0f,
+        private readonly NetworkVariable<float> _reviveProgress = new(0f,
             NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-        
+        private PlayerHealth _health;
         private PlayerInput _playerInput;
+        
         private bool _interactHeld;
-        private PlayerResurrection _currentTarget;
+        private PlayerRevive _currentTarget;
         private float _heartbeatTimer;
-
         
         private ulong _reviverId;
         private float _lastHeartbeatTime = float.NegativeInfinity;
+        
+        public PlayerHealth Health => _health;
+        public float ReviveProgress => _reviveProgress.Value;
 
         public override void OnNetworkSpawn()
         {
+            _health = GetComponent<PlayerHealth>();
             All.Add(this);
 
             if (!IsOwner) return;
@@ -42,8 +46,6 @@ namespace Gameplay.Controller
             _playerInput = TryGetComponent(out PlayerInput pi) ? pi : gameObject.AddComponent<PlayerInput>();
             _playerInput.OnInteractInput += OnInteractPressed;
             _playerInput.OnInteractInputCanceled += OnInteractReleased;
-
-            ListenToEvent<PlayerDeathEvent>(OnPlayerDeath);
         }
 
         public override void OnNetworkDespawn()
@@ -61,13 +63,7 @@ namespace Gameplay.Controller
 
         private void OnInteractPressed() => _interactHeld = true;
         private void OnInteractReleased() => _interactHeld = false;
-
-        private void OnPlayerDeath(PlayerDeathEvent e)
-        { 
-            if(!IsOwner) return;
-            if (e.playerID == OwnerClientId)
-                IsDowned.Value = true;
-        }
+        
 
         private void Update()
         {
@@ -80,8 +76,8 @@ namespace Gameplay.Controller
 
         private void UpdateReviver()
         {
-            PlayerResurrection best = null;
-            if (_interactHeld && !IsDowned.Value)
+            PlayerRevive best = null;
+            if (_interactHeld && !_health.IsDowned)
                 best = FindClosestDownedAlly();
             
             if (best != _currentTarget)
@@ -100,14 +96,14 @@ namespace Gameplay.Controller
             }
         }
 
-        private PlayerResurrection FindClosestDownedAlly()
+        private PlayerRevive FindClosestDownedAlly()
         {
-            PlayerResurrection best = null;
+            PlayerRevive best = null;
             float bestSqr = reviveDistance * reviveDistance;
 
             foreach (var other in All)
             {
-                if (other == this || !other.IsSpawned || !other.IsDowned.Value) continue;
+                if (other == this || !other.IsSpawned || other.Health == null || !other.Health.IsDowned) continue;
 
                 float sqr = (other.transform.position - transform.position).sqrMagnitude;
                 if (sqr <= bestSqr)
@@ -125,7 +121,7 @@ namespace Gameplay.Controller
             if (rpcParams.Receive.SenderClientId != OwnerClientId) return;
 
             if (targetRef.TryGet(out NetworkObject targetObj) &&
-                targetObj.TryGetComponent(out PlayerResurrection target))
+                targetObj.TryGetComponent(out PlayerRevive target))
             {
                 target.ServerReceiveHeartbeat(OwnerClientId);
             }
@@ -133,38 +129,38 @@ namespace Gameplay.Controller
 
         #endregion
 
-        #region Server (on the downed player's object)
+        #region Revivable (server, on the downed player's object)
 
         private void ServerReceiveHeartbeat(ulong reviverId)
         {
-            if (!IsDowned.Value) return;
+            if (!_health.IsDowned) return;
             _reviverId = reviverId;
             _lastHeartbeatTime = Time.time;
         }
 
         private void UpdateServerRevive()
         {
-            if (!IsDowned.Value)
+            if (!_health.IsDowned)
             {
                 _lastHeartbeatTime = float.NegativeInfinity;
-                if (ReviveProgress.Value != 0f) ReviveProgress.Value = 0f;
+                if (_reviveProgress.Value != 0f) _reviveProgress.Value = 0f;
                 return;
             }
 
             if (IsReviverStillValid())
             {
-                ReviveProgress.Value = Mathf.Min(1f, ReviveProgress.Value + Time.deltaTime / reviveDuration);
+                _reviveProgress.Value = Mathf.Min(1f, _reviveProgress.Value + Time.deltaTime / reviveDuration);
 
-                if (ReviveProgress.Value >= 1f)
+                if (_reviveProgress.Value >= 1f)
                 {
-                    ReviveProgress.Value = 0f;
+                    _reviveProgress.Value = 0f;
                     _lastHeartbeatTime = float.NegativeInfinity;
-                    ReviveOwnerRpc();
+                    _health.ServerRevive();          
                 }
             }
-            else if (ReviveProgress.Value > 0f)
+            else if (_reviveProgress.Value > 0f)
             {
-                ReviveProgress.Value = Mathf.Max(0f, ReviveProgress.Value - progressDecayPerSecond * Time.deltaTime);
+                _reviveProgress.Value = Mathf.Max(0f, _reviveProgress.Value - progressDecayPerSecond * Time.deltaTime);
             }
         }
 
@@ -173,8 +169,8 @@ namespace Gameplay.Controller
             if (Time.time - _lastHeartbeatTime > heartbeatTimeout) return false;
             if (!NetworkManager.ConnectedClients.TryGetValue(_reviverId, out var client)) return false;
             if (client.PlayerObject == null) return false;
-            if (!client.PlayerObject.TryGetComponent(out PlayerResurrection reviver)) return false;
-            if (reviver.IsDowned.Value) return false;
+            if (!client.PlayerObject.TryGetComponent(out PlayerRevive reviver)) return false;
+            if (reviver.Health == null || reviver._health.IsDowned) return false;
 
             float maxDist = reviveDistance * 1.5f;
             return (reviver.transform.position - transform.position).sqrMagnitude <= maxDist * maxDist;
@@ -182,20 +178,6 @@ namespace Gameplay.Controller
 
         #endregion
         
-        [Rpc(SendTo.Owner)]
-        public void ReviveOwnerRpc()
-        {
-            IsDowned.Value = false;
-
-            if (TryGetComponent(out PlayerController controller))
-                controller.Revive();
-            ReviveServerRpc();
-        }
-
-        [Rpc(SendTo.Server)]
-        private void ReviveServerRpc()
-        {
-            InvokeEvent(new PlayerRevivedEvent { playerID = OwnerClientId });
-        }
+       
     }
 }
