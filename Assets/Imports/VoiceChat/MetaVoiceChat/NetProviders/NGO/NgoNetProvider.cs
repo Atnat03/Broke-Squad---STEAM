@@ -8,11 +8,11 @@ using UnityEngine;
 namespace MetaVoiceChat.NetProviders.NGO
 {
 	[RequireComponent(typeof(MetaVc))]
-	public class NGONetProvider : NetworkBehaviour, INetProvider
+	public class NgoNetProvider : NetworkBehaviour, INetProvider
 	{
-		public static NGONetProvider LocalPlayerInstance { get; private set; }
-		private readonly static List<NGONetProvider> s_Instances = new();
-		public static IReadOnlyList<NGONetProvider> Instances => s_Instances;
+		public static NgoNetProvider LocalPlayerInstance { get; private set; }
+		private readonly static List<NgoNetProvider> s_Instances = new();
+		public static IReadOnlyList<NgoNetProvider> Instances => s_Instances;
 
 		public MetaVc MetaVc { get; private set; }
 
