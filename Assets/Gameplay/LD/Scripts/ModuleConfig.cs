@@ -8,5 +8,6 @@ namespace Assets.Gameplay.LD
     public abstract class ModuleConfig
     {
         public int ModuleID;
+        public abstract Type ModuleType { get; }
     }
 }

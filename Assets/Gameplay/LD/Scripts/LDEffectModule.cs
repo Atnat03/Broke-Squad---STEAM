@@ -6,5 +6,9 @@ namespace Assets.Gameplay.LD
 {
     public class LDEffectModule : LDElementModule
     {
+        protected override void OnInitialize(ModuleConfig config)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
