@@ -92,14 +92,33 @@
 
                 _playerHp.Value = MaxHpValue;
                 _playerDown.Value = false;
+                PlayRezRpc();
             }
             #endregion
             
             #region Replication callbacks (every client)
 
-            private void OnHpChanged(int previous, int current) => OnChangeHp?.Invoke(previous, current);
+            private void OnHpChanged(int previous, int current)
+            {
+                OnChangeHp?.Invoke(previous, current);
+                if(IsOwner) InvokeEvent(new PlayerHealthChanged_EVENT
+                {
+                    CurrentHp = CurrentHp,
+                    MaxHp = MaxHp,
+                    Invincible =  IsInvincible
+                });
+            }
 
-            private void OnInvincibleChanged(bool previous, bool current) => OnChangedInvincibility?.Invoke(current);
+            private void OnInvincibleChanged(bool previous, bool current)
+            {
+                OnChangedInvincibility?.Invoke(current);
+                if(IsOwner) InvokeEvent(new PlayerHealthChanged_EVENT
+                {
+                    CurrentHp = CurrentHp,
+                    MaxHp = MaxHp,
+                    Invincible =  IsInvincible
+                });
+            }
 
             private void OnDownedChanged(bool previous, bool downed)
             {
@@ -107,10 +126,13 @@
             }
             
             #endregion
-           
+            
             #region SFX
             [Rpc(SendTo.Everyone)]
             private void PlayDeathRpc() => PlaySfx(_deathSound, 0.5f);
+            
+            [Rpc(SendTo.Everyone)]
+            private void PlayRezRpc() => PlaySfx(_rezSound, 0.5f);
             
             [Rpc(SendTo.Owner)]
             private void PlayHurtRpc()

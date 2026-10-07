@@ -15,6 +15,7 @@ namespace Gameplay.Controller
     public class PlayerController : NetworkBusListener
     {
         #region Variables
+        
         [Header("Profile")]
         [SerializeField] private ControllerProfileSO profile;
 
@@ -37,6 +38,7 @@ namespace Gameplay.Controller
         [SerializeField, SoundName] private string _jumpSound;
         [SerializeField, SoundName] private string _crouchSound;
         
+        [Header("Components")]
         private Rigidbody _rb;
         private CapsuleCollider _capsule;
         private PlayerInput _playerInput;
@@ -47,9 +49,7 @@ namespace Gameplay.Controller
         
         private int _syncedColor;
         private string _syncedName = "";
-
         
-
         private readonly NetworkVariable<bool> _netCrouching = new(false,
             NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         
@@ -78,7 +78,7 @@ namespace Gameplay.Controller
         public void PlayCrouchSound() => PlaySound(_crouchSound, 0.5f);
 
         public void SetYaw(float yawDegrees) => _rb.MoveRotation(Quaternion.Euler(0f, yawDegrees, 0f));
-
+        
         #endregion
 
         #region Initialization
@@ -147,7 +147,7 @@ namespace Gameplay.Controller
             _input = new PlayerInputReader(_playerInput);
 
             _stamina = new PlayerStamina(profile, (current, max) =>
-                InvokeEvent(new StaminaChangedEvent { stamina = current, maxStamina = max }));
+                InvokeEvent(new StaminaChanged_EVENT { Current = current, MaxStamina = max }));
 
             _motor = new PlayerMotor(_rb, transform, profile, ground, _input);
             _motor.OnJump += () => PlaySound(_jumpSound, 0.5f);
@@ -171,7 +171,6 @@ namespace Gameplay.Controller
             At(movementState, crouchState,   new FuncPredicate(WantsCrouch));
             At(sprintState,   crouchState,   new FuncPredicate(WantsCrouch));
             At(crouchState,   movementState, new FuncPredicate(() => !WantsCrouch()));
-
             At(movementState, sprintState,   new FuncPredicate(WantsSprint));
             At(sprintState,   movementState, new FuncPredicate(() => !WantsSprint()));
 

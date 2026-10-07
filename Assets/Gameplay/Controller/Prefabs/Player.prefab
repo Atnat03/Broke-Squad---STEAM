@@ -971,7 +971,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1942329737
+  GlobalObjectIdHash: 3075001378
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -1706,7 +1706,6 @@ GameObject:
   - component: {fileID: 1959911433720007506}
   - component: {fileID: 6159683007712173540}
   - component: {fileID: 6920109597034966347}
-  - component: {fileID: 3731673786537567935}
   m_Layer: 7
   m_Name: UI
   m_TagString: Untagged
@@ -1803,31 +1802,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &3731673786537567935
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3733190074482631680}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a584034d004740fcb6a22fcbc5e70482, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.PlayerData.UITest
-  ShowTopMostFoldoutHeaderGroup: 1
-  pvSlider: {fileID: 4639189184447105916}
-  playerHpText: {fileID: 3526673465744200816}
-  pvColor: {r: 0, g: 1, b: 0.078431375, a: 1}
-  invincibleColor: {r: 0.24528301, g: 0.2233001, b: 0.2233001, a: 1}
-  sliderColor: {fileID: 4143715951008408683}
-  playerStaminaSlider: {fileID: 5053621595964100940}
-  staminaGroup: {fileID: 7710661931890576653}
-  staminaSmoothSpeed: 12
-  staminaHideDelay: 0.5
-  staminaFadeSpeed: 6
-  playerHealth: {fileID: 7777815450667916752}
-  playerController: {fileID: 7696705341883764508}
 --- !u!1 &3771218236746138740
 GameObject:
   m_ObjectHideFlags: 0
@@ -2590,6 +2564,7 @@ GameObject:
   - component: {fileID: 6687425459849478861}
   - component: {fileID: 5053621595964100940}
   - component: {fileID: 7710661931890576653}
+  - component: {fileID: 6819939737695025584}
   m_Layer: 7
   m_Name: StaminaSlider
   m_TagString: Untagged
@@ -2681,6 +2656,23 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &6819939737695025584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6252269413399912945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45e48efe78794c00945ffae1a941dce3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.UI.StaminaBarView
+  playerStaminaSlider: {fileID: 5053621595964100940}
+  staminaGroup: {fileID: 7710661931890576653}
+  staminaSmoothSpeed: 12
+  staminaHideDelay: 1.5
+  staminaFadeSpeed: 4
 --- !u!1 &6309793586976150699
 GameObject:
   m_ObjectHideFlags: 0
@@ -2793,6 +2785,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7347278514556086626}
   - component: {fileID: 4639189184447105916}
+  - component: {fileID: 8522840132551020170}
   m_Layer: 7
   m_Name: PVSlider
   m_TagString: Untagged
@@ -2873,6 +2866,23 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8522840132551020170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6491918330904054473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dfb0e3356624c2995eee0671ad7f4aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.UI.Scripts.HealthBarView
+  pvSlider: {fileID: 4639189184447105916}
+  playerHpText: {fileID: 3526673465744200816}
+  pvColor: {r: 0.084590435, g: 1, b: 0, a: 1}
+  invincibleColor: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 1}
+  sliderColor: {fileID: 4143715951008408683}
 --- !u!1 &6520600150064567915
 GameObject:
   m_ObjectHideFlags: 0

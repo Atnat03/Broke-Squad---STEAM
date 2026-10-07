@@ -17,13 +17,6 @@ namespace Gameplay.PlayerData
         [SerializeField] private Color invincibleColor;
         [SerializeField] private Image sliderColor;
         
-
-        [Header("Stamina Bar")]
-        [SerializeField] private Slider playerStaminaSlider;
-        [SerializeField] private CanvasGroup staminaGroup;
-        [SerializeField] private float staminaSmoothSpeed = 12f;
-        [SerializeField] private float staminaHideDelay = 1.5f;  
-        [SerializeField] private float staminaFadeSpeed = 4f;   
         
         [Header("References")]
         [SerializeField] private PlayerHealth playerHealth;
@@ -41,15 +34,12 @@ namespace Gameplay.PlayerData
             if (!IsOwner)
             {
                 pvSlider.gameObject.SetActive(false);
-                if (playerStaminaSlider != null)
-                    playerStaminaSlider.gameObject.SetActive(false);
                 return;
             }
 
             pvSlider.gameObject.SetActive(true);
 
-            ListenToEvent<PlayerDataEvent>(UpdateUI);
-            ListenToEvent<StaminaChangedEvent>(UpdateUI);
+            //ListenToEvent<PlayerDataEvent>(UpdateUI);
 
             if (playerHealth == null) playerHealth = GetComponent<PlayerHealth>();
             if (playerController == null) playerController = GetComponent<PlayerController>();
@@ -61,17 +51,7 @@ namespace Gameplay.PlayerData
                 playerHealth.OnChangeHp += OnHpChanged;
                 playerHealth.OnChangedInvincibility += SetInvincible;
             }
-
-            if (playerStaminaSlider != null && playerController != null)
-            {
-                _maxStamina = playerController.MaxStamina;
-                _targetStamina = _displayedStamina = _maxStamina;
-                playerStaminaSlider.maxValue = _maxStamina;
-                playerStaminaSlider.value = _maxStamina;
-                _hideTimer = 0f;
-                
-                if (staminaGroup != null) staminaGroup.alpha = 0f;
-            }
+            
         }
         
         public override void OnNetworkDespawn()
@@ -99,43 +79,17 @@ namespace Gameplay.PlayerData
             if (sliderColor != null) sliderColor.color = invincible ? invincibleColor : pvColor;
         }
 
-        private void Update()
-        {
-            if (!IsOwner || playerStaminaSlider == null) return;
-            
-            float t = 1f - Mathf.Exp(-staminaSmoothSpeed * Time.deltaTime);
-            _displayedStamina = Mathf.Lerp(_displayedStamina, _targetStamina, t);
-            if (Mathf.Abs(_displayedStamina - _targetStamina) < 0.01f)
-                _displayedStamina = _targetStamina;
+        
 
-            playerStaminaSlider.value = _displayedStamina;
-            
-            if (staminaGroup == null) return;
-
-            bool full = _targetStamina >= _maxStamina && _displayedStamina >= _maxStamina - 0.01f;
-            _hideTimer = full ? _hideTimer - Time.deltaTime : staminaHideDelay;
-
-            float targetAlpha = _hideTimer > 0f ? 1f : 0f;
-            staminaGroup.alpha = Mathf.MoveTowards(staminaGroup.alpha, targetAlpha, staminaFadeSpeed * Time.deltaTime);
-        }
-
-        private void UpdateUI(PlayerDataEvent e)
+        private void UpdateUI(PlayerHealthChanged_EVENT e)
         {
             if (pvSlider == null || playerHpText == null) return;
 
-            pvSlider.maxValue = e.maxHp;
-            pvSlider.value = e.playerHp;
-            playerHpText.text = e.playerHp.ToString();
+            pvSlider.maxValue = e.MaxHp;
+            pvSlider.value = e.CurrentHp;
+            playerHpText.text = e.CurrentHp.ToString();
         }
-
-        private void UpdateUI(StaminaChangedEvent e)
-        {
-            _maxStamina = e.maxStamina;
-            _targetStamina = e.stamina;
-
-            if (playerStaminaSlider != null)
-                playerStaminaSlider.maxValue = e.maxStamina;
-        }
+        
         
     }
 }
