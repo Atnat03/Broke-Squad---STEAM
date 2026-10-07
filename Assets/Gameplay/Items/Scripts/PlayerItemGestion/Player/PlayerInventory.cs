@@ -278,10 +278,10 @@ namespace Gameplay.Items
             if (item == null) return;
             
             foreach (IFirstAction f in item.FirstActionList)
-                f?.Condition.DisableItemInHand();
+                f?.Condition?.DisableItemInHand();
             
             foreach (ISecondAction s in item.SecondActionList)
-                s?.Condition.DisableItemInHand();
+                s?.Condition?.DisableItemInHand();
             
             _slots[_selectedSlot.Value] = null;
             RefreshHeldItem();

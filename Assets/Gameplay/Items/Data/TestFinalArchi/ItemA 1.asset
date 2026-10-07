@@ -18,7 +18,7 @@ MonoBehaviour:
   PickupPrefab: {fileID: 3567522838004889354, guid: 7631b2a500c3b0140ad9bd4601087284, type: 3}
   Icon: {fileID: 21300000, guid: 7464c0a64b8ffa848af50a4c1827275d, type: 3}
   FirstActionList:
-  - rid: 7203100951382327542
+  - rid: 7203100956235923631
   SecondActionList:
   - rid: 7203100951382327488
   PassifList: []
@@ -30,15 +30,17 @@ MonoBehaviour:
     - rid: 7203100951382327488
       type: {class: ThrowModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
+        _condition:
+          rid: -2
         _durationToFullFill: 2
         _minThrowForce: {x: 0, y: 0, z: 0}
         _maxThrowForce: {x: 0, y: 2, z: 12}
         _minTorqueForce: {x: 0, y: 0, z: 0}
         _maxTorqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: {x: 0.2, y: 0, z: 0.7}
+    - rid: 7203100956235923631
+      type: {class: ChargeItemModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
         _condition:
           rid: -2
-    - rid: 7203100951382327542
-      type: {class: HealOtherModule, ns: Gameplay.Items, asm: Assembly-CSharp}
-      data:
-        _healAmount: 10
+        _percentGain: 10

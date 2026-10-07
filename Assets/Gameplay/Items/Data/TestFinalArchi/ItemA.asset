@@ -18,7 +18,7 @@ MonoBehaviour:
   PickupPrefab: {fileID: 5110332906644801116, guid: 12a4d097662054b489a13f9fd7f0c3df, type: 3}
   Icon: {fileID: 21300000, guid: 7464c0a64b8ffa848af50a4c1827275d, type: 3}
   FirstActionList:
-  - rid: 7203100951382327541
+  - rid: 7203100951382327771
   SecondActionList:
   - rid: 7203100951382327488
   PassifList:
@@ -39,19 +39,18 @@ MonoBehaviour:
         _minTorqueForce: {x: 0, y: 0, z: 0}
         _maxTorqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: {x: 0.2, y: 0, z: 0.7}
-    - rid: 7203100951382327541
-      type: {class: BreakThingsModule, ns: Gameplay.Items, asm: Assembly-CSharp}
-      data:
-        _condition:
-          rid: 7203100951382327701
-        _force: 5
     - rid: 7203100951382327595
       type: {class: StunModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _minVelocityForStun: 2
         _stunDuration: 1
-    - rid: 7203100951382327701
-      type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+    - rid: 7203100951382327771
+      type: {class: BreakThingsModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
-        _numberOfUse: 3
-        _destroyWhenEmpty: 1
+        _condition:
+          rid: 7203100951382327773
+        _force: 5
+    - rid: 7203100951382327773
+      type: {class: ElectricUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _electricNeededToUse: 10

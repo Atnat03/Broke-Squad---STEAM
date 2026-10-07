@@ -992,7 +992,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3075001378
+  GlobalObjectIdHash: 1942329737
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -1728,7 +1728,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4874256371157005472}
-  - {fileID: 8488744753459614403}
+  - {fileID: 2938912773699533930}
   - {fileID: 7201325223253693841}
   - {fileID: 7347278514556086626}
   - {fileID: 1215043112672158133}
@@ -1844,7 +1844,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8488744753459614403
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1852,17 +1852,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3771218236746138740}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8939416941495228624}
-  m_Father: {fileID: 4363694170265431080}
+  m_Father: {fileID: 2938912773699533930}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 778, y: -465}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 316.188, y: 107.63}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &3881795936748857949
@@ -3487,6 +3487,59 @@ MonoBehaviour:
   _eventKey: UI_THROW_BAR
   _uiThrow: {fileID: 3152614203818353611}
   _throwImage: {fileID: 599778181649812176}
+--- !u!1 &8112011242926827485
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2938912773699533930}
+  - component: {fileID: 5349148031472526}
+  m_Layer: 7
+  m_Name: ElectricPercentLogic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2938912773699533930
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8112011242926827485}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8488744753459614403}
+  m_Father: {fileID: 4363694170265431080}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 778, y: -465}
+  m_SizeDelta: {x: 316.188, y: 107.630005}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5349148031472526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8112011242926827485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc291f64da6844238be935374bb327eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ElectricUseModuleView
+  _eventKey: ELECTRIC_USE_MODULE
+  _uiUse: {fileID: 3771218236746138740}
+  _useText: {fileID: 8027119305052795742}
+  _speedFill: 20
 --- !u!1 &9034689254952957922
 GameObject:
   m_ObjectHideFlags: 0

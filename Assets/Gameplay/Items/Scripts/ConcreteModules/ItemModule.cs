@@ -9,7 +9,7 @@
         public void Initialize(ItemContext context)
         {
             Context = context;
-            OnBind();
+            OnComeInHand();
         }
 
         public IItemModule Clone()
@@ -21,6 +21,6 @@
 
         protected virtual void OnCloned() {}
         protected virtual void SetModule() {}
-        protected virtual void OnBind() {}
+        protected virtual void OnComeInHand() {}
     }
 }

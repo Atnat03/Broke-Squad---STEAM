@@ -19,9 +19,8 @@ namespace Gameplay.Items
             if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, 2f) && hit.transform.TryGetComponent(out IBreakable breakable))
             {
                 breakable.Break(_force);
+                ConsumeCondition(new OnModuleDoAction_EVENT());
             }
-            
-            ConsumeCondition(new OnModuleDoAction_EVENT());
         }
 
         public void StopFirstAction()
