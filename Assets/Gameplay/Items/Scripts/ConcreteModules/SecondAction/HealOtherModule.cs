@@ -1,4 +1,5 @@
 ﻿using System;
+using Gameplay.PlayerData;
 using UnityEngine;
 
 namespace Gameplay.Items
@@ -16,7 +17,7 @@ namespace Gameplay.Items
             
             Transform cam = Context.Camera.transform;
 
-            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, 2f) && hit.transform.TryGetComponent(out PlayerData.PlayerData data))
+            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, 2f) && hit.transform.TryGetComponent(out PlayerHealth data))
             {
                 Context.SendToServer(this, new OnModuleDoAction_EVENT
                 {
@@ -33,7 +34,7 @@ namespace Gameplay.Items
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {
             // PlayerData => PlayerHealth.Heal()
-            if (data.GetTarget().TryGetComponent(out PlayerData.PlayerData playerData))
+            if (data.GetTarget().TryGetComponent(out PlayerHealth playerData))
             {
                 playerData.Heal(_healAmount);
             }

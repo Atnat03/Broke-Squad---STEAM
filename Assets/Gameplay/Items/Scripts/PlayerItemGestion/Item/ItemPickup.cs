@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using Bus;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 
 namespace Gameplay.Items
 {
+    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(BoxCollider))]
+    [RequireComponent(typeof(NetworkTransform))]
     public class ItemPickup : NetworkBusListener, IInteractable
     {
         [SerializeField] private int _itemIndex = -1;
@@ -15,10 +19,6 @@ namespace Gameplay.Items
         public Outline outline => _outline;
         
         private ItemInstance _instance;
-        
-        private readonly NetworkList<ItemModuleState> _states = new();
-        private readonly List<ItemModuleState> _buffer = new();
-        public event Action OnStatesChanged;
         
         public ItemInstance Instance
         {

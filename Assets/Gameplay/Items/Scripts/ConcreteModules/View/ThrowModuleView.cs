@@ -1,3 +1,4 @@
+using System;
 using Bus;
 using Gameplay.Items;
 using MyPrint;
@@ -11,6 +12,11 @@ public class ThrowModuleView : MonoBusListener
     [Header("References")]
     [SerializeField] private GameObject _uiThrow;
     [SerializeField] private Image _throwImage;
+
+    private void Awake()
+    {
+        _uiThrow.gameObject.SetActive(false);
+    }
 
     void OnEnable()
     {
