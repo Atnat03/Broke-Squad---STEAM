@@ -1,11 +1,12 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Gameplay.Controller
 {
     public class ReviveWorldUI : MonoBehaviour
     {
-        [SerializeField] private PlayerResurrection resurrection;
+        [SerializeField] private PlayerRevive revive;
         [SerializeField] private GameObject root;  
         [SerializeField] private Image fillImage;   
         [SerializeField] private float smoothSpeed = 10f;
@@ -18,7 +19,7 @@ namespace Gameplay.Controller
 
         private void LateUpdate()
         {
-            bool visible = resurrection.IsSpawned && !resurrection.IsOwner && resurrection.IsDowned.Value;
+            bool visible = revive.IsSpawned && !revive.IsOwner && revive.Health != null && revive.Health.IsDowned;
 
             if (root.activeSelf != visible) root.SetActive(visible);
             if (!visible)
@@ -27,14 +28,12 @@ namespace Gameplay.Controller
                 return;
             }
 
-            _displayed = Mathf.Lerp(_displayed, resurrection.ReviveProgress.Value,
+            _displayed = Mathf.Lerp(_displayed, revive.ReviveProgress,
                 1f - Mathf.Exp(-smoothSpeed * Time.deltaTime));
             fillImage.fillAmount = _displayed;
 
             if (_cam == null) _cam = Camera.main;
-            
-            root.transform.position = resurrection.transform.position + worldOffset;
-
+            root.transform.position = revive.transform.position + worldOffset;
             if (_cam != null)
                 root.transform.rotation = Quaternion.LookRotation(root.transform.position - _cam.transform.position);
         }

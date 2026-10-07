@@ -4,15 +4,16 @@ using Gameplay.PlayerData;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace Gameplay.Controller
 {
     public class CheatsManager : NetworkBusListener
     {
         private Player _playerInputs;
-        public PlayerData.PlayerData  playerData; 
-        public PlayerResurrection playerResurrection;
-        
+        public PlayerHealth  playerHealth; 
+        public PlayerRevive playerRevive;
+            
         public Action OnInvincibility;
         public Action OnRevive;
         public Action OnDamage;
@@ -57,7 +58,7 @@ namespace Gameplay.Controller
         [Rpc(SendTo.Server)]
         private void InvincibilityServerRpc()
         {
-            playerData.invincibility.Value = !playerData.invincibility.Value;
+            playerHealth.SetInvincible(!playerHealth.IsInvincible);
         }
 
         private void Damage(InputAction.CallbackContext context)
@@ -67,7 +68,7 @@ namespace Gameplay.Controller
         [Rpc(SendTo.Server)]
         private void DamageServerRpc()
         {
-            playerData.ApplyDamage(50);
+            playerHealth.ApplyDamage(50);
         }
 
         private void Heal(InputAction.CallbackContext context)
@@ -77,13 +78,13 @@ namespace Gameplay.Controller
         [Rpc(SendTo.Server)]
         private void HealServerRpc()
         {
-            playerData.Heal(playerData.MaxHp);
+            playerHealth.Heal(playerHealth.MaxHp);
         }
 
-        private void Revive(InputAction.CallbackContext context)
-        {
-            playerResurrection.ReviveOwnerRpc();
-        }
+        private void Revive(InputAction.CallbackContext context) => ReviveServerRpc();
+
+        [Rpc(SendTo.Server)]
+        private void ReviveServerRpc() => playerHealth.ServerRevive();
         
     }
 }

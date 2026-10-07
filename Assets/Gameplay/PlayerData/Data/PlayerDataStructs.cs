@@ -1,30 +1,14 @@
 namespace Gameplay.PlayerData
 {
-    public struct PlayerDataEvent
+    public struct PlayerHealthChanged_EVENT
     {
-        public int playerHp;
-        public int maxHp;
+        public int CurrentHp;
+        public int MaxHp;
+        public bool Invincible;
     }
-
-    public struct PlayerDeathEvent
+    public struct StaminaChanged_EVENT
     {
-        public ulong playerID;
-    }
-
-    public struct StaminaChangedEvent
-    {
-        public float stamina;
-        public float maxStamina;
-    }
-    
-    public struct PlayerRevivedEvent
-    {
-        public ulong playerID;
-    }
-    
-    public struct PlayerStatusChangedEvent
-    {
-        public ulong playerID;
-        public bool invincible;
+        public float Current;
+        public float MaxStamina;
     }
 }
