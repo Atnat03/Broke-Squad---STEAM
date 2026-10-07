@@ -9,17 +9,5 @@ namespace Gameplay.LD
     {
         public int ModuleID;
         public abstract Type ModuleType { get; }
-
-        public override void OnInitialize(LDElementModule module)
-        {
-            if (module is LogMsgEffect logMsgEffect)
-            {
-                logMsgEffect._message = Message;
-            }
-            else
-            {
-                throw new InvalidOperationException($"Module is not of type {nameof(LogMsgEffect)}");
-            }
-        }
     }
 }
