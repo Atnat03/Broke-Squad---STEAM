@@ -3,9 +3,14 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 
+public interface INeedKey
+{
+    public bool CheckKey(Vector2Int idRange);
+}
+
 namespace Gameplay.LD.Scripts
 {
-    public class Door : NetworkBusListener
+    public class Door : NetworkBusListener, INeedKey
     {
         [SerializeField] private int _doorID;
         [SerializeField] private UnityEvent _eventOpen;
@@ -65,7 +70,11 @@ namespace Gameplay.LD.Scripts
 
         public bool TryOpen(Vector2Int idRange)
         {
-            if (!IsServer) return false;
+            if (!IsServer)
+            { 
+                TryOpenRpc(idRange);
+                return false;
+            }
 
             if (Time.time - _lastToggleTime < _toggleCooldown)
                 return false;
@@ -86,6 +95,12 @@ namespace Gameplay.LD.Scripts
             return true;
         }
 
+        [Rpc(SendTo.Server)]
+        private void TryOpenRpc(Vector2Int idRange)
+        {
+            TryOpen(idRange);
+        }
+        
         private bool IsKeyValid(Vector2Int idRange)
         {
             if (idRange.x == -1 && idRange.y == -1)
@@ -103,6 +118,11 @@ namespace Gameplay.LD.Scripts
                 position = transform.position,
                 volume = 0.5f
             });
+        }
+
+        public bool CheckKey(Vector2Int idRange)
+        {
+            return TryOpen(idRange);
         }
     }
 }

@@ -10,19 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
-  m_Name: ItemA
+  m_Name: ItemA 1
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
-  ID: 0
+  ID: 1
   ItemName: Item Test
-  VisualPrefab: {fileID: 1810510646809570900, guid: 3088c713771495643a003e04ffed39b0, type: 3}
-  PickupPrefab: {fileID: 5110332906644801116, guid: 12a4d097662054b489a13f9fd7f0c3df, type: 3}
+  VisualPrefab: {fileID: 6025352865224789175, guid: d906856e65b1f744b85bd24ed617d5e4, type: 3}
+  PickupPrefab: {fileID: 3567522838004889354, guid: 7631b2a500c3b0140ad9bd4601087284, type: 3}
   Icon: {fileID: 21300000, guid: 7464c0a64b8ffa848af50a4c1827275d, type: 3}
   FirstActionList:
-  - rid: 7203100951382327541
+  - rid: 7203100951382327542
   SecondActionList:
   - rid: 7203100951382327488
-  PassifList:
-  - rid: 7203100951382327595
+  PassifList: []
   references:
     version: 2
     RefIds:
@@ -31,27 +30,15 @@ MonoBehaviour:
     - rid: 7203100951382327488
       type: {class: ThrowModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
-        _condition:
-          rid: -2
-        _durationToFullFill: 0.5
+        _durationToFullFill: 2
         _minThrowForce: {x: 0, y: 0, z: 0}
         _maxThrowForce: {x: 0, y: 2, z: 12}
         _minTorqueForce: {x: 0, y: 0, z: 0}
         _maxTorqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: {x: 0.2, y: 0, z: 0.7}
-    - rid: 7203100951382327541
-      type: {class: BreakThingsModule, ns: Gameplay.Items, asm: Assembly-CSharp}
-      data:
         _condition:
-          rid: 7203100951382327701
-        _force: 5
-    - rid: 7203100951382327595
-      type: {class: StunModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+          rid: -2
+    - rid: 7203100951382327542
+      type: {class: HealOtherModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
-        _minVelocityForStun: 2
-        _stunDuration: 1
-    - rid: 7203100951382327701
-      type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
-      data:
-        _numberOfUse: 3
-        _destroyWhenEmpty: 1
+        _healAmount: 10

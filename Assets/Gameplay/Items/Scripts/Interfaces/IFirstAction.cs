@@ -4,7 +4,7 @@ namespace Gameplay.Items
 {
     public interface IFirstAction : IItemModule
     {
-        public List<ICondition> Conditions { get; }
+        public ICondition Condition { get; }
         
         public void StartFirstAction();
         public void StopFirstAction();

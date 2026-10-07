@@ -29,9 +29,7 @@ namespace Gameplay.Items
             SecondActionList = CloneAll(source.SecondActionList);
             Passifs = CloneAll(source.Passifs);
         }
-
-        public ItemInstance Clone() => new ItemInstance(this);
-
+        
         private static List<T> CloneAll<T>(IEnumerable<T> source) where T : class
         { 
             var list = new List<T>(); 
@@ -87,9 +85,36 @@ namespace Gameplay.Items
 
         public IEnumerable<IItemModule> AllModules()
         {
-            foreach (var m in FirstActionList) yield return m;
-            foreach (var m in SecondActionList) yield return m;
+            foreach (var m in FirstActionList)
+            {
+                yield return m;
+                if (m.Condition != null) yield return m.Condition;
+            }
+
+            foreach (var m in SecondActionList)
+            {
+                yield return m;
+                if (m.Condition != null) yield return m.Condition;
+            }
+
             foreach (var m in Passifs) yield return m;
+        }
+        
+        public void CollectStates(List<ItemModuleState> into)
+        {
+            int i = 0;
+            foreach (var m in AllModules())
+            {
+                if (m is IReplicatedModule r)
+                    into.Add(new ItemModuleState { ModuleIndex = i, Value = r.GetState() });
+                i++;
+            }
+        }
+
+        public void ApplyState(ItemModuleState state)
+        {
+            if (GetModule(state.ModuleIndex) is IReplicatedModule r)
+                r.SetState(state.Value);
         }
     }
 }

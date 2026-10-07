@@ -31,6 +31,7 @@ namespace Gameplay.Items
         private ItemInstance[] _slots;
         private readonly NetworkVariable<int> _selectedSlot = new(0);
         
+        private PlayerInventoryReplication _replication;
         private readonly NetworkVariable<int> _heldItemId = new(-1);
         private ItemCore _currentItem;
         
@@ -43,6 +44,8 @@ namespace Gameplay.Items
         
         public override void OnNetworkSpawn()
         {
+            _replication = GetComponent<PlayerInventoryReplication>();
+            
             _slots = new ItemInstance[Mathf.Max(1, _itemCount)];
             
             OnSetupInventory?.Invoke(_slots.Length);
@@ -85,9 +88,9 @@ namespace Gameplay.Items
         {
             ItemInstance item = GetCurrentItemInHand();
             int newId = item != null ? item.Data.ID : -1;
-
-            //PublishUses();
-
+            
+            _replication.PublishHeldItem(item);
+            
             if (_heldItemId.Value == newId && newId != -1)
                 OnHeldItemChanged(newId, newId);
 
@@ -134,7 +137,17 @@ namespace Gameplay.Items
             GameObject visual = Instantiate(data.VisualPrefab, core.transform);
             visual.transform.localPosition = Vector3.zero;
             
-            ItemInstance instance = NetworkManager.Singleton.IsServer ? GetCurrentItemInHand() : new ItemInstance(data);
+            ItemInstance instance;
+            if (NetworkManager.Singleton.IsServer)
+            {
+                instance = GetCurrentItemInHand();
+            }
+            else
+            {
+                instance = new ItemInstance(data);
+                _replication.ApplyTo(instance);
+            }
+            
             core.SetInstance(instance, _camera, this);
             
             foreach (IPassif passif in instance.Passifs)
@@ -151,19 +164,25 @@ namespace Gameplay.Items
             
             foreach (IPassif passif in _currentItem.Instance.Passifs)
             {
-                passif.OnStopHolding();
+                passif?.OnStopHolding();
             }
-                
-            if (IsOwner) 
+            
+            if (IsOwner)
                 _currentItem.UnsubscribeFromInput(_playerInput);
 
-            if (!IsServer) 
+            if (!IsServer)
                 _currentItem.Instance?.Cleanup();
                 
             Destroy(_currentItem.gameObject);
             _currentItem = null;
         }
 
+        public void ApplyReplicatedStates()
+        {
+            if (IsServer || _currentItem == null) return;
+            _replication.ApplyTo(_currentItem.Instance);
+        }
+        
         public void SetCurrentItemInHand(ItemCore core)
         {
             _currentItem = core;
@@ -255,8 +274,36 @@ namespace Gameplay.Items
         
         public void ClearCurrentSlot()
         {
+            ItemInstance item = GetCurrentItemInHand();
+            if (item == null) return;
+            
+            foreach (IFirstAction f in item.FirstActionList)
+                f?.Condition.DisableItemInHand();
+            
+            foreach (ISecondAction s in item.SecondActionList)
+                s?.Condition.DisableItemInHand();
+            
             _slots[_selectedSlot.Value] = null;
             RefreshHeldItem();
         }
+        
+        public void DestroyItemInHand()
+        {
+            if (!IsServer)
+            {
+                DestroyItemInHandRpc();
+                return;
+            }
+
+            ItemInstance item = GetCurrentItemInHand();
+            if (item == null) return;
+            
+            item.Cleanup();
+
+            ClearCurrentSlot();
+        }
+
+        [Rpc(SendTo.Server)]
+        private void DestroyItemInHandRpc() => DestroyItemInHand();
     }
 }

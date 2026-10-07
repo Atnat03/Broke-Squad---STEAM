@@ -1,31 +1,40 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using MyPrint;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Gameplay.Items.FirstAction
+namespace Gameplay.Items
 {
-    public class ThrowModule : ItemModule, ISecondAction, IServerAction
+    [Serializable]
+    public class ThrowModule : ActionModule, ISecondAction, IServerAction
     {
         [Header("Settings")]
+        [SerializeField] private float _durationToFullFill = 0.5f;
+        
+        [Header("Throw Force")]
         [SerializeField] private Vector3 _minThrowForce = Vector3.zero;
         [SerializeField] private Vector3 _maxThrowForce = new Vector3(0f, 2f, 12f);
-        [SerializeField] private float _durationToFullFill = 2;
+        
+        [Header("Throw Torque")]
         [SerializeField] private Vector3 _minTorqueForce = new Vector3(0, 0, 0);
         [SerializeField] private Vector3 _maxTorqueForce = new Vector3(5, 0, 0);
-        [SerializeField] private Vector3 _spawnDistance = new Vector3(0,0,0.7f);
+        
+        [Header("Spawn Position")]
+        [SerializeField] private Vector3 _spawnDistance = new Vector3(0.2f,0,0.7f);
+        
         private float _charge;
+        private Coroutine _chargeCoroutine;
+        
+        #region Action Gestion
 
-        [Header("Conditions")]        
-        [SerializeReference] private List<ICondition> _conditionList = new List<ICondition>();
-        
-        public List<ICondition> Conditions => _conditionList;
-        
-        Coroutine _chargeCoroutine;
-        
+        public ICondition Condition => ConditionParent;
+
         public void StartSecondAction()
         {
+            if (!CanUse()) return;
+            
             _chargeCoroutine = Context.StartCoroutine(FillTheThrowForce());
         }
 
@@ -49,13 +58,15 @@ namespace Gameplay.Items.FirstAction
                 Rotation = Context.Camera.transform.rotation,
                 Position = Context.Camera.transform.position,
             });
+            
+            ConsumeCondition(new OnModuleDoAction_EVENT());
         }
 
+        #endregion
+        
         //Server
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {
-            ABPrint.Print("ServerExecute : " + data.ValueF, ABColor.Orange);
-            
             Quaternion camRot = data.Rotation;
             Vector3 camPos = data.Position;
             Vector3 spawnPos = camPos + camRot * _spawnDistance;
@@ -85,6 +96,7 @@ namespace Gameplay.Items.FirstAction
             }
         }
         
+        // Faire spawn le nouvel item via la fonction de Context
         private ItemPickup ServerSpawnPickup(Vector3 pos, Quaternion rot)
         {
             ItemInstance item = Context.Inventory.GetCurrentItemInHand();
@@ -103,6 +115,7 @@ namespace Gameplay.Items.FirstAction
             return pickup;
         }
         
+        //Coroutine de load du lancer
         private IEnumerator FillTheThrowForce()
         {
             float elapsed = 0f;
@@ -113,6 +126,7 @@ namespace Gameplay.Items.FirstAction
                 elapsed += Time.deltaTime;
                 _charge = Mathf.Clamp01(elapsed / _durationToFullFill);
                 
+                // Envoie un event à destination de l'ui avec la key : UI_THROW_BAR
                 Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
                 {
                     ClientId = Context.Inventory.OwnerClientId,

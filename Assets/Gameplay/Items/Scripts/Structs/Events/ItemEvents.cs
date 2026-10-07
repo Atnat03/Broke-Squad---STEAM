@@ -10,6 +10,9 @@ namespace Gameplay.Items
         public NetworkObjectReference ItemPickUpRef;
     }
     
+    public struct OnGrabGoal_EVENT{}
+    public struct OnDropGoal_EVENT{}
+    
     public struct OnModuleDoAction_EVENT : INetworkSerializable
     {
         public ulong ClientId;
@@ -18,6 +21,7 @@ namespace Gameplay.Items
         public float ValueF;
         public int ValueI;
         public bool ValueB;
+        public FixedString32Bytes ValueS;
         public Vector3 Position;
         public Quaternion Rotation;
         
@@ -29,8 +33,19 @@ namespace Gameplay.Items
             serializer.SerializeValue(ref ValueF);
             serializer.SerializeValue(ref ValueI);
             serializer.SerializeValue(ref ValueB);
+            serializer.SerializeValue(ref ValueS);
             serializer.SerializeValue(ref Position);
             serializer.SerializeValue(ref Rotation);
+        }
+
+        public NetworkObject GetTarget()
+        {
+            if (Target.TryGet(out NetworkObject networkObject))
+            {
+                return networkObject;
+            }
+            
+            return null;
         }
     }
 }

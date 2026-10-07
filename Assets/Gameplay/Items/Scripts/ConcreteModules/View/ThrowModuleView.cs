@@ -16,9 +16,12 @@ public class ThrowModuleView : MonoBusListener
     {
         ListenToEvent<OnModuleDoAction_EVENT>(UpdateBar);
     }
-
+    
     private void UpdateBar(OnModuleDoAction_EVENT data)
     {
+        if(_eventKey != data.KeyEvent)
+            return;
+        
         _uiThrow.gameObject.SetActive(data.ValueB);
         _throwImage.fillAmount = data.ValueF;
     }

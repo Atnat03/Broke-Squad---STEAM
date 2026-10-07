@@ -1,4 +1,7 @@
-﻿using Bus;
+﻿using System;
+using System.Collections.Generic;
+using Bus;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Gameplay.Items
@@ -12,6 +15,10 @@ namespace Gameplay.Items
         public Outline outline => _outline;
         
         private ItemInstance _instance;
+        
+        private readonly NetworkList<ItemModuleState> _states = new();
+        private readonly List<ItemModuleState> _buffer = new();
+        public event Action OnStatesChanged;
         
         public ItemInstance Instance
         {
@@ -31,7 +38,8 @@ namespace Gameplay.Items
 
         public void SetOutline(bool state)
         {
-            outline.enabled = state;
+            if(outline != null)
+                outline.enabled = state;
         }
 
         public void Interact(ulong clientId)

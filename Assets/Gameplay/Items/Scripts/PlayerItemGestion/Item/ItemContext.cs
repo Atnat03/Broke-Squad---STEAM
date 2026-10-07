@@ -2,6 +2,7 @@
 using System.Collections;
 using MyPrint;
 using UnityEngine;
+using FixedString32Bytes = Unity.Collections.FixedString32Bytes;
 
 namespace Gameplay.Items
 {
@@ -35,5 +36,10 @@ namespace Gameplay.Items
 
         public NetworkObject SpawnGameObject(GameObject prefab, Vector3 position, Quaternion rotation) => _replication.SpawnGameObject(prefab, position, rotation);
         
+        public void NotifyStateChanged(IItemModule module)
+        {
+            if (module is not IReplicatedModule replicated) return;
+            _replication.PublishState(Core.Instance.IndexOf(module), replicated.GetState());
+        }
     }
 }

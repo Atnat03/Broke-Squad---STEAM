@@ -12,8 +12,14 @@
             OnBind();
         }
 
-        public IItemModule Clone() => (IItemModule)MemberwiseClone();
+        public IItemModule Clone()
+        {
+            var clone = (ItemModule)MemberwiseClone();
+            clone.OnCloned();
+            return (IItemModule)clone;
+        }
 
+        protected virtual void OnCloned() {}
         protected virtual void SetModule() {}
         protected virtual void OnBind() {}
     }

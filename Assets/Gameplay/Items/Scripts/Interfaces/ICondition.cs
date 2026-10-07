@@ -4,6 +4,6 @@
     {
         public bool CheckCondition();
         public void UseItem();
-        public void ThrowItem();
+        public void DisableItemInHand();
     }
 }
