@@ -25,6 +25,7 @@ namespace Gameplay.Items
         [SerializeField] private SO_ItemDataBase _database;
         [SerializeField] private Transform _localHand;
         [SerializeField] private Transform _remoteHand;
+        [SerializeField] private float _dropRange = 2;
         
         [Header("Inventory")]
         [SerializeField] private int _itemCount = 3;
@@ -248,7 +249,7 @@ namespace Gameplay.Items
             Vector3 prefabSize = Vector3.up * (item.Data.PickupPrefab.transform.position.y / 2);
             Vector3 pos = transform.position + transform.forward + prefabSize;
             
-            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out var hit, 1000, ~0, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out var hit, _dropRange, ~0, QueryTriggerInteraction.Ignore))
             {
                 pos = hit.point + prefabSize;
             }
