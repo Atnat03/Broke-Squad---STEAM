@@ -8,7 +8,7 @@ namespace Gameplay.LD
 {
     public class LDElement : NetworkBehaviour
     {
-        [SerializeField] private LDElementRegistry _registry;
+        [SerializeField] private SO_LDElementRegistry _registry;
         private readonly NetworkVariable<int> _dataIndex = new NetworkVariable<int>(-1);
         private SO_LDElementData _data;
         private LDElementContext _context;

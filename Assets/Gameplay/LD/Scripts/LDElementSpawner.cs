@@ -6,7 +6,7 @@ namespace Gameplay.LD
     public class LDElementSpawner : MonoBehaviour
     {
         [SerializeField] private LDElement _parentPrefab;
-        [SerializeField] private LDElementRegistry _registry;
+        [SerializeField] private SO_LDElementRegistry _registry;
         [SerializeField] private SO_LDElementData _debugData;
 
         public void Spawn(SO_LDElementData data, Vector3 position)

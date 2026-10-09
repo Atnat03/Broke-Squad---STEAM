@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Gameplay.LD
 {
     [CreateAssetMenu(fileName = "LDElementRegistry", menuName = "LD/New Element Registry")]
-    public class LDElementRegistry : ScriptableObject
+    public class SO_LDElementRegistry : ScriptableObject
     {
         public List<SO_LDElementData> LDElementsList;
     }
