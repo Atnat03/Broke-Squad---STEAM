@@ -69,7 +69,7 @@ namespace Gameplay.Other.SuspiciousSound
 
                         guard.TriggerBySound(f, newG.transform);
                         
-                        //Destroy(newG);
+                        Destroy(newG, 3f);
                     }
                 }
             }
