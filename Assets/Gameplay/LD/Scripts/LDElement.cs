@@ -16,6 +16,7 @@ namespace Gameplay.LD
 
         public void PrepareOnServer(int registryIndex)
         {
+            Debug.Log("[LD] PrepareOnServer: " + registryIndex);
             _dataIndex.Value = registryIndex;
         }
 
@@ -25,14 +26,14 @@ namespace Gameplay.LD
 
             if(_registry == null)
             {
-                Debug.LogError($"LDElement {name} has no registry assigned");
+                Debug.LogError($"[LD] {name} has no registry assigned");
                 return;
             }
 
             _data = _registry.Get(_dataIndex.Value);
             if(_data == null)
             {
-                Debug.LogError($"LDElement {name} has invalid data index {_dataIndex.Value}");
+                Debug.LogError($"[LD] {name} has invalid data index {_dataIndex.Value}");
                 return;
             }
 
@@ -50,7 +51,7 @@ namespace Gameplay.LD
 
             foreach (ModuleConfig config in _data.ModulesList)
             {
-                if (config == null) return;
+                if (config == null) continue;
                 GameObject child = new GameObject(config.ModuleType.Name);
                 child.transform.SetParent(transform, false);
                 LDElementModule module = (LDElementModule)child.AddComponent(config.ModuleType);

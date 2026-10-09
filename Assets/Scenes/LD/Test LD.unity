@@ -277,7 +277,9 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _speedPatrol: 2
   _speedChase: 4
+  _distanceToStopChasing: 5
   _guardFieldOfView: {fileID: 53789393}
+  _detectionProgression: {fileID: 0}
   _meshRenderer: {fileID: 53789388}
   _colorPatrol: {r: 0.14320946, g: 1, b: 0, a: 1}
   _colorChase: {r: 1, g: 0.07087125, b: 0.042452812, a: 1}
@@ -296,6 +298,12 @@ MonoBehaviour:
   _colorHit: {r: 1, g: 1, b: 1, a: 1}
   _currentHealthUI: {fileID: 1460187021}
   _stunColor: {r: 0, g: 0.7490196, b: 1, a: 1}
+  _timeBeforeReturnToPatrol: 3
+  _radiusToAutoDetectWhenAttacking: 10
+  _detectedSound: 
+  _hitSound: 
+  _dieSound: 
+  _takeDamageSound: 
 --- !u!114 &53789393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -312,6 +320,7 @@ MonoBehaviour:
   _angle: 80
   _eyeHeight: 3.11
   _checkInterval: 0.5
+  _detectionDuration: 2
   _targetMask:
     serializedVersion: 2
     m_Bits: 128
@@ -887,25 +896,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
   profile: {fileID: 0}
-  autoUpdateProfileValue: 1
+  ground:
+    groundLayer:
+      serializedVersion: 2
+      m_Bits: 0
+    checkDist: 0.15
+    radiusMultiplier: 0.9
+    skin: 0.1
+    maxSlopeAngle: 50
+  body:
+    ceilingLayer:
+      serializedVersion: 2
+      m_Bits: 0
+    eyeTarget: {fileID: 0}
+    visual: {fileID: 0}
+    tiedVisual: {fileID: 0}
+    tiedUpHeight: 0.8
+  footsteps:
+    walkStepInterval: 0.5
+    sprintStepInterval: 0.35
+    crouchStepInterval: 0.8
+    walkStepVolume: 0.3
+    sprintStepVolume: 0.5
+    crouchStepVolume: 0.1
+    walkSound: []
   playerCamera: {fileID: 1197007964}
   UI: {fileID: 0}
-  meshRenderer: {fileID: 0}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  groundCheckDist: 0.15
-  groundCheckRadiusMultiplier: 0.9
-  groundCheckSkin: 0.1
-  maxSlopeAngle: 50
-  ceilingLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  maxStamina: 100
-  drainPerSecond: 10
-  regenPerSecond: 10
-  regenDelay: 2
-  eyeTarget: {fileID: 0}
+  health: {fileID: 0}
+  meshRenderer:
+  - {fileID: 0}
+  pseudoText: {fileID: 0}
+  tiedUpSpeed: 1
+  _jumpSound: 
+  _crouchSound: 
 --- !u!54 &244986481
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1058,15 +1081,22 @@ MonoBehaviour:
   _parent: {fileID: 0}
   _remoteParent: {fileID: 0}
   _database: {fileID: 0}
+  _playerController: {fileID: 0}
   _camera: {fileID: 1197007967}
   _range: 5
   _layerMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  _itemCount: 3
+  _slotPrefabUI: {fileID: 0}
+  _parentInventory: {fileID: 0}
+  _emptyIcon: {fileID: 0}
   _throwUI: {fileID: 0}
   _throwImage: {fileID: 0}
   _electicUI: {fileID: 0}
   _electicPercent: {fileID: 0}
+  _useAmountText: {fileID: 0}
+  _pickUpSFX: 
 --- !u!114 &244986488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1094,6 +1124,53 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!1 &262465495
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 262465497}
+  - component: {fileID: 262465496}
+  m_Layer: 0
+  m_Name: LD Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &262465496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 262465495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed737eb32d0c3cd42a167d2b9676a2dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.LDElementSpawner
+  _parentPrefab: {fileID: 116225365248365684, guid: d1df1dbc606bde748bfec14f8066e21b, type: 3}
+  _registry: {fileID: 11400000, guid: 93fb9c12958553f4fa86b9d9bb4f8888, type: 2}
+  _debugData: {fileID: 11400000, guid: 09365643ddab42e45bf32cd27a336167, type: 2}
+--- !u!4 &262465497
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 262465495}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.59338, y: -0, z: -31.81502}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &313530743
 GameObject:
   m_ObjectHideFlags: 0
@@ -2982,6 +3059,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Breakable
   ShowTopMostFoldoutHeaderGroup: 1
   _normalMesh: {fileID: 1262818770}
+  solidity: 20
+  _dropPickableItem: 0
   _breakMesh:
   - {fileID: 1514552753}
   - {fileID: 1885479677}
@@ -2999,6 +3078,9 @@ MonoBehaviour:
   - {fileID: 1017339335}
   - {fileID: 1714573298}
   - {fileID: 99105221}
+  _dropItemPrefabs: {fileID: 0}
+  _pickupSpawnPoints: []
+  _breakSound: 
 --- !u!114 &1262818777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3522,6 +3604,10 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   _canOpenWithoutKey: 1
+  _toggleCooldown: 0.3
+  _openSound: 
+  _closeSound: 
+  _tryToOpenClosedDoorSound: 
 --- !u!114 &1467233677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3629,8 +3715,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3642fa98d98d47d8b62035a0dcef04a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.PriseElectrique
+  ShowTopMostFoldoutHeaderGroup: 1
   _chargeDistance: 1
   _chargePerSeconde: 10
+  _plugSound: 
 --- !u!135 &1499691525
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -5230,7 +5318,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83fb6bfa9c474e77a7fde73d2b852c9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.BreakableWindow
-  _health: 1
 --- !u!65 &2029048002
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5802,3 +5889,4 @@ SceneRoots:
   - {fileID: 53789390}
   - {fileID: 1450516963}
   - {fileID: 244986486}
+  - {fileID: 262465497}
