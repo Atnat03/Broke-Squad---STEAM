@@ -1,4 +1,5 @@
 using System;
+using Gameplay.Other.SuspiciousSound;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,6 +9,7 @@ namespace Gameplay.Controller
     [Serializable]
     public class PlayerFootsteps
     {
+        
         [SerializeField] private float walkStepInterval = 0.5f;
         [SerializeField] private float sprintStepInterval = 0.35f;
         [SerializeField] private float crouchStepInterval = 0.8f;
@@ -16,11 +18,20 @@ namespace Gameplay.Controller
         [SerializeField] private float crouchStepVolume = 0.1f;
         [SerializeField, SoundName] private string[] walkSound;
 
+        [SerializeField] private SO_SuspiciousSoundSettings _settings;
+        
+        private PlayerController _controller;
+
         private Action<string, float> _play;
         private float _timer;
         private bool _wasMoving;
 
-        public void Init(Action<string, float> play) => _play = play;
+        public void Init(Action<string, float> play,  PlayerController controller)
+        {
+            _play = play;
+            
+            _controller = controller;
+        }
 
         public void Tick(float dt, bool grounded, bool hasMoveInput, bool crouching, bool sprinting)
         {
@@ -50,6 +61,14 @@ namespace Gameplay.Controller
             }
         }
 
-        private void PlayStep(float volume) => _play?.Invoke(walkSound[Random.Range(0, walkSound.Length)], volume);
+        private void PlayStep(float volume)
+        {
+            _play?.Invoke(walkSound[Random.Range(0, walkSound.Length)], volume);
+
+            if (_controller == null) return;
+            _controller.SendEventSoundServerRpc(_settings.Force, _settings.MaxDistance);
+            
+        }
+        
     }
 }

@@ -50,16 +50,37 @@ namespace Gameplay.Items
                 ValueF = 0,
                 ValueB = false,
             });
+
+            Vector3 pos = Context.Camera.transform.position;
+            Vector3 forward = Context.Camera.transform.forward;
+            float maxSize = Context.Inventory.GetCurrentItemInHand().Data.PickupPrefab.transform.localScale.z;
+            
+            Vector3 finalPos = GetThrowStartPos(pos, forward, maxSize);
             
             //Pour le server (le lancer)
             Context.SendToServer(this, new OnModuleDoAction_EVENT
             { 
                 ValueF = _charge,
                 Rotation = Context.Camera.transform.rotation,
-                Position = Context.Camera.transform.position,
+                Position = finalPos,
             });
             
             ConsumeCondition(new OnModuleDoAction_EVENT());
+        }
+
+        // Calculate if a wall is a front of us
+        private Vector3 GetThrowStartPos(Vector3 pos, Vector3 dir, float maxSize)
+        {
+            Vector3 finalPos = pos;
+            
+            if (Physics.Raycast(pos, dir, out RaycastHit hit, maxSize, ~0, QueryTriggerInteraction.Ignore))
+            {
+                finalPos -= dir * 1.1f;
+            }
+            
+            ABPrint.Print(finalPos.ToString(), ABColor.Orange);
+            
+            return finalPos;
         }
 
         #endregion
@@ -81,14 +102,14 @@ namespace Gameplay.Items
             Vector3 right = camRot * Vector3.right;
             Vector3 up = camRot * Vector3.up;
             Vector3 forward = camRot * Vector3.forward;
-
-            Transform t = Context.Camera.transform;
             
-            rb.AddForce(right * force.x + up * force.y + forward * force.z, ForceMode.VelocityChange);
+            //Force
+            Vector3 finalForce = right * force.x + up * force.y + forward * force.z;
+            rb.AddForce(finalForce, ForceMode.VelocityChange);
             
+            //Torque
             Vector3 currentTorqueForce = Vector3.Lerp(_minTorqueForce, _maxTorqueForce, Mathf.Clamp01(data.ValueF));
-            
-            rb.AddTorque(t.rotation * currentTorqueForce, ForceMode.VelocityChange);
+            rb.AddTorque(Context.Camera.transform.rotation * currentTorqueForce, ForceMode.VelocityChange);
             
             foreach (IPassif passif in thrown.Instance.Passifs)
             {
