@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Bus;
+using Gameplay.Other.SuspiciousSound;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
@@ -41,12 +42,26 @@ namespace Gameplay.Items
         public void SendEvent(ulong clientId, OnModuleDoAction_EVENT data) => EventRpc(data, RpcTarget.Single(clientId, RpcTargetUse.Temp));
         public void SendEventToEveryOne(OnModuleDoAction_EVENT data) => EventEveryoneRpc(data);
 
+        public void SendSuspiciousSoundEvent(ulong clientId, Vector3 pos, SO_SuspiciousSoundSettings settings) => 
+            SendSuspiciousSoundEventRpc(clientId, settings.Force, settings.MaxDistance, pos);
         
         [Rpc(SendTo.SpecifiedInParams)]
         private void EventRpc(OnModuleDoAction_EVENT data, RpcParams rpcParams = default) => EventBus.InvokeEvent(data);
         
         [Rpc(SendTo.Everyone)]
         private void EventEveryoneRpc(OnModuleDoAction_EVENT data) => EventBus.InvokeEvent(data);
+
+        [Rpc(SendTo.Server)]
+        private void SendSuspiciousSoundEventRpc(ulong clientId, float force, float distance, Vector3 origin)
+        {
+            InvokeEvent(new OnCreateSuspiciousSound_EVENT
+            {
+                FromClientID = clientId,
+                Force = force,
+                MaxDistance = distance,
+                Position = origin
+            });
+        }
 
         #endregion
 

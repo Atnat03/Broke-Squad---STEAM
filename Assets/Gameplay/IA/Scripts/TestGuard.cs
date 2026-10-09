@@ -419,6 +419,17 @@ namespace Gameplay.IA.Scripts
                 volume = 0.3f
             });
         }
+
+        public void TriggerBySound(float force, Transform t)
+        {
+            Debug.Log(force);
+
+            if (force > 5)
+            {
+                _target = t;
+
+            }
+        }
         
         #endregion
     }
