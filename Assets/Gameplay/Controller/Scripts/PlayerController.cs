@@ -252,7 +252,7 @@ namespace Gameplay.Controller
             ReplicatePersonalisationRpc(colorId, playerName);
         }
 
-        [Rpc(SendTo.Server, RequireOwnership = false)]
+        [Rpc(SendTo.Server)]
         private void RequestPersonalisationRpc() => ReplicatePersonalisationRpc(_syncedColor, _syncedName);
 
         [Rpc(SendTo.Everyone)]

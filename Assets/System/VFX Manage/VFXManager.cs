@@ -20,7 +20,6 @@ namespace VFX_Manage
 
         [Header("Test")]
         [SerializeField] private string nameVFX;
-        [SerializeField] private float testDistance = 5f;
         [SerializeField] private int spamCount = 30;
         [SerializeField] private Vector3 position;
 

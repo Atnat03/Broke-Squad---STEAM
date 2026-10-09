@@ -44,7 +44,6 @@ namespace Gameplay.IA
         {
             if(IsServer)
             {
-                ABPrint.Print("State : " + _stateMachine.CurrentStateName);
                 _stateMachine.Update();
             }
         }

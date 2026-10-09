@@ -25,7 +25,7 @@ namespace Bus
             base.OnNetworkDespawn();
         }
 
-        protected virtual void OnDestroy()
+        public override void OnDestroy()
         {
             UnsubscribeAll();
         }

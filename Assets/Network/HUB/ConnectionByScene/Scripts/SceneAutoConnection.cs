@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Transactions;
+using Bus;
 using Network.Connections;
 using Unity.Multiplayer.PlayMode;
 using Unity.Netcode;
@@ -11,7 +12,7 @@ using UnityEngine.SceneManagement;
 
 namespace Network.HUB
 {
-    public class SceneAutoConnection : MonoBehaviour
+    public class SceneAutoConnection : MonoBusListener
     {
         private int _selectedSceneId = -1;
         
@@ -100,6 +101,8 @@ namespace Network.HUB
             {
                 StartHost();
             }
+            
+            InvokeEvent(new OnStartCreateGame_EVENT());
         
             StartCoroutine(WaitForAllPlayerConnected());
         }

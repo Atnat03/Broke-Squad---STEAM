@@ -24,7 +24,6 @@ namespace Gameplay.PlayerData
 
         private float _targetStamina;
         private float _displayedStamina;
-        private float _maxStamina = 1f;
         private float _hideTimer;
 
         public override void OnNetworkSpawn()

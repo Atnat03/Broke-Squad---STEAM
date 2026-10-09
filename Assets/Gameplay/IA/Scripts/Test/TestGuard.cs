@@ -268,6 +268,8 @@ namespace Gameplay.IA.Scripts
 
             Transform point = _patrolPoints[_patrolPointIndex];
 
+            if (!point) return;
+            
             if (Vector3.Distance(transform.position, point.position) >= _patrolPointReachDistance)
                 _agent.SetDestination(point.position);
             else

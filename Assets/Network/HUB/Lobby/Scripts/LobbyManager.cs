@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Bus;
 using MyPrint;
 using Network.Connections;
 using Unity.Netcode;
@@ -15,7 +16,7 @@ namespace Network.HUB
     using UnityEngine;
     using Random = UnityEngine.Random;
 
-    public class LobbyManager : MonoBehaviour
+    public class LobbyManager : MonoBusListener
     {
         public static int MAX_PLAYER_COUNT => MAX_PLAYER;
         const int MAX_PLAYER = 4;
@@ -58,11 +59,6 @@ namespace Network.HUB
             try
             {
                 await UnityServices.InitializeAsync();
-                
-                AuthenticationService.Instance.SignedIn += () =>
-                {
-                    Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
-                };
                 
                 AuthenticationService.Instance.SwitchProfile("player_" + Random.Range(0, 100000));
 
@@ -117,7 +113,7 @@ namespace Network.HUB
             }
             catch (Exception e)
             {
-                // ignored
+               Debug.Log(e);
             }
         }
 
@@ -174,6 +170,8 @@ namespace Network.HUB
         {
             if (!IsLobbyHost()) return;
 
+            InvokeEvent(new OnStartCreateGame_EVENT());
+            
             try
             {
                 Debug.Log($"[StartGame] NetworkManager avant CreateRelay = {NetworkManager.Singleton}");
@@ -337,7 +335,7 @@ namespace Network.HUB
             }
             catch (LobbyServiceException e)
             {
-                //Ignore
+                Debug.Log(e);
             }
         }
 

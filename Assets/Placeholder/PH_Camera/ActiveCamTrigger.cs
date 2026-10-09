@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class ActiveCamTrigger : MonoBehaviour
 {
-    public GameObject camera;
+    [SerializeField] private GameObject _camera;
     
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            camera.SetActive(true);
+            _camera.SetActive(true);
         }
     }
 }

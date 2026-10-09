@@ -19,7 +19,9 @@ namespace Gameplay.Items
 
             if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, 2f) && hit.transform.TryGetComponent(out INeedKey door))
             {
-                if(door.CheckKey(_canOpenIndexRange))
+                Vector2Int range = _canOpenAllDoors ? new Vector2Int(-1, -1) : _canOpenIndexRange;
+                
+                if(door.CheckKey(range))
                     ConsumeCondition(new OnModuleDoAction_EVENT());
             }
         }
