@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEngine.Rendering.STP;
 
 namespace Gameplay.LD
 {
@@ -25,6 +23,12 @@ namespace Gameplay.LD
         {
             base.OnNetworkSpawn();
 
+            if(_registry == null)
+            {
+                Debug.LogError($"LDElement {name} has no registry assigned");
+                return;
+            }
+
             _data = _registry.Get(_dataIndex.Value);
             if(_data == null)
             {
@@ -41,6 +45,7 @@ namespace Gameplay.LD
 
             foreach (ModuleConfig config in _data.ModulesList)
             {
+                if (config == null) return;
                 GameObject child = new GameObject(config.ModuleType.Name);
                 child.transform.SetParent(transform, false);
                 LDElementModule module = (LDElementModule)child.AddComponent(config.ModuleType);
