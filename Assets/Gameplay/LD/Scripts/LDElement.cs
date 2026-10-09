@@ -10,7 +10,7 @@ namespace Gameplay.LD
     {
         [SerializeField] private LDElementRegistry _registry;
         private readonly NetworkVariable<int> _dataIndex = new NetworkVariable<int>(-1);
-        private LDElementData _data;
+        private SO_LDElementData _data;
         private LDElementContext _context;
         private readonly Dictionary<int, LDElementModule> _modulesById = new ();
 
@@ -41,6 +41,11 @@ namespace Gameplay.LD
 
         private void BuildFromData()
         {
+            if(_data.Prefab != null)
+            {
+                GameObject prefabInstance = Instantiate(_data.Prefab, transform);
+            }
+
             _context = new LDElementContext(this);
 
             foreach (ModuleConfig config in _data.ModulesList)

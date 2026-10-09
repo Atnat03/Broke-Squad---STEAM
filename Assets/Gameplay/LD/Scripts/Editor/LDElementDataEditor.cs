@@ -9,7 +9,7 @@ using UnityEditor;
 
 namespace Gameplay.LD
 {
-    [CustomEditor(typeof(LDElementData))]
+    [CustomEditor(typeof(SO_LDElementData))]
     public class LDElementDataEditor : Editor
     {
         public override void OnInspectorGUI()

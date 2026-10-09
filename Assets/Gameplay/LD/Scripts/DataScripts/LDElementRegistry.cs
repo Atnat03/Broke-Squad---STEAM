@@ -8,6 +8,6 @@ namespace Gameplay.LD
     [CreateAssetMenu(fileName = "LDElementRegistry", menuName = "LD/New Element Registry")]
     public class LDElementRegistry : ScriptableObject
     {
-        public List<LDElementData> LDElementsList;
+        public List<SO_LDElementData> LDElementsList;
     }
 }

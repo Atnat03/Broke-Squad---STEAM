@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Gameplay.LD
 {
     [CreateAssetMenu(fileName = "LDElementData", menuName = "LD/New Element Data")]
-    public class LDElementData : ScriptableObject
+    public class SO_LDElementData : ScriptableObject
     {
         public GameObject Prefab;
         public List<LDBindingData> BindingsList = new();
