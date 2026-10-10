@@ -15,7 +15,7 @@ namespace Gameplay.IA.Scripts
         [SerializeField] private float _speedPatrol = 2;
         [SerializeField] private float _speedChase = 3;
         [SerializeField] private float _distanceToStopChasing = 5;
-        [SerializeField] private GuardFieldOfView _guardFieldOfView;
+        [SerializeField] private GuardLineOfSight guardLineOfSight;
         [SerializeField] private Image _detectionProgression;
         
         [Header("Color")]
@@ -70,7 +70,7 @@ namespace Gameplay.IA.Scripts
             _isInChase.OnValueChanged += GuardStateChange;
             _currentHealth.OnValueChanged += UpdateHP;
             _isStun.OnValueChanged += StunStateChange;
-            _guardFieldOfView.OnDetectionProgressChanged += UpdateDetection;
+            guardLineOfSight.OnDetectionProgressChanged += UpdateDetection;
             
             _currentHealth.Value = _maxHealth;
 
@@ -169,9 +169,9 @@ namespace Gameplay.IA.Scripts
                 }
             }
             
-            if (_guardFieldOfView.CanSeeTarget && _guardFieldOfView.Target != null)
+            if (guardLineOfSight.CanSeeTarget && guardLineOfSight.Target != null)
             {
-                _target = _guardFieldOfView.Target;
+                _target = guardLineOfSight.Target;
                 _targetHealth = _target.GetComponent<PlayerData.PlayerHealth>();
 
                 if (_returnToPatrolCoroutine != null)
@@ -379,7 +379,7 @@ namespace Gameplay.IA.Scripts
         {
             yield return new WaitForSeconds(_timeBeforeReturnToPatrol);
 
-            if (_target != null && Vector3.Distance(_target.position, transform.position) > _distanceToStopChasing && !_guardFieldOfView.CanSeeTarget)
+            if (_target != null && Vector3.Distance(_target.position, transform.position) > _distanceToStopChasing && !guardLineOfSight.CanSeeTarget)
             {
                 _target = null;
             }

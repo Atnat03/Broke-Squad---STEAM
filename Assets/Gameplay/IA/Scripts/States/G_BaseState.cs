@@ -8,8 +8,14 @@ namespace Gameplay.IA
     {
         protected GuardBehavior _behavior;
         
-        public void SetBehaviour(GuardBehavior behavior) => _behavior = behavior;
-        
+        public void SetBehaviour(GuardBehavior behavior)
+        { 
+            _behavior = behavior;
+            
+            OnStart();
+        }
+
+        public virtual void OnStart(){}
         public virtual void OnEnter() {}
         public virtual void OnExit() {}
         public virtual void OnUpdate() {}
