@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using Unity.Netcode;
 using Gameplay.Controller;
+using Gameplay.Controller.Gameplay.Controller;
 using Gameplay.IA.Scripts;
 using MyPrint;
 using UnityEngine;
@@ -22,12 +24,8 @@ namespace Gameplay.IA
         [HideInInspector] public GuardHealth GuardHealth;
         [HideInInspector] public GuardMotor GuardMotor;
         [HideInInspector] public GuardLineOfSight GuardSight;
-        
-        [Header("DebugVisuel")]
-        [SerializeField] MeshRenderer _meshRenderer;
-        [SerializeField] Color _normalColor;
-        [SerializeField] Color _duringDetectionColor;
-        [SerializeField] Color _hasTargetColor;
+
+        [SerializeField] private MeshRenderer _meshRenderer;
         
         private StateMachine _stateMachine;
         
@@ -37,27 +35,9 @@ namespace Gameplay.IA
             GuardMotor = GetComponent<GuardMotor>();
             GuardSight = GetComponent<GuardLineOfSight>();
 
-            GuardSight.OnTargetSeen += GetTarget;
-            GuardSight.OnDetectionProgressChanged += Detection;
-            GuardSight.OnTargetLost += LostTarget;
+            GuardHealth.OnStun += HandleStun;
             
             SetUpStateMachine();
-        }
-
-        private void Detection(float ratio)
-        {
-            if(ratio is > 0.1f and < 0.9f)
-                _meshRenderer.material.color = _duringDetectionColor;
-        }
-
-        private void LostTarget()
-        {
-            _meshRenderer.material.color = _normalColor;
-        }
-
-        private void GetTarget(Transform obj)
-        {
-            _meshRenderer.material.color = _hasTargetColor;
         }
 
         private void SetUpStateMachine()
@@ -65,9 +45,45 @@ namespace Gameplay.IA
             _stateMachine = new StateMachine();
             
             _patrolState.SetBehaviour(this);
+            _pursuitState.SetBehaviour(this);
+            _investigateState.SetBehaviour(this);
+            _koState.SetBehaviour(this);
             
-            //At(idle, patrol, new FuncPredicate(() => true));
-            Any(_patrolState, new FuncPredicate(() => true));
+            //Get new target
+            TriggerPredicate onGetNewTargetPatrol = new TriggerPredicate();
+            GuardSight.OnGetNewTarget += onGetNewTargetPatrol.Trigger;
+            At(_patrolState, _pursuitState, onGetNewTargetPatrol);
+            
+            
+            TriggerPredicate onGetNewTargetInvestigate = new TriggerPredicate();
+            _investigateState.OnFindPlayer += onGetNewTargetInvestigate.Trigger;
+            At(_investigateState, _pursuitState, onGetNewTargetInvestigate);
+            
+            
+            //Loose target
+            TriggerPredicate onLooseTarget = new TriggerPredicate();
+            GuardSight.OnTargetLost += onLooseTarget.Trigger;
+            At(_pursuitState, _patrolState, onLooseTarget);
+            //At(_pursuitState, _patrolState, new FuncPredicate(GuardMotor.TargetKO));
+            
+            TriggerPredicate onEndInvestigate = new TriggerPredicate();
+            _investigateState.OnInvestigationEnded += onEndInvestigate.Trigger;
+            At(_investigateState, _patrolState, onEndInvestigate);
+            
+            
+            TriggerPredicate onGetNewSuspiciousTarget = new TriggerPredicate();
+            GuardSight.OnGetNewSuspicious += onGetNewSuspiciousTarget.Trigger;
+            At(_patrolState, _investigateState, onGetNewSuspiciousTarget);
+            
+            // From patrol to investigate by suspicious sound
+            
+            //KO
+            Any(_koState, new FuncPredicate(() => GuardHealth.IsKO));
+
+            //Event on take damage
+            TriggerPredicate onHit = new TriggerPredicate();
+            GuardHealth.OnTakeDamage += onHit.Trigger;
+            Any(_pursuitState, onHit);
             
             _stateMachine.SetState(_patrolState);
         }
@@ -81,12 +97,28 @@ namespace Gameplay.IA
             {
                 _stateMachine.Update();
 
-                Transform found = GuardSight.Target;
-                if(found)
-                    ABPrint.Print(found.name, ABColor.Pink);
+                ABPrint.Print(_stateMachine.CurrentStateName, ABColor.Orange);
             }
         }
+
+        private void LateUpdate()
+        {
+            if (IsServer) _stateMachine.LateUpdate();
+        }
         
-        private void LateUpdate() { if (IsServer) _stateMachine.LateUpdate(); }
+        public void SetColor(Color color) => _meshRenderer.material.color = color;
+        
+        
+        private void HandleStun(bool isStunned)
+        {
+            if (isStunned)
+            {
+                GuardMotor.StopAgent();
+            }
+            else
+            {
+                GuardMotor.StartAgent();
+            }
+        }
     }
 }

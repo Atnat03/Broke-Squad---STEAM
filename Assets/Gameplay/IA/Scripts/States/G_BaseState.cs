@@ -1,5 +1,7 @@
 ﻿using System;
 using Gameplay.Controller;
+using Gameplay.IA.Scripts;
+using UnityEngine;
 
 namespace Gameplay.IA
 {
@@ -7,15 +9,25 @@ namespace Gameplay.IA
     public abstract class G_BaseState : IState
     {
         protected GuardBehavior _behavior;
+        protected GuardMotor _motor;
+        protected GuardHealth _health;
+        protected GuardLineOfSight _lineOfSight;
+        protected Transform _myTransform;
+
+        [SerializeField] protected Color _color;
         
         public void SetBehaviour(GuardBehavior behavior)
         { 
             _behavior = behavior;
+
+            if (!_behavior) return;
             
-            OnStart();
+            _motor = _behavior.GuardMotor;
+            _health = _behavior.GuardHealth;
+            _lineOfSight = _behavior.GuardSight;
+            _myTransform = _behavior.transform;
         }
 
-        public virtual void OnStart(){}
         public virtual void OnEnter() {}
         public virtual void OnExit() {}
         public virtual void OnUpdate() {}
