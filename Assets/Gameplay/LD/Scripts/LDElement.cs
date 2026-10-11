@@ -26,7 +26,9 @@ namespace Gameplay.LD
         {
             base.OnNetworkSpawn();
 
-            if(_registry == null)
+            Debug.Log($"[LD] OnNetworkSpawn: {name} index {_dataIndex.Value}");
+
+            if (_registry == null)
             {
                 Debug.LogError($"[LD] {name} has no registry assigned");
                 return;
@@ -39,7 +41,11 @@ namespace Gameplay.LD
                 return;
             }
 
-            if(!IsServer) _stateFlags.Value = (int)_data.initialFlag;
+            if(IsServer) 
+            {
+                _stateFlags.Value = (int)_data.initialFlags;
+                Debug.Log($"[LD] client flags: {_stateFlags.Value}");
+            }
             _stateFlags.OnValueChanged += OnStateFlagsChanged;
 
             BuildFromData();
@@ -82,7 +88,14 @@ namespace Gameplay.LD
 
         private void OnTriggered(int index, LDActivation activation)
         {
-            foreach(int id in _data.BindingsList[index].EffectIDs)
+            Debug.Log("[LD] OnTriggered");
+
+            LDBindingData binding = _data.BindingsList[index];
+            if(!ConditionsPass(binding, activation)) return;
+
+            Debug.Log("[LD] conditions ok");
+
+            foreach (int id in _data.BindingsList[index].EffectIDs)
             {
                 if (!TryGetModule<LDEffectModule>(id, out var effect)) continue;
 
@@ -122,6 +135,16 @@ namespace Gameplay.LD
 
         private void OnStateFlagsChanged(int previous, int current) => FlagsChanged?.Invoke((LDFlag) current);
         #endregion
+
+        private bool ConditionsPass(LDBindingData binding, LDActivation activation)
+        {
+            foreach (int conditionID in binding.ConditionIDs)
+            {
+                if (!TryGetModule<LDConditionModule>(conditionID, out var condition)) continue;
+                if (!condition.CanActivate(activation)) return false;
+            }
+            return true;
+        }
 
     }
 }

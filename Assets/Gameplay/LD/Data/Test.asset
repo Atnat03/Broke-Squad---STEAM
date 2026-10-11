@@ -13,15 +13,34 @@ MonoBehaviour:
   m_Name: Test
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.SO_LDElementData
   Prefab: {fileID: 0}
-  BindingsList: []
-  initialFlag: 1
+  BindingsList:
+  - TriggerID: 1
+    Action: 0
+    Delay: 0
+    CancelsPendingDelays: 0
+    ConditionIDs: 02000000
+    EffectIDs: 03000000
+  initialFlags: 1
   ModulesList:
-  - rid: 808842747739635800
+  - rid: 4871551455405801560
+  - rid: 4871551455405801561
+  - rid: 4871551455405801562
   references:
     version: 2
     RefIds:
-    - rid: 808842747739635800
-      type: {class: LogMsgEffectConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
+    - rid: 4871551455405801560
+      type: {class: TimerTriggerConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
       data:
         ModuleID: 1
-        Message: egerjgerkh
+        Interval: 2
+    - rid: 4871551455405801561
+      type: {class: FlagConditionConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
+      data:
+        ModuleID: 2
+        Flag: 1
+        Required: 1
+    - rid: 4871551455405801562
+      type: {class: LogMsgEffectConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
+      data:
+        ModuleID: 3
+        Message: "\xE7a marche"

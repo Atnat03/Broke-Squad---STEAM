@@ -22,6 +22,7 @@ namespace Gameplay.LD
             while(true)
             {
                 yield return new WaitForSeconds(_interval);
+                Debug.Log("[LD] tick");
                 Raise(new LDActivation { Position = transform.position });
             }
         }
