@@ -42,6 +42,7 @@ namespace Gameplay.LD
 
         private void BuildFromData()
         {
+            if (!IsServer) return;
             if(_data.Prefab != null)
             {
                 GameObject prefabInstance = Instantiate(_data.Prefab, transform);
@@ -58,6 +59,32 @@ namespace Gameplay.LD
                 module.Initialize(_context, config);
                 _modulesById[config.ModuleID] = module;
             }
+
+            for (int i = 0; i < _data.BindingsList.Count; i++)
+            {
+                int index = i;
+                var binding = _data.BindingsList[i];
+                if (!TryGetModule<LDTriggerModule>(binding.TriggerID, out var trigger)) continue;
+                trigger.Triggered += activation => OnTriggered(index, activation);
+            }
+        }
+
+        private void OnTriggered(int index, LDActivation activation)
+        {
+            foreach(int id in _data.BindingsList[index].EffectIDs)
+            {
+                if (!TryGetModule<LDElementModule>(id, out var effect)) continue;
+                effect.Activate(activation);
+            }
+        }
+
+        public bool TryGetModule<T>(int id, out T module) where T : LDElementModule
+        {
+            module = null;
+            if (!_modulesById.TryGetValue(id, out var m)) { Debug.LogError($"Module {id} introuvable", this); return false; }
+            module = m as T;
+            if (module == null) Debug.LogError($"Module {id} n'est pas un {typeof(T).Name}", this);
+            return module != null;
         }
     }
 }

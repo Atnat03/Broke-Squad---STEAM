@@ -8,7 +8,7 @@ namespace Gameplay.LD
     {
         protected override void OnInitialize(ModuleConfig config)
         {
-            throw new NotImplementedException();
+            
         }
 
         public abstract bool CanActivate(LDActivation activation);
