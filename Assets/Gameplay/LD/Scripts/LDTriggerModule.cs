@@ -10,6 +10,7 @@ namespace Gameplay.LD
 
         protected void Raise(LDActivation activation)
         {
+            if (!Context.IsServer) return;
             Triggered?.Invoke(activation);
         }
     }
