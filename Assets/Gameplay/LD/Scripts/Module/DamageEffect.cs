@@ -11,7 +11,11 @@ namespace Gameplay.LD
 
         public override void Activate(LDActivation activation)
         {
-            if (!activation.TryGetInstigator(out var instigator)) return;
+            if (!activation.TryGetInstigator(out var instigator)) 
+            { 
+                Debug.LogWarning($"[LD] Activation without instigator", this);
+                return;
+            }
 
             IDamageable target = instigator.GetComponentInParent<IDamageable>();
             if (target == null)

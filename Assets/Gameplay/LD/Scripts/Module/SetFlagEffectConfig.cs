@@ -7,6 +7,7 @@ namespace Gameplay.LD
     {
         public LDFlag Flag = LDFlag.Armed;
         public bool Value = false;
+        public bool Toggle = false;
         public override Type ModuleType => typeof(SetFlagEffect);
     }
 }

@@ -14,25 +14,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.SO_LDElementData
   Prefab: {fileID: 0}
   BindingsList:
-  - TriggerID: 1
+  - TriggerID: 5
     Action: 0
     Delay: 0
     CancelsPendingDelays: 0
     ConditionIDs: 02000000
-    EffectIDs: 03000000
+    EffectIDs: 030000000400000006000000
+  - TriggerID: 7
+    Action: 0
+    Delay: 0
+    CancelsPendingDelays: 0
+    ConditionIDs: 
+    EffectIDs: 08000000
   initialFlags: 1
   ModulesList:
-  - rid: 4871551455405801560
   - rid: 4871551455405801561
   - rid: 4871551455405801562
+  - rid: 4871551455405801563
+  - rid: 4871551455405801564
+  - rid: 4871551455405801565
+  - rid: 4871551455405801566
+  - rid: 4871551455405801567
   references:
     version: 2
     RefIds:
-    - rid: 4871551455405801560
-      type: {class: TimerTriggerConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
-      data:
-        ModuleID: 1
-        Interval: 2
     - rid: 4871551455405801561
       type: {class: FlagConditionConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
       data:
@@ -44,3 +49,35 @@ MonoBehaviour:
       data:
         ModuleID: 3
         Message: "\xE7a marche"
+    - rid: 4871551455405801563
+      type: {class: DamageEffectConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
+      data:
+        ModuleID: 4
+        Damage: 10
+    - rid: 4871551455405801564
+      type: {class: PlayerEnterTriggerConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
+      data:
+        ModuleID: 5
+        Center: {x: 0, y: 0, z: 0}
+        Size: {x: 3, y: 3, z: 3}
+    - rid: 4871551455405801565
+      type: {class: SetFlagEffectConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
+      data:
+        ModuleID: 6
+        Flag: 1
+        Value: 0
+        Toggle: 0
+    - rid: 4871551455405801566
+      type: {class: InteractTriggerConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
+      data:
+        ModuleID: 7
+        Center: {x: 0, y: 0, z: 0}
+        Size: {x: 3, y: 3, z: 3}
+        Range: 4
+    - rid: 4871551455405801567
+      type: {class: SetFlagEffectConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
+      data:
+        ModuleID: 8
+        Flag: 1
+        Value: 0
+        Toggle: 1

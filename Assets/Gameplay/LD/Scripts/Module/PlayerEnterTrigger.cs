@@ -31,7 +31,7 @@ namespace Gameplay.LD
             NetworkObject netObj = other.GetComponentInParent<NetworkObject>();
             if(netObj == null || !netObj.IsPlayerObject) return;
 
-            Raise(new LDActivation { Position = transform.position });
+            Raise(new LDActivation(netObj, netObj.transform.position));
         }
 
         private void OnDrawGizmosSelected()

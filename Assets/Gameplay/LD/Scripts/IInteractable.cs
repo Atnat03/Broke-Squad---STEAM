@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Assets.Gameplay.LD.Scripts
+namespace Gameplay.LD
 {
     public  interface IInteractable
     {

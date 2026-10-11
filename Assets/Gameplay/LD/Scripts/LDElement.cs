@@ -146,5 +146,16 @@ namespace Gameplay.LD
             return true;
         }
 
+        internal void RequestInteract(int moduleId) => InteractServerRpc(moduleId);
+
+        [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+        private void InteractServerRpc(int moduleId, RpcParams rpcParams = default)
+        {
+            ulong sender = rpcParams.Receive.SenderClientId;
+            if (!NetworkManager.ConnectedClients.TryGetValue(sender, out var client)) return;
+            if (client.PlayerObject == null) return;
+            if (!TryGetModule<InteractTrigger>(moduleId, out var trigger)) return;
+            trigger.ServerInteract(client.PlayerObject);
+        }
     }
 }
