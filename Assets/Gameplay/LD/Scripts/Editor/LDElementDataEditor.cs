@@ -1,6 +1,6 @@
 ﻿#if UNITY_EDITOR
 
-using Gameplay.Items.Scripts.CustomInspector;
+using Gameplay.Items;
 using Gameplay.LD;
 using System;
 using System.Collections.Generic;
