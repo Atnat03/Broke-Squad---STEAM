@@ -42,10 +42,9 @@ namespace Gameplay.LD
 
         private void BuildFromData()
         {
-            if (!IsServer) return;
             if(_data.Prefab != null)
             {
-                GameObject prefabInstance = Instantiate(_data.Prefab, transform);
+                Instantiate(_data.Prefab, transform);
             }
 
             _context = new LDElementContext(this);
@@ -62,6 +61,7 @@ namespace Gameplay.LD
 
             for (int i = 0; i < _data.BindingsList.Count; i++)
             {
+                if(!IsServer) continue;
                 int index = i;
                 var binding = _data.BindingsList[i];
                 if (!TryGetModule<LDTriggerModule>(binding.TriggerID, out var trigger)) continue;
@@ -73,8 +73,12 @@ namespace Gameplay.LD
         {
             foreach(int id in _data.BindingsList[index].EffectIDs)
             {
-                if (!TryGetModule<LDElementModule>(id, out var effect)) continue;
-                effect.Activate(activation);
+                if (!TryGetModule<LDEffectModule>(id, out var effect)) continue;
+
+                if (effect.RunsOn == LDEffectModule.EffectTarget.Server)
+                    effect.Activate(activation);
+                else
+                    ActivateEffectClientsRPC(id, activation);
             }
         }
 
@@ -85,6 +89,13 @@ namespace Gameplay.LD
             module = m as T;
             if (module == null) Debug.LogError($"Module {id} n'est pas un {typeof(T).Name}", this);
             return module != null;
+        }
+
+        [Rpc(SendTo.ClientsAndHost)]
+        private void ActivateEffectClientsRPC(int moduleID, LDActivation activation)
+        {
+            if (!TryGetModule<LDEffectModule>(moduleID, out var effect)) return;
+            effect.Activate(activation);
         }
     }
 }

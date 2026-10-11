@@ -6,6 +6,12 @@ namespace Gameplay.LD
 {
     public abstract class LDEffectModule : LDElementModule
     {
+        public enum EffectTarget
+        {
+            Server,
+            AllClients,
+        }
+
         protected override void OnInitialize(ModuleConfig config)
         {
             
@@ -17,5 +23,7 @@ namespace Gameplay.LD
         {
 
         }
+
+        public virtual EffectTarget RunsOn => EffectTarget.Server;
     }
 }
