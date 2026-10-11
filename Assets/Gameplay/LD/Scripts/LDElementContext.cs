@@ -14,5 +14,15 @@ namespace Gameplay.LD
         }
 
         public bool IsServer => Element.IsServer;
+
+        public bool HasFlag(LDFlag flag) => Element.HasFlag(flag);
+
+        public void SetFlag(LDFlag flag, bool value) => Element.SetFlag(flag, value);
+
+        public event Action<LDFlag> OnFlagChanged
+        {
+            add => Element.FlagsChanged += value;
+            remove => Element.FlagsChanged -= value;
+        }
     }
 }

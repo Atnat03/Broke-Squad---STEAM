@@ -8,7 +8,7 @@ namespace Gameplay.LD
     {
         public GameObject Prefab;
         public List<LDBindingData> BindingsList = new();
-        public bool initialFlag = true;
+        public LDFlag initialFlag;
         [SerializeReference] public List<ModuleConfig> ModulesList = new();
     }
 }

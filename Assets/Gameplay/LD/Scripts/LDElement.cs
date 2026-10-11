@@ -13,6 +13,8 @@ namespace Gameplay.LD
         private SO_LDElementData _data;
         private LDElementContext _context;
         private readonly Dictionary<int, LDElementModule> _modulesById = new ();
+        private readonly NetworkVariable<int> _stateFlags = new(0);
+        public event Action<LDFlag> FlagsChanged;
 
         public void PrepareOnServer(int registryIndex)
         {
@@ -37,7 +39,16 @@ namespace Gameplay.LD
                 return;
             }
 
+            if(!IsServer) _stateFlags.Value = (int)_data.initialFlag;
+            _stateFlags.OnValueChanged += OnStateFlagsChanged;
+
             BuildFromData();
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            _stateFlags.OnValueChanged -= OnStateFlagsChanged;
+            base.OnNetworkDespawn();
         }
 
         private void BuildFromData()
@@ -97,5 +108,20 @@ namespace Gameplay.LD
             if (!TryGetModule<LDEffectModule>(moduleID, out var effect)) return;
             effect.Activate(activation);
         }
+
+        #region flags
+
+        public bool HasFlag(LDFlag flag) => (_stateFlags.Value & (int)flag) != 0;
+
+        public void SetFlag(LDFlag flag, bool value)
+        {
+            if (!IsServer) return;
+            int v = _stateFlags.Value;
+            _stateFlags.Value = value ? v | (int)flag : v & ~(int)flag;
+        }
+
+        private void OnStateFlagsChanged(int previous, int current) => FlagsChanged?.Invoke((LDFlag) current);
+        #endregion
+
     }
 }
