@@ -91,16 +91,16 @@ namespace Gameplay.Controller
         {
             _cam = GetComponent<Camera>();
             playerInput.OnMouseMovement += OnMouseMove;
-            playerInput.OnLeanLeftInput += EnterLeanMode;
-            playerInput.OnLeanLeftInputCanceled += ExitLeanMode;
+            playerInput.OnLeanInput += EnterLeanMode;
+            playerInput.OnLeanInputCanceled += ExitLeanMode;
             _bob = _walkBob;
         }
 
         private void OnDestroy()
         {
             playerInput.OnMouseMovement -= OnMouseMove;
-            playerInput.OnLeanLeftInput -= EnterLeanMode;
-            playerInput.OnLeanLeftInputCanceled -= ExitLeanMode;
+            playerInput.OnLeanInput -= EnterLeanMode;
+            playerInput.OnLeanInputCanceled -= ExitLeanMode;
         }
 
         private void Start()
@@ -290,6 +290,9 @@ namespace Gameplay.Controller
             _leanCameraRadius = profile.leanCameraRadius;
             _leanWallPadding = profile.leanWallPadding;
             _downBob = profile.downBob;
+            _leanModeSensitivity = profile.leanModeSensitivity;
+            _invertLeanMode = profile.invertLeanMode;
+            _lockControllerOnLean = profile.lockControllerOnLean;
 
         }
         

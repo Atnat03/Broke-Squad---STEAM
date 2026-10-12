@@ -41,11 +41,16 @@ namespace Gameplay.Controller
         
         [Header("Lean")]
         public bool leanEnabled = true;
+        public float leanModeSensitivity = 0.02f;
+        public bool invertLeanMode = false;
+        public bool lockControllerOnLean = true;
         public float leanDistance = 0.45f;    
         public float leanRollAngle = 12f;      
         public float leanDip = 0.01f;          
         public float leanSmoothTime = 0.08f;
         public float leanCameraRadius = 0.15f;
         public float leanWallPadding = 0.05f;
+        
+        
     }
 }

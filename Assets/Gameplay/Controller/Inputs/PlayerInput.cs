@@ -27,11 +27,9 @@ namespace Gameplay.Controller
         public Action OnInteractInputCanceled;
         public Action OnDropInput;
         public Action OnDropInputCanceled;
-
-        public  Action OnLeanLeftInput;
-        public  Action OnLeanLeftInputCanceled;
-        public  Action OnLeanRightInput;
-        public  Action OnLeanRightInputCanceled;
+        
+        public  Action OnLeanInput;
+        public  Action OnLeanInputCanceled;
 
         public Action<int> OnMouseRoll;
 
@@ -72,10 +70,8 @@ namespace Gameplay.Controller
             _playerInputs.Gameplay.Drop.performed += PerformDrop;
             _playerInputs.Gameplay.Drop.canceled += PerformCanceled;
             
-            _playerInputs.Gameplay.RightLean.performed += PerformRightLean;
-            _playerInputs.Gameplay.RightLean.canceled += PerformRightLeanCanceled;
-            _playerInputs.Gameplay.LeftLean.performed += PerformLeftLean;
-            _playerInputs.Gameplay.LeftLean.canceled += PerformLeftLeanCanceled;
+            _playerInputs.Gameplay.Lean.performed += PerformLean;
+            _playerInputs.Gameplay.Lean.canceled += PerformLeanCanceled;
             
             _playerInputs.Gameplay.MouseMovement.performed += PerformeMouseMovement;
             _playerInputs.Gameplay.MouseMovement.canceled += PerformeMouseMovement;
@@ -199,24 +195,14 @@ namespace Gameplay.Controller
             OnMouseMovement?.Invoke(context.ReadValue<Vector2>());
         }
 
-        private void PerformRightLean(InputAction.CallbackContext context)
+        private void PerformLean(InputAction.CallbackContext context)
         {
-            OnLeanRightInput?.Invoke();
+            OnLeanInput?.Invoke();
         }
 
-        private void PerformRightLeanCanceled(InputAction.CallbackContext context)
+        private void PerformLeanCanceled(InputAction.CallbackContext context)
         {
-            OnLeanRightInputCanceled?.Invoke();
-        }
-
-        private void PerformLeftLean(InputAction.CallbackContext context)
-        {
-            OnLeanLeftInput?.Invoke();
-        }
-
-        private void PerformLeftLeanCanceled(InputAction.CallbackContext context)
-        {
-            OnLeanLeftInputCanceled?.Invoke();
+            OnLeanInputCanceled?.Invoke();
         }
         
         private void PerformMouseRoll(InputAction.CallbackContext obj)
