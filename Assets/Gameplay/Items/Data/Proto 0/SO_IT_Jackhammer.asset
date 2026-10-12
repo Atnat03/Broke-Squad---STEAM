@@ -17,6 +17,7 @@ MonoBehaviour:
   VisualPrefab: {fileID: 4020002191422514929, guid: 6f505122f9b844847aec3cf00b59a11f, type: 3}
   PickupPrefab: {fileID: 8302772345514676335, guid: 6500fa7ae29c6dd4c90828e7a7d5c938, type: 3}
   Icon: {fileID: 21300000, guid: 15a952fa7df21904d84702ba0b162e85, type: 3}
+  OffsetInHand: {x: 2, y: 0, z: 0}
   FirstActionList:
   - rid: 7202345609054912652
   SecondActionList:
@@ -73,7 +74,6 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 2.5
         _canDamagePlayer: 1
-        _minVelocityForSound: 3
     - rid: 7202345609054912652
       type: {class: BreakThingsModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -83,4 +83,5 @@ MonoBehaviour:
     - rid: 7202345609054912653
       type: {class: ElectricUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
+        _maxPercentValue: 100
         _electricNeededToUse: 50
