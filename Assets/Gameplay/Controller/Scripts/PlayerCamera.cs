@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Gameplay.Controller
@@ -58,6 +59,14 @@ namespace Gameplay.Controller
         private float _leanSmoothTime = 0.08f;
         private float _leanCameraRadius = 0.15f;
         private float _leanWallPadding = 0.05f;
+        private float _leanModeSensitivity = 0.02f;
+        private bool _invertLeanMode = false;
+        private bool _lockControllerOnLean = true;
+        private bool _leanMode;
+        
+        public bool IsLeanMode => _leanMode;
+        public bool LocksController => _leanMode && _lockControllerOnLean;
+        private float _leanModeValue;
         [SerializeField] private LayerMask leanObstacleMask; 
         
         private float _leanAmount;  
@@ -81,8 +90,17 @@ namespace Gameplay.Controller
         private void Awake()
         {
             _cam = GetComponent<Camera>();
-            playerInput.OnMouseMovement += value => _mouseMovement = value;
+            playerInput.OnMouseMovement += OnMouseMove;
+            playerInput.OnLeanLeftInput += EnterLeanMode;
+            playerInput.OnLeanLeftInputCanceled += ExitLeanMode;
             _bob = _walkBob;
+        }
+
+        private void OnDestroy()
+        {
+            playerInput.OnMouseMovement -= OnMouseMove;
+            playerInput.OnLeanLeftInput -= EnterLeanMode;
+            playerInput.OnLeanLeftInputCanceled -= ExitLeanMode;
         }
 
         private void Start()
@@ -98,9 +116,17 @@ namespace Gameplay.Controller
         {
             if(autoUpdateProfileValue) GetDataFromProfile();
             
-            _yRotation += _mouseMovement.x * sensX;
-            _xRotation -= _mouseMovement.y * sensY;
-            _xRotation = Mathf.Clamp(_xRotation, _minLookAngle, _maxLookAngle);
+            if (_leanMode)
+            {
+                float dir = _invertLeanMode ? -1f : 1f;
+                _leanModeValue = Mathf.Clamp(_leanModeValue + _mouseMovement.x * _leanModeSensitivity * dir, -1f, 1f);
+            }
+            else
+            {
+                _yRotation += _mouseMovement.x * sensX;
+                _xRotation -= _mouseMovement.y * sensY;
+                _xRotation = Mathf.Clamp(_xRotation, _minLookAngle, _maxLookAngle);
+            }
 
             player.SetYaw(_yRotation);
         }
@@ -123,6 +149,15 @@ namespace Gameplay.Controller
             transform.position = _smoothPos + yawOnly * (bobOffset + leanOffset);
         }
 
+        private void OnMouseMove(Vector2 value) => _mouseMovement = value;
+        private void EnterLeanMode() => _leanMode = true;
+
+        private void ExitLeanMode()
+        {
+            _leanMode = false;
+            _leanModeValue = 0f; 
+        }
+        
         private void UpdateFov(float dt)
         {
             float target = player.IsCrouching ? _crouchFov
@@ -198,7 +233,8 @@ namespace Gameplay.Controller
 
         private Vector3 UpdateLean(float dt, Quaternion yawOnly, out float roll)
         {
-            float target = _leanEnabled && !player.IsSprinting ? player.LeanInput : 0f;
+            float input = _leanMode ? _leanModeValue : player.LeanInput;
+            float target = _leanEnabled && !player.IsSprinting ? input : 0f;
             _leanAmount = Mathf.SmoothDamp(_leanAmount, target, ref _leanVel, _leanSmoothTime);
 
             roll = 0f;

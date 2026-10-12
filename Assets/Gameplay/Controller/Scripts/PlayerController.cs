@@ -52,7 +52,7 @@ namespace Gameplay.Controller
         
         private readonly NetworkVariable<bool> _netCrouching = new(false,
             NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-        
+
         public PlayerHealth Health => health;
         public bool IsGrounded => ground.IsGrounded;
         public bool IsCrouching => IsOwner ? _stateMachine?.CurrentState is CrouchState : _netCrouching.Value;
@@ -73,7 +73,7 @@ namespace Gameplay.Controller
         public float TiedUpSpeed => tiedUpSpeed;
         
         private bool WantsCrouch() => _input.CrouchHeld || (IsCrouching && !body.CanStandUp());
-        private bool WantsSprint() => _input.SprintHeld && _input.Move.y > 0.1f && _stamina.CanSprint;
+        private bool WantsSprint() => _input.SprintHeld && _input.Move.y > 0.1f && _stamina.CanSprint && !playerCamera.LocksController;
 
         public void PlayCrouchSound() => PlaySound(_crouchSound, 0.5f);
 
@@ -195,6 +195,7 @@ namespace Gameplay.Controller
                 return;
             }
             
+            _motor.CanMove = !playerCamera.LocksController;
             _stateMachine.Update();
             body.UpdateEye(Time.deltaTime);
         }
@@ -213,7 +214,7 @@ namespace Gameplay.Controller
 
             _netCrouching.Value = IsCrouching;
 
-            footsteps.Tick(dt, IsGrounded, _input.Move.sqrMagnitude > 0.01f, IsCrouching, IsSprinting);
+            footsteps.Tick(dt, IsGrounded, !playerCamera.LocksController && _input.Move.sqrMagnitude > 0.01f, IsCrouching, IsSprinting);
         }
 
         private void LateUpdate() { if (IsOwner) _stateMachine.LateUpdate(); }

@@ -26,10 +26,10 @@ namespace Gameplay.Controller
             _playerInput.OnCrouchInputCanceled += OnCrouchCanceled;
             _playerInput.OnSprintInput += OnSprint;
             _playerInput.OnSprintInputCanceled += OnSprintCanceled;
-            _playerInput.OnLeanRightInput += OnLeanRight;
-            _playerInput.OnLeanRightInputCanceled += OnLeanRightCanceled;
-            _playerInput.OnLeanLeftInput += OnLeanLeft;
-            _playerInput.OnLeanLeftInputCanceled += OnLeanLeftCanceled;
+            //_playerInput.OnLeanRightInput += OnLeanRight;
+            //_playerInput.OnLeanRightInputCanceled += OnLeanRightCanceled;
+            //_playerInput.OnLeanLeftInput += OnLeanLeft;
+            //_playerInput.OnLeanLeftInputCanceled += OnLeanLeftCanceled;
         }
         
         private void OnMove(Vector2 v) => Move = v;
@@ -51,10 +51,10 @@ namespace Gameplay.Controller
             _playerInput.OnCrouchInputCanceled -= OnCrouchCanceled;
             _playerInput.OnSprintInput -= OnSprint;
             _playerInput.OnSprintInputCanceled -= OnSprintCanceled;
-            _playerInput.OnLeanRightInput -= OnLeanRight;
-            _playerInput.OnLeanRightInputCanceled -= OnLeanRightCanceled;
-            _playerInput.OnLeanLeftInput -= OnLeanLeft;
-            _playerInput.OnLeanLeftInputCanceled -= OnLeanLeftCanceled;
+            //_playerInput.OnLeanRightInput -= OnLeanRight;
+            //_playerInput.OnLeanRightInputCanceled -= OnLeanRightCanceled;
+            //_playerInput.OnLeanLeftInput -= OnLeanLeft;
+            //_playerInput.OnLeanLeftInputCanceled -= OnLeanLeftCanceled;
         }
     }
 }
