@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &8264249090486389368
+--- !u!1 &5511290797746346268
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,52 +8,48 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6066067664738164575}
-  - component: {fileID: 2478028181097852222}
-  - component: {fileID: 5313893375840033488}
-  - component: {fileID: 1298304704116486197}
-  - component: {fileID: 8190239967187849347}
-  - component: {fileID: 5358012214481652747}
-  - component: {fileID: 5506653167804960001}
-  - component: {fileID: 1751969410002179631}
-  - component: {fileID: 6583028339843404574}
+  - component: {fileID: 3501382749129839468}
+  - component: {fileID: 292335437977090092}
+  - component: {fileID: 2609048521278672855}
+  - component: {fileID: 8701140951868907060}
+  - component: {fileID: 6189913609206004925}
   m_Layer: 0
-  m_Name: P_IT_PICKUP_Dumbell
+  m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6066067664738164575
+--- !u!4 &3501382749129839468
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8264249090486389368}
+  m_GameObject: {fileID: 5511290797746346268}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.4665961, y: -0.21476372, z: 3.0661826}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 6066067664738164575}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2478028181097852222
+--- !u!33 &292335437977090092
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8264249090486389368}
+  m_GameObject: {fileID: 5511290797746346268}
   m_Mesh: {fileID: 7845688114071678188, guid: 5dfdfe460a3ef724eb29ce5e47002033, type: 3}
---- !u!23 &5313893375840033488
+--- !u!23 &2609048521278672855
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8264249090486389368}
+  m_GameObject: {fileID: 5511290797746346268}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -96,13 +92,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1298304704116486197
+--- !u!114 &8701140951868907060
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8264249090486389368}
+  m_GameObject: {fileID: 5511290797746346268}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
@@ -114,6 +110,64 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!65 &6189913609206004925
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5511290797746346268}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.63678694, y: 0.24357699, z: 0.28125846}
+  m_Center: {x: 0, y: 0.12155219, z: 0}
+--- !u!1 &8264249090486389368
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6066067664738164575}
+  - component: {fileID: 8190239967187849347}
+  - component: {fileID: 5358012214481652747}
+  - component: {fileID: 5506653167804960001}
+  - component: {fileID: 1751969410002179631}
+  - component: {fileID: 6583028339843404574}
+  m_Layer: 9
+  m_Name: P_IT_PICKUP_Dumbell
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6066067664738164575
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8264249090486389368}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.4665961, y: -0.21476372, z: 3.0661826}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3501382749129839468}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &8190239967187849347
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -174,7 +228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 4200149347
+  GlobalObjectIdHash: 1365385990
   InScenePlacedSourceGlobalObjectIdHash: 1678341787
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0

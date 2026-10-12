@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5042312072715669929
+--- !u!1 &835290471593779412
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,52 +8,48 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3365575116609064171}
-  - component: {fileID: 2320282578805325248}
-  - component: {fileID: 4715032923538383460}
-  - component: {fileID: 1916495916325783060}
-  - component: {fileID: 1772939549443620673}
-  - component: {fileID: 57028548025431120}
-  - component: {fileID: 3115993661849629237}
-  - component: {fileID: 5295128986847872396}
-  - component: {fileID: 1040478823868464577}
+  - component: {fileID: 5722120941679578027}
+  - component: {fileID: 6764687159987629897}
+  - component: {fileID: 1454108478169622793}
+  - component: {fileID: 3489404168556979449}
+  - component: {fileID: 7849356033277990988}
   m_Layer: 0
-  m_Name: P_IT_PICKUP_CrowBar
+  m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3365575116609064171
+--- !u!4 &5722120941679578027
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5042312072715669929}
+  m_GameObject: {fileID: 835290471593779412}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -2.702117, y: -0.181, z: 2.934}
-  m_LocalScale: {x: 1.5, y: 1.5000001, z: 1.5000001}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 3365575116609064171}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
---- !u!33 &2320282578805325248
+--- !u!33 &6764687159987629897
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5042312072715669929}
+  m_GameObject: {fileID: 835290471593779412}
   m_Mesh: {fileID: 8918077550557095614, guid: 85332a844ebaaa1489b6d6b7a08ee613, type: 3}
---- !u!23 &4715032923538383460
+--- !u!23 &1454108478169622793
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5042312072715669929}
+  m_GameObject: {fileID: 835290471593779412}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -96,13 +92,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1916495916325783060
+--- !u!114 &3489404168556979449
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5042312072715669929}
+  m_GameObject: {fileID: 835290471593779412}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
@@ -114,6 +110,64 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!65 &7849356033277990988
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835290471593779412}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.16703302, y: 0.5608575, z: 0.028303232}
+  m_Center: {x: -0.040570155, y: 0.2801489, z: -0.00000001117587}
+--- !u!1 &5042312072715669929
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3365575116609064171}
+  - component: {fileID: 1772939549443620673}
+  - component: {fileID: 57028548025431120}
+  - component: {fileID: 3115993661849629237}
+  - component: {fileID: 5295128986847872396}
+  - component: {fileID: 1040478823868464577}
+  m_Layer: 9
+  m_Name: P_IT_PICKUP_CrowBar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3365575116609064171
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5042312072715669929}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -2.702117, y: -0.181, z: 2.934}
+  m_LocalScale: {x: 1.5, y: 1.5000001, z: 1.5000001}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 5722120941679578027}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!54 &1772939549443620673
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -174,7 +228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2193624022
+  GlobalObjectIdHash: 1291608353
   InScenePlacedSourceGlobalObjectIdHash: 2373085180
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0

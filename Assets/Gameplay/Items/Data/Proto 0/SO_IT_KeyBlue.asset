@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
   m_Name: SO_IT_KeyBlue
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
-  ID: 0
+  ID: 12
   ItemName: Blue Key
   VisualPrefab: {fileID: 4151085900101867295, guid: c899fdbbcd0d09047863b7072f699922, type: 3}
   PickupPrefab: {fileID: 8558208644492957827, guid: 44a63f1c90f75034596e3a17e11d66ce, type: 3}
   Icon: {fileID: 21300000, guid: a0d14db13341bd14c88ca2930b84b6c6, type: 3}
+  OffsetInHand: {x: 0.05, y: 0.25, z: 0}
   FirstActionList:
   - rid: 7202345609054912654
   SecondActionList:
@@ -73,7 +74,6 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 0.5
         _canDamagePlayer: 1
-        _minVelocityForSound: 3
     - rid: 7202345609054912654
       type: {class: OpenDoorModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:

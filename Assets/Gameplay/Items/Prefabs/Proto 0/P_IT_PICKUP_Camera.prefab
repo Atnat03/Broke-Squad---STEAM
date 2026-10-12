@@ -140,11 +140,10 @@ GameObject:
   - component: {fileID: 3711821776542815034}
   - component: {fileID: 1795660993032223770}
   - component: {fileID: 7011213549859714947}
-  - component: {fileID: 2675807035882910673}
   - component: {fileID: 4549792930971375594}
   - component: {fileID: 8345686490535218355}
   - component: {fileID: 6362295917854395192}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: P_IT_PICKUP_Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -267,24 +266,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2675807035882910673
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1365331866969658599}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Outline
-  outlineMode: 0
-  outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 10
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!65 &4549792930971375594
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -319,7 +300,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ItemPickup
   ShowTopMostFoldoutHeaderGroup: 1
-  _itemIndex: {fileID: 0}
+  _itemIndex: {fileID: 11400000, guid: 17028b7c2c264e746922e7d10dab7a1d, type: 2}
 --- !u!65 &6362295917854395192
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -352,6 +333,9 @@ GameObject:
   - component: {fileID: 3121351907928635224}
   - component: {fileID: 842637464115784271}
   - component: {fileID: 4433913298012785519}
+  - component: {fileID: 320180815626058102}
+  - component: {fileID: 2783879766109524447}
+  - component: {fileID: 4950833813541152374}
   m_Layer: 0
   m_Name: MeshCam
   m_TagString: Untagged
@@ -431,6 +415,66 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &320180815626058102
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5577246929204630050}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.17461886, y: 0.099435955, z: 0.37894407}
+  m_Center: {x: -0.0031265067, y: 0.11116921, z: 0.022288464}
+--- !u!65 &2783879766109524447
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5577246929204630050}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.17461886, y: 0.08128235, z: 0.13931343}
+  m_Center: {x: -0.0031265214, y: 0.02039987, z: -0.03943448}
+--- !u!114 &4950833813541152374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5577246929204630050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &6386727603395515592
 GameObject:
   m_ObjectHideFlags: 0

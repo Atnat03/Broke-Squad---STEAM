@@ -17,6 +17,7 @@ MonoBehaviour:
   VisualPrefab: {fileID: 3369091547028494645, guid: c0127cc13872fcf42b714c28f04d2a51, type: 3}
   PickupPrefab: {fileID: 47756118134500608, guid: 7c9d09d5a6d5a0940a52c913b501a13e, type: 3}
   Icon: {fileID: 21300000, guid: 3dda5c2d2a577ea4b92faf743fe5cf4c, type: 3}
+  OffsetInHand: {x: 0, y: 0, z: 0}
   FirstActionList:
   - rid: 7202345609054912643
   SecondActionList:
@@ -33,11 +34,11 @@ MonoBehaviour:
       data:
         _condition:
           rid: -2
-        _durationToFullFill: 2
+        _durationToFullFill: 3
         _minThrowForce: {x: 0, y: 0, z: 0}
-        _maxThrowForce: {x: 0, y: 2, z: 7}
+        _maxThrowForce: {x: 0, y: 2, z: 10}
         _minTorqueForce: {x: 0, y: 0, z: 0}
-        _maxTorqueForce: {x: 5, y: 0, z: 0}
+        _maxTorqueForce: {x: 15, y: 0, z: 0}
         _spawnDistance: {x: 0.2, y: 0, z: 0.7}
     - rid: 7202345609054912642
       type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
@@ -73,7 +74,6 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 2
         _canDamagePlayer: 1
-        _minVelocityForSound: 3
     - rid: 7202345609054912643
       type: {class: BreakThingsModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
