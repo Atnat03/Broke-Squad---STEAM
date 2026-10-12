@@ -12,6 +12,10 @@ namespace Gameplay.Items
         
         public void OnCollide(Collision collision, ItemPickup item)
         {
+            float speed = collision.relativeVelocity.magnitude;
+
+            if(speed < _minVelocityForStun) return;
+            
             if (collision.gameObject.TryGetComponent<IStunnable>(out var stun))
             {
                 stun.ApplyStun(_stunDuration);

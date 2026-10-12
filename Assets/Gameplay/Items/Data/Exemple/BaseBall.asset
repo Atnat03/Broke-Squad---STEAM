@@ -17,12 +17,14 @@ MonoBehaviour:
   VisualPrefab: {fileID: 3439047623123149040, guid: ec3b82ed418b57648b9c3f814edf40bc, type: 3}
   PickupPrefab: {fileID: 6264819104247258344, guid: 6f825f9031f38ee4999f1f54dfb971b0, type: 3}
   Icon: {fileID: 21300000, guid: 3dda5c2d2a577ea4b92faf743fe5cf4c, type: 3}
+  OffsetInHand: {x: 0, y: 0, z: 0}
   FirstActionList:
   - rid: 7203100960112246927
   SecondActionList:
   - rid: 7203100960112246928
   PassifList:
   - rid: 7203100960112246929
+  - rid: 7203100995761471812
   references:
     version: 2
     RefIds:
@@ -32,7 +34,7 @@ MonoBehaviour:
       type: {class: BreakThingsModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: 7203100960112246985
+          rid: -2
         _force: 20
     - rid: 7203100960112246928
       type: {class: ThrowModule, ns: Gameplay.Items, asm: Assembly-CSharp}
@@ -79,8 +81,8 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 1
         _canDamagePlayer: 0
-        _minVelocityForSound: 3
-    - rid: 7203100960112246985
-      type: {class: ElectricUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+    - rid: 7203100995761471812
+      type: {class: CreateSuspiciousSoundModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
-        _electricNeededToUse: 10
+        _miniVelocityToDoSound: 5
+        _suspiciousSoundSettings: {fileID: 11400000, guid: 8029d65674b61e844acad36af99f168f, type: 2}

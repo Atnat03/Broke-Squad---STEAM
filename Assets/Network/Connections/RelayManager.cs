@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Threading.Tasks;
+using MyPrint;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
@@ -37,10 +38,13 @@ namespace Network.Connections
 
                 Allocation allocation = await RelayService.Instance.CreateAllocationAsync(3);
 
+                ABPrint.Print("[START CREATE GAME]", ABColor.Yellow);
+                
                 string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
                 LastJoinCode = joinCode;
-                Debug.Log("Join Code généré: " + joinCode);
 
+                ABPrint.Print("[GAME CREATE WITH CODE : " + joinCode + "]", ABColor.Green);
+                
                 var utp = NetworkManager.Singleton.GetComponent<UnityTransport>();
                 utp.SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, "dtls"));
 
@@ -50,7 +54,7 @@ namespace Network.Connections
             }
             catch (Exception e)
             {
-                Debug.LogError("Erreur dans CreateRelay: " + e.Message);
+                ABPrint.Print("[FAILED TO CREATE GAME] : " + e, ABColor.Red);
                 return null;
             }
         }
