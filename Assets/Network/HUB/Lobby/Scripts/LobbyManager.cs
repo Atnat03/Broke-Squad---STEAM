@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using Bus;
 using MyPrint;
 using Network.Connections;
 using Unity.Netcode;
@@ -14,7 +16,7 @@ namespace Network.HUB
     using UnityEngine;
     using Random = UnityEngine.Random;
 
-    public class LobbyManager : MonoBehaviour
+    public class LobbyManager : MonoBusListener
     {
         public static int MAX_PLAYER_COUNT => MAX_PLAYER;
         const int MAX_PLAYER = 4;
@@ -57,11 +59,6 @@ namespace Network.HUB
             try
             {
                 await UnityServices.InitializeAsync();
-                
-                AuthenticationService.Instance.SignedIn += () =>
-                {
-                    Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
-                };
                 
                 AuthenticationService.Instance.SwitchProfile("player_" + Random.Range(0, 100000));
 
@@ -116,7 +113,7 @@ namespace Network.HUB
             }
             catch (Exception e)
             {
-                // ignored
+               Debug.Log(e);
             }
         }
 
@@ -173,36 +170,69 @@ namespace Network.HUB
         {
             if (!IsLobbyHost()) return;
 
+            InvokeEvent(new OnStartCreateGame_EVENT());
+            
             try
             {
+                Debug.Log($"[StartGame] NetworkManager avant CreateRelay = {NetworkManager.Singleton}");
+
                 string relayCode = await RelayManager.instance.CreateRelay();
-                if (string.IsNullOrEmpty(relayCode))
+
+                Debug.Log($"[StartGame] Relay créé : {relayCode}");
+                Debug.Log($"[StartGame] NetworkManager après CreateRelay = {NetworkManager.Singleton}");
+
+                if (NetworkManager.Singleton == null)
                 {
-                    Debug.LogError("CreateRelay a échoué");
+                    Debug.LogError("[StartGame] NetworkManager.Singleton est NULL après CreateRelay !");
                     return;
                 }
 
-                _joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, new UpdateLobbyOptions
-                {
-                    IsLocked = true,
-                    Data = new Dictionary<string, DataObject>
+                _joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(
+                    _joinedLobby.Id,
+                    new UpdateLobbyOptions
                     {
-                        { KEY_RELAY, new DataObject(DataObject.VisibilityOptions.Member, relayCode) },
-                        { KEY_MAP,  new DataObject(DataObject.VisibilityOptions.Member, _selectedMap) }
-                }
-                });
+                        IsLocked = true,
+                        Data = new Dictionary<string, DataObject>
+                        {
+                            { KEY_RELAY, new DataObject(DataObject.VisibilityOptions.Member, relayCode) },
+                            { KEY_MAP, new DataObject(DataObject.VisibilityOptions.Member, _selectedMap) }
+                        }
+                    });
+
+                Debug.Log($"[StartGame] Lobby mis à jour");
+                Debug.Log($"[StartGame] NetworkManager = {NetworkManager.Singleton}");
+                Debug.Log($"[StartGame] IsHost = {NetworkManager.Singleton.IsHost}");
+                Debug.Log($"[StartGame] IsListening = {NetworkManager.Singleton.IsListening}");
 
                 int expected = _joinedLobby.Players.Count;
+
                 float timeout = 20f;
-                while (NetworkManager.Singleton.ConnectedClientsIds.Count < expected && timeout > 0f)
+
+                while (NetworkManager.Singleton != null &&
+                       NetworkManager.Singleton.ConnectedClientsIds.Count < expected &&
+                       timeout > 0f)
                 {
                     timeout -= Time.deltaTime;
-                    await System.Threading.Tasks.Task.Yield();
+                    await Task.Yield();
                 }
 
+                if (NetworkManager.Singleton == null)
+                {
+                    Debug.LogError("[StartGame] NetworkManager détruit/disparu pendant l'attente !");
+                    return;
+                }
+
+                Debug.Log(
+                    $"[StartGame] Clients connectés : " +
+                    $"{NetworkManager.Singleton.ConnectedClientsIds.Count}/{expected}"
+                );
+
                 string map = _joinedLobby.Data[KEY_MAP].Value;
-                
-                NetworkManager.Singleton.SceneManager.LoadScene(map, LoadSceneMode.Single);
+
+                NetworkManager.Singleton.SceneManager.LoadScene(
+                    map,
+                    LoadSceneMode.Single
+                );
             }
             catch (Exception e)
             {
@@ -305,7 +335,7 @@ namespace Network.HUB
             }
             catch (LobbyServiceException e)
             {
-                //Ignore
+                Debug.Log(e);
             }
         }
 

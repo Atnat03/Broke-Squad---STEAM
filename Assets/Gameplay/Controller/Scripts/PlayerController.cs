@@ -1,6 +1,7 @@
 ﻿using System;
 using Bus;
 using Gameplay.Controller.States;
+using Gameplay.Other.SuspiciousSound;
 using Gameplay.PlayerData;
 using Network.Connections;
 using TMPro;
@@ -153,7 +154,7 @@ namespace Gameplay.Controller
             _motor.OnJump += () => PlaySound(_jumpSound, 0.5f);
             _input.OnJumpPressed += _motor.BufferJump;
 
-            footsteps.Init(PlaySound);
+            footsteps.Init(PlaySound, this);
         }
 
         private void SetUpStateMachine()
@@ -218,10 +219,7 @@ namespace Gameplay.Controller
         }
 
         private void LateUpdate() { if (IsOwner) _stateMachine.LateUpdate(); }
-
         
-        
-
         #endregion
 
         #region  Sound
@@ -255,7 +253,7 @@ namespace Gameplay.Controller
             ReplicatePersonalisationRpc(colorId, playerName);
         }
 
-        [Rpc(SendTo.Server, RequireOwnership = false)]
+        [Rpc(SendTo.Server)]
         private void RequestPersonalisationRpc() => ReplicatePersonalisationRpc(_syncedColor, _syncedName);
 
         [Rpc(SendTo.Everyone)]
@@ -264,6 +262,18 @@ namespace Gameplay.Controller
             if (PlayerLocalData.instance == null) return;
             meshRenderer[0].material.color = PlayerLocalData.instance.PossibleColor[colorId];
             pseudoText.text = playerName;
+        }
+
+        [Rpc(SendTo.Server)]
+        public void SendEventSoundServerRpc(float force, float dis)
+        {
+            InvokeEvent(new OnCreateSuspiciousSound_EVENT
+            {
+                FromClientID = OwnerClientId,
+                Force = force,
+                MaxDistance = dis,
+                Position = transform.position,
+            });
         }
         
 

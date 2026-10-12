@@ -3,7 +3,12 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class Breakable : NetworkBusListener
+public interface IBreakable
+{
+    void Break(float force);
+}
+
+public class Breakable : NetworkBusListener, IBreakable
 {
     [SerializeField] private GameObject _normalMesh;
     [SerializeField] private float solidity = 20f;
@@ -29,13 +34,14 @@ public class Breakable : NetworkBusListener
 
     public void Break(float force)
     {
-        if (force < solidity) return;
         AskServerToBreakRpc(force);
     }
 
     [Rpc(SendTo.Server)]
     private void AskServerToBreakRpc(float force)
     {
+        if (force < solidity) return;
+        
         float radius = transform.localScale.magnitude;
 
         if (_dropPickableItem)
