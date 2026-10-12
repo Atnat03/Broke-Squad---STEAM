@@ -11,6 +11,7 @@ namespace Gameplay.Items
         [SerializeField] public GameObject VisualPrefab;
         [SerializeField] public ItemPickup PickupPrefab;
         [SerializeField] public Sprite Icon;
+        [SerializeField] public Vector3 OffsetInHand = new Vector3(0, 0, 0);
         [SerializeReference] public List<IFirstAction> FirstActionList;
         [SerializeReference] public List<ISecondAction> SecondActionList;
         [SerializeReference] public List<IPassif> PassifList;

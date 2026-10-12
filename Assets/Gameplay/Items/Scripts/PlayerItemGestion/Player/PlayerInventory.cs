@@ -136,7 +136,7 @@ namespace Gameplay.Items
 
             ItemCore core = go.AddComponent<ItemCore>();
             GameObject visual = Instantiate(data.VisualPrefab, core.transform);
-            visual.transform.localPosition = Vector3.zero;
+            visual.transform.localPosition = data.OffsetInHand;
             
             ItemInstance instance;
             if (NetworkManager.Singleton.IsServer)

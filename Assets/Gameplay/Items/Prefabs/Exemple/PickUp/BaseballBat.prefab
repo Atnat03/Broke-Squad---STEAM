@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2787035974486385141}
   - component: {fileID: 977156915385042956}
   - component: {fileID: 5035998034798204295}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BaseballBat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1571756975
+  GlobalObjectIdHash: 946937786
   InScenePlacedSourceGlobalObjectIdHash: 422393812
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -78,7 +78,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ItemPickup
   ShowTopMostFoldoutHeaderGroup: 1
   _itemIndex: {fileID: 11400000, guid: c7e79980558172e40b627a91a4f35599, type: 2}
-  _outline: {fileID: 4258056736211233347}
 --- !u!65 &2787035974486385141
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -98,8 +97,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.11967921, y: 1.1222668, z: 0.111528635}
-  m_Center: {x: 0, y: 0.30974257, z: 0.00000011920929}
+  m_Size: {x: 0.49604595, y: 1.3322685, z: 0.749977}
+  m_Center: {x: -0.0081819, y: 0.3138335, z: 0.024676383}
 --- !u!54 &977156915385042956
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -233,6 +232,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1141309035379116954, guid: 64759d2bfa2981d4b80548269cac537c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4258056736211233347}
+    - targetCorrespondingSourceObject: {fileID: 1141309035379116954, guid: 64759d2bfa2981d4b80548269cac537c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 182413389867987229}
   m_SourcePrefab: {fileID: 100100000, guid: 64759d2bfa2981d4b80548269cac537c, type: 3}
 --- !u!4 &4897960052754488010 stripped
 Transform:
@@ -262,3 +264,24 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!65 &182413389867987229
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5238491326026891376}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.09799426, y: 1.1150899, z: 0.09799425}
+  m_Center: {x: 0, y: 0.3161565, z: -0.00000033527613}
