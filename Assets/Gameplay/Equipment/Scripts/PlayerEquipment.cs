@@ -1,64 +1,136 @@
-using System;
-using System.Collections.Generic;
-using Bus;
-using Gameplay;
-using Gameplay.Items;
+﻿using Bus;
+using Gameplay.Controller;
 using MyPrint;
 using Unity.Netcode;
-using UnityEditor;
 using UnityEngine;
 
-public class PlayerEquipment : NetworkBusListener, IInteractable
+namespace Gameplay.Equipment
 {
-    [SerializeField] private Transform _itemPos;
-    
-    [Header("BackPack Parent")]
-    [SerializeField] private GameObject _backPack;
-    
-    
-    public void Interact(ulong clientId)
+    public class PlayerEquipment : NetworkBusListener
     {
-        if (IsServer)
-            HandleInteract(clientId);
-        else
-            InteractServerRpc(clientId);
-    }
+        [SerializeField] private Transform _packPackParent;
+        [SerializeField] private PlayerInput _playerInputs;
+        [SerializeField] private Camera _camera;
+        [SerializeField] private float _rangeDrop = 2f;
 
-    [Rpc(SendTo.Server)]
-    private void InteractServerRpc(ulong clientId) => HandleInteract(clientId);
+        BackPack _currentBackPack; // résolu sur tous les peers
 
-    private void HandleInteract(ulong clientId)
-    {
-        if (!NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client)) return;
+        readonly NetworkVariable<NetworkObjectReference> _backPackRef = new();
+        readonly NetworkVariable<bool> _hasBackPack = new();
 
-        PlayerInventory playerSender = client.PlayerObject.GetComponentInChildren<PlayerInventory>();
-        if (playerSender == null) return;
+        public override void OnNetworkSpawn()
+        {
+            _hasBackPack.OnValueChanged += OnHasBackPackChanged;
 
-        ItemInstance item = playerSender.GetCurrentItemInHand();
-        if (item == null) return;
+            if (IsOwner)
+                _playerInputs.OnTryDropEquipment += TryDropBackPack;
 
-        Transform slot = _itemPos;
+            ListenToEvent<OnTryToPickUpBackPack_EVENT>(TryPickUp);
+        }
 
-        ItemPickup pickup = Instantiate(item.Data.PickupPrefab, slot.position, slot.rotation, slot);
-        pickup.Setup(item);
-        pickup.GetComponent<NetworkObject>().Spawn();
-        
-        if (!pickup.GetComponent<NetworkObject>().TrySetParent(NetworkObject, worldPositionStays: true))
-            Debug.LogWarning("Reparent failed");
-        
-        pickup.GetComponent<Rigidbody>().useGravity = false;
-        pickup.GetComponent<Rigidbody>().isKinematic = true;
-        
-        pickup.transform.GetChild(0).GetComponent<Collider>().enabled = false;
-        
-        playerSender.ClearCurrentSlot();
-    }
+        public override void OnNetworkDespawn()
+        {
+            _hasBackPack.OnValueChanged -= OnHasBackPackChanged;
 
-    //Outline 
-    [SerializeField] private Outline _outline;
-    public Outline outline => _outline;
-    public void SetOutline(bool state)
-    {
-        outline.enabled = state;
+            if (IsOwner)
+                _playerInputs.OnTryDropEquipment -= TryDropBackPack;
+        }
+
+        private bool ResolveBackPack()
+        {
+            if (_currentBackPack != null) return true;
+            if (!_hasBackPack.Value) return false;
+
+            if (_backPackRef.Value.TryGet(out NetworkObject no) && no.TryGetComponent(out BackPack bp))
+            {
+                _currentBackPack = bp;
+                if (IsOwner) SetBackpackVisibility(false);
+                return true;
+            }
+            return false;
+        }
+
+        private void OnHasBackPackChanged(bool previous, bool has)
+        {
+            if (has || _currentBackPack == null) return;
+
+            if (IsOwner) SetBackpackVisibility(true);
+            _currentBackPack = null;
+        }
+
+        private void TryPickUp(OnTryToPickUpBackPack_EVENT ev)
+        {
+            if (ev.ClientId != OwnerClientId) return;
+            if (_hasBackPack.Value) return;
+
+            PickupBP(ev.BackPackNOR);
+        }
+
+        private void PickupBP(NetworkObjectReference bp)
+        {
+            if (!IsServer)
+            {
+                PickupBPServerRpc(bp);
+                return;
+            }
+
+            if (_hasBackPack.Value) return;
+            if (!bp.TryGet(out NetworkObject backpackObject)) return;
+            if (!backpackObject.TryGetComponent(out BackPackPhysics physics) || physics.IsCarried) return;
+
+            physics.SetCarried(true);
+            _backPackRef.Value = backpackObject;   // <-- la ligne qui manquait
+            _hasBackPack.Value = true;
+        }
+
+        [Rpc(SendTo.Server)]
+        private void PickupBPServerRpc(NetworkObjectReference bp) => PickupBP(bp);
+
+        private void TryDropBackPack()
+        {
+            Vector3 origin = _camera.transform.position;
+            Vector3 fwd = _camera.transform.forward;
+
+            if (Physics.Raycast(origin, fwd, out RaycastHit hit, _rangeDrop, ~0, QueryTriggerInteraction.Ignore))
+                TryDrop(hit.point + hit.normal * 0.3f);
+            else
+                TryDrop(origin + fwd * _rangeDrop);
+        }
+
+        private void TryDrop(Vector3 position)
+        {
+            if (!IsServer)
+            {
+                TryDropBackPackServerRpc(position);
+                return;
+            }
+
+            if (!_hasBackPack.Value) return;
+
+            if (ResolveBackPack() && _currentBackPack.TryGetComponent(out BackPackPhysics physics))
+                physics.DropAt(position);
+
+            _hasBackPack.Value = false; // déclenche OnHasBackPackChanged (visibilité + null)
+        }
+
+        [Rpc(SendTo.Server)]
+        private void TryDropBackPackServerRpc(Vector3 position) => TryDrop(position);
+
+        void LateUpdate()
+        {
+            if (!_hasBackPack.Value) return;
+            if (!ResolveBackPack()) return;
+
+            _currentBackPack.transform.SetPositionAndRotation(
+                _packPackParent.position, _packPackParent.rotation);
+        }
+
+        private void SetBackpackVisibility(bool visible)
+        {
+            if (_currentBackPack == null) return;
+
+            foreach (Renderer r in _currentBackPack.GetComponentsInChildren<Renderer>(true))
+                r.enabled = visible;
+        }
     }
 }

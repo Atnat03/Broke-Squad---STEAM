@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 946937786
+  GlobalObjectIdHash: 1100539049
   InScenePlacedSourceGlobalObjectIdHash: 422393812
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -77,6 +77,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ItemPickup
   ShowTopMostFoldoutHeaderGroup: 1
+  _rackRatio: 0.5
+  _collidersOffOnRack:
+  - {fileID: 182413389867987229}
   _itemIndex: {fileID: 11400000, guid: c7e79980558172e40b627a91a4f35599, type: 2}
 --- !u!65 &2787035974486385141
 BoxCollider:
@@ -168,7 +171,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0

@@ -47,6 +47,8 @@ namespace Gameplay.Items
             if (target == null && _currentHoverInteractable != null)
                 _currentHoverInteractable.SetOutline(false);
 
+            _currentHoverInteractable?.SetOutline(false);
+            
             _currentHoverInteractable = target;
 
             if (_currentHoverInteractable != null)

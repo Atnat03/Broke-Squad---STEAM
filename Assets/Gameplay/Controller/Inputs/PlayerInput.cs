@@ -40,6 +40,8 @@ namespace Gameplay.Controller
 
         public Action OnPinging;
 
+        public Action OnTryDropEquipment;
+
         private void Awake()
         {
             _playerInputs = new Player();
@@ -83,8 +85,10 @@ namespace Gameplay.Controller
             _playerInputs.Gameplay.MouseRoll.performed += PerformMouseRoll;
 
             _playerInputs.Gameplay.Ping.performed += PerformPing;
+
+            _playerInputs.Gameplay.EquimentDrop.performed += PerformDropEquipment;
         }
-        
+
 
         private void OnDisable()
         {
@@ -113,6 +117,8 @@ namespace Gameplay.Controller
             _playerInputs.Gameplay.MouseRoll.performed -= PerformMouseRoll;
             
             _playerInputs.Gameplay.Ping.performed -= PerformPing;
+            
+            _playerInputs.Gameplay.EquimentDrop.performed -= PerformDropEquipment;
 
             _playerInputs.Disable();
         }
@@ -236,6 +242,11 @@ namespace Gameplay.Controller
         private void PerformPing(InputAction.CallbackContext obj)
         {
             OnPinging?.Invoke();
+        }
+        
+        private void PerformDropEquipment(InputAction.CallbackContext obj)
+        {
+            OnTryDropEquipment?.Invoke();
         }
         
         private void OnDestroy() => _playerInputs.Dispose();
