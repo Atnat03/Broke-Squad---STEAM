@@ -37,5 +37,11 @@ namespace Gameplay.Controller
         public float drainPerSecond = 10f;
         public float regenPerSecond = 10f;
         public float regenDelay = 2f;
+        
+        [Header("Ladder")]
+        public float climbSpeed = 2.5f;
+        public float ladderTopPushSpeed = 2f;   
+        public float ladderTopLift = 0.1f;     
+        public float ladderRegrabCooldown = 0.4f;
     }
 }

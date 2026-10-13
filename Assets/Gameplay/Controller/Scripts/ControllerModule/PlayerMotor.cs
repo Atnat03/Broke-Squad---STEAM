@@ -19,6 +19,8 @@ namespace Gameplay.Controller
         public bool JumpAllowed { get; set; }
         
         public bool CanMove { get; set; } = true;
+        public bool IsClimbing { get; set; }
+        public float ClimbVelocity { get; set; }
         private Vector2 MoveInput => CanMove ? _input.Move : Vector2.zero;
 
         public Vector3 HorizontalVelocity => new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
@@ -42,6 +44,10 @@ namespace Gameplay.Controller
         }
 
         public Action OnJump;
+        
+        
+
+        
 
         public PlayerMotor(Rigidbody rb, Transform transform, ControllerProfileSO profile,
             GroundChecker ground, PlayerInputReader input, PlayerBody body)
@@ -54,10 +60,18 @@ namespace Gameplay.Controller
             _steps = new StepClimber(rb, body, ground, profile);
         }
         
-        
-
         public void BufferJump() => _jumpBufferTimer = _profile.jumpBufferTime;
+        public void LaunchOffLadderTop(Vector3 forward)
+        {
+            float g = Mathf.Abs(Physics.gravity.y) * _profile.gravityMultiplier;
+            float liftVel = Mathf.Sqrt(2f * g * _profile.ladderTopLift);
 
+            forward.y = 0f;
+            Vector3 push = forward.normalized * _profile.ladderTopPushSpeed;
+
+            _rb.linearVelocity = new Vector3(push.x, liftVel, push.z);
+            _ground.ForceAirborne();
+        }
         public void StopMoving()
         {
             _rb.linearVelocity = Vector3.zero;
@@ -66,6 +80,14 @@ namespace Gameplay.Controller
 
         public void FixedTick(float dt)
         {
+            if (IsClimbing)
+            {
+                _rb.linearVelocity = new Vector3(0f, ClimbVelocity, 0f);
+                _jumpBufferTimer = 0f;
+                _coyoteTimer = 0f;
+                return;
+            }
+            
             _coyoteTimer = _ground.IsGrounded ? _profile.coyoteTime : _coyoteTimer - dt;
             _jumpBufferTimer -= dt;
 

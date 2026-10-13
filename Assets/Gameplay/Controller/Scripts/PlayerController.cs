@@ -1,6 +1,7 @@
 ﻿using System;
 using Bus;
 using Gameplay.Controller.States;
+using Gameplay.LD;
 using Gameplay.Other.SuspiciousSound;
 using Gameplay.PlayerData;
 using Network.Connections;
@@ -24,6 +25,7 @@ namespace Gameplay.Controller
         [SerializeField] private GroundChecker ground;
         [SerializeField] private PlayerBody body;
         [SerializeField] private PlayerFootsteps footsteps;
+        [SerializeField] private LadderChecker ladderChecker;
 
         [Header("To Assign")]
         public PlayerCamera playerCamera;
@@ -35,7 +37,7 @@ namespace Gameplay.Controller
         [Header("Tied Up")]
         [SerializeField] private float tiedUpSpeed = 1f;
 
-        [Header("SFX")]
+        [Header("SFX")] 
         [SerializeField, SoundName] private string _jumpSound;
         [SerializeField, SoundName] private string _crouchSound;
         
@@ -54,6 +56,7 @@ namespace Gameplay.Controller
         private readonly NetworkVariable<bool> _netCrouching = new(false,
             NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
+        private float _ladderCooldown;
         public PlayerHealth Health => health;
         public bool IsGrounded => ground.IsGrounded;
         public bool IsCrouching => IsOwner ? _stateMachine?.CurrentState is CrouchState : _netCrouching.Value;
@@ -71,6 +74,7 @@ namespace Gameplay.Controller
         public PlayerMotor Motor => _motor;
         public PlayerBody Body => body;
         public PlayerStamina Stamina => _stamina;
+        public LadderChecker LadderChecker => ladderChecker;
         public float TiedUpSpeed => tiedUpSpeed;
         
         private bool WantsCrouch() => _input.CrouchHeld || (IsCrouching && !body.CanStandUp());
@@ -80,6 +84,17 @@ namespace Gameplay.Controller
 
         public void SetYaw(float yawDegrees) => _rb.MoveRotation(Quaternion.Euler(0f, yawDegrees, 0f));
         
+        public Vector2 MoveInput => _input != null && !playerCamera.LocksController ? _input.Move : Vector2.zero;
+        
+        public void StartLadderCooldown() => _ladderCooldown = Profile.ladderRegrabCooldown;
+        
+        private bool WantsClimb() =>
+            _ladderCooldown <= 0f
+            && ladderChecker.Touching
+            && ladderChecker.Current != null
+            && MoveInput.y > 0.1f;
+        
+        private bool KeepClimbing() => ladderChecker.Touching && !(IsGrounded && MoveInput.y < -0.1f);
         #endregion
 
         #region Initialization
@@ -162,19 +177,24 @@ namespace Gameplay.Controller
             _stateMachine = new StateMachine();
 
             var movementState = new MovementState(this);
-            var sprintState   = new SprintState(this);
-            var crouchState   = new CrouchState(this);
-            var tiedState     = new TiedUpState(this);
+            var sprintState = new SprintState(this);
+            var crouchState = new CrouchState(this);
+            var tiedState = new TiedUpState(this);
+            var climbState = new ClimbState(this);
+
+            
 
             Any(tiedState, new FuncPredicate(() => health.IsDowned));
             At(tiedState, movementState, new FuncPredicate(() => !health.IsDowned && !body.CanStandUp()));
             At(tiedState, crouchState, new FuncPredicate(() => !health.IsDowned && body.CanStandUp()));
-            
-            At(movementState, crouchState,   new FuncPredicate(WantsCrouch));
-            At(sprintState,   crouchState,   new FuncPredicate(WantsCrouch));
-            At(crouchState,   movementState, new FuncPredicate(() => !WantsCrouch()));
-            At(movementState, sprintState,   new FuncPredicate(WantsSprint));
-            At(sprintState,   movementState, new FuncPredicate(() => !WantsSprint()));
+            At(movementState, crouchState, new FuncPredicate(WantsCrouch));
+            At(sprintState, crouchState, new FuncPredicate(WantsCrouch));
+            At(crouchState, movementState, new FuncPredicate(() => !WantsCrouch()));
+            At(movementState, sprintState, new FuncPredicate(WantsSprint));
+            At(sprintState, movementState, new FuncPredicate(() => !WantsSprint()));
+            At(movementState, climbState,  new FuncPredicate(WantsClimb));
+            At(sprintState, climbState,  new FuncPredicate(WantsClimb));
+            At(climbState, movementState, new FuncPredicate(() => !KeepClimbing()));
 
             _stateMachine.SetState(movementState);
         }
@@ -207,7 +227,8 @@ namespace Gameplay.Controller
             
             float dt = Time.fixedDeltaTime;
             ground.Check(body, _rb, transform);
-            
+            ladderChecker.Check(body, transform);
+            _ladderCooldown -= dt;
             _stateMachine.FixedUpdate();       
             body.Tick(dt);
             _motor.FixedTick(dt);
@@ -278,5 +299,7 @@ namespace Gameplay.Controller
         
 
         #endregion
+
+        
     }
 }
