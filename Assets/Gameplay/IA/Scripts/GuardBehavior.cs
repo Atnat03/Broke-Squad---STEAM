@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Bus;
 using Unity.Netcode;
 using Gameplay.Controller;
 using Gameplay.Controller.Gameplay.Controller;
@@ -14,7 +15,7 @@ namespace Gameplay.IA
     [RequireComponent(typeof(GuardMotor))]
     [RequireComponent(typeof(GuardHealth))]
     [RequireComponent(typeof(GuardLineOfSight))]
-    public class GuardBehavior : NetworkBehaviour
+    public class GuardBehavior : NetworkBusListener
     {
         [SerializeField] G_PatrolState _patrolState;
         [SerializeField] G_InvestigateState _investigateState;
@@ -107,7 +108,6 @@ namespace Gameplay.IA
         }
         
         public void SetColor(Color color) => _meshRenderer.material.color = color;
-        
         
         private void HandleStun(bool isStunned)
         {

@@ -32,6 +32,8 @@ namespace Gameplay.IA
             _target = newTarget;
             if (newTarget.TryGetComponent(out PlayerHealth player)) _playerHealth = player;
             
+            _behavior.InvokeEvent(new OnLockDownStart_EVENT());
+            
             _motor.SetSpeed(_pursuitSpeed);
         }
 
