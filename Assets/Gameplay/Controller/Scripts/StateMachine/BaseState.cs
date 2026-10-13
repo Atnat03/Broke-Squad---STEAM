@@ -1,15 +1,15 @@
-namespace Gameplay.Controller
+namespace Gameplay.Controller.States
 {
-    using UnityEngine;
-
-    public class BaseState : IState
+    public abstract class BaseState : IState
     {
         protected readonly PlayerController playerController;
 
-        protected BaseState(PlayerController playerController)
-        {
-            this.playerController = playerController;
-        }
+        protected BaseState(PlayerController playerController) => this.playerController = playerController;
+
+        protected ControllerProfileSO Profile => playerController.Profile;
+        protected PlayerMotor Motor => playerController.Motor;
+        protected PlayerBody Body => playerController.Body;
+        protected PlayerStamina Stamina => playerController.Stamina;
 
         public virtual void OnEnter() {}
         public virtual void OnExit() {}
@@ -18,4 +18,3 @@ namespace Gameplay.Controller
         public virtual void OnLateUpdate() {}
     }
 }
-

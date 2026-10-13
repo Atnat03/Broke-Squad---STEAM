@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using Bus;
 using MyPrint;
 using Network.Connections;
 using Unity.Netcode;
@@ -14,16 +16,18 @@ namespace Network.HUB
     using UnityEngine;
     using Random = UnityEngine.Random;
 
-    public class LobbyManager : MonoBehaviour
+    public class LobbyManager : MonoBusListener
     {
         public static int MAX_PLAYER_COUNT => MAX_PLAYER;
         const int MAX_PLAYER = 4;
-
-        [SerializeField] private string _sceneNameToPlayTogether;
         
         //Lobby var
         private Lobby _hostLobby;
         private Lobby _joinedLobby;
+        
+        //KeyDataName
+        private string KEY_RELAY = "Relay";
+        private string KEY_MAP = "Map";
 
         //Current time before update Lobbies
         private float _heartbeatTimer;
@@ -34,6 +38,10 @@ namespace Network.HUB
         [SerializeField] private float _lobbyUpdateTimerMax = 2f;
         [SerializeField] private float _heartbeatTimerMax = 3f;
         [SerializeField] private float _lobbyListUpdateTimerMax = 1.5f;
+        
+        //In Lobby
+        private string _sceneNameToPlayTogether;
+        private string _selectedMap;
 
         //Other variables
         private string _playerName;
@@ -43,6 +51,8 @@ namespace Network.HUB
         public Action<Lobby, bool> OnJoinLobby;
         public Action<List<Lobby>> OnUpdateJoinedLobby;
         public Action<Lobby> OnUpdateLobbyInfo;
+        public Action<string> OnUpdatedMap;
+        public Action OnTryToJoinGame;
 
         private async void Start()
         {
@@ -50,16 +60,15 @@ namespace Network.HUB
             {
                 await UnityServices.InitializeAsync();
                 
-                AuthenticationService.Instance.SignedIn += () =>
-                {
-                    Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
-                };
-                
-                AuthenticationService.Instance.SwitchProfile("player_" + UnityEngine.Random.Range(0, 100000));
+                AuthenticationService.Instance.SwitchProfile("player_" + Random.Range(0, 100000));
 
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
                 _playerName = "Player " + Random.Range(0, 99);
+                
+                string _sceneName = SceneUtility.GetScenePathByBuildIndex(1);
+                _sceneNameToPlayTogether = System.IO.Path.GetFileNameWithoutExtension(_sceneName);
+                _selectedMap = _sceneNameToPlayTogether;
             }
             catch (Exception e)
             {
@@ -104,7 +113,7 @@ namespace Network.HUB
             }
             catch (Exception e)
             {
-                // ignored
+               Debug.Log(e);
             }
         }
 
@@ -125,8 +134,10 @@ namespace Network.HUB
                 
                 if (IsLobbyHost() || _relayJoined) return;
 
-                if (_joinedLobby.Data.TryGetValue("Relay", out var relayData) && relayData.Value != "0")
+                if (_joinedLobby.Data.TryGetValue(KEY_RELAY, out var relayData) && relayData.Value != "0")
                 {
+                    OnTryToJoinGame?.Invoke();
+                    
                     _relayJoined = true;
                     _relayJoined = await RelayManager.instance.JoinRelay(relayData.Value);
                 }
@@ -151,45 +162,85 @@ namespace Network.HUB
 
         #endregion
         
+        #region StartGame
+        
         public void StartingGame() => StartGame();
     
         public async void StartGame()
         {
             if (!IsLobbyHost()) return;
 
+            InvokeEvent(new OnStartCreateGame_EVENT());
+            
             try
             {
+                Debug.Log($"[StartGame] NetworkManager avant CreateRelay = {NetworkManager.Singleton}");
+
                 string relayCode = await RelayManager.instance.CreateRelay();
-                if (string.IsNullOrEmpty(relayCode))
+
+                Debug.Log($"[StartGame] Relay créé : {relayCode}");
+                Debug.Log($"[StartGame] NetworkManager après CreateRelay = {NetworkManager.Singleton}");
+
+                if (NetworkManager.Singleton == null)
                 {
-                    Debug.LogError("CreateRelay a échoué");
+                    Debug.LogError("[StartGame] NetworkManager.Singleton est NULL après CreateRelay !");
                     return;
                 }
 
-                _joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, new UpdateLobbyOptions
-                {
-                    IsLocked = true,
-                    Data = new Dictionary<string, DataObject>
+                _joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(
+                    _joinedLobby.Id,
+                    new UpdateLobbyOptions
                     {
-                        { "Relay", new DataObject(DataObject.VisibilityOptions.Member, relayCode) }
-                    }
-                });
+                        IsLocked = true,
+                        Data = new Dictionary<string, DataObject>
+                        {
+                            { KEY_RELAY, new DataObject(DataObject.VisibilityOptions.Member, relayCode) },
+                            { KEY_MAP, new DataObject(DataObject.VisibilityOptions.Member, _selectedMap) }
+                        }
+                    });
+
+                Debug.Log($"[StartGame] Lobby mis à jour");
+                Debug.Log($"[StartGame] NetworkManager = {NetworkManager.Singleton}");
+                Debug.Log($"[StartGame] IsHost = {NetworkManager.Singleton.IsHost}");
+                Debug.Log($"[StartGame] IsListening = {NetworkManager.Singleton.IsListening}");
 
                 int expected = _joinedLobby.Players.Count;
+
                 float timeout = 20f;
-                while (NetworkManager.Singleton.ConnectedClientsIds.Count < expected && timeout > 0f)
+
+                while (NetworkManager.Singleton != null &&
+                       NetworkManager.Singleton.ConnectedClientsIds.Count < expected &&
+                       timeout > 0f)
                 {
                     timeout -= Time.deltaTime;
-                    await System.Threading.Tasks.Task.Yield();
+                    await Task.Yield();
                 }
 
-                NetworkManager.Singleton.SceneManager.LoadScene(_sceneNameToPlayTogether, LoadSceneMode.Single);
+                if (NetworkManager.Singleton == null)
+                {
+                    Debug.LogError("[StartGame] NetworkManager détruit/disparu pendant l'attente !");
+                    return;
+                }
+
+                Debug.Log(
+                    $"[StartGame] Clients connectés : " +
+                    $"{NetworkManager.Singleton.ConnectedClientsIds.Count}/{expected}"
+                );
+
+                string map = _joinedLobby.Data[KEY_MAP].Value;
+
+                NetworkManager.Singleton.SceneManager.LoadScene(
+                    map,
+                    LoadSceneMode.Single
+                );
             }
             catch (Exception e)
             {
                 Debug.LogException(e);
             }
         }
+        
+        #endregion
 
         #region Create Lobby
 
@@ -204,7 +255,8 @@ namespace Network.HUB
                     Player = GetNewPlayer(),
                     Data = new Dictionary<string, DataObject>
                     {
-                        { "Relay", new DataObject(DataObject.VisibilityOptions.Member, "0") },
+                        { KEY_RELAY, new DataObject(DataObject.VisibilityOptions.Member, "0") },
+                        { KEY_MAP, new DataObject(DataObject.VisibilityOptions.Member, _selectedMap) },
                     }
                 };
 
@@ -283,7 +335,7 @@ namespace Network.HUB
             }
             catch (LobbyServiceException e)
             {
-                //Ignore
+                Debug.Log(e);
             }
         }
 
@@ -366,6 +418,36 @@ namespace Network.HUB
 
             return false;
         }
+        
+        public void SetMapButton(string id) => SetMap(id);
+  
+        public async void SetMap(string newMapName)
+        {
+            if (!IsLobbyHost()) return;
+
+            try
+            {
+                ABPrint.Print("try to update map : " + newMapName, ABColor.Red);
+                
+                await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, new UpdateLobbyOptions
+                {
+                    Data = new Dictionary<string, DataObject>
+                    {
+                        { KEY_MAP, new DataObject(DataObject.VisibilityOptions.Member, newMapName) }
+                    }
+                });
+
+                _selectedMap = newMapName;
+                OnUpdatedMap?.Invoke(newMapName);
+                
+                ABPrint.Print("Map updated : " + newMapName, ABColor.Yellow);
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+        }
+
 
         #endregion
     }

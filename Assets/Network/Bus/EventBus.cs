@@ -28,6 +28,7 @@ namespace Bus
             }
         }
         
+        // ReSharper disable Unity.PerformanceAnalysis
         public static void InvokeEvent<T>(T invokedEvent) where T : struct
         {
             if(!_handlers.TryGetValue(typeof(T), out List<Delegate> subscribers)) return;
@@ -40,7 +41,9 @@ namespace Bus
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError(e);
+#if UNITY_EDITOR
+                    Debug.LogException(e);
+#endif
                 }
             }
         }

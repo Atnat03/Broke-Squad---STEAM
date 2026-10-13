@@ -97,6 +97,16 @@
                     "priority": 0
                 },
                 {
+                    "name": "Drop",
+                    "type": "Button",
+                    "id": "77508b1f-037c-421e-b798-32f65efb719a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
                     "name": "MouseMovement",
                     "type": "Value",
                     "id": "575ca3c8-7805-4ad8-8913-16253cf67e3f",
@@ -104,6 +114,46 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true,
+                    "priority": 0
+                },
+                {
+                    "name": "RightLean",
+                    "type": "Button",
+                    "id": "7390eba6-7217-4df9-9779-d1a07590da99",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "LeftLean",
+                    "type": "Button",
+                    "id": "5c1cd1ad-a541-4712-8cdf-79c398b862b0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "MouseRoll",
+                    "type": "Value",
+                    "id": "16fd4ae5-f1f2-4b51-bc51-c6f5a90bf51d",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
+                    "priority": 0
+                },
+                {
+                    "name": "Ping",
+                    "type": "Button",
+                    "id": "ed4e293e-3ddc-4cf0-a28c-ef36bd51a4af",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
                     "priority": 0
                 }
             ],
@@ -231,6 +281,28 @@
                 },
                 {
                     "name": "",
+                    "id": "ac15dd1a-4921-49c5-a2d9-fd0779a174c1",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "72bac483-e58e-45a7-8574-3723b9d18549",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Drop",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "91d9e827-85b0-48fc-a37d-d41ec9eda5cf",
                     "path": "<Keyboard>/shift",
                     "interactions": "",
@@ -259,6 +331,164 @@
                     "processors": "",
                     "groups": "",
                     "action": "MouseMovement",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d35678a4-42f3-4449-8eda-39fa8ad5ac40",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightLean",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cb2126e1-69fc-467c-9eca-39000ce03967",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LeftLean",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "2310293f-6ded-41bf-a5f0-f41f57fca6fc",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseRoll",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "b9c28fba-5b31-4621-b831-63284dc3e47f",
+                    "path": "<Mouse>/scroll/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseRoll",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "a37ead18-1580-4188-a783-c859c39371c1",
+                    "path": "<Mouse>/scroll/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseRoll",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "ae01bae1-918a-4b32-ab66-63146ca2f5af",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Ping",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Cheats",
+            "id": "308c7f7f-e9f7-47c6-b813-d321e6fa913a",
+            "actions": [
+                {
+                    "name": "Invicibility",
+                    "type": "Button",
+                    "id": "18440df2-1e21-4fd8-886c-12a5e38a4ddd",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Revive",
+                    "type": "Button",
+                    "id": "2f15499e-2604-4141-b6a7-84c10e770b6b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Heal",
+                    "type": "Button",
+                    "id": "1a10499c-9a94-4e52-995f-bdaad4773e2c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Take Damage",
+                    "type": "Button",
+                    "id": "9ead8427-7029-4b39-a273-c022a9d304a3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "084842b8-497e-4136-85a9-f85e736bb650",
+                    "path": "<Keyboard>/numpad1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Invicibility",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "19befea7-a78b-40ce-b7f0-df2793ac95a8",
+                    "path": "<Keyboard>/numpad3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Heal",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "aa968d14-a062-4219-915f-b15c7f0f2602",
+                    "path": "<Keyboard>/numpad4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Take Damage",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "dfd18ac5-2a45-4a14-b661-59520e0bb338",
+                    "path": "<Keyboard>/numpad2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Revive",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

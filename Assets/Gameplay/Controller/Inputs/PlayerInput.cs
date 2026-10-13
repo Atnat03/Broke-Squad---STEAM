@@ -24,9 +24,21 @@ namespace Gameplay.Controller
         public Action OnCrouchInputCanceled;
         
         public Action OnInteractInput;
+        public Action OnInteractInputCanceled;
+        public Action OnDropInput;
+        public Action OnDropInputCanceled;
+
+        public  Action OnLeanLeftInput;
+        public  Action OnLeanLeftInputCanceled;
+        public  Action OnLeanRightInput;
+        public  Action OnLeanRightInputCanceled;
+
+        public Action<int> OnMouseRoll;
 
         public Action<Vector2> OnMoveInput;
         public Action<Vector2> OnMouseMovement;
+
+        public Action OnPinging;
 
         private void Awake()
         {
@@ -55,10 +67,24 @@ namespace Gameplay.Controller
             _playerInputs.Gameplay.Crouch.canceled += PerformCrouchCanceled;
             
             _playerInputs.Gameplay.Interact.performed += PerformInteract;
+            _playerInputs.Gameplay.Interact.canceled += PerformInteractCanceled;
+
+            _playerInputs.Gameplay.Drop.performed += PerformDrop;
+            _playerInputs.Gameplay.Drop.canceled += PerformCanceled;
+            
+            _playerInputs.Gameplay.RightLean.performed += PerformRightLean;
+            _playerInputs.Gameplay.RightLean.canceled += PerformRightLeanCanceled;
+            _playerInputs.Gameplay.LeftLean.performed += PerformLeftLean;
+            _playerInputs.Gameplay.LeftLean.canceled += PerformLeftLeanCanceled;
             
             _playerInputs.Gameplay.MouseMovement.performed += PerformeMouseMovement;
             _playerInputs.Gameplay.MouseMovement.canceled += PerformeMouseMovement;
+
+            _playerInputs.Gameplay.MouseRoll.performed += PerformMouseRoll;
+
+            _playerInputs.Gameplay.Ping.performed += PerformPing;
         }
+        
 
         private void OnDisable()
         {
@@ -83,6 +109,10 @@ namespace Gameplay.Controller
             
             _playerInputs.Gameplay.MouseMovement.performed -= PerformeMouseMovement;
             _playerInputs.Gameplay.MouseMovement.canceled -= PerformeMouseMovement;
+            
+            _playerInputs.Gameplay.MouseRoll.performed -= PerformMouseRoll;
+            
+            _playerInputs.Gameplay.Ping.performed -= PerformPing;
 
             _playerInputs.Disable();
         }
@@ -148,10 +178,64 @@ namespace Gameplay.Controller
         {
             OnInteractInput?.Invoke();
         }
+
+        private void PerformInteractCanceled(InputAction.CallbackContext context)
+        {
+            OnInteractInputCanceled?.Invoke();
+        }
+        
+        private void PerformDrop(InputAction.CallbackContext obj)
+        {
+            OnDropInput?.Invoke();
+        }
+        
+        private void PerformCanceled(InputAction.CallbackContext obj)
+        {
+            OnDropInputCanceled?.Invoke();
+        }
         
         private void PerformeMouseMovement(InputAction.CallbackContext context)
         {
             OnMouseMovement?.Invoke(context.ReadValue<Vector2>());
+        }
+
+        private void PerformRightLean(InputAction.CallbackContext context)
+        {
+            OnLeanRightInput?.Invoke();
+        }
+
+        private void PerformRightLeanCanceled(InputAction.CallbackContext context)
+        {
+            OnLeanRightInputCanceled?.Invoke();
+        }
+
+        private void PerformLeftLean(InputAction.CallbackContext context)
+        {
+            OnLeanLeftInput?.Invoke();
+        }
+
+        private void PerformLeftLeanCanceled(InputAction.CallbackContext context)
+        {
+            OnLeanLeftInputCanceled?.Invoke();
+        }
+        
+        private void PerformMouseRoll(InputAction.CallbackContext obj)
+        {
+            float value = obj.ReadValue<float>();
+
+            if (value > 0)
+            {
+                OnMouseRoll?.Invoke(-1);
+            }
+            else
+            {
+                OnMouseRoll?.Invoke(1);
+            }
+        }
+        
+        private void PerformPing(InputAction.CallbackContext obj)
+        {
+            OnPinging?.Invoke();
         }
         
         private void OnDestroy() => _playerInputs.Dispose();

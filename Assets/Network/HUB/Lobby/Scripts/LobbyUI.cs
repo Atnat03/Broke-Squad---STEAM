@@ -1,13 +1,13 @@
 using TMPro;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using MyPrint;
+using Unity.Services.Lobbies.Models;
+using UnityEngine;
 
 namespace Network.HUB
 {
-    using System.Collections.Generic;
-    using MyPrint;
-    using Unity.Services.Lobbies.Models;
-    using UnityEngine;
-
     public class LobbyUI : MonoBehaviour
     {
         [SerializeField] private LobbyManager _lobbyManager;
@@ -26,21 +26,32 @@ namespace Network.HUB
         [SerializeField] private Transform _playerNotifParent;
         [SerializeField] private TextMeshProUGUI _lobbyNameText;
         private readonly List<GameObject> _elementPlayerList = new();
+
+        [Header("Scene List UI")] 
+        [SerializeField] private GameObject[] _onlyHostUI;
+        [SerializeField] private SceneLobbyElement _sceneListPrefab;
+        [SerializeField] private Transform _parentListScene;
+        [SerializeField] private TextMeshProUGUI _selectedSceneName;
         
         [SerializeField] private Button _startGameButton;
+        [SerializeField] private GameObject _loadingScreen;
         
         private void OnEnable()
         {
             _lobbyManager.OnJoinLobby += JoinLobbyUI;
             _lobbyManager.OnUpdateJoinedLobby += UpdateLobbyList;
             _lobbyManager.OnUpdateLobbyInfo += UpdateLobbyInfo;
+            _lobbyManager.OnUpdatedMap += UpdateSelectedMapName;
+            _lobbyManager.OnTryToJoinGame += ActivateLoadingScreen;
         }
-
+        
         private void OnDisable()
         {
             _lobbyManager.OnJoinLobby -= JoinLobbyUI;
             _lobbyManager.OnUpdateJoinedLobby -= UpdateLobbyList;
             _lobbyManager.OnUpdateLobbyInfo -= UpdateLobbyInfo;
+            _lobbyManager.OnUpdatedMap -= UpdateSelectedMapName;
+            _lobbyManager.OnTryToJoinGame -= ActivateLoadingScreen; 
             
             _elementList.Clear();
         }
@@ -49,6 +60,17 @@ namespace Network.HUB
         {
             _inLobbyCanva.SetActive(false);
             _creationCanva.SetActive(true);
+
+            int n = SceneManager.sceneCountInBuildSettings;
+        
+            for (int i = 1; i < n; i++)
+            {
+                SceneLobbyElement item = Instantiate(_sceneListPrefab, _parentListScene);
+            
+                item.SetScene(i, _lobbyManager);
+            }
+            
+            _loadingScreen.SetActive(false);
         }
 
         private void UpdateLobbyList(List<Lobby> list)
@@ -75,8 +97,11 @@ namespace Network.HUB
         private void JoinLobbyUI(Lobby lobby, bool isHost)
         {
             SwitchCanva();
-            
-            _startGameButton.gameObject.SetActive(isHost);
+
+            foreach (GameObject g in _onlyHostUI)
+            {
+                g.SetActive(isHost);
+            }
             
             ABPrint.Print("Join Lobby : " +  lobby.Name, ABColor.Yellow);
         }
@@ -105,6 +130,15 @@ namespace Network.HUB
             _inLobbyCanva.SetActive(!_inLobbyCanva.activeSelf);
             _creationCanva.SetActive(!_creationCanva.activeSelf);
         }
+        
+        private void UpdateSelectedMapName(string newName)
+        {
+            _selectedSceneName.text = newName;
+        }
+        
+        private void ActivateLoadingScreen()
+        {
+            _loadingScreen.SetActive(true);
+        }
     }
 }
-

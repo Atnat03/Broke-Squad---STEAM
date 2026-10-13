@@ -23,6 +23,7 @@ namespace Network.HUB
         public void SetConnection()
         {
             _connect.SelectScene(_sceneId);
+            _connect.TryConnect();
         }
     }
 }
