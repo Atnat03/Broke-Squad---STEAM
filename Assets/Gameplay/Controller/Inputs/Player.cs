@@ -231,6 +231,16 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""EquimentDrop"",
+                    ""type"": ""Button"",
+                    ""id"": ""a9d431c1-d975-4c5f-a4e0-198e085134e6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -475,6 +485,17 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""action"": ""Ping"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d41dced2-e70f-4ee9-aec7-1801d0404bea"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquimentDrop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -589,6 +610,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
         m_Gameplay_Lean = m_Gameplay.FindAction("Lean", throwIfNotFound: true);
         m_Gameplay_MouseRoll = m_Gameplay.FindAction("MouseRoll", throwIfNotFound: true);
         m_Gameplay_Ping = m_Gameplay.FindAction("Ping", throwIfNotFound: true);
+        m_Gameplay_EquimentDrop = m_Gameplay.FindAction("EquimentDrop", throwIfNotFound: true);
         // Cheats
         m_Cheats = asset.FindActionMap("Cheats", throwIfNotFound: true);
         m_Cheats_Invicibility = m_Cheats.FindAction("Invicibility", throwIfNotFound: true);
@@ -690,6 +712,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Lean;
     private readonly InputAction m_Gameplay_MouseRoll;
     private readonly InputAction m_Gameplay_Ping;
+    private readonly InputAction m_Gameplay_EquimentDrop;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -758,6 +781,10 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Ping => m_Wrapper.m_Gameplay_Ping;
         /// <summary>
+        /// Provides access to the underlying input action "Gameplay/EquimentDrop".
+        /// </summary>
+        public InputAction @EquimentDrop => m_Wrapper.m_Gameplay_EquimentDrop;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
@@ -825,6 +852,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @Ping.started += instance.OnPing;
             @Ping.performed += instance.OnPing;
             @Ping.canceled += instance.OnPing;
+            @EquimentDrop.started += instance.OnEquimentDrop;
+            @EquimentDrop.performed += instance.OnEquimentDrop;
+            @EquimentDrop.canceled += instance.OnEquimentDrop;
         }
 
         /// <summary>
@@ -878,6 +908,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @Ping.started -= instance.OnPing;
             @Ping.performed -= instance.OnPing;
             @Ping.canceled -= instance.OnPing;
+            @EquimentDrop.started -= instance.OnEquimentDrop;
+            @EquimentDrop.performed -= instance.OnEquimentDrop;
+            @EquimentDrop.canceled -= instance.OnEquimentDrop;
         }
 
         /// <summary>
@@ -1145,6 +1178,13 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPing(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "EquimentDrop" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEquimentDrop(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Cheats" which allows adding and removing callbacks.

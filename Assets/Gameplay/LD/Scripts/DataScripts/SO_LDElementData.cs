@@ -1,0 +1,14 @@
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+namespace Gameplay.LD
+{
+    [CreateAssetMenu(fileName = "LDElementData", menuName = "LD/New Element Data")]
+    public class SO_LDElementData : ScriptableObject
+    {
+        public GameObject Prefab;
+        public List<LDBindingData> BindingsList = new();
+        public LDFlag initialFlags;
+        [SerializeReference] public List<ModuleConfig> ModulesList = new();
+    }
+}
