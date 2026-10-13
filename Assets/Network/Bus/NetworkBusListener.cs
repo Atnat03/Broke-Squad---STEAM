@@ -14,7 +14,7 @@ namespace Bus
             _unsubscribeActions.Add(EventBus.Subscribe(listeningAction));
         }
 
-        protected void InvokeEvent<T>(T newEvent) where T : struct
+        public void InvokeEvent<T>(T newEvent) where T : struct
         {
             EventBus.InvokeEvent(newEvent);
         }
