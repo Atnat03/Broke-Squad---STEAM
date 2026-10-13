@@ -26,6 +26,11 @@ namespace Gameplay.Controller
         public float crouchHeight = 1.0f;
         public float crouchTransitionSpeed = 12f;
         
+        [Header("Steps")]
+        public float maxStepHeight = 0.4f;
+        public float minStepHeight = 0.03f;
+        public float stepProbeDistance = 0.15f;
+        public float stepForwardNudge = 0.05f;
         
         [Header("Stamina")]
         public float maxStamina = 100f;

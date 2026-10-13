@@ -150,7 +150,7 @@ namespace Gameplay.Controller
             _stamina = new PlayerStamina(profile, (current, max) =>
                 InvokeEvent(new StaminaChanged_EVENT { Current = current, MaxStamina = max }));
 
-            _motor = new PlayerMotor(_rb, transform, profile, ground, _input);
+            _motor = new PlayerMotor(_rb, transform, profile, ground, _input, body);
             _motor.OnJump += () => PlaySound(_jumpSound, 0.5f);
             _input.OnJumpPressed += _motor.BufferJump;
 
