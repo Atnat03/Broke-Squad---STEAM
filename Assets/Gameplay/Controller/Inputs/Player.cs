@@ -203,17 +203,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""priority"": 0
                 },
                 {
-                    ""name"": ""RightLean"",
-                    ""type"": ""Button"",
-                    ""id"": ""7390eba6-7217-4df9-9779-d1a07590da99"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false,
-                    ""priority"": 0
-                },
-                {
-                    ""name"": ""LeftLean"",
+                    ""name"": ""Lean"",
                     ""type"": ""Button"",
                     ""id"": ""5c1cd1ad-a541-4712-8cdf-79c398b862b0"",
                     ""expectedControlType"": """",
@@ -432,23 +422,23 @@ public partial class @Player: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""d35678a4-42f3-4449-8eda-39fa8ad5ac40"",
-                    ""path"": ""<Keyboard>/r"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""RightLean"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""cb2126e1-69fc-467c-9eca-39000ce03967"",
                     ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""LeftLean"",
+                    ""action"": ""Lean"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e99a2fa7-8068-4cd0-8b96-0d5540435868"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Lean"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -617,8 +607,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
         m_Gameplay_Interact = m_Gameplay.FindAction("Interact", throwIfNotFound: true);
         m_Gameplay_Drop = m_Gameplay.FindAction("Drop", throwIfNotFound: true);
         m_Gameplay_MouseMovement = m_Gameplay.FindAction("MouseMovement", throwIfNotFound: true);
-        m_Gameplay_RightLean = m_Gameplay.FindAction("RightLean", throwIfNotFound: true);
-        m_Gameplay_LeftLean = m_Gameplay.FindAction("LeftLean", throwIfNotFound: true);
+        m_Gameplay_Lean = m_Gameplay.FindAction("Lean", throwIfNotFound: true);
         m_Gameplay_MouseRoll = m_Gameplay.FindAction("MouseRoll", throwIfNotFound: true);
         m_Gameplay_Ping = m_Gameplay.FindAction("Ping", throwIfNotFound: true);
         m_Gameplay_EquimentDrop = m_Gameplay.FindAction("EquimentDrop", throwIfNotFound: true);
@@ -720,8 +709,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Interact;
     private readonly InputAction m_Gameplay_Drop;
     private readonly InputAction m_Gameplay_MouseMovement;
-    private readonly InputAction m_Gameplay_RightLean;
-    private readonly InputAction m_Gameplay_LeftLean;
+    private readonly InputAction m_Gameplay_Lean;
     private readonly InputAction m_Gameplay_MouseRoll;
     private readonly InputAction m_Gameplay_Ping;
     private readonly InputAction m_Gameplay_EquimentDrop;
@@ -781,13 +769,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @MouseMovement => m_Wrapper.m_Gameplay_MouseMovement;
         /// <summary>
-        /// Provides access to the underlying input action "Gameplay/RightLean".
+        /// Provides access to the underlying input action "Gameplay/Lean".
         /// </summary>
-        public InputAction @RightLean => m_Wrapper.m_Gameplay_RightLean;
-        /// <summary>
-        /// Provides access to the underlying input action "Gameplay/LeftLean".
-        /// </summary>
-        public InputAction @LeftLean => m_Wrapper.m_Gameplay_LeftLean;
+        public InputAction @Lean => m_Wrapper.m_Gameplay_Lean;
         /// <summary>
         /// Provides access to the underlying input action "Gameplay/MouseRoll".
         /// </summary>
@@ -859,12 +843,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @MouseMovement.started += instance.OnMouseMovement;
             @MouseMovement.performed += instance.OnMouseMovement;
             @MouseMovement.canceled += instance.OnMouseMovement;
-            @RightLean.started += instance.OnRightLean;
-            @RightLean.performed += instance.OnRightLean;
-            @RightLean.canceled += instance.OnRightLean;
-            @LeftLean.started += instance.OnLeftLean;
-            @LeftLean.performed += instance.OnLeftLean;
-            @LeftLean.canceled += instance.OnLeftLean;
+            @Lean.started += instance.OnLean;
+            @Lean.performed += instance.OnLean;
+            @Lean.canceled += instance.OnLean;
             @MouseRoll.started += instance.OnMouseRoll;
             @MouseRoll.performed += instance.OnMouseRoll;
             @MouseRoll.canceled += instance.OnMouseRoll;
@@ -918,12 +899,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @MouseMovement.started -= instance.OnMouseMovement;
             @MouseMovement.performed -= instance.OnMouseMovement;
             @MouseMovement.canceled -= instance.OnMouseMovement;
-            @RightLean.started -= instance.OnRightLean;
-            @RightLean.performed -= instance.OnRightLean;
-            @RightLean.canceled -= instance.OnRightLean;
-            @LeftLean.started -= instance.OnLeftLean;
-            @LeftLean.performed -= instance.OnLeftLean;
-            @LeftLean.canceled -= instance.OnLeftLean;
+            @Lean.started -= instance.OnLean;
+            @Lean.performed -= instance.OnLean;
+            @Lean.canceled -= instance.OnLean;
             @MouseRoll.started -= instance.OnMouseRoll;
             @MouseRoll.performed -= instance.OnMouseRoll;
             @MouseRoll.canceled -= instance.OnMouseRoll;
@@ -1180,19 +1158,12 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMouseMovement(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "RightLean" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Lean" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnRightLean(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "LeftLean" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnLeftLean(InputAction.CallbackContext context);
+        void OnLean(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "MouseRoll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

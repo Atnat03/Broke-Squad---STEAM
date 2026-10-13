@@ -16,6 +16,9 @@ namespace Gameplay.Controller
 
         public float TargetSpeed { get; set; }
         public bool JumpAllowed { get; set; }
+        
+        public bool CanMove { get; set; } = true;
+        private Vector2 MoveInput => CanMove ? _input.Move : Vector2.zero;
 
         public Vector3 HorizontalVelocity => new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 
@@ -52,7 +55,7 @@ namespace Gameplay.Controller
         {
             _coyoteTimer = _ground.IsGrounded ? _profile.coyoteTime : _coyoteTimer - dt;
             _jumpBufferTimer -= dt;
-
+            
             ApplyHorizontal(dt);
             ApplyJump();
             ApplyGravity(dt);
@@ -62,7 +65,7 @@ namespace Gameplay.Controller
         {
             float speed = TargetSpeed * (ForwardDot < -0.1f ? _profile.backwardSpeedMultiplier : 1f);
 
-            Vector3 input = Vector3.ClampMagnitude(new Vector3(_input.Move.x, 0f, _input.Move.y), 1f);
+            Vector3 input = Vector3.ClampMagnitude(new Vector3(MoveInput.x, 0f, MoveInput.y), 1f);
             Vector3 target = _transform.TransformDirection(input) * speed;
 
             float accel = _ground.IsGrounded
@@ -76,7 +79,7 @@ namespace Gameplay.Controller
 
         private void ApplyJump()
         {
-            if (!JumpAllowed || _jumpBufferTimer <= 0f || _coyoteTimer <= 0f) return;
+            if (!CanMove || !JumpAllowed || _jumpBufferTimer <= 0f || _coyoteTimer <= 0f) return;
 
             float g = Mathf.Abs(Physics.gravity.y) * _profile.gravityMultiplier;
             float jumpVel = Mathf.Sqrt(2f * g * _profile.jumpHeight);
@@ -92,7 +95,7 @@ namespace Gameplay.Controller
         private void ApplyGravity(float dt)
         {
             Vector3 v = _rb.linearVelocity;
-            bool noInput = _input.Move.sqrMagnitude < 0.01f;
+            bool noInput = MoveInput.sqrMagnitude < 0.01f;
 
             if (_ground.IsGrounded && noInput && v.y <= 0.01f) return;
 
