@@ -19,7 +19,7 @@ namespace Gameplay.Other
             _win.OnValueChanged += OnWin;
             _loose.OnValueChanged += OnLoose;
             
-            ListenToEvent<OnTryToWin_EVENT>(TryWin);
+            ListenToEvent<OnTryToWin_EVENT>(TryToWin);
 
             if (IsServer)
             {
@@ -30,7 +30,6 @@ namespace Gameplay.Other
 
         private void SetHasGoal(OnGrabGoal_EVENT data)
         {
-            ABPrint.Print("SetHasGoal");
             _hasGoal = true;   
         }
         private void SetDropGoal(OnDropGoal_EVENT data) => _hasGoal = false;
@@ -38,10 +37,18 @@ namespace Gameplay.Other
         private void OnWin(bool previousValue, bool newValue) { }
         private void OnLoose(bool previousValue, bool newValue) { }
 
-        void TryWin(OnTryToWin_EVENT data)
+        void TryToWin(OnTryToWin_EVENT data)
+        {
+            TryWin();
+        }
+        
+        void TryWin()
         {
             if (!IsServer)
+            {
+                TryWinRpc();
                 return;
+            }
 
             ABPrint.Print("Try to win");
             
@@ -55,7 +62,7 @@ namespace Gameplay.Other
             }
         }
 
-        //[Rpc(SendTo.Server)]
-        //private void TryWinRpc() => TryWin();
+        [Rpc(SendTo.Server)]
+        private void TryWinRpc() => TryWin();
     }
 }

@@ -9,7 +9,7 @@ namespace Gameplay.Items
     public class ShootModule : ActionModule, IFirstAction, IServerAction
     {
         [SerializeField] private SO_Item _ammoPrefab;
-        [SerializeField] private Vector3 _shootPos;
+        [SerializeField] private Vector3 _shootPos_SECURITY;
         [SerializeField] private float _shootForce;
         
         public ICondition Condition => ConditionParent;
@@ -28,7 +28,14 @@ namespace Gameplay.Items
                 aimPoint = hit.point;
             }
 
-            Vector3 origin = cam.TransformPoint(_shootPos);
+            Vector3 pos = _shootPos_SECURITY;
+            
+            if(Context.Core.transform.childCount > 0)
+            {
+                pos = Context.Core.transform.GetChild(0).position;
+            }
+            
+            Vector3 origin = pos;
             Vector3 direction = (aimPoint - origin).normalized;
             
             Context.SendToServer(this, new OnModuleDoAction_EVENT
@@ -60,12 +67,12 @@ namespace Gameplay.Items
                 pickup.Setup(item);
             }
             
-            ABPrint.Print("Spawn new ammo at : " + data.Position, ABColor.Green);
-            
             if (ammo.TryGetComponent(out Rigidbody rb))
             {
+                rb.useGravity = false;
+                pickup.OnCollide += () => rb.useGravity = true;
+                
                 rb.AddForce(data.Direction * data.ValueF, ForceMode.Impulse);
-                ABPrint.Print("Impulse new ammo", ABColor.Green);
             }
         }
     }

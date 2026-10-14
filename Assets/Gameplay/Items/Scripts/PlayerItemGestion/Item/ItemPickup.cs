@@ -12,6 +12,7 @@ namespace Gameplay.Items
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(BoxCollider))]
     [RequireComponent(typeof(NetworkTransform))]
+    [RequireComponent(typeof(NetworkRigidbody))]
     public class ItemPickup : NetworkBusListener, IInteractable
     {
         [SerializeField] private float _rackRatio = 0.5f;
@@ -31,6 +32,8 @@ namespace Gameplay.Items
         private ItemInstance _instance;
         
         public ItemInstance Instance => _instance ??= new ItemInstance(_itemIndex);
+
+        public Action OnCollide;
         
         public override void OnNetworkDespawn()
         {
@@ -120,6 +123,8 @@ namespace Gameplay.Items
         {
             if(_instance == null)
                 return;
+            
+            OnCollide?.Invoke();
             
             foreach (var passif in _instance.Passifs)
             {
