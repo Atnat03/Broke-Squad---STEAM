@@ -12,9 +12,10 @@ namespace Gameplay.LD
         [SerializeField] private SO_LDElementData _data;
 
         private readonly NetworkVariable<int> _dataIndex = new NetworkVariable<int>(-1);
+        private readonly NetworkVariable<int> _stateFlags = new(0);
+        
         private LDElementContext _context;
         private readonly Dictionary<int, LDElementModule> _modulesById = new ();
-        private readonly NetworkVariable<int> _stateFlags = new(0);
         public event Action<LDFlag> FlagsChanged;
         
         public void PrepareOnServer(int registryIndex)
