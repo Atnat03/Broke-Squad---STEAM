@@ -62,11 +62,6 @@ namespace Gameplay.LD
 
         private void BuildFromData()
         {
-            if(_data.Prefab != null)
-            {
-                Instantiate(_data.Prefab, transform);
-            }
-
             _context = new LDElementContext(this);
 
             foreach (ModuleConfig config in _data.ModulesList)
