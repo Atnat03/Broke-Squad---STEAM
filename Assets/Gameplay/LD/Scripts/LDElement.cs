@@ -29,9 +29,7 @@ namespace Gameplay.LD
             
             if(IsServer)
                 _dataIndex.Value = _registry.IndexOf(_data);
-
-            Debug.Log($"[LD] OnNetworkSpawn: {name} index {_dataIndex.Value}");
-
+            
             if (_registry == null)
             {
                 Debug.LogError($"[LD] {name} has no registry assigned");
@@ -86,13 +84,8 @@ namespace Gameplay.LD
 
         private void OnTriggered(int index, LDActivation activation)
         {
-            Debug.Log("[LD] OnTriggered");
-
             LDBindingData binding = _data.BindingsList[index];
             if(!ConditionsPass(binding, activation)) return;
-
-            Debug.Log("[LD] conditions ok");
-
             foreach (int id in _data.BindingsList[index].EffectIDs)
             {
                 if (!TryGetModule<LDEffectModule>(id, out var effect)) continue;
