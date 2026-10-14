@@ -13,8 +13,6 @@ namespace Gameplay.Items
 
         public void OnStartHolding()
         {
-            ABPrint.Print("Start Holding");
-            
             Context.SendEventToEveryone(new OnModuleDoAction_EVENT
             {
                 ValueB = true
@@ -23,8 +21,6 @@ namespace Gameplay.Items
 
         public void OnStopHolding()
         {
-            ABPrint.Print("Stop Holding");
-            
             Context.SendEventToEveryone(new OnModuleDoAction_EVENT
             {
                 ValueB = false
