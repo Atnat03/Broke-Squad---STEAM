@@ -116,5 +116,11 @@ namespace Gameplay.Items
             if (GetModule(state.ModuleIndex) is IReplicatedModule r)
                 r.SetState(state.Value);
         }
+        
+        public void SetAnchor(Transform anchor, ulong hostId)
+        {
+            foreach (var m in AllModules())
+                if (m is IAnchorAware a) a.SetAnchor(anchor, hostId);
+        }
     }
 }

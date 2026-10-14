@@ -12,15 +12,18 @@ namespace Gameplay.Items
         private SO_Item _itemData;
         
         public ItemInstance Instance { get; private set; }
+        public ulong HostId { get; private set; }
         
         public void SetInstance(ItemInstance instance, Camera cam, PlayerInventory inventory)
         {
             Instance = instance;
+            HostId = inventory.NetworkObjectId;
 
             ItemContext context = new ItemContext(this, cam, inventory);
-            
             foreach (var module in Instance.AllModules())
                 module.Initialize(context);
+
+            Instance.SetAnchor(transform, HostId);
         }
 
         public void SubscribeToInput(PlayerInput input)

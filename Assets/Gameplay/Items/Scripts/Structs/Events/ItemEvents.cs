@@ -25,6 +25,7 @@ namespace Gameplay.Items
         public Vector3 Position;
         public Vector3 Direction;
         public Quaternion Rotation;
+        public ulong HostId;
         
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
@@ -38,6 +39,7 @@ namespace Gameplay.Items
             serializer.SerializeValue(ref Position);
             serializer.SerializeValue(ref Direction);
             serializer.SerializeValue(ref Rotation);
+            serializer.SerializeValue(ref HostId);
         }
 
         public NetworkObject GetTarget()
