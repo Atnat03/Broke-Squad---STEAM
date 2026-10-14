@@ -41,21 +41,13 @@ namespace Gameplay.UI.Scripts
 
         private void AddPing()
         {
-            ABPrint.Print("Pinging 1 ", ABColor.Red);
-            
             if (!IsOwner) return;
             
-            ABPrint.Print("Pinging 2 ", ABColor.Red);
-
             if (!_canPing) return;
             
-            ABPrint.Print("Pinging 3 ", ABColor.Red);
-		
             if (Physics.Raycast(_cam.transform.position, _cam.transform.forward, out RaycastHit hit, 10000, _layerMask ,QueryTriggerInteraction.Ignore))
             {
                 _elapsedTime = _timerBetweenPing;
-                
-                ABPrint.Print("Pinging 4 ", ABColor.Red);
                 
                 if (IsServer)
                     AddPingObserverRpc(hit.point + hit.normal * 0.1f);

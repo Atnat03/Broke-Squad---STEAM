@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using Bus;
+using MyPrint;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -6,16 +9,34 @@ namespace Gameplay.IA
 {
     public class LockDownManager : NetworkBusListener
     {
+        public static LockDownManager instance;
+
+        [Header("Settings")] 
+        [SerializeField] private float _lockDownDuration = 10f;
+        
         [Header("View")]
         [SerializeField] private GameObject _lockDownPrefab;
         
         public bool IsLockDown => _isLockDown.Value;
+        public float RatioDuration => _currentDuration.Value / _lockDownDuration;
         
         private readonly NetworkVariable<bool> _isLockDown = new NetworkVariable<bool>();
+        private readonly NetworkVariable<float> _currentDuration = new NetworkVariable<float>();
+
+        private List<GuardBehavior> _guardList = new List<GuardBehavior>();
+        
+        public Action OnStartLockDown;
+        public Action OnEndLockDown;
+
+        private void Awake()
+        {
+            if(instance == null) instance = this;
+        }
 
         public override void OnNetworkSpawn()
-        {
+        { 
             _isLockDown.OnValueChanged += OnLockDownChange;
+            _currentDuration.OnValueChanged += OnDurationChange;
             
             if(IsServer)
                 _isLockDown.Value = false;
@@ -24,7 +45,6 @@ namespace Gameplay.IA
             ListenToEvent<OnLockDownEnd_EVENT>(TryEndLockDown);
         }
 
-                
         #region Start Lock Down
 
         private void TryStartLockDown(OnLockDownStart_EVENT ev)
@@ -44,6 +64,7 @@ namespace Gameplay.IA
             }
 
             _isLockDown.Value = true;
+            _currentDuration.Value = _lockDownDuration;
         }
 
         [Rpc(SendTo.Server)]
@@ -82,6 +103,57 @@ namespace Gameplay.IA
         private void OnLockDownChange(bool previousValue, bool newValue)
         {
             _lockDownPrefab.SetActive(newValue);
+            
+            if (newValue)
+                OnStartLockDown?.Invoke();
+            else
+                OnEndLockDown?.Invoke();
         }
+        
+        
+        private void OnDurationChange(float previousValue, float newValue)
+        {
+            
+        }
+
+        private void Update()
+        {
+            if (!IsServer) return;
+
+            if (IsLockDown)
+            {
+                if (!CanStartCooldownToStop())
+                {
+                    if(!Mathf.Approximately(_currentDuration.Value, _lockDownDuration))
+                        _currentDuration.Value = _lockDownDuration;
+                    return;
+                }
+                
+                _currentDuration.Value -= Time.deltaTime;
+                if (_currentDuration.Value <= 0)
+                {
+                    EndLockDown();
+                }
+            }
+        }
+        
+        #region Guard List
+        
+        public void SubscribeGuard(GuardBehavior guard) => _guardList.Add(guard);
+        public void UnSubscribeGuard(GuardBehavior guard) => _guardList.Remove(guard);
+
+        bool CanStartCooldownToStop()
+        {
+            foreach (GuardBehavior g in _guardList)
+            {
+                if (g.CurrentState is G_PursuitState || g.CurrentState is G_InvestigateState)
+                    return false;
+            }
+            
+            return true;
+        }
+        
+        
+        #endregion
     }
 }

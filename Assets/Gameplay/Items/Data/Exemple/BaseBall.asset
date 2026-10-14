@@ -24,7 +24,7 @@ MonoBehaviour:
   - rid: 7203101111232233668
   PassifList:
   - rid: 7203100960112246929
-  - rid: 7203100995761471812
+  - rid: 7203101114004144391
   references:
     version: 2
     RefIds:
@@ -70,11 +70,6 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 1
         _canDamagePlayer: 0
-    - rid: 7203100995761471812
-      type: {class: CreateSuspiciousSoundModule, ns: Gameplay.Items, asm: Assembly-CSharp}
-      data:
-        _miniVelocityToDoSound: 5
-        _suspiciousSoundSettings: {fileID: 11400000, guid: 8029d65674b61e844acad36af99f168f, type: 2}
     - rid: 7203101111232233668
       type: {class: ThrowModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -86,3 +81,8 @@ MonoBehaviour:
         _minTorqueForce: {x: 0, y: 0, z: 0}
         _maxTorqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: {x: 0.2, y: 0, z: 0.7}
+    - rid: 7203101114004144391
+      type: {class: CreateSuspiciousSoundModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _miniVelocityToDoSound: 1
+        _suspiciousSoundSettings: {fileID: 11400000, guid: 8029d65674b61e844acad36af99f168f, type: 2}

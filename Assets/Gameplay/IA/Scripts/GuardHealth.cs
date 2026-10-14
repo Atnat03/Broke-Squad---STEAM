@@ -18,6 +18,8 @@ namespace Gameplay.IA
         
         private readonly NetworkVariable<float> _currentHealth = new NetworkVariable<float>(0);
         private readonly NetworkVariable<bool> _isKO = new NetworkVariable<bool>();
+
+        public GuardBehavior GuardBrain;
         
         //Action
         public Action OnTakeDamage;
@@ -42,7 +44,7 @@ namespace Gameplay.IA
             
             _currentHealth.Value -= damage;
             
-            OnTakeDamage?.Invoke();
+            //OnTakeDamage?.Invoke();
 
             if (_currentHealth.Value <= 0)
             {

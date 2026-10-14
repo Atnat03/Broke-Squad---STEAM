@@ -17,8 +17,19 @@ namespace Gameplay.Items
         {
             if (!CanUse()) return;
 
-            Vector3 origin = Context.Camera.transform.position + _shootPos;
-            Vector3 direction = Context.Camera.transform.forward;
+            Transform cam = Context.Camera.transform;
+
+            Ray ray = new Ray(cam.position, cam.forward);
+
+            Vector3 aimPoint = ray.origin + ray.direction * 100f;
+
+            if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+            {
+                aimPoint = hit.point;
+            }
+
+            Vector3 origin = cam.TransformPoint(_shootPos);
+            Vector3 direction = (aimPoint - origin).normalized;
             
             Context.SendToServer(this, new OnModuleDoAction_EVENT
             {
@@ -35,7 +46,9 @@ namespace Gameplay.Items
 
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {
-            NetworkObject ammo = Context.SpawnGameObject(_ammoPrefab.PickupPrefab.gameObject, data.Position, _ammoPrefab.PickupPrefab.transform.rotation);
+            Quaternion rotation = Quaternion.LookRotation(data.Direction);
+            
+            NetworkObject ammo = Context.SpawnGameObject(_ammoPrefab.PickupPrefab.gameObject, data.Position, rotation);
 
             ItemInstance item = Context.Inventory.GetCurrentItemInHand();
             
