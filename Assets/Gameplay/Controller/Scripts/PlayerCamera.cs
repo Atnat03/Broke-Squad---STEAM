@@ -1,10 +1,11 @@
 using System;
+using Bus;
 using UnityEngine;
 
 namespace Gameplay.Controller
 {
     [RequireComponent(typeof(Camera))]
-    public class PlayerCamera : MonoBehaviour
+    public class PlayerCamera : MonoBusListener
     {
         
         [SerializeField] private CameraProfileSO profile;
@@ -65,7 +66,11 @@ namespace Gameplay.Controller
         private bool _leanMode;
         
         public bool IsLeanMode => _leanMode;
-        public bool LocksController => _leanMode && _lockControllerOnLean;
+        public bool LocksController => (_leanMode && _lockControllerOnLean) || (_override?.LocksController ?? false);
+        
+        public bool HasOverride => _override != null && _override.LocksController;
+        public void ReleaseOverride() => _override?.Release();
+
         private float _leanModeValue;
         [SerializeField] private LayerMask leanObstacleMask; 
         
@@ -86,6 +91,10 @@ namespace Gameplay.Controller
         private float _bobPhase;
         private float _bobWeight;
         private float _backwardFactor;
+        
+        private ICameraOverride _override;
+        private float _lastWeight;
+        public float OverrideWeight => _override?.Weight ?? 0f;
 
         private void Awake()
         {
@@ -116,7 +125,9 @@ namespace Gameplay.Controller
         {
             if(autoUpdateProfileValue) GetDataFromProfile();
             
-            if (_leanMode)
+            if (_override != null && player.IsDown) _override.Release();
+
+            if (_leanMode && _override == null)
             {
                 float dir = _invertLeanMode ? -1f : 1f;
                 _leanModeValue = Mathf.Clamp(_leanModeValue + _mouseMovement.x * _leanModeSensitivity * dir, -1f, 1f);
@@ -126,6 +137,7 @@ namespace Gameplay.Controller
                 _yRotation += _mouseMovement.x * sensX;
                 _xRotation -= _mouseMovement.y * sensY;
                 _xRotation = Mathf.Clamp(_xRotation, _minLookAngle, _maxLookAngle);
+                _override?.ProcessLook(ref _yRotation, ref _xRotation);
             }
 
             player.SetYaw(_yRotation);
@@ -147,11 +159,43 @@ namespace Gameplay.Controller
             transform.rotation = look * Quaternion.Euler(0f, 0f, bobRoll + leanRoll);
 
             transform.position = _smoothPos + yawOnly * (bobOffset + leanOffset);
+            
+            var pose = new CameraPose
+            {
+                position = _smoothPos + yawOnly * (bobOffset + leanOffset),
+                rotation = look * Quaternion.Euler(0f, 0f, bobRoll + leanRoll),
+                fov = _cam.fieldOfView
+            };
+
+            if (_override != null)
+            {
+                _override.Tick(dt);
+                pose = _override.Apply(pose);
+                if (_override.IsFinished) _override = null;
+            }
+
+            transform.SetPositionAndRotation(pose.position, pose.rotation);
+            _cam.fieldOfView = pose.fov;
+            float w = OverrideWeight;
+            if (!Mathf.Approximately(w, _lastWeight))
+            {
+                _lastWeight = w;
+                InvokeEvent(new KeyholeWeightChanged_EVENT { Weight = w });
+            }
+            
         }
 
         private void OnMouseMove(Vector2 value) => _mouseMovement = value;
         private void EnterLeanMode() => _leanMode = true;
 
+        public void SetOverride(ICameraOverride o)
+        {
+            _override = o;
+            _leanMode = false;
+            _leanModeValue = 0f;
+            o.OnEnter(ref _yRotation, ref _xRotation);
+        }
+        
         private void ExitLeanMode()
         {
             _leanMode = false;

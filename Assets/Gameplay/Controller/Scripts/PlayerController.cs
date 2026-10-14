@@ -299,6 +299,12 @@ namespace Gameplay.Controller
 
         #endregion
 
+        public void SnapTo(Vector3 position, float yawDegrees)
+        {
+            _rb.position = position;
+            _rb.linearVelocity = Vector3.zero;   
+            SetYaw(yawDegrees);
+        }
         
     }
 }
