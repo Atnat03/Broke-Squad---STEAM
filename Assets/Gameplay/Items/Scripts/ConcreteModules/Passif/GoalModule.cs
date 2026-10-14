@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Gameplay.Items
 {
     [Serializable]
-    public class GoalModule : ItemModule, IPassif
+    public class GoalModule : ItemModule, IPassif, IServerAction
     {
         public void OnCollide(Collision collision, ItemPickup item) { }
 
@@ -13,9 +13,7 @@ namespace Gameplay.Items
 
         public void OnStartHolding()
         {
-            ABPrint.Print("Start Holding");
-            
-            Context.SendEventToEveryone(new OnModuleDoAction_EVENT
+            Context.SendToServer(this, new OnModuleDoAction_EVENT
             {
                 ValueB = true
             });
@@ -23,12 +21,22 @@ namespace Gameplay.Items
 
         public void OnStopHolding()
         {
-            ABPrint.Print("Stop Holding");
-            
-            Context.SendEventToEveryone(new OnModuleDoAction_EVENT
+            Context.SendToServer(this, new OnModuleDoAction_EVENT
             {
                 ValueB = false
             });
+        }
+
+        public void ServerExecute(OnModuleDoAction_EVENT data)
+        {
+            if (data.ValueB)
+            {
+                Context.Inventory.InvokeEvent(new OnGrabGoal_EVENT());
+            }
+            else
+            {
+                Context.Inventory.InvokeEvent(new OnDropGoal_EVENT());
+            }
         }
     }
 }

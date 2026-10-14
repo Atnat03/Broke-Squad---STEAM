@@ -12,6 +12,7 @@ namespace Gameplay.Items
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(BoxCollider))]
     [RequireComponent(typeof(NetworkTransform))]
+    [RequireComponent(typeof(NetworkRigidbody))]
     public class ItemPickup : NetworkBusListener, IInteractable
     {
         [SerializeField] private float _rackRatio = 0.5f;
@@ -23,22 +24,16 @@ namespace Gameplay.Items
         readonly NetworkVariable<bool> _onRack = new();
         Vector3 _baseSize, _baseScale;
         
-        [SerializeField] private SO_Item _itemIndex; 
+        [SerializeField] private SO_Item _itemIndex;
         private Outline _outline;
         
         public Outline outline => _outline;
         
         private ItemInstance _instance;
         
-        public ItemInstance Instance
-        {
-            get
-            {
-                    _instance = new ItemInstance(_itemIndex);
+        public ItemInstance Instance => _instance ??= new ItemInstance(_itemIndex);
 
-                return _instance;
-            }
-        }
+        public Action OnCollide;
         
         public override void OnNetworkDespawn()
         {
@@ -116,10 +111,11 @@ namespace Gameplay.Items
                 ItemPickUpRef = NetworkObject
             });
         }
-
+        
         public void Setup(ItemInstance instance)
         {
             _instance = instance;
+            instance?.SetAnchor(transform, NetworkObjectId);
             DetectNotGrabbable();
         }
         
@@ -127,6 +123,8 @@ namespace Gameplay.Items
         {
             if(_instance == null)
                 return;
+            
+            OnCollide?.Invoke();
             
             foreach (var passif in _instance.Passifs)
             {
@@ -138,7 +136,7 @@ namespace Gameplay.Items
         {
             if (Instance != null)
             {
-                foreach (IPassif passif in Instance.Passifs)
+                foreach (IPassif passif in _instance.Passifs)
                 {
                     if (passif is NotGrabbableModule)
                     {
