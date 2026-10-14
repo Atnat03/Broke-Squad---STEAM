@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Bus;
 using Unity.Netcode;
 using Gameplay.Controller;
 using Gameplay.Controller.Gameplay.Controller;
@@ -14,11 +15,14 @@ namespace Gameplay.IA
     [RequireComponent(typeof(GuardMotor))]
     [RequireComponent(typeof(GuardHealth))]
     [RequireComponent(typeof(GuardLineOfSight))]
-    public class GuardBehavior : NetworkBehaviour
+    public class GuardBehavior : NetworkBusListener
     {
         [SerializeField] G_PatrolState _patrolState;
+        [SerializeField] G_PatrolState _patrolState_LOCKDOWN;
         [SerializeField] G_InvestigateState _investigateState;
+        [SerializeField] G_InvestigateState _investigateState_LOCKDOWN;
         [SerializeField] G_PursuitState _pursuitState;
+        [SerializeField] G_PursuitState _pursuitState_LOCKDOWN;
         [SerializeField] G_KoState _koState;
         
         [HideInInspector] public GuardHealth GuardHealth;
@@ -26,18 +30,47 @@ namespace Gameplay.IA
         [HideInInspector] public GuardLineOfSight GuardSight;
 
         [SerializeField] private MeshRenderer _meshRenderer;
+
+        [Header("Sound")] 
+        [SerializeField] private float _strengthToBeingAwake = 10;
         
         private StateMachine _stateMachine;
+
+        public IState CurrentState => _stateMachine.CurrentState;
         
-        public override void OnNetworkSpawn()
+        private LockDownManager _lockDownManager;
+        
+        private bool IsLockDown => _lockDownManager != null && _lockDownManager.IsLockDown;
+
+        [HideInInspector] public Transform PlayerTarget = null;
+        [HideInInspector] public Transform SuspectTarget = null;
+
+        public Action OnDetectSound;
+
+        private void Awake()
         {
             GuardHealth = GetComponent<GuardHealth>();
             GuardMotor = GetComponent<GuardMotor>();
             GuardSight = GetComponent<GuardLineOfSight>();
+            GuardSight.GuardBrain = this;
+            GuardHealth.GuardBrain = this;
+        }
 
+        public override void OnNetworkSpawn()
+        {
             GuardHealth.OnStun += HandleStun;
             
+            _lockDownManager = LockDownManager.instance;
+            _lockDownManager.SubscribeGuard(this);
+            
             SetUpStateMachine();
+        }
+        
+        public override void OnNetworkDespawn()
+        {
+            GuardHealth.OnStun -= HandleStun;
+            
+            _lockDownManager.UnSubscribeGuard(this);
         }
 
         private void SetUpStateMachine()
@@ -47,6 +80,13 @@ namespace Gameplay.IA
             _patrolState.SetBehaviour(this);
             _pursuitState.SetBehaviour(this);
             _investigateState.SetBehaviour(this);
+            
+            /*
+             _patrolState_LOCKDOWN.SetBehaviour(this);
+            _pursuitState_LOCKDOWN.SetBehaviour(this);
+            _investigateState_LOCKDOWN.SetBehaviour(this);
+            */
+            
             _koState.SetBehaviour(this);
             
             //Get new target
@@ -54,11 +94,9 @@ namespace Gameplay.IA
             GuardSight.OnGetNewTarget += onGetNewTargetPatrol.Trigger;
             At(_patrolState, _pursuitState, onGetNewTargetPatrol);
             
-            
             TriggerPredicate onGetNewTargetInvestigate = new TriggerPredicate();
             _investigateState.OnFindPlayer += onGetNewTargetInvestigate.Trigger;
             At(_investigateState, _pursuitState, onGetNewTargetInvestigate);
-            
             
             //Loose target
             TriggerPredicate onLooseTarget = new TriggerPredicate();
@@ -70,10 +108,13 @@ namespace Gameplay.IA
             _investigateState.OnInvestigationEnded += onEndInvestigate.Trigger;
             At(_investigateState, _patrolState, onEndInvestigate);
             
-            
             TriggerPredicate onGetNewSuspiciousTarget = new TriggerPredicate();
             GuardSight.OnGetNewSuspicious += onGetNewSuspiciousTarget.Trigger;
             At(_patrolState, _investigateState, onGetNewSuspiciousTarget);
+            
+            TriggerPredicate onDetectSound = new TriggerPredicate();
+            OnDetectSound += onDetectSound.Trigger;
+            At(_patrolState, _investigateState, onDetectSound);
             
             // From patrol to investigate by suspicious sound
             
@@ -88,17 +129,17 @@ namespace Gameplay.IA
             _stateMachine.SetState(_patrolState);
         }
         
+        
         void At(IState from, IState to, IPredicate condition) => _stateMachine.AddTransition(from, to, condition);
         void Any(IState to, IPredicate condition) => _stateMachine.AddAnyTransition(to, condition);
 
         private void Update()
         {
-            if(IsServer)
-            {
-                _stateMachine.Update();
+            if (!IsServer && _stateMachine == null) return;
+            
+            _stateMachine.Update();
 
-                ABPrint.Print(_stateMachine.CurrentStateName, ABColor.Orange);
-            }
+            ABPrint.Print(_stateMachine.CurrentStateName, ABColor.Orange);
         }
 
         private void LateUpdate()
@@ -107,7 +148,6 @@ namespace Gameplay.IA
         }
         
         public void SetColor(Color color) => _meshRenderer.material.color = color;
-        
         
         private void HandleStun(bool isStunned)
         {
@@ -118,6 +158,17 @@ namespace Gameplay.IA
             else
             {
                 GuardMotor.StartAgent();
+            }
+        }
+
+        public void TriggerBySound(float f, Transform newTarget)
+        {
+            if (f >= _strengthToBeingAwake)
+            {
+                ABPrint.Print("suspicious sound detected !! ", ABColor.Orange);
+                
+                SuspectTarget = newTarget;
+                OnDetectSound?.Invoke();
             }
         }
     }

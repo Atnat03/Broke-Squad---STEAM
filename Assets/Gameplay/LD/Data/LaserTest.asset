@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 183e628d66377fc49bf18d443c4b4dbe, type: 3}
+  m_Name: LaserTest
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.SO_LDElementData
+  Prefab: {fileID: 3005239043139423282, guid: 206d9e477a363d249a1d74f4fc7c8ef9, type: 3}
+  BindingsList:
+  - TriggerID: 2
+    Action: 0
+    Delay: 0
+    CancelsPendingDelays: 0
+    ConditionIDs: 
+    EffectIDs: 01000000
+  initialFlags: 0
+  ModulesList:
+  - rid: 4871551455405801564
+  - rid: 7203101114004144393
+  references:
+    version: 2
+    RefIds:
+    - rid: 4871551455405801564
+      type: {class: PlayerEnterTriggerConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
+      data:
+        ModuleID: 2
+        Center: {x: 1.1641641, y: 0.6747685, z: -0.00000011920929}
+        Size: {x: 1.9936209, y: 0.13491213, z: 0.10030866}
+    - rid: 7203101114004144393
+      type: {class: ActivateLockDownConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
+      data:
+        ModuleID: 1

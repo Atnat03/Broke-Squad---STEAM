@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Bus;
+using Gameplay.Other.SuspiciousSound;
+using MyPrint;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
@@ -15,6 +17,7 @@ namespace Gameplay.Items
         [SerializeField] private float _rackRatio = 0.5f;
         private Collider[] _collidersOffOnRack;
         
+        private NetworkTransform _nt;
         private Rigidbody _rb;
         private BoxCollider _box;
         readonly NetworkVariable<bool> _onRack = new();
@@ -47,7 +50,13 @@ namespace Gameplay.Items
             _outline = GetComponentInChildren<Outline>();
             _rb = GetComponent<Rigidbody>();
             _box = GetComponent<BoxCollider>();
-
+            _nt = GetComponent<NetworkTransform>();
+            
+            _nt.InLocalSpace = true;
+            _nt.SyncScaleX = false;
+            _nt.SyncScaleY = false;
+            _nt.SyncScaleZ = false;
+            
             _baseSize = _box.size;
             _baseScale = transform.localScale;
 
@@ -58,6 +67,7 @@ namespace Gameplay.Items
                     if (c != _box) list.Add(c);
                 _collidersOffOnRack = list.ToArray();
             }
+            
         }
 
         public override void OnNetworkSpawn()
@@ -79,12 +89,16 @@ namespace Gameplay.Items
         void ApplyRack()
         {
             bool on = _onRack.Value;
-            Debug.Log($"[{(IsServer ? "SERVER" : "CLIENT")}] ApplyRack({on}) on {name}, colliders={_collidersOffOnRack.Length}");
 
             _rb.isKinematic = on;
             _rb.useGravity = !on;
-            foreach (var c in _collidersOffOnRack) if (c != null) c.enabled = !on;
-            _box.size = on ? _baseSize / 4f : _baseSize;
+            foreach (var c in _collidersOffOnRack)
+            {
+                if (c != null)
+                    c.enabled = !on;
+            }
+            
+            _box.size = on ? _baseSize / _rackRatio : _baseSize;
             transform.localScale = on ? _baseScale * _rackRatio : _baseScale;
         }
 
@@ -102,18 +116,66 @@ namespace Gameplay.Items
                 ItemPickUpRef = NetworkObject
             });
         }
-        
-        public void Setup(ItemInstance instance) => _instance = instance;
+
+        public void Setup(ItemInstance instance)
+        {
+            _instance = instance;
+            DetectNotGrabbable();
+        }
         
         public void OnCollisionEnter(Collision collision)
         {
             if(_instance == null)
                 return;
-
+            
             foreach (var passif in _instance.Passifs)
             {
                 passif.OnCollide(collision, this);
             }
         }
+
+        void DetectNotGrabbable()
+        {
+            if (Instance != null)
+            {
+                foreach (IPassif passif in Instance.Passifs)
+                {
+                    if (passif is NotGrabbableModule)
+                    {
+                        DisableOutlineRpc();
+                        
+                        Destroy(this);
+                        
+                        return;
+                    }
+                }
+            }
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void DisableOutlineRpc()
+        {
+            Destroy(outline);
+        }
+
+        public void CreateSuspiciousSound(ulong clientId, float force, float distance)
+        {
+            if (!IsServer)
+            {
+                CreateSuspiciousSoundRpc(clientId, force, distance);
+                return;
+            }
+            
+            InvokeEvent(new OnCreateSuspiciousSound_EVENT
+            {
+                FromClientID = clientId,
+                Force = force,
+                MaxDistance = distance,
+                Position = transform.position
+            });
+        }
+
+        [Rpc(SendTo.Server)]
+        void CreateSuspiciousSoundRpc(ulong clientId, float force, float distance) => CreateSuspiciousSound(clientId, force, distance);
     }
 }

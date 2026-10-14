@@ -9,22 +9,26 @@ namespace Gameplay.LD
     public class LDElement : NetworkBehaviour
     {
         [SerializeField] private SO_LDElementRegistry _registry;
+        [SerializeField] private SO_LDElementData _data;
+
         private readonly NetworkVariable<int> _dataIndex = new NetworkVariable<int>(-1);
-        private SO_LDElementData _data;
+        private readonly NetworkVariable<int> _stateFlags = new(0);
+        
         private LDElementContext _context;
         private readonly Dictionary<int, LDElementModule> _modulesById = new ();
-        private readonly NetworkVariable<int> _stateFlags = new(0);
         public event Action<LDFlag> FlagsChanged;
-
+        
         public void PrepareOnServer(int registryIndex)
         {
             Debug.Log("[LD] PrepareOnServer: " + registryIndex);
-            _dataIndex.Value = registryIndex;
         }
 
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
+            
+            if(IsServer)
+                _dataIndex.Value = _registry.IndexOf(_data);
 
             Debug.Log($"[LD] OnNetworkSpawn: {name} index {_dataIndex.Value}");
 
@@ -34,7 +38,6 @@ namespace Gameplay.LD
                 return;
             }
 
-            _data = _registry.Get(_dataIndex.Value);
             if(_data == null)
             {
                 Debug.LogError($"[LD] {name} has invalid data index {_dataIndex.Value}");
@@ -59,11 +62,6 @@ namespace Gameplay.LD
 
         private void BuildFromData()
         {
-            if(_data.Prefab != null)
-            {
-                Instantiate(_data.Prefab, transform);
-            }
-
             _context = new LDElementContext(this);
 
             foreach (ModuleConfig config in _data.ModulesList)

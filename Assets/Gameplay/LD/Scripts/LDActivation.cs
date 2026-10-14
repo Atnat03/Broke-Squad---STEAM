@@ -15,7 +15,7 @@ namespace Gameplay.LD
             serializer.SerializeValue(ref InstigatorClientId);
             serializer.SerializeValue(ref InstigatorObjectId);
             serializer.SerializeValue(ref Position);
-            serializer.SerializeValue(ref HasInstigator);
+            serializer.SerializeValue(ref HasInstigator); 
         }
 
         public LDActivation(NetworkObject instigator, Vector3 position)

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4872937307564207100}
   - component: {fileID: 7393676402829598410}
   - component: {fileID: 1445514565686470048}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Key
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,7 +83,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.25994468, y: 0.08506848, z: 0.47357106}
+  m_Size: {x: 0.3, y: 0.1, z: 0.6}
   m_Center: {x: 0.0012671947, y: 0.0038016513, z: 0.0024754107}
 --- !u!114 &4872937307564207100
 MonoBehaviour:
@@ -97,14 +97,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2858330144
+  GlobalObjectIdHash: 4014918059
   InScenePlacedSourceGlobalObjectIdHash: 4014918059
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 1
+  m_InScenePlaced: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -171,8 +171,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ItemPickup
   ShowTopMostFoldoutHeaderGroup: 1
+  _rackRatio: 0.5
   _itemIndex: {fileID: 11400000, guid: a51b361679f917647acb63f1bbcbed76, type: 2}
-  _outline: {fileID: 4112138051776036082}
 --- !u!1001 &311826068656155284
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -225,6 +225,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_KeyVisual
       objectReference: {fileID: 0}
+    - target: {fileID: 7202695838721188802, guid: 347693302e6e3694fa61abf1bc137fe4, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -232,6 +236,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7202695838721188802, guid: 347693302e6e3694fa61abf1bc137fe4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4112138051776036082}
+    - targetCorrespondingSourceObject: {fileID: 7202695838721188802, guid: 347693302e6e3694fa61abf1bc137fe4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6485404999444357004}
   m_SourcePrefab: {fileID: 100100000, guid: 347693302e6e3694fa61abf1bc137fe4, type: 3}
 --- !u!4 &5908036910165211973 stripped
 Transform:
@@ -261,3 +268,24 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!65 &6485404999444357004
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7468878705668770134}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.12193201, y: 0.039105855, z: 0.23262405}
+  m_Center: {x: 0, y: -9.313226e-10, z: 0.0000000037252903}

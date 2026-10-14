@@ -8,8 +8,6 @@ namespace Gameplay.Equipment
 
     public class CoatRack : NetworkBusListener, IInteractable
     {
-        [SerializeField] private float _ratioSize = 0.5f;
-        
         public void Interact(ulong clientId)
         {
             if (IsServer)
@@ -30,12 +28,12 @@ namespace Gameplay.Equipment
 
             ItemInstance item = playerSender.GetCurrentItemInHand();
             if (item == null) return;
-
-            ItemPickup pickup = Instantiate(item.Data.PickupPrefab, transform.position, transform.rotation);
-            pickup.Setup(item);
             
+            ItemPickup pickup = Instantiate(item.Data.PickupPrefab, transform.position, transform.rotation);
             NetworkObject pickupNO = pickup.GetComponent<NetworkObject>();
+            
             pickupNO.Spawn();
+            pickup.Setup(item);
 
             if (!pickupNO.TrySetParent(NetworkObject, worldPositionStays: true))
                 Debug.LogWarning("Reparent failed");
