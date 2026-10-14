@@ -21,6 +21,8 @@ namespace Gameplay.Items
         
         public void OnCollide(Collision collision, ItemPickup item)
         {
+            if (collision.collider == item.GetComponent<Collider>()) return;
+            
             float speed = collision.relativeVelocity.magnitude;
             
             if (collision.gameObject.TryGetComponent<IDamageable>(out var damage))

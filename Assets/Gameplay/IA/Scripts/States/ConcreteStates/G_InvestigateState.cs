@@ -32,7 +32,7 @@ namespace Gameplay.IA
             _isInvestigating = false;
             _routine = null;
 
-            Transform target = _lineOfSight.SuspiciousTarget;
+            Transform target = _behavior.SuspectTarget;
             _hasDestination = target != null;
 
             if (!_hasDestination)

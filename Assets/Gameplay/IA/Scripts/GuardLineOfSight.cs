@@ -1,30 +1,44 @@
 ﻿using System;
 using MyPrint;
+using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
-namespace Gameplay.IA.Scripts
+namespace Gameplay.IA
 {
-    public class GuardLineOfSight : MonoBehaviour
+    public class GuardLineOfSight : NetworkBehaviour
     {
         // ---------- Joueur ----------
         public bool CanSeeTarget { get; private set; }
-        public Transform Target { get; private set; }
-        public float DetectionProgress => _detectionLevel > 0f ? Mathf.Clamp01(_detectionTimer / _detectionLevel) : 1f;
+
+        public Transform Target
+        {
+            get => _visibleTargetPlayer;
+            private set => GuardBrain.PlayerTarget = _visibleTargetPlayer;
+        }
+        public float DetectionProgress => _detectionLevel > 0f ? Mathf.Clamp01(_detectionTimer.Value / _detectionLevel) : 1f;
 
         public event Action<Transform> OnTargetSeen;
         public event Action OnGetNewTarget;
         public event Action OnTargetLost;
+        public event Action<bool> OnNotifyTargetSeen;
         public event Action<float> OnDetectionProgressChanged;
         public event Action<Transform> OnDetectionCompleted;
 
         // ---------- Suspicieux ----------
         public bool CanSeeSuspicious { get; private set; }
-        public Transform SuspiciousTarget { get; private set; }
-        public float SuspiciousProgress => _suspiciousLevel > 0f ? Mathf.Clamp01(_suspiciousTimer / _suspiciousLevel) : 1f;
+
+        public Transform SuspiciousTarget
+        {
+            get => _visibleTargetSuspicious;
+            private set => GuardBrain.SuspectTarget = _visibleTargetSuspicious;
+        }
+        public float SuspiciousProgress => _suspiciousLevel > 0f ? Mathf.Clamp01(_suspiciousTimer.Value / _suspiciousLevel) : 1f;
 
         public event Action<Transform> OnSuspiciousSeen;
         public event Action OnGetNewSuspicious;
         public event Action OnSuspiciousLost;
+        public event Action<bool> OnNotifySuspectTargetSeen;
         public event Action<float> OnSuspiciousProgressChanged;
 
         [Header("Vision")]
@@ -52,8 +66,8 @@ namespace Gameplay.IA.Scripts
         private readonly Collider[] _bufferSuspicious = new Collider[8];
 
         private float _nextCheck;
-        private float _detectionTimer;
-        private float _suspiciousTimer;
+        private readonly NetworkVariable<float> _detectionTimer = new();
+        private NetworkVariable<float> _suspiciousTimer = new();
         private Transform _visibleTargetPlayer;
         private Transform _visibleTargetSuspicious;
 
@@ -61,8 +75,25 @@ namespace Gameplay.IA.Scripts
         public float Angle => _angle;
         public Vector3 EyePosition => transform.position + Vector3.up * _eyeHeight;
 
+        public GuardBehavior GuardBrain;
+
+        public override void OnNetworkSpawn()
+        {
+            _detectionTimer.OnValueChanged += OnDetectionTimerChange;
+            _suspiciousTimer.OnValueChanged += OnSuspiciousTimerChange;
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            _detectionTimer.OnValueChanged -= OnDetectionTimerChange;
+            _suspiciousTimer.OnValueChanged -= OnSuspiciousTimerChange;
+        }
+
         private void Update()
         {
+            if (!IsServer)
+                return;
+            
             // La vision est testée à intervalle régulier,
             // mais les timers sont mis à jour à chaque frame.
             if (Time.time >= _nextCheck)
@@ -79,24 +110,23 @@ namespace Gameplay.IA.Scripts
         private void UpdatePlayerDetection()
         {
             CanSeeTarget = _visibleTargetPlayer != null;
-
-            float previousTimer = _detectionTimer;
-
+            
             if (CanSeeTarget)
             {
                 // Détection : le timer monte jusqu'au seuil.
-                _detectionTimer = Mathf.Min(_detectionTimer + Time.deltaTime * _detectionSpeed, _detectionLevel);
+                _detectionTimer.Value = Mathf.Min(_detectionTimer.Value + Time.deltaTime * _detectionSpeed, _detectionLevel);
 
                 if (Target == null)
                 {
                     // La cible n'est acquise qu'une fois le seuil atteint.
-                    if (_detectionTimer >= _detectionLevel)
+                    if (_detectionTimer.Value >= _detectionLevel)
                     {
                         Target = _visibleTargetPlayer;
                         
                         OnGetNewTarget?.Invoke();
                         OnTargetSeen?.Invoke(Target);
                         OnDetectionCompleted?.Invoke(Target);
+                        OnNotifyTargetStateRpc(true);
                     }
                 }
                 else
@@ -108,41 +138,40 @@ namespace Gameplay.IA.Scripts
             else
             {
                 // Oubli : le timer descend jusqu'à 0.
-                _detectionTimer = Mathf.Max(_detectionTimer - Time.deltaTime * _forgettingSpeed, 0f);
+                _detectionTimer.Value = Mathf.Max(_detectionTimer.Value - Time.deltaTime * _forgettingSpeed, 0f);
 
                 // La cible n'est perdue qu'une fois le timer vidé.
-                if (_detectionTimer <= 0f && Target != null)
+                if (_detectionTimer.Value <= 0f && Target != null)
                 {
                     Target = null;
                     OnTargetLost?.Invoke();
+                    OnNotifyTargetStateRpc(false);
                 }
             }
-            
-            // On ne notifie que si la valeur a réellement changé.
-            if (!Mathf.Approximately(previousTimer, _detectionTimer))
-                OnDetectionProgressChanged?.Invoke(DetectionProgress);
         }
+
+        [Rpc(SendTo.Everyone)]
+        private void OnNotifyTargetStateRpc(bool state) => OnNotifyTargetSeen?.Invoke(state);
 
         private void UpdateSuspiciousDetection()
         {
             CanSeeSuspicious = _visibleTargetSuspicious != null;
-
-            float previousTimer = _suspiciousTimer;
-
+            
             if (CanSeeSuspicious)
             {
                 // Détection : le timer monte jusqu'au seuil.
-                _suspiciousTimer = Mathf.Min(_suspiciousTimer + Time.deltaTime * _suspiciousSpeed, _suspiciousLevel);
+                _suspiciousTimer.Value = Mathf.Min(_suspiciousTimer.Value + Time.deltaTime * _suspiciousSpeed, _suspiciousLevel);
 
                 if (SuspiciousTarget == null)
                 {
                     // L'objet n'est acquis qu'une fois le seuil atteint.
-                    if (_suspiciousTimer >= _suspiciousLevel)
+                    if (_suspiciousTimer.Value >= _suspiciousLevel)
                     {
                         SuspiciousTarget = _visibleTargetSuspicious;
 
                         OnGetNewSuspicious?.Invoke();
                         OnSuspiciousSeen?.Invoke(SuspiciousTarget);
+                        OnNotifySuspiciousTargetStateRpc(true);
                     }
                 }
                 else
@@ -154,21 +183,22 @@ namespace Gameplay.IA.Scripts
             else
             {
                 // Oubli : le timer descend jusqu'à 0.
-                _suspiciousTimer = Mathf.Max(_suspiciousTimer - Time.deltaTime * _suspiciousForgettingSpeed, 0f);
+                _suspiciousTimer.Value = Mathf.Max(_suspiciousTimer.Value - Time.deltaTime * _suspiciousForgettingSpeed, 0f);
 
                 // L'objet n'est oublié qu'une fois le timer vidé.
-                if (_suspiciousTimer <= 0f && SuspiciousTarget != null)
+                if (_suspiciousTimer.Value <= 0f && SuspiciousTarget != null)
                 {
                     SuspiciousTarget = null;
                     OnSuspiciousLost?.Invoke();
+                    OnNotifySuspiciousTargetStateRpc(false);
                 }
             }
-
-            // On ne notifie que si la valeur a réellement changé.
-            if (!Mathf.Approximately(previousTimer, _suspiciousTimer))
-                OnSuspiciousProgressChanged?.Invoke(SuspiciousProgress);
         }
 
+        [Rpc(SendTo.Everyone)]
+        private void OnNotifySuspiciousTargetStateRpc(bool state) => OnNotifySuspectTargetSeen?.Invoke(state);
+
+        
         private Transform FindVisible(LayerMask mask, Collider[] buffer)
         {
             int count = Physics.OverlapSphereNonAlloc(transform.position, _radius, buffer, mask, QueryTriggerInteraction.Ignore);
@@ -191,6 +221,20 @@ namespace Gameplay.IA.Scripts
             }
 
             return null;
+        }
+        
+        private void OnDetectionTimerChange(float previousValue, float newValue)
+        {
+            if (Mathf.Abs(previousValue - newValue) > 0.001f)
+            {
+                OnDetectionProgressChanged?.Invoke(_detectionLevel > 0f ? Mathf.Clamp01(newValue / _detectionLevel) : 1f);
+            }
+        }
+        
+        private void OnSuspiciousTimerChange(float previousValue, float newValue)
+        {
+            if(Math.Abs(previousValue - newValue) < 0.01f)
+                OnSuspiciousProgressChanged?.Invoke(newValue / _suspiciousLevel);
         }
 
 #if UNITY_EDITOR

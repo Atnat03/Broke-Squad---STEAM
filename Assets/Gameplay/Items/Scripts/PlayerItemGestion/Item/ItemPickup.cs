@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Bus;
+using Gameplay.Other.SuspiciousSound;
 using MyPrint;
 using Unity.Netcode;
 using Unity.Netcode.Components;
@@ -126,7 +127,7 @@ namespace Gameplay.Items
         {
             if(_instance == null)
                 return;
-
+            
             foreach (var passif in _instance.Passifs)
             {
                 passif.OnCollide(collision, this);
@@ -156,5 +157,25 @@ namespace Gameplay.Items
         {
             Destroy(outline);
         }
+
+        public void CreateSuspiciousSound(ulong clientId, float force, float distance)
+        {
+            if (!IsServer)
+            {
+                CreateSuspiciousSoundRpc(clientId, force, distance);
+                return;
+            }
+            
+            InvokeEvent(new OnCreateSuspiciousSound_EVENT
+            {
+                FromClientID = clientId,
+                Force = force,
+                MaxDistance = distance,
+                Position = transform.position
+            });
+        }
+
+        [Rpc(SendTo.Server)]
+        void CreateSuspiciousSoundRpc(ulong clientId, float force, float distance) => CreateSuspiciousSound(clientId, force, distance);
     }
 }
