@@ -36,6 +36,8 @@ namespace Gameplay.Items
         private readonly NetworkVariable<int> _heldItemId = new(-1);
         private ItemCore _currentItem;
         
+        public ItemInstance GetHeldInstance() => _currentItem != null ? _currentItem.Instance : null;
+        
         //Actions
         public Action<int> OnSetupInventory;
         public Action OnPickupItem;
@@ -260,6 +262,7 @@ namespace Gameplay.Items
         
         public bool HasItemInHand() => _heldItemId.Value != -1;
         
+        
         [Rpc(SendTo.Server)]
         private void DropItemRpc(Vector3 pos)
         {
@@ -267,8 +270,8 @@ namespace Gameplay.Items
             if (item == null) return;
             
             ItemPickup pickup = Instantiate(item.Data.PickupPrefab, pos, transform.rotation);
-            pickup.Setup(item);
             pickup.GetComponent<NetworkObject>().Spawn();
+            pickup.Setup(item);
                 
             ClearCurrentSlot();
         }

@@ -18,30 +18,37 @@ namespace Gameplay.IA
         [SerializeField] private float _attackRange = 2;
         [SerializeField] private float _attackCooldown = 1.5f;
         private bool _isAttacking = false;
-
+        private Coroutine _attackCoroutine;
+        
         public Action OnAttacking;
         
         public override void OnEnter()
         {
             _behavior.SetColor(_color);
             
-            Transform newTarget = _lineOfSight.Target;
+            Transform newTarget = _behavior.PlayerTarget;
 
             if (!newTarget) return;
             
             _target = newTarget;
             if (newTarget.TryGetComponent(out PlayerHealth player)) _playerHealth = player;
             
+            _behavior.InvokeEvent(new OnLockDownStart_EVENT());
+            
             _motor.SetSpeed(_pursuitSpeed);
         }
 
         public override void OnUpdate()
         {
+            if(_target == null)
+                return;
+            
             bool isToClose = (_myTransform.position - _target.position).sqrMagnitude < _attackRange;
 
             if (isToClose && !_isAttacking)
             {
-                _behavior.StartCoroutine(AttackRoutine());
+                if(_attackCoroutine == null)
+                    _attackCoroutine = _behavior.StartCoroutine(AttackRoutine());
             }
             else
             {
@@ -64,6 +71,8 @@ namespace Gameplay.IA
                 
                 _motor.StartAgent();
                 _isAttacking = false;
+
+                _attackCoroutine = null;
             }
         }
     }

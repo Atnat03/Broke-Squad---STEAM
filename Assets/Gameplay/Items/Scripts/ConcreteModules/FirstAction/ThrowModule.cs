@@ -40,9 +40,11 @@ namespace Gameplay.Items
 
         public void StopSecondAction()
         {
+            if (_chargeCoroutine == null) return;
+
             Context.StopCoroutine(_chargeCoroutine);
-            
-            //Pour l'ui local
+            _chargeCoroutine = null;
+
             Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
             {
                 ClientId = Context.Inventory.OwnerClientId,
@@ -51,20 +53,22 @@ namespace Gameplay.Items
                 ValueB = false,
             });
 
+            ItemInstance held = Context.Inventory.GetHeldInstance();
+            if (held == null || held.Data == null || held.Data.PickupPrefab == null) return;
+
             Vector3 pos = Context.Camera.transform.position;
             Vector3 forward = Context.Camera.transform.forward;
-            float maxSize = Context.Inventory.GetCurrentItemInHand().Data.PickupPrefab.transform.localScale.z;
-            
+            float maxSize = held.Data.PickupPrefab.transform.localScale.z;
+
             Vector3 finalPos = GetThrowStartPos(pos, forward, maxSize);
-            
-            //Pour le server (le lancer)
+
             Context.SendToServer(this, new OnModuleDoAction_EVENT
-            { 
+            {
                 ValueF = _charge,
                 Rotation = Context.Camera.transform.rotation,
                 Position = finalPos,
             });
-            
+
             ConsumeCondition(new OnModuleDoAction_EVENT());
         }
 
@@ -109,7 +113,7 @@ namespace Gameplay.Items
             
             //Torque
             Vector3 currentTorqueForce = Vector3.Lerp(_minTorqueForce, _maxTorqueForce, Mathf.Clamp01(data.ValueF));
-            rb.AddTorque(Context.Camera.transform.rotation * currentTorqueForce, ForceMode.VelocityChange);
+            rb.AddTorque(camRot * currentTorqueForce, ForceMode.VelocityChange);
             
             foreach (IPassif passif in thrown.Instance.Passifs)
             {
@@ -132,8 +136,8 @@ namespace Gameplay.Items
             if (newObj == null) return null;
             if (!newObj.TryGetComponent(out ItemPickup pickup)) return null;
             
-            pickup.Setup(item);
             pickup.GetComponent<NetworkObject>().Spawn();
+            pickup.Setup(item);
 
             Context.Inventory.ClearCurrentSlot();
             return pickup;

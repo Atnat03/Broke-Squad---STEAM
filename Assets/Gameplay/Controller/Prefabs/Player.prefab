@@ -890,6 +890,7 @@ Transform:
   - {fileID: 5104489689690218889}
   - {fileID: 2503866950617896307}
   - {fileID: 3042942995402423090}
+  - {fileID: 6239929513650457466}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8471785753695333050
@@ -1055,7 +1056,7 @@ MonoBehaviour:
   ground:
     groundLayer:
       serializedVersion: 2
-      m_Bits: 65
+      m_Bits: 1089
     checkDist: 0.15
     radiusMultiplier: 0.9
     skin: 0.1
@@ -1080,7 +1081,14 @@ MonoBehaviour:
     - Joueur/Walk 2
     - Joueur/Walk 3
     - Joueur/Walk 4
-    _settings: {fileID: 11400000, guid: 8029d65674b61e844acad36af99f168f, type: 2}
+    _settings: {fileID: 0}
+  ladderChecker:
+    ladderLayer:
+      serializedVersion: 2
+      m_Bits: 1024
+    checkDistance: 0.35
+    lowRayHeight: 0.3
+    highRayOffset: 0.1
   playerCamera: {fileID: 8757740270961154763}
   UI: {fileID: 3733190074482631680}
   health: {fileID: 7777815450667916752}
@@ -1620,6 +1628,7 @@ GameObject:
   - component: {fileID: 7886903856503900242}
   - component: {fileID: 2488830388692849024}
   - component: {fileID: 9165374328735143844}
+  - component: {fileID: 7520677197054471513}
   m_Layer: 7
   m_Name: Inventory
   m_TagString: Untagged
@@ -1713,6 +1722,23 @@ MonoBehaviour:
   _emptyIcon: {fileID: 21300000, guid: abcad81f89a6e3f4eb5276c2db0d595f, type: 3}
   _pickUpSound: 
   _dropSound: 
+--- !u!114 &7520677197054471513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3123897319235820941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69f32149bb1f42fcaa0510cbb4323229, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Equipment.PlayerEquipment
+  ShowTopMostFoldoutHeaderGroup: 1
+  _packPackParent: {fileID: 6239929513650457466}
+  _playerInputs: {fileID: 88644022890520242}
+  _camera: {fileID: 8333721531469245462}
+  _rangeDrop: 2
 --- !u!1 &3152614203818353611
 GameObject:
   m_ObjectHideFlags: 0
@@ -2195,6 +2221,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.UseModuleView
   _uiUse: {fileID: 2683151830643941304}
   _useText: {fileID: 7156752449948875134}
+--- !u!1 &4763456765550172174
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6239929513650457466}
+  m_Layer: 7
+  m_Name: BackPackParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6239929513650457466
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4763456765550172174}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.123, z: -0.47}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7133925661517429810}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4775993779250425507
 GameObject:
   m_ObjectHideFlags: 0

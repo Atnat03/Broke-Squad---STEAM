@@ -68,7 +68,6 @@ GameObject:
   - component: {fileID: 7557211392896550594}
   - component: {fileID: 2545241054833993765}
   - component: {fileID: 7048009606435426760}
-  - component: {fileID: 1324083175097731848}
   - component: {fileID: 8497313736861059894}
   - component: {fileID: 4350852574953870354}
   m_Layer: 0
@@ -198,55 +197,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &1324083175097731848
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2347137409202986441}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbeeb924d692441ca2d868a9cfc97468, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.Door
-  ShowTopMostFoldoutHeaderGroup: 1
-  _doorID: 0
-  _eventOpen:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2546254149331435970}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Open
-          m_BoolArgument: 0
-        m_CallState: 2
-  _eventClose:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2546254149331435970}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Close
-          m_BoolArgument: 0
-        m_CallState: 2
-  _canOpenWithoutKey: 1
-  _toggleCooldown: 0.3
-  _openSound: Enviro/Open Door
-  _closeSound: Enviro/Close Door
-  _tryToOpenClosedDoorSound: Enviro/Try Open Closed Door
 --- !u!114 &8497313736861059894
 MonoBehaviour:
   m_ObjectHideFlags: 0

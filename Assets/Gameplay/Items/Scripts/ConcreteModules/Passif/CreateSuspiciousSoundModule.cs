@@ -1,5 +1,6 @@
 ﻿using System;
 using Gameplay.Other.SuspiciousSound;
+using MyPrint;
 using UnityEngine;
 
 namespace Gameplay.Items
@@ -16,7 +17,10 @@ namespace Gameplay.Items
             
             if (speed <= _miniVelocityToDoSound) return;
             
-            Context.SendSuspiciousSound(Context.Inventory.OwnerClientId, item.transform.position, _suspiciousSoundSettings);
+            item.CreateSuspiciousSound(
+                item.OwnerClientId, 
+                _suspiciousSoundSettings.Force,
+                _suspiciousSoundSettings.MaxDistance);
         }
 
         public void OnThrow(Rigidbody rb)

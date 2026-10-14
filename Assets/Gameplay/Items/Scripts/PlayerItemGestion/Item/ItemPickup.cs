@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Bus;
+using Gameplay.Other.SuspiciousSound;
+using MyPrint;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
@@ -12,6 +14,15 @@ namespace Gameplay.Items
     [RequireComponent(typeof(NetworkTransform))]
     public class ItemPickup : NetworkBusListener, IInteractable
     {
+        [SerializeField] private float _rackRatio = 0.5f;
+        private Collider[] _collidersOffOnRack;
+        
+        private NetworkTransform _nt;
+        private Rigidbody _rb;
+        private BoxCollider _box;
+        readonly NetworkVariable<bool> _onRack = new();
+        Vector3 _baseSize, _baseScale;
+        
         [SerializeField] private SO_Item _itemIndex; 
         private Outline _outline;
         
@@ -28,15 +39,67 @@ namespace Gameplay.Items
                 return _instance;
             }
         }
+        
+        public override void OnNetworkDespawn()
+        {
+            _onRack.OnValueChanged -= OnRackChanged;
+        }
 
         private void Awake()
         {
             _outline = GetComponentInChildren<Outline>();
+            _rb = GetComponent<Rigidbody>();
+            _box = GetComponent<BoxCollider>();
+            _nt = GetComponent<NetworkTransform>();
+            
+            _nt.InLocalSpace = true;
+            _nt.SyncScaleX = false;
+            _nt.SyncScaleY = false;
+            _nt.SyncScaleZ = false;
+            
+            _baseSize = _box.size;
+            _baseScale = transform.localScale;
+
+            if (_collidersOffOnRack == null || _collidersOffOnRack.Length == 0)
+            {
+                var list = new List<Collider>();
+                foreach (var c in GetComponentsInChildren<Collider>(true))
+                    if (c != _box) list.Add(c);
+                _collidersOffOnRack = list.ToArray();
+            }
+            
         }
 
         public override void OnNetworkSpawn()
         {
             SetOutline(false);
+            _onRack.OnValueChanged += OnRackChanged;
+            ApplyRack();
+        }
+        
+        private void OnRackChanged(bool previous, bool current) => ApplyRack();
+
+        public void SetOnRack()
+        {
+            if (!IsServer) return;
+            _onRack.Value = true;
+            ApplyRack();
+        }
+
+        void ApplyRack()
+        {
+            bool on = _onRack.Value;
+
+            _rb.isKinematic = on;
+            _rb.useGravity = !on;
+            foreach (var c in _collidersOffOnRack)
+            {
+                if (c != null)
+                    c.enabled = !on;
+            }
+            
+            _box.size = on ? _baseSize / _rackRatio : _baseSize;
+            transform.localScale = on ? _baseScale * _rackRatio : _baseScale;
         }
 
         public void SetOutline(bool state)
@@ -53,18 +116,66 @@ namespace Gameplay.Items
                 ItemPickUpRef = NetworkObject
             });
         }
-        
-        public void Setup(ItemInstance instance) => _instance = instance;
+
+        public void Setup(ItemInstance instance)
+        {
+            _instance = instance;
+            DetectNotGrabbable();
+        }
         
         public void OnCollisionEnter(Collision collision)
         {
             if(_instance == null)
                 return;
-
+            
             foreach (var passif in _instance.Passifs)
             {
                 passif.OnCollide(collision, this);
             }
         }
+
+        void DetectNotGrabbable()
+        {
+            if (Instance != null)
+            {
+                foreach (IPassif passif in Instance.Passifs)
+                {
+                    if (passif is NotGrabbableModule)
+                    {
+                        DisableOutlineRpc();
+                        
+                        Destroy(this);
+                        
+                        return;
+                    }
+                }
+            }
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void DisableOutlineRpc()
+        {
+            Destroy(outline);
+        }
+
+        public void CreateSuspiciousSound(ulong clientId, float force, float distance)
+        {
+            if (!IsServer)
+            {
+                CreateSuspiciousSoundRpc(clientId, force, distance);
+                return;
+            }
+            
+            InvokeEvent(new OnCreateSuspiciousSound_EVENT
+            {
+                FromClientID = clientId,
+                Force = force,
+                MaxDistance = distance,
+                Position = transform.position
+            });
+        }
+
+        [Rpc(SendTo.Server)]
+        void CreateSuspiciousSoundRpc(ulong clientId, float force, float distance) => CreateSuspiciousSound(clientId, force, distance);
     }
 }
