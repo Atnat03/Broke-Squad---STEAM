@@ -136,8 +136,8 @@ namespace Gameplay.Items
             if (newObj == null) return null;
             if (!newObj.TryGetComponent(out ItemPickup pickup)) return null;
             
-            pickup.Setup(item);
             pickup.GetComponent<NetworkObject>().Spawn();
+            pickup.Setup(item);
 
             Context.Inventory.ClearCurrentSlot();
             return pickup;

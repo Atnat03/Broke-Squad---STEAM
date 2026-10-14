@@ -270,8 +270,8 @@ namespace Gameplay.Items
             if (item == null) return;
             
             ItemPickup pickup = Instantiate(item.Data.PickupPrefab, pos, transform.rotation);
-            pickup.Setup(item);
             pickup.GetComponent<NetworkObject>().Spawn();
+            pickup.Setup(item);
                 
             ClearCurrentSlot();
         }
