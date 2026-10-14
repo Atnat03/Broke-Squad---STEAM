@@ -11,11 +11,12 @@ namespace Gameplay.IA
         // ---------- Joueur ----------
         public bool CanSeeTarget { get; private set; }
 
-        public Transform Target
-        {
+        public Transform Target{ get; private set; }
+        /*{
             get => _visibleTargetPlayer;
             private set => GuardBrain.PlayerTarget = _visibleTargetPlayer;
-        }
+        }*/
+        
         public float DetectionProgress => _detectionLevel > 0f ? Mathf.Clamp01(_detectionTimer.Value / _detectionLevel) : 1f;
 
         public event Action<Transform> OnTargetSeen;
@@ -28,11 +29,11 @@ namespace Gameplay.IA
         // ---------- Suspicieux ----------
         public bool CanSeeSuspicious { get; private set; }
 
-        public Transform SuspiciousTarget
-        {
+        public Transform SuspiciousTarget{ get; private set; }
+        /*{
             get => _visibleTargetSuspicious;
             private set => GuardBrain.SuspectTarget = _visibleTargetSuspicious;
-        }
+        }*/
         public float SuspiciousProgress => _suspiciousLevel > 0f ? Mathf.Clamp01(_suspiciousTimer.Value / _suspiciousLevel) : 1f;
 
         public event Action<Transform> OnSuspiciousSeen;
@@ -235,6 +236,32 @@ namespace Gameplay.IA
         {
             if(Math.Abs(previousValue - newValue) < 0.01f)
                 OnSuspiciousProgressChanged?.Invoke(newValue / _suspiciousLevel);
+        }
+        
+        public void ForceTarget(Transform newTarget)
+        {
+            if (newTarget == null)
+            {
+                if (Target != null)
+                {
+                    Target = null;
+                    _detectionTimer.Value = 0f; 
+                    OnTargetLost?.Invoke();
+                    OnNotifyTargetStateRpc(false);
+                }
+                return;
+            }
+
+            if (Target == newTarget) return;
+
+
+            Target = newTarget;
+            _detectionTimer.Value = _detectionLevel;
+
+            OnGetNewTarget?.Invoke();
+            OnTargetSeen?.Invoke(Target);
+            OnDetectionCompleted?.Invoke(Target);
+            OnNotifyTargetStateRpc(true);
         }
 
 #if UNITY_EDITOR

@@ -34,6 +34,9 @@ namespace Gameplay.IA
         [Header("Sound")] 
         [SerializeField] private float _strengthToBeingAwake = 10;
         
+        [HideInInspector] public Vector3 LastSoundPosition;
+        [HideInInspector] public Transform LastSoundSource;
+        
         private StateMachine _stateMachine;
 
         public IState CurrentState => _stateMachine.CurrentState;
@@ -42,8 +45,10 @@ namespace Gameplay.IA
         
         private bool IsLockDown => _lockDownManager != null && _lockDownManager.IsLockDown;
 
+        /*
         [HideInInspector] public Transform PlayerTarget = null;
         [HideInInspector] public Transform SuspectTarget = null;
+        */
 
         public Action OnDetectSound;
 
@@ -104,6 +109,10 @@ namespace Gameplay.IA
             At(_pursuitState, _patrolState, onLooseTarget);
             //At(_pursuitState, _patrolState, new FuncPredicate(GuardMotor.TargetKO));
             
+            TriggerPredicate onPursuitEnded = new TriggerPredicate();
+            _pursuitState.OnPursuitEnded += onPursuitEnded.Trigger;
+            At(_pursuitState, _patrolState, onPursuitEnded);
+            
             TriggerPredicate onEndInvestigate = new TriggerPredicate();
             _investigateState.OnInvestigationEnded += onEndInvestigate.Trigger;
             At(_investigateState, _patrolState, onEndInvestigate);
@@ -112,11 +121,10 @@ namespace Gameplay.IA
             GuardSight.OnGetNewSuspicious += onGetNewSuspiciousTarget.Trigger;
             At(_patrolState, _investigateState, onGetNewSuspiciousTarget);
             
+            // From patrol to investigate by suspicious sound
             TriggerPredicate onDetectSound = new TriggerPredicate();
             OnDetectSound += onDetectSound.Trigger;
             At(_patrolState, _investigateState, onDetectSound);
-            
-            // From patrol to investigate by suspicious sound
             
             //KO
             Any(_koState, new FuncPredicate(() => GuardHealth.IsKO));
@@ -128,7 +136,6 @@ namespace Gameplay.IA
             
             _stateMachine.SetState(_patrolState);
         }
-        
         
         void At(IState from, IState to, IPredicate condition) => _stateMachine.AddTransition(from, to, condition);
         void Any(IState to, IPredicate condition) => _stateMachine.AddAnyTransition(to, condition);
@@ -166,8 +173,10 @@ namespace Gameplay.IA
             if (f >= _strengthToBeingAwake)
             {
                 ABPrint.Print("suspicious sound detected !! ", ABColor.Orange);
+
+                LastSoundSource = newTarget;
+                LastSoundPosition = newTarget != null ? newTarget.position : transform.position;
                 
-                SuspectTarget = newTarget;
                 OnDetectSound?.Invoke();
             }
         }
