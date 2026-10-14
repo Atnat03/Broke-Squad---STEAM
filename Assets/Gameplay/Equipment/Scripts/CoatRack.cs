@@ -8,8 +8,6 @@ namespace Gameplay.Equipment
 
     public class CoatRack : NetworkBusListener, IInteractable
     {
-        [SerializeField] private float _ratioSize = 0.5f;
-        
         public void Interact(ulong clientId)
         {
             if (IsServer)

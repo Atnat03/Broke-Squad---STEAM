@@ -26,7 +26,8 @@ namespace Gameplay.LD
         {
             base.OnNetworkSpawn();
             
-            _dataIndex.Value = _registry.IndexOf(_data);
+            if(IsServer)
+                _dataIndex.Value = _registry.IndexOf(_data);
 
             Debug.Log($"[LD] OnNetworkSpawn: {name} index {_dataIndex.Value}");
 
