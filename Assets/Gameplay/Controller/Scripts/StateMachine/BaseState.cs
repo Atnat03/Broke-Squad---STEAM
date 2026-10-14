@@ -10,6 +10,7 @@ namespace Gameplay.Controller.States
         protected PlayerMotor Motor => playerController.Motor;
         protected PlayerBody Body => playerController.Body;
         protected PlayerStamina Stamina => playerController.Stamina;
+        protected LadderChecker LadderChecker => playerController.LadderChecker;
 
         public virtual void OnEnter() {}
         public virtual void OnExit() {}

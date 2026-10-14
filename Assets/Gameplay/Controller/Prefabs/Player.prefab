@@ -1056,7 +1056,7 @@ MonoBehaviour:
   ground:
     groundLayer:
       serializedVersion: 2
-      m_Bits: 65
+      m_Bits: 1089
     checkDist: 0.15
     radiusMultiplier: 0.9
     skin: 0.1
@@ -1082,6 +1082,13 @@ MonoBehaviour:
     - Joueur/Walk 3
     - Joueur/Walk 4
     _settings: {fileID: 11400000, guid: 8029d65674b61e844acad36af99f168f, type: 2}
+  ladderChecker:
+    ladderLayer:
+      serializedVersion: 2
+      m_Bits: 1024
+    checkDistance: 0.35
+    lowRayHeight: 0.3
+    highRayOffset: 0.1
   playerCamera: {fileID: 8757740270961154763}
   UI: {fileID: 3733190074482631680}
   health: {fileID: 7777815450667916752}
