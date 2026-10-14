@@ -44,7 +44,7 @@ namespace Gameplay.IA
             
             _currentHealth.Value -= damage;
             
-            //OnTakeDamage?.Invoke();
+            OnTakeDamage?.Invoke();
 
             if (_currentHealth.Value <= 0)
             {

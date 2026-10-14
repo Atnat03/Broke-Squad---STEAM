@@ -30,7 +30,7 @@ namespace Gameplay.IA
 
         private void Awake()
         {
-            if(instance == null) instance = this;
+            instance = this;
         }
 
         public override void OnNetworkSpawn()
