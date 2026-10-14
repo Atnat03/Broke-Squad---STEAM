@@ -98,7 +98,7 @@ namespace Gameplay.Items
                     c.enabled = !on;
             }
             
-            _box.size = on ? _baseSize / 4f : _baseSize;
+            _box.size = on ? _baseSize / _rackRatio : _baseSize;
             transform.localScale = on ? _baseScale * _rackRatio : _baseScale;
         }
 
