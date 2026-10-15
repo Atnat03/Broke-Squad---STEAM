@@ -6,6 +6,7 @@ namespace Gameplay.Items
 {
     public class PlayerInteract : NetworkBusListener
     {
+        [SerializeField] private PlayerCamera _playerCamera;
         [Header("References")]
         [SerializeField] private PlayerInput _playerInput;
         
@@ -40,7 +41,7 @@ namespace Gameplay.Items
         {
             if (!IsOwner || _camera == null) return;
 
-            IInteractable target = GetAimingInteractable();
+            IInteractable target = (_playerCamera != null && _playerCamera.HasOverride) ? null : GetAimingInteractable();
             
             if (target == _currentHoverInteractable) return;
             
@@ -72,6 +73,12 @@ namespace Gameplay.Items
         // When press E => check if they're an IInteractable in front of us then Interact with it is there is
         private void TryToInteract()
         {
+            if (_playerCamera != null && _playerCamera.HasOverride)
+            {
+                _playerCamera.ReleaseOverride();
+                return;
+            }
+            
             if (_currentHoverInteractable != null)
             {
                 _currentHoverInteractable.Interact(OwnerClientId);
