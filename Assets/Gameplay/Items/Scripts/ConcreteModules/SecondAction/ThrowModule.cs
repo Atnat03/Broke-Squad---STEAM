@@ -82,8 +82,6 @@ namespace Gameplay.Items
                 finalPos -= dir * 1.1f;
             }
             
-            ABPrint.Print(finalPos.ToString(), ABColor.Orange);
-            
             return finalPos;
         }
 
