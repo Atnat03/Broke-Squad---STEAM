@@ -12,7 +12,6 @@
             _required = condition.Required;
         }
 
-        public override bool CanActivate(LDActivation activation)
-            => Context.HasFlag(_flag) == _required;
+        public override bool CanActivate(LDActivation activation) => Context.HasFlag(_flag) == _required;
     }
 }

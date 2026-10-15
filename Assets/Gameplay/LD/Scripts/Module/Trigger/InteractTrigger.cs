@@ -16,10 +16,12 @@ namespace Gameplay.LD
 
             gameObject.layer = Context.Element.gameObject.layer;
 
+            BoxCollider parentCollider = gameObject.transform.parent.GetComponent<BoxCollider>();
+            
             BoxCollider box = gameObject.AddComponent<BoxCollider>();
             box.isTrigger = false;
-            box.center = c.Center;
-            box.size = c.Size;
+            box.center = parentCollider.center;
+            box.size = parentCollider.size * 1.05f;
 
             outline = Context.Element.GetComponentInChildren<Outline>(true);
             SetOutline(false);
