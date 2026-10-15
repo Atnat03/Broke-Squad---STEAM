@@ -91,7 +91,6 @@ namespace Gameplay.Controller
         private bool WantsClimb() =>
             _ladderCooldown <= 0f
             && ladderChecker.Touching
-            && ladderChecker.Current != null
             && MoveInput.y > 0.1f;
         
         private bool KeepClimbing() => ladderChecker.Touching && !(IsGrounded && MoveInput.y < -0.1f);
@@ -300,6 +299,12 @@ namespace Gameplay.Controller
 
         #endregion
 
+        public void SnapTo(Vector3 position, float yawDegrees)
+        {
+            _rb.position = position;
+            _rb.linearVelocity = Vector3.zero;   
+            SetYaw(yawDegrees);
+        }
         
     }
 }

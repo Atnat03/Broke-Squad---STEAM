@@ -26,7 +26,7 @@ namespace Gameplay.IA
         
         LockDownManager _lockDownManager;
         
-        void OnEnable()
+        void Start()
         {
             if(_lockDownManager == null)
                 _lockDownManager = LockDownManager.instance;

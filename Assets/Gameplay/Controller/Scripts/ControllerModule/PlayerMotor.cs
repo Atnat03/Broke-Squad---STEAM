@@ -95,6 +95,7 @@ namespace Gameplay.Controller
             ApplyHorizontal(dt);
             ApplyJump();
             ApplyGravity(dt);
+            SnapToGround();
         }
 
         private void ApplyHorizontal(float dt)
@@ -153,6 +154,15 @@ namespace Gameplay.Controller
             _coyoteTimer = 0f;
             _ground.ForceAirborne();
             OnJump?.Invoke();
+        }
+        
+        private void SnapToGround()
+        {
+            if (!_ground.IsGrounded) return;
+            if (_rb.linearVelocity.y > 0.01f && Vector3.Dot(_rb.linearVelocity, _ground.Normal) > 0.01f) return;
+
+            if (_ground.Gap > 0.001f)
+                _rb.position -= Vector3.up * _ground.Gap;
         }
         
     }

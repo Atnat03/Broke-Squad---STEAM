@@ -17,6 +17,7 @@ namespace Gameplay.Controller
         public float MaxSlopeAngle => maxSlopeAngle;
         public bool IsGrounded { get; private set; }
         public Vector3 Normal { get; private set; } = Vector3.up;
+        public float Gap { get; private set; }
 
         public void ForceAirborne() => IsGrounded = false;
 
@@ -48,8 +49,10 @@ namespace Gameplay.Controller
             }
 
             Normal = hitGround ? bestNormal : Vector3.up;
-            
             IsGrounded = hitGround && Vector3.Dot(rb.linearVelocity, Normal) < 0.1f;
+            
+            Gap = hitGround ? Mathf.Max(0f, best - skin) : 0f;
+
             Debug.DrawRay(origin, Vector3.down * dist, IsGrounded ? Color.green : Color.red);
         }
     }
