@@ -12,7 +12,6 @@ namespace Gameplay.Items
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(BoxCollider))]
     [RequireComponent(typeof(NetworkTransform))]
-    [RequireComponent(typeof(NetworkRigidbody))]
     public class ItemPickup : NetworkBusListener, IInteractable
     {
         [SerializeField] private float _rackRatio = 0.5f;
