@@ -8,40 +8,71 @@ public class Door : OnlineInteractable
 {
     [SerializeField] List<LeverDoor> RequiredLevers;
     [SerializeField] List<ButtonDoor> RequiredButtons;
-    [SerializeField] private bool _locked = true;
-    [SerializeField] private bool _opened;
+    [SerializeField] bool canBeInteracted;
+    [SerializeField] bool startLocked;
     
-    private KeyCondition _keyCondition;
+    readonly NetworkVariable<bool> _locked = new(false);
+    readonly NetworkVariable<bool> _opened = new(false);
+
+    KeyCondition _keyCondition;
 
     void Awake()
     {
-        _keyCondition = GetComponent<KeyCondition>();
+        _keyCondition = GetComponent<KeyCondition>(); 
     }
 
-    public override void Interact(ulong clientId)
+    public override void OnNetworkSpawn()
     {
-        if (!IsServer)
-        {
-            base.Interact(clientId);
-            return;
-        }
+        _locked.Value = startLocked;
+        _opened.OnValueChanged += OnOpenedChanged;
 
-        if (!_locked)
-            TryOpen();
+        if (!IsServer) return;
+        foreach (var l in RequiredLevers) l.StateChanged += Evaluate;
+        foreach (var b in RequiredButtons) b.StateChanged += Evaluate;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        _opened.OnValueChanged -= OnOpenedChanged;
+
+        if (!IsServer) return;
+        foreach (var l in RequiredLevers) l.StateChanged -= Evaluate;
+        foreach (var b in RequiredButtons) b.StateChanged -= Evaluate;
     }
     
-    void TryOpen()
+    void OnOpenedChanged(bool _, bool open)
     {
+        if (open) onInteractableOpen?.Invoke();
+        else onInteractableClose?.Invoke();
+    }
+
+    void Evaluate()
+    {
+        bool allActive = true;
+        foreach (var l in RequiredLevers) allActive &= l.activated.Value;
+        foreach (var b in RequiredButtons) allActive &= b.activated.Value;
+
+        bool shouldBeLocked = !allActive;
+        if (_locked.Value == shouldBeLocked) return; 
+
+        _locked.Value = shouldBeLocked;
+        SetOpen(allActive); 
+    }
+
+    protected override void ServerInteract(ulong sender)
+    {
+        if(!canBeInteracted) return;
+        if (_locked.Value) return;
         ABPrint.Print("TryOpen");
-        
-        _opened = !_opened;
-            
-        if(_opened) 
-            onInteractableOpen.Invoke();
-        else 
-            onInteractableClose.Invoke();
+        SetOpen(!_opened.Value);
     }
-    
+
+    void SetOpen(bool open)
+    {
+        if (_opened.Value == open) return;
+        _opened.Value = open;
+    }
+
     public bool TryUnlock(Vector2Int range)
     {
         if (!IsServer)
@@ -49,44 +80,21 @@ public class Door : OnlineInteractable
             TryUnlockRpc(range.x, range.y);
             return false;
         }
-        
-        if (!_locked) return false;
-        
+
+        if (!_locked.Value) return false;
+
         if (_keyCondition.TryOpen(range))
         {
-            _locked = false;
-            TryOpen();
+            _locked.Value = false;
+            SetOpen(true);
             return true;
         }
-        
+
         return false;
     }
-    
+
     [Rpc(SendTo.Server)]
     private void TryUnlockRpc(int rangeX, int rangeY) => TryUnlock(new Vector2Int(rangeX, rangeY));
-
-    public void TryUnlock()
-    {
-        foreach (LeverDoor lever in RequiredLevers)
-        {
-            if (!lever.activated) return;
-        }
-
-        foreach (ButtonDoor button in RequiredButtons)
-        {
-            if (!button.activated) return;
-        }
-        
-        _locked = false;
-        _opened = true;
-        onInteractableOpen?.Invoke();
-    }
-
-    public void TryLock()
-    {
-        _locked = true;
-        _opened = false;
-        onInteractableClose?.Invoke();
-    }
-
+    
+    
 }
