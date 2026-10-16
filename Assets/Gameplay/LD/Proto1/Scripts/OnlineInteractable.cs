@@ -3,32 +3,30 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class OnlineInteractable : NetworkBehaviour, IInteractable
+public abstract class OnlineInteractable : NetworkBehaviour, IInteractable
 {
     [SerializeField] Outline Outline;
     public Outline outline => Outline;
-    
+
     public UnityEvent onInteractableOpen;
     public UnityEvent onInteractableClose;
+
+    public void SetOutline(bool state) => outline.enabled = state;
     
-    public void SetOutline(bool state)
+    public void Interact(ulong clientId)
     {
-        outline.enabled = state;
+        if (IsServer) ServerInteract(clientId);
+        else InteractServerRpc();
     }
-
-    public virtual void Interact(ulong clientId)
-    {
-        Debug.Log("Interacting with " + clientId);      
-        if (!IsServer)
-        {
-            InteractServerRpc();
-            return;
-        }
-    }
-
+    
     [Rpc(SendTo.Server)]
-    public void InteractServerRpc()
-    {
-        Interact(OwnerClientId);
-    }
+    void InteractServerRpc() => ServerInteract(OwnerClientId);
+    
+    protected abstract void ServerInteract(ulong senderClientId);
+
+    [Rpc(SendTo.Everyone)]
+    protected void OpenEventsRpc() => onInteractableOpen?.Invoke();
+
+    [Rpc(SendTo.Everyone)]
+    protected void CloseEventsRpc() => onInteractableClose?.Invoke();
 }

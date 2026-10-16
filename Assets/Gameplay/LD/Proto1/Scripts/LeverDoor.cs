@@ -1,16 +1,15 @@
-using Gameplay;
-using UnityEngine;
+using System;
+using Unity.Netcode;
 
 public class LeverDoor : OnlineInteractable
 {
-    public bool activated = false;
-    
-    public override void Interact(ulong clientId)
+    public NetworkVariable<bool> activated = new(false);
+    public event Action StateChanged; 
+
+    protected override void ServerInteract(ulong sender)
     {
-        base.Interact(clientId);
-        
-        activated = !activated;
-        if(activated) onInteractableOpen?.Invoke();
-        else onInteractableClose?.Invoke();
+        activated.Value = !activated.Value;
+        if (activated.Value) OpenEventsRpc(); else CloseEventsRpc();
+        StateChanged?.Invoke();
     }
 }
