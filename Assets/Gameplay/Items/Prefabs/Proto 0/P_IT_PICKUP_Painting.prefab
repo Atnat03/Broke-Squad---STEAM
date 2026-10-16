@@ -171,6 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ItemPickup
   ShowTopMostFoldoutHeaderGroup: 1
+  _rackRatio: 0.5
   _itemIndex: {fileID: 11400000, guid: 333e397f043f3c7479173687ca25b042, type: 2}
 --- !u!1 &6517375301660068130
 GameObject:
@@ -185,6 +186,7 @@ GameObject:
   - component: {fileID: 4570194847093364424}
   - component: {fileID: 3623171116846735619}
   - component: {fileID: 8003559614764938348}
+  - component: {fileID: 5563162608948692876}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -305,3 +307,15 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &5563162608948692876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6517375301660068130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher
