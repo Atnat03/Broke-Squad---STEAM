@@ -1,5 +1,8 @@
 ﻿using System;
+using Gameplay.LD.Proto1.Scripts;
+using MyPrint;
 using UnityEngine;
+using UnityEngine.ProBuilder.Shapes;
 
 namespace Gameplay.Items
 {
@@ -18,6 +21,15 @@ namespace Gameplay.Items
             if (!CanUse()) return;
             
             Transform cam = Context.Camera.transform;
+
+            //Replace with door script
+            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, 2f) && hit.transform.TryGetComponent(out Door door))
+            {
+                ABPrint.Print("KeyCondition");
+                
+                if(door.TryUnlock(Range));
+                    ConsumeCondition(new OnModuleDoAction_EVENT());
+            }
         }
 
         public void StopFirstAction()

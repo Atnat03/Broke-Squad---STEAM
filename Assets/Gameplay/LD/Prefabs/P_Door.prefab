@@ -10,7 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1794909744459157365}
   - component: {fileID: 2546254149331435970}
-  m_Layer: 0
+  - component: {fileID: 8002077530412153049}
+  - component: {fileID: 1470570446522708117}
+  - component: {fileID: 2098159771859780984}
+  - component: {fileID: 8876441711350258589}
+  m_Layer: 9
   m_Name: P_Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31,8 +35,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2968968847654055002}
-  - {fileID: 8791187075959639599}
-  - {fileID: 3177099707125278202}
   - {fileID: 7020405606901180008}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -58,6 +60,117 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8002077530412153049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 502132731061504385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 1474033901
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  m_InScenePlacedDisabledByDefault: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  m_InScenePlaced: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &1470570446522708117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 502132731061504385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2734bb28f23745e7a8078128e44d6fae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Proto1.Scripts.KeyCondition
+  ShowTopMostFoldoutHeaderGroup: 1
+  _keyId: 1
+  _canBeOpenWithoutKey: 0
+--- !u!65 &2098159771859780984
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 502132731061504385}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.12065097, y: 2.277018, z: 0.99739796}
+  m_Center: {x: 0.0049908184, y: 0.97327065, z: -0.4945722}
+--- !u!114 &8876441711350258589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 502132731061504385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ea8ad3ae955cbe47a342e7b848a3f9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
+  ShowTopMostFoldoutHeaderGroup: 1
+  Outline: {fileID: 5369203765261530551}
+  onInteractableOpen:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2546254149331435970}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Open
+          m_BoolArgument: 0
+        m_CallState: 2
+  onInteractableClose:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2546254149331435970}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Close
+          m_BoolArgument: 0
+        m_CallState: 2
+  RequiredLevers: []
+  RequiredButtons: []
+  canBeInteracted: 1
+  startLocked: 0
 --- !u!1 &1403313907570113567
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,8 +273,6 @@ GameObject:
   - component: {fileID: 8500257738157256870}
   - component: {fileID: 9098678278538248731}
   - component: {fileID: 198772903369539566}
-  - component: {fileID: 8677769511506557461}
-  - component: {fileID: 8537705160622785147}
   - component: {fileID: 5369203765261530551}
   m_Layer: 0
   m_Name: Door
@@ -185,6 +296,8 @@ Transform:
   m_Children:
   - {fileID: 1366912918814018409}
   - {fileID: 167810362394262520}
+  - {fileID: 8791187075959639599}
+  - {fileID: 3177099707125278202}
   m_Father: {fileID: 1794909744459157365}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!33 &8500257738157256870
@@ -265,46 +378,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.10819903, y: 2, z: 1.0247409}
   m_Center: {x: 0, y: -0.037076443, z: -0.4856653}
---- !u!114 &8677769511506557461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1551656079732412970}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 0
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  m_InScenePlacedDisabledByDefault: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  m_InScenePlaced: 0
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
---- !u!114 &8537705160622785147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1551656079732412970}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66559d7f60f743d69bc18b29cd97dccb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.Outliner
-  _outline: {fileID: 5369203765261530551}
 --- !u!114 &5369203765261530551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -312,14 +385,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1551656079732412970}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Outline
   outlineMode: 0
   outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 2
+  outlineWidth: 10
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
@@ -335,8 +408,6 @@ GameObject:
   - component: {fileID: 8976011185955407251}
   - component: {fileID: 7557211392896550594}
   - component: {fileID: 2545241054833993765}
-  - component: {fileID: 7048009606435426760}
-  - component: {fileID: 8497313736861059894}
   - component: {fileID: 4350852574953870354}
   m_Layer: 0
   m_Name: RealDoor
@@ -438,46 +509,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7048009606435426760
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2347137409202986441}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1812329772
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  m_InScenePlacedDisabledByDefault: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  m_InScenePlaced: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
---- !u!114 &8497313736861059894
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2347137409202986441}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66559d7f60f743d69bc18b29cd97dccb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.Outliner
-  _outline: {fileID: 4350852574953870354}
 --- !u!114 &4350852574953870354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -525,13 +556,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2635443080897833543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.067, y: 0.817, z: -0.19499981}
-  m_LocalScale: {x: 0.16640408, y: 0.13070916, z: 0.115585126}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0.06099989, y: -0.22007656, z: -0.80303633}
+  m_LocalScale: {x: 0.16640407, y: 0.13070916, z: 0.115585126}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9114463866667031457}
-  m_Father: {fileID: 1794909744459157365}
+  m_Father: {fileID: 7020405606901180008}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!33 &8097114519477569951
 MeshFilter:
@@ -830,13 +861,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7696287090993818455}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.065, y: 0.817, z: -0.195}
-  m_LocalScale: {x: 0.16640408, y: 0.13070916, z: 0.115585126}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: -0.7071068}
+  m_LocalPosition: {x: -0.07100009, y: -0.22007656, z: -0.80303633}
+  m_LocalScale: {x: 0.16640408, y: 0.13070916, z: 0.11558513}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8988255786064908810}
-  m_Father: {fileID: 1794909744459157365}
+  m_Father: {fileID: 7020405606901180008}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!33 &9180361840170285084
 MeshFilter:

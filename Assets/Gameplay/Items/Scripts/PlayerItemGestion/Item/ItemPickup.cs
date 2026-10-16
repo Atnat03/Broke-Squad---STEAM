@@ -12,7 +12,6 @@ namespace Gameplay.Items
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(BoxCollider))]
     [RequireComponent(typeof(NetworkTransform))]
-    [RequireComponent(typeof(NetworkRigidbody))]
     public class ItemPickup : NetworkBusListener, IInteractable
     {
         [SerializeField] private float _rackRatio = 0.5f;
@@ -57,8 +56,8 @@ namespace Gameplay.Items
 
             if (_collidersOffOnRack == null || _collidersOffOnRack.Length == 0)
             {
-                var list = new List<Collider>();
-                foreach (var c in GetComponentsInChildren<Collider>(true))
+                List<Collider> list = new List<Collider>();
+                foreach (Collider c in GetComponentsInChildren<Collider>(true))
                     if (c != _box) list.Add(c);
                 _collidersOffOnRack = list.ToArray();
             }
