@@ -1,42 +1,82 @@
 using System.Collections.Generic;
-using Unity.Netcode;
+using Gameplay.LD.Proto1.Scripts;
+using MyPrint;
 using UnityEngine;
 
 public class Door : OnlineInteractable
 {
     [SerializeField] List<LeverDoor> RequiredLevers;
     [SerializeField] List<ButtonDoor> RequiredButtons;
+    [SerializeField] private bool _locked = true;
+    [SerializeField] private bool _opened;
+    
+    private KeyCondition _keyCondition;
 
-    readonly NetworkVariable<bool> _locked = new(true);   // starts locked
-    readonly NetworkVariable<bool> _opened = new(false);
-
-    public override void OnNetworkSpawn()
+    void Awake()
     {
-        // Every machine plays the visuals when the synced state changes
-        _opened.OnValueChanged += (_, open) =>
+        _keyCondition = GetComponent<KeyCondition>();
+    }
+
+    public override void Interact(ulong clientId)
+    {
+        if (!IsServer)
         {
-            if (open) onInteractableOpen?.Invoke();
-            else onInteractableClose?.Invoke();
-        };
+            base.Interact(clientId);
+            return;
+        }
 
-        if (!IsServer) return;
-        foreach (var l in RequiredLevers) l.StateChanged += Evaluate;
-        foreach (var b in RequiredButtons) b.StateChanged += Evaluate;
+        if (!_locked)
+            TryOpen();
     }
-
-    protected override void ServerInteract(ulong sender)
+    
+    void TryOpen()
     {
-        if (_locked.Value) return;
-        _opened.Value = !_opened.Value;
+        ABPrint.Print("TryOpen");
+        
+        _opened = !_opened;
+            
+        if(_opened) 
+            onInteractableOpen.Invoke();
+        else 
+            onInteractableClose.Invoke();
     }
-
-    void Evaluate()
+    
+    public bool TryUnlock(Vector2Int range)
     {
-        bool allActive = true;
-        foreach (var l in RequiredLevers) allActive &= l.activated.Value;
-        foreach (var b in RequiredButtons) allActive &= b.activated.Value;
-
-        _locked.Value = !allActive;
-        _opened.Value = allActive;   // auto-open on unlock, auto-close on lock
+        if (!_locked) return false;
+        
+        if (_keyCondition.TryOpen(range))
+        {
+            _locked = false;
+            TryOpen();
+            return true;
+        }
+        
+        return false;
     }
+
+    public void TryUnlock()
+    {
+        foreach (LeverDoor lever in RequiredLevers)
+        {
+            if (!lever.activated) return;
+        }
+
+        foreach (ButtonDoor button in RequiredButtons)
+        {
+            if (!button.activated) return;
+        }
+        
+        _locked = false;
+        _opened = true;
+        onInteractableOpen?.Invoke();
+    }
+
+    public void TryLock()
+    {
+        _locked = true;
+        _opened = false;
+        onInteractableClose?.Invoke();
+    }
+
 }

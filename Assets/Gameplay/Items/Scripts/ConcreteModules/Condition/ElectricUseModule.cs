@@ -14,7 +14,7 @@ namespace Gameplay.Items
         private FixedString32Bytes _keyEvent = "ELECTRIC_USE_MODULE";
         
         protected override void SetModule() => _currentPercentValue = _maxPercentValue;
-        public bool CheckCondition() => _currentPercentValue-_electricNeededToUse > 0;
+        public bool CheckCondition() => _currentPercentValue-_electricNeededToUse >= 0;
 
         public void UseItem()
         {
@@ -58,22 +58,13 @@ namespace Gameplay.Items
             });
         }
         
-        public bool AddEnergy(int amount)
+        public bool AddEnergy(float amount)
         {
-            if (_currentPercentValue >= _maxPercentValue)
+            if (amount <= 0f || _currentPercentValue >= _maxPercentValue)
                 return false;
-            
-            if (amount >= 0)
-            {
-                _currentPercentValue += amount;
-                
-                if (_currentPercentValue > _maxPercentValue) 
-                    _currentPercentValue = _maxPercentValue;
-                
-                return true;
-            }
 
-            return false;
+            _currentPercentValue = Mathf.Min(_currentPercentValue + amount, _maxPercentValue);
+            return true;
         }
 
         public void ServerExecute(OnModuleDoAction_EVENT data) => UseItem();
