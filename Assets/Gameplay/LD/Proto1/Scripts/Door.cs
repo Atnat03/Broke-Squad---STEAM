@@ -9,8 +9,9 @@ public class Door : OnlineInteractable
     [SerializeField] List<LeverDoor> RequiredLevers;
     [SerializeField] List<ButtonDoor> RequiredButtons;
     [SerializeField] bool canBeInteracted;
+    [SerializeField] bool startLocked;
     
-    readonly NetworkVariable<bool> _locked = new(true);
+    readonly NetworkVariable<bool> _locked = new(false);
     readonly NetworkVariable<bool> _opened = new(false);
 
     KeyCondition _keyCondition;
@@ -22,6 +23,7 @@ public class Door : OnlineInteractable
 
     public override void OnNetworkSpawn()
     {
+        _locked.Value = startLocked;
         _opened.OnValueChanged += OnOpenedChanged;
 
         if (!IsServer) return;
