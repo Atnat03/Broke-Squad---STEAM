@@ -1,22 +1,58 @@
 using System.Collections.Generic;
+using Gameplay.LD.Proto1.Scripts;
+using MyPrint;
 using UnityEngine;
 
 public class Door : OnlineInteractable
 {
     [SerializeField] List<LeverDoor> RequiredLevers;
     [SerializeField] List<ButtonDoor> RequiredButtons;
-    private  bool _locked;
-    private bool _opened;
+    [SerializeField] private bool _locked = true;
+    [SerializeField] private bool _opened;
+    
+    private KeyCondition _keyCondition;
+
+    void Awake()
+    {
+        _keyCondition = GetComponent<KeyCondition>();
+    }
 
     public override void Interact(ulong clientId)
     {
-        base.Interact(clientId);
+        if (!IsServer)
+        {
+            base.Interact(clientId);
+            return;
+        }
 
         if (!_locked)
+            TryOpen();
+    }
+    
+    void TryOpen()
+    {
+        ABPrint.Print("TryOpen");
+        
+        _opened = !_opened;
+            
+        if(_opened) 
+            onInteractableOpen.Invoke();
+        else 
+            onInteractableClose.Invoke();
+    }
+    
+    public bool TryUnlock(Vector2Int range)
+    {
+        if (!_locked) return false;
+        
+        if (_keyCondition.TryOpen(range))
         {
-            if(!_opened) onInteractableOpen.Invoke();
-            else onInteractableClose.Invoke();
+            _locked = false;
+            TryOpen();
+            return true;
         }
+        
+        return false;
     }
 
     public void TryUnlock()
@@ -41,6 +77,6 @@ public class Door : OnlineInteractable
         _locked = true;
         _opened = false;
         onInteractableClose?.Invoke();
-        
     }
+
 }

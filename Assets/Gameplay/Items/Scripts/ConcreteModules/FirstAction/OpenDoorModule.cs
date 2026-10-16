@@ -23,13 +23,12 @@ namespace Gameplay.Items
             Transform cam = Context.Camera.transform;
 
             //Replace with door script
-            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, 2f) && hit.transform.TryGetComponent(out KeyCondition keyCondition))
+            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, 2f) && hit.transform.TryGetComponent(out Door door))
             {
                 ABPrint.Print("KeyCondition");
                 
-                keyCondition.Range = Range;
-                keyCondition.Interact(Context.Inventory.OwnerClientId);
-                ConsumeCondition(new OnModuleDoAction_EVENT());
+                if(door.TryUnlock(Range));
+                    ConsumeCondition(new OnModuleDoAction_EVENT());
             }
         }
 
