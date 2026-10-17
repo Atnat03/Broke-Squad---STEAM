@@ -23,10 +23,11 @@ public class Door : OnlineInteractable
 
     public override void OnNetworkSpawn()
     {
-        _locked.Value = startLocked;
+        
         _opened.OnValueChanged += OnOpenedChanged;
 
         if (!IsServer) return;
+        _locked.Value = startLocked;
         foreach (var l in RequiredLevers) l.StateChanged += Evaluate;
         foreach (var b in RequiredButtons) b.StateChanged += Evaluate;
     }
