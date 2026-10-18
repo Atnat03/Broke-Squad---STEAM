@@ -171,6 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ItemPickup
   ShowTopMostFoldoutHeaderGroup: 1
+  _rackRatio: 0.5
   _itemIndex: {fileID: 11400000, guid: c8390fcd7770ab2468e5a3ba2ce02ea1, type: 2}
 --- !u!1001 &4541127603531769220
 PrefabInstance:
@@ -259,6 +260,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6d9a52aeb3d475541a9c5e90902ed0fa, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8150586975544916650}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6d9a52aeb3d475541a9c5e90902ed0fa, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7150407463079924787}
     - targetCorrespondingSourceObject: {fileID: 4923512449041188838, guid: 6d9a52aeb3d475541a9c5e90902ed0fa, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5002572478619514553}
@@ -286,6 +290,18 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &7150407463079924787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3730170915673495765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher
 --- !u!4 &4075733489193189999 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6d9a52aeb3d475541a9c5e90902ed0fa, type: 3}

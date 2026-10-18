@@ -14,26 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.SO_LDElementData
   Prefab: {fileID: 502132731061504385, guid: a91819c91f4ac0b419487684cb818bcd, type: 3}
   BindingsList:
-  - TriggerID: 2
+  - TriggerID: 1
     Action: 0
     Delay: 0
     CancelsPendingDelays: 0
     ConditionIDs: 
-    EffectIDs: 01000000
+    EffectIDs: 02000000
   initialFlags: 0
   ModulesList:
-  - rid: 7203101139162890401
-  - rid: 7203101139162890402
+  - rid: 7202345775861858481
+  - rid: 7202345775861858482
   references:
     version: 2
     RefIds:
-    - rid: 7203101139162890401
+    - rid: 7202345775861858481
       type: {class: InteractTriggerConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
       data:
-        ModuleID: 2
-        Range: 4
-    - rid: 7203101139162890402
+        ModuleID: 1
+        Range: 2
+    - rid: 7202345775861858482
       type: {class: TriggerEventEffectConfig, ns: Gameplay.LD, asm: Assembly-CSharp}
       data:
-        ModuleID: 1
-        KeyEvent: LD_DOOR_01
+        ModuleID: 2
+        KeyEvent: LD_DOOR
