@@ -69,8 +69,16 @@ public class Door : OnlineInteractable
 
     protected override void OnInteract()
     {
+        ABPrint.Print("canBeInteracted");
+
         if(!canBeInteracted) return;
+        
+        ABPrint.Print("_locked");
+
+        
         if (_locked.Value) return;
+        
+        ABPrint.Print("OnInteract");
 
         SetOpen(!_opened.Value);
     }
