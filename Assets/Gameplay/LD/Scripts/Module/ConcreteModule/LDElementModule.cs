@@ -10,10 +10,10 @@ namespace Gameplay.LD
     public abstract class LDElementModule : NetworkBusListener
     {
         protected LDElementContext Context { get; private set; }
-        public void Initialize(LDElementContext context)
+        public virtual void Initialize(LDElementContext context)
         {
             Context = context;
-            OnInitialize(config);
+            OnInitialize();
         }
 
         protected abstract void OnInitialize();
