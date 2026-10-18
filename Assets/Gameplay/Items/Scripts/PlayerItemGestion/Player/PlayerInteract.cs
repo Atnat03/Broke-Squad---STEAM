@@ -58,8 +58,11 @@ namespace Gameplay.Items
         
         private IInteractable GetAimingInteractable()
         {
-            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
-                    out RaycastHit hit, _maxDistanceToInteract, _interactableMask, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out RaycastHit hitControl,
+                    _maxDistanceToInteract, ~0, QueryTriggerInteraction.Ignore))
+                return null;
+            
+            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out RaycastHit hit, _maxDistanceToInteract, _interactableMask, QueryTriggerInteraction.Ignore))
             { 
                 if(hit.collider.TryGetComponent(out IInteractable interact))
                 {
