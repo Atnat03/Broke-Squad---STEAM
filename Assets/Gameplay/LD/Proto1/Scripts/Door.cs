@@ -18,7 +18,7 @@ public class Door : OnlineInteractable
 
     void Awake()
     {
-        _keyCondition = GetComponent<KeyCondition>(); 
+        _keyCondition = GetComponent<KeyCondition>();
     }
 
     public override void OnNetworkSpawn()
@@ -84,13 +84,10 @@ public class Door : OnlineInteractable
     public bool TryUnlock(Vector2Int range)
     {
         if (!IsServer)
-        {
-            TryUnlockRpc(range.x, range.y);
             return false;
-        }
-
+        
         if (!_locked.Value) return false;
-
+        
         if (_keyCondition.TryOpen(range))
         {
             _locked.Value = false;
@@ -100,9 +97,4 @@ public class Door : OnlineInteractable
 
         return false;
     }
-
-    [Rpc(SendTo.Server)]
-    private void TryUnlockRpc(int rangeX, int rangeY) => TryUnlock(new Vector2Int(rangeX, rangeY));
-    
-    
 }
