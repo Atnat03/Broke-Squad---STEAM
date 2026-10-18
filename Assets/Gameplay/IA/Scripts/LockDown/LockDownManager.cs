@@ -25,9 +25,6 @@ namespace Gameplay.IA
 
         private List<GuardBehavior> _guardList = new List<GuardBehavior>();
         
-        public Action OnStartLockDown;
-        public Action OnEndLockDown;
-
         private void Awake()
         {
             instance = this;
@@ -105,9 +102,9 @@ namespace Gameplay.IA
             _lockDownPrefab.SetActive(newValue);
             
             if (newValue)
-                OnStartLockDown?.Invoke();
+                InvokeEvent(new OnLockDownStart_EVENT());
             else
-                OnEndLockDown?.Invoke();
+                InvokeEvent(new OnLockDownEnd_EVENT());
         }
         
         

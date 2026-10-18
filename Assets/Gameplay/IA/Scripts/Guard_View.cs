@@ -31,8 +31,8 @@ namespace Gameplay.IA
             if(_lockDownManager == null)
                 _lockDownManager = LockDownManager.instance;
 
-            _lockDownManager.OnStartLockDown += StartLockDown;
-            _lockDownManager.OnEndLockDown += StopLockDown;
+            ListenToEvent<OnLockDownStart_EVENT>(StartLockDown);
+            ListenToEvent<OnLockDownEnd_EVENT>(StopLockDown);
 
             _guardLineOfSight.OnDetectionProgressChanged += DetectionUpdate;
             _guardLineOfSight.OnSuspiciousProgressChanged += SuspectUpdate;
@@ -41,13 +41,13 @@ namespace Gameplay.IA
             //_guardLineOfSight.OnNotifySuspectTargetSeen += UpdateSuspectTargetUI;
         }
 
-        private void StartLockDown()
+        private void StartLockDown(OnLockDownStart_EVENT data)
         {
             _lockDownUI.SetActive(true);
             StartCoroutine(UpdateLockDown());
         }
         
-        private void StopLockDown()
+        private void StopLockDown(OnLockDownEnd_EVENT data)
         {
             _lockDownUI.SetActive(false);
         }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Gameplay.LD.Proto1;
 using Gameplay.LD.Proto1.Scripts;
 using MyPrint;
 using Unity.Netcode;
