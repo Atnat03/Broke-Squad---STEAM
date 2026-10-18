@@ -305,6 +305,14 @@ namespace Gameplay.Controller
             _rb.linearVelocity = Vector3.zero;   
             SetYaw(yawDegrees);
         }
+
+        [ClientRpc]
+        public void TeleportClientRpc(Vector3 position, Quaternion rotation)
+        {
+            if(!IsOwner) return;
+            _rb.position = position;
+            _rb.rotation = rotation;
+        }
         
     }
 }
