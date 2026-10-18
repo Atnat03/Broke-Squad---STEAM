@@ -11,11 +11,13 @@ namespace Gameplay.Items
         [SerializeField] private float _miniVelocityToDoSound = 1;
         [SerializeField] private SO_SuspiciousSoundSettings _suspiciousSoundSettings;
         
-        private Vector3 _lastVelocity;
+        private Rigidbody _rb;
         
         public void OnCollide(Collision collision, ItemPickup item)
         {
-            float speed = Mathf.Abs(Vector3.Dot(_lastVelocity, collision.GetContact(0).normal));
+            if (_rb == null && !item.TryGetComponent(out _rb)) return;
+
+            float speed = collision.impulse.magnitude / _rb.mass;
             
             if (speed <= _miniVelocityToDoSound) return;
             
@@ -26,13 +28,10 @@ namespace Gameplay.Items
         }
 
         public void OnThrow(Rigidbody rb)
-        { }
-        
-        public void OnFixedUpdate(Rigidbody rb)
         {
-            _lastVelocity = rb.linearVelocity;
+            _rb = rb;
         }
-
+        
         public void OnStartHolding()
         { }
 

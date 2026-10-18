@@ -19,13 +19,14 @@ namespace Gameplay.Items
         [SerializeField] private bool _canDamagePlayer = false;
         //[SerializeField] private float _minVelocityForSound = 3;
         
-        private Vector3 _lastVelocity;
+        private Rigidbody _rb;
         
         public void OnCollide(Collision collision, ItemPickup item)
         {
             if (collision.collider == item.GetComponent<Collider>()) return;
-            
-            float speed = Mathf.Abs(Vector3.Dot(_lastVelocity, collision.GetContact(0).normal));
+            if (_rb == null && !item.TryGetComponent(out _rb)) return;
+
+            float speed = collision.impulse.magnitude / _rb.mass;
             
             if (collision.gameObject.TryGetComponent<IDamageable>(out var damage))
             {
@@ -52,12 +53,8 @@ namespace Gameplay.Items
 
         public void OnThrow(Rigidbody rb)
         {
-            rb.mass = _mass;
-        }
-        
-        public void OnFixedUpdate(Rigidbody rb)
-        {
-            _lastVelocity = rb.linearVelocity;
+            _rb = rb;
+            _rb.mass = _mass;
         }
 
         public void OnStartHolding()

@@ -14,7 +14,5 @@ namespace Gameplay.Items
 
         public void OnStopHolding()
         { }
-
-        public void OnFixedUpdate(Rigidbody rb) { }
     }
 }
