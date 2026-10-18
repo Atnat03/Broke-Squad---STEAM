@@ -14,9 +14,6 @@ namespace Gameplay.IA
         [Header("Settings")] 
         [SerializeField] private float _lockDownDuration = 10f;
         
-        [Header("View")]
-        [SerializeField] private GameObject _lockDownPrefab;
-        
         public bool IsLockDown => _isLockDown.Value;
         public float RatioDuration => _currentDuration.Value / _lockDownDuration;
         
@@ -99,8 +96,6 @@ namespace Gameplay.IA
         
         private void OnLockDownChange(bool previousValue, bool newValue)
         {
-            _lockDownPrefab.SetActive(newValue);
-            
             if (newValue)
                 InvokeEvent(new OnLockDownStart_EVENT());
             else
