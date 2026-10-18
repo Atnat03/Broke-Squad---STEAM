@@ -149,11 +149,11 @@ namespace Gameplay.Items
             return false;
         }
 
-        public void CreateSuspiciousSound(ulong clientId, float force, float distance)
+        public void CreateSuspiciousSound(ulong clientId, float force)
         {
             if (!IsServer)
             {
-                CreateSuspiciousSoundRpc(clientId, force, distance);
+                CreateSuspiciousSoundRpc(clientId, force);
                 return;
             }
             
@@ -161,12 +161,11 @@ namespace Gameplay.Items
             {
                 FromClientID = clientId,
                 Force = force,
-                MaxDistance = distance,
                 Position = transform.position
             });
         }
         
         [Rpc(SendTo.Server)]
-        void CreateSuspiciousSoundRpc(ulong clientId, float force, float distance) => CreateSuspiciousSound(clientId, force, distance);
+        void CreateSuspiciousSoundRpc(ulong clientId, float force) => CreateSuspiciousSound(clientId, force);
     }
 }
