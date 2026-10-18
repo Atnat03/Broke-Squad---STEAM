@@ -48,7 +48,11 @@ namespace Gameplay.IA
         [Header("Lockdown Alert")]
         [SerializeField] private float _timerAlertLockDown = 3f;
         private readonly NetworkVariable<float> _lockDownAlertTimer = new();
+        
+        
         public Action<float> OnLockDownAlertChange;
+        public Action OnStartInvestigate;
+        public Action OnStopInvestigate;
         
         /*
         [HideInInspector] public Transform PlayerTarget = null;

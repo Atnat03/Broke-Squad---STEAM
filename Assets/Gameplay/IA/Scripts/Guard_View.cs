@@ -43,14 +43,11 @@ namespace Gameplay.IA
             _guardLineOfSight.OnDetectionProgressChanged += DetectionUpdate;
 
             _guardLineOfSight.OnNotifyTargetSeen += UpdateTargetUI;
-            _guardLineOfSight.OnNotifySuspectTargetSeen += UpdateSuspectTargetUI;
+            
+            _guard.OnStartInvestigate += () =>  _investUI.SetActive(true);
+            _guard.OnStopInvestigate += () =>  _investUI.SetActive(false);
 
             _guard.OnLockDownAlertChange += UpdateGuardAlert;
-        }
-
-        private void UpdateSuspectTargetUI(bool state)
-        {
-            _investUI.SetActive(state);
         }
 
         private void DetectionUpdate(float ratio)
