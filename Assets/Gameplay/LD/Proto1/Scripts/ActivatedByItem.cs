@@ -8,27 +8,11 @@ namespace Gameplay.LD.Proto1.Scripts
 {
     public class ActivatedByItem : NetworkBehaviour
     {
-        [SerializeField] private UnityEvent _triggerEvent;
+        [SerializeField] private OnlineInteractable _interactable;
 
         public void TriggerActivation()
         {
-            if (!IsServer)
-            {
-                TriggerActivationServerRpc();
-                return;
-            }
-            
-            TriggerActivationClientRpc();
+            _interactable.OnInteractParent();
         }
-
-        [Rpc(SendTo.Everyone)]
-        private void TriggerActivationClientRpc()
-        {
-            _triggerEvent?.Invoke();
-        }
-        
-
-        [Rpc(SendTo.Server)]
-        private void TriggerActivationServerRpc() => TriggerActivation();
     }
 }

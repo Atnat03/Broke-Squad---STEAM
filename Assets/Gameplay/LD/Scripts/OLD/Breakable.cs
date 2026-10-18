@@ -24,9 +24,12 @@ public class Breakable : NetworkBusListener, IBreakable
     [Header("SFX")]
     [SerializeField, SoundName] private string _breakSound;
     
+    Collider _collider;
+    
     public override void OnNetworkSpawn()
     {
         _normalMesh.SetActive(true);
+        _collider = GetComponent<Collider>();
 
         foreach (var rb in _breakMesh)
             rb.gameObject.SetActive(false);
@@ -71,6 +74,7 @@ public class Breakable : NetworkBusListener, IBreakable
         });
         
         _normalMesh.SetActive(false);
+        _collider.enabled = false;
 
         if (_dropPickableItem) return;
 

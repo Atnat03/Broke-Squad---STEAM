@@ -8,5 +8,6 @@ namespace Gameplay.Items
         public void OnThrow(Rigidbody rb);
         public void OnStartHolding();
         public void OnStopHolding();
+        public void OnFixedUpdate(Rigidbody rb);
     }
 }
