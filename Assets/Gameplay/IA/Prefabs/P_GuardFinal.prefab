@@ -561,7 +561,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 847709545
+  GlobalObjectIdHash: 4284276389
   InScenePlacedSourceGlobalObjectIdHash: 3034250001
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -591,13 +591,11 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _patrolState:
     _color: {r: 0.6179246, g: 1, b: 0.70629025, a: 1}
-    _patrolSpeed: 0.5
+    _patrolSpeed: 1.5
     _patrolNodes:
     - {fileID: 0}
     - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    _distanceCloseToChangePoint: 2
+    _distanceCloseToChangePoint: 1
   _patrolState_LOCKDOWN:
     _color: {r: 0, g: 0, b: 0, a: 0}
     _patrolSpeed: 1
@@ -605,7 +603,7 @@ MonoBehaviour:
     _distanceCloseToChangePoint: 2
   _investigateState:
     _color: {r: 1, g: 0.96142983, b: 0.43867922, a: 1}
-    _investigateSpeed: 1
+    _investigateSpeed: 2
     _destinationRange: 1
     _investigationDuration: 4
     _investigateAngle: 45
@@ -617,7 +615,7 @@ MonoBehaviour:
     _investigateAngle: 15
   _pursuitState:
     _color: {r: 1, g: 0.5424528, b: 0.5424528, a: 1}
-    _pursuitSpeed: 1.5
+    _pursuitSpeed: 3
     _aggroRadius: 15
     _maxPursuitDistance: 10
     _damage: 10
@@ -625,7 +623,7 @@ MonoBehaviour:
     _attackCooldown: 1.5
   _pursuitState_LOCKDOWN:
     _color: {r: 0, g: 0, b: 0, a: 0}
-    _pursuitSpeed: 1
+    _pursuitSpeed: 3
     _aggroRadius: 15
     _maxPursuitDistance: 25
     _damage: 10
@@ -683,13 +681,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.IA.Scripts.GuardFieldOfView
   ShowTopMostFoldoutHeaderGroup: 1
-  _radius: 5
-  _angle: 90
+  _radius: 4
+  _angle: 61
   _eyeHeight: 1.6
   _checkInterval: 0.2
-  _detectionLevel: 2
+  _detectionLevel: 5
   _detectionSpeed: 2
-  _forgettingSpeed: 1
+  _forgettingSpeed: 0.5
   _suspiciousLevel: 2
   _suspiciousSpeed: 2
   _suspiciousForgettingSpeed: 1
@@ -1328,7 +1326,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4286004399875292298
 RectTransform:
   m_ObjectHideFlags: 0
