@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -8,48 +7,42 @@ namespace Gameplay.LD
 {
     public class LDElement : NetworkBehaviour
     {
-        [SerializeField] private SO_LDElementRegistry _registry;
-        [SerializeField] private SO_LDElementData _data;
+        [SerializeField] private LDFlag _initialFlags;
+        [SerializeField] private List<LDBinding> _bindings = new();
 
-        private readonly NetworkVariable<int> _dataIndex = new NetworkVariable<int>(-1);
         private readonly NetworkVariable<int> _stateFlags = new(0);
-        
+        private LDElementModule[] _modules;
         private LDElementContext _context;
-        private readonly Dictionary<int, LDElementModule> _modulesById = new ();
+
         public event Action<LDFlag> FlagsChanged;
-        
-        public void PrepareOnServer(int registryIndex)
-        {
-            Debug.Log("[LD] PrepareOnServer: " + registryIndex);
-        }
 
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
-            
-            if(IsServer)
-                _dataIndex.Value = _registry.IndexOf(_data);
-            
-            if (_registry == null)
+
+            _context = new LDElementContext(this);
+            _modules = GetComponentsInChildren<LDElementModule>(true);
+            foreach (var module in _modules)
+                module.Initialize(_context);
+
+            if (IsServer)
             {
-                Debug.LogError($"[LD] {name} has no registry assigned");
-                return;
+                _stateFlags.Value = (int)_initialFlags;
+
+                for (int i = 0; i < _bindings.Count; i++)
+                {
+                    int index = i;
+                    var trigger = _bindings[i].Trigger;
+                    if (trigger == null)
+                    {
+                        Debug.LogWarning($"[LD] {name} : binding {i} sans trigger", this);
+                        continue;
+                    }
+                    trigger.Triggered += activation => OnTriggered(index, activation);
+                }
             }
 
-            if(_data == null)
-            {
-                Debug.LogError($"[LD] {name} has invalid data index {_dataIndex.Value}");
-                return;
-            }
-
-            if(IsServer) 
-            {
-                _stateFlags.Value = (int)_data.initialFlags;
-                Debug.Log($"[LD] client flags: {_stateFlags.Value}");
-            }
             _stateFlags.OnValueChanged += OnStateFlagsChanged;
-
-            BuildFromData();
         }
 
         public override void OnNetworkDespawn()
@@ -58,63 +51,41 @@ namespace Gameplay.LD
             base.OnNetworkDespawn();
         }
 
-        private void BuildFromData()
+        private void OnTriggered(int bindingIndex, LDActivation activation)
         {
-            _context = new LDElementContext(this);
+            var binding = _bindings[bindingIndex];
+            if (!ConditionsPass(binding, activation)) return;
 
-            foreach (ModuleConfig config in _data.ModulesList)
+            for (int e = 0; e < binding.Effects.Length; e++)
             {
-                if (config == null) continue;
-                GameObject child = new GameObject(config.ModuleType.Name);
-                child.transform.SetParent(transform, false);
-                LDElementModule module = (LDElementModule)child.AddComponent(config.ModuleType);
-                module.Initialize(_context, config);
-                _modulesById[config.ModuleID] = module;
-            }
-
-            for (int i = 0; i < _data.BindingsList.Count; i++)
-            {
-                if(!IsServer) continue;
-                int index = i;
-                var binding = _data.BindingsList[i];
-                if (!TryGetModule<LDTriggerModule>(binding.TriggerID, out var trigger)) continue;
-                trigger.Triggered += activation => OnTriggered(index, activation);
-            }
-        }
-
-        private void OnTriggered(int index, LDActivation activation)
-        {
-            LDBindingData binding = _data.BindingsList[index];
-            if(!ConditionsPass(binding, activation)) return;
-            foreach (int id in _data.BindingsList[index].EffectIDs)
-            {
-                if (!TryGetModule<LDEffectModule>(id, out var effect)) continue;
+                var effect = binding.Effects[e];
+                if (effect == null) continue;
 
                 if (effect.RunsOn == LDEffectModule.EffectTarget.Server)
                     effect.Activate(activation);
                 else
-                    ActivateEffectClientsRPC(id, activation);
+                    ActivateEffectClientsRpc(bindingIndex, e, activation);
             }
         }
 
-        public bool TryGetModule<T>(int id, out T module) where T : LDElementModule
+        private bool ConditionsPass(LDBinding binding, LDActivation activation)
         {
-            module = null;
-            if (!_modulesById.TryGetValue(id, out var m)) { Debug.LogError($"Module {id} introuvable", this); return false; }
-            module = m as T;
-            if (module == null) Debug.LogError($"Module {id} n'est pas un {typeof(T).Name}", this);
-            return module != null;
+            foreach (var condition in binding.Conditions)
+            {
+                if (condition == null) continue;
+                if (!condition.CanActivate(activation)) return false;
+            }
+            return true;
         }
 
         [Rpc(SendTo.ClientsAndHost)]
-        private void ActivateEffectClientsRPC(int moduleID, LDActivation activation)
+        private void ActivateEffectClientsRpc(int bindingIndex, int effectIndex, LDActivation activation)
         {
-            if (!TryGetModule<LDEffectModule>(moduleID, out var effect)) return;
-            effect.Activate(activation);
+            var effect = _bindings[bindingIndex].Effects[effectIndex];
+            if (effect != null) effect.Activate(activation);
         }
 
         #region flags
-
         public bool HasFlag(LDFlag flag) => (_stateFlags.Value & (int)flag) != 0;
 
         public void SetFlag(LDFlag flag, bool value)
@@ -124,29 +95,27 @@ namespace Gameplay.LD
             _stateFlags.Value = value ? v | (int)flag : v & ~(int)flag;
         }
 
-        private void OnStateFlagsChanged(int previous, int current) => FlagsChanged?.Invoke((LDFlag) current);
+        private void OnStateFlagsChanged(int previous, int current)
+            => FlagsChanged?.Invoke((LDFlag)current);
         #endregion
 
-        private bool ConditionsPass(LDBindingData binding, LDActivation activation)
+        #region interact
+        internal void RequestInteract(LDElementModule module)
         {
-            foreach (int conditionID in binding.ConditionIDs)
-            {
-                if (!TryGetModule<LDConditionModule>(conditionID, out var condition)) continue;
-                if (!condition.CanActivate(activation)) return false;
-            }
-            return true;
+            int index = Array.IndexOf(_modules, module);
+            if (index >= 0) InteractServerRpc(index);
         }
 
-        internal void RequestInteract(int moduleId) => InteractServerRpc(moduleId);
-
         [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
-        private void InteractServerRpc(int moduleId, RpcParams rpcParams = default)
+        private void InteractServerRpc(int moduleIndex, RpcParams rpcParams = default)
         {
+            if (moduleIndex < 0 || moduleIndex >= _modules.Length) return;
             ulong sender = rpcParams.Receive.SenderClientId;
             if (!NetworkManager.ConnectedClients.TryGetValue(sender, out var client)) return;
             if (client.PlayerObject == null) return;
-            if (!TryGetModule<InteractTrigger>(moduleId, out var trigger)) return;
-            trigger.ServerInteract(client.PlayerObject);
+            if (_modules[moduleIndex] is InteractTrigger trigger)
+                trigger.ServerInteract(client.PlayerObject);
         }
+        #endregion
     }
 }
