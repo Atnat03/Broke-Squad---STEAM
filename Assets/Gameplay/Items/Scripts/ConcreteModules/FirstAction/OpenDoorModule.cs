@@ -1,13 +1,11 @@
 ﻿using System;
-using Gameplay.LD.Proto1.Scripts;
 using MyPrint;
 using UnityEngine;
-using UnityEngine.ProBuilder.Shapes;
 
 namespace Gameplay.Items
 {
     [Serializable]
-    public class OpenDoorModule : ActionModule, IFirstAction
+    public class OpenDoorModule : ActionModule, IFirstAction, IServerAction
     {
         public Vector2Int Range => _canOpenAllDoors ? new Vector2Int(-1, -1) : _canOpenIndexRange;
         
@@ -22,14 +20,31 @@ namespace Gameplay.Items
             
             Transform cam = Context.Camera.transform;
 
-            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, 2f) && hit.transform.TryGetComponent(out Door door))
+            Context.SendToServer(this, new OnModuleDoAction_EVENT
             {
-                if(door.TryUnlock(Range))
-                    ConsumeCondition(new OnModuleDoAction_EVENT());
-            }
+                Position =  cam.position,
+                Direction = cam.forward,
+            });
         }
 
         public void StopFirstAction()
         { }
+
+        public void ServerExecute(OnModuleDoAction_EVENT data)
+        {
+            Vector3 origin = data.Position;
+            Vector3 direction = data.Direction;
+            
+            if (Physics.Raycast(origin, direction, out RaycastHit hit, 2f) && hit.transform.TryGetComponent(out Door door))
+            {
+                bool b = door.TryUnlock(Range);
+                ABPrint.PrintBool(b);
+                
+                if(b)
+                {
+                    ConsumeCondition(new OnModuleDoAction_EVENT());
+                }
+            }
+        }
     }
 }
