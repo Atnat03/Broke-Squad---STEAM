@@ -173,6 +173,14 @@ namespace Gameplay.Items
             });
         }
 
+        private void FixedUpdate()
+        {
+            foreach (IPassif passif in Instance.Passifs)
+            { 
+                passif.OnFixedUpdate(_rb);
+            }
+        }
+        
         [Rpc(SendTo.Server)]
         void CreateSuspiciousSoundRpc(ulong clientId, float force, float distance) => CreateSuspiciousSound(clientId, force, distance);
     }

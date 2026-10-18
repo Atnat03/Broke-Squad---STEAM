@@ -23,7 +23,6 @@ public class Door : OnlineInteractable
 
     public override void OnNetworkSpawn()
     {
-        
         _opened.OnValueChanged += OnOpenedChanged;
 
         if (!IsServer) return;
@@ -64,7 +63,15 @@ public class Door : OnlineInteractable
     {
         if(!canBeInteracted) return;
         if (_locked.Value) return;
-        ABPrint.Print("TryOpen");
+
+        SetOpen(!_opened.Value);
+    }
+
+    protected override void OnInteract()
+    {
+        if(!canBeInteracted) return;
+        if (_locked.Value) return;
+
         SetOpen(!_opened.Value);
     }
 

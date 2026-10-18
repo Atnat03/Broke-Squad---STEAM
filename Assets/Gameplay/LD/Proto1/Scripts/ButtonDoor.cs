@@ -22,6 +22,17 @@ public class ButtonDoor : OnlineInteractable
         _routine = StartCoroutine(WaitToDeactivate());
     }
 
+    protected override void OnInteract()
+    {
+        if (_routine != null) StopCoroutine(_routine);
+
+        activated.Value = true;
+        OpenEventsRpc();
+        StateChanged?.Invoke();
+
+        _routine = StartCoroutine(WaitToDeactivate());
+    }
+
     IEnumerator WaitToDeactivate()
     {
         yield return new WaitForSeconds(activeDuration);
