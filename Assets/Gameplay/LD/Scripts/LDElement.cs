@@ -20,6 +20,8 @@ namespace Gameplay.LD
         {
             base.OnNetworkSpawn();
 
+            if (IsServer) _stateFlags.Value = (int)_initialFlags;
+
             _context = new LDElementContext(this);
             _modules = GetComponentsInChildren<LDElementModule>(true);
             foreach (var module in _modules)
