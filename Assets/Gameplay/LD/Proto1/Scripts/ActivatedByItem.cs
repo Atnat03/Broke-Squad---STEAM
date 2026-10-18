@@ -12,6 +12,7 @@ namespace Gameplay.LD.Proto1.Scripts
 
         public void TriggerActivation()
         {
+            ABPrint.Print("ActivatedByItem");
             _interactable.OnInteractParent();
         }
     }

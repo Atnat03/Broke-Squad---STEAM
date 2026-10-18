@@ -19,14 +19,17 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: fabeb6c75ef292a4287a6c4b2beb384f, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
   FirstActionList: []
-  SecondActionList: []
+  SecondActionList:
+  - rid: 7203101205303918820
   PassifList:
+  - rid: 7202345837684326772
   - rid: 7202345609054912661
   - rid: 7202345749860581726
-  - rid: 7202345837684326772
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 7202345609054912661
       type: {class: StunModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -38,4 +41,15 @@ MonoBehaviour:
     - rid: 7202345837684326772
       type: {class: ActiveMecanism, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
-        _minVelocity: 0
+        _minVelocity: 1
+    - rid: 7203101205303918820
+      type: {class: ThrowModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _durationToFullFill: 0.5
+        _minThrowForce: {x: 0, y: 0, z: 0}
+        _maxThrowForce: {x: 0, y: 2, z: 12}
+        _minTorqueForce: {x: 0, y: 0, z: 0}
+        _maxTorqueForce: {x: 5, y: 0, z: 0}
+        _spawnDistance: {x: 0.2, y: 0, z: 0.7}

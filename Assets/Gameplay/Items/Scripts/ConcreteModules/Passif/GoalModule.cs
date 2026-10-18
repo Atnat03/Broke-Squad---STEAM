@@ -26,10 +26,7 @@ namespace Gameplay.Items
                 ValueB = false
             });
         }
-
-        public void OnFixedUpdate(Rigidbody rb)
-        { }
-
+        
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {
             if (data.ValueB)

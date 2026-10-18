@@ -14,6 +14,7 @@ namespace Gameplay.Items
         [SerializeField] private Camera _camera;
         [SerializeField] private float _maxDistanceToInteract = 2f;
         [SerializeField] private LayerMask _interactableMask;
+        [SerializeField] private LayerMask _obstacleMask;
         private IInteractable _currentHoverInteractable = null;
 
         #region Network Start
@@ -58,10 +59,12 @@ namespace Gameplay.Items
         
         private IInteractable GetAimingInteractable()
         {
+            int rayMask = _interactableMask | _obstacleMask;
+
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
-                    out RaycastHit hit, _maxDistanceToInteract, _interactableMask, QueryTriggerInteraction.Ignore))
-            { 
-                if(hit.collider.TryGetComponent(out IInteractable interact))
+                    out RaycastHit hit, _maxDistanceToInteract, rayMask, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.collider.TryGetComponent(out IInteractable interact))
                 {
                     return interact;
                 }

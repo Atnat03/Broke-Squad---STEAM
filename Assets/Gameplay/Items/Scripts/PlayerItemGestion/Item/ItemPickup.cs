@@ -31,7 +31,7 @@ namespace Gameplay.Items
         private ItemInstance _instance;
         
         public ItemInstance Instance => _instance ??= new ItemInstance(_itemIndex);
-
+        
         public Action OnCollide;
         
         public override void OnNetworkDespawn()
@@ -104,6 +104,8 @@ namespace Gameplay.Items
 
         public void Interact(ulong clientId)
         {
+            if (DetectNotGrabbable()) return;
+            
             InvokeEvent(new OnPickupItem_EVENT
             {
                 ClientId = clientId,
@@ -115,7 +117,6 @@ namespace Gameplay.Items
         {
             _instance = instance;
             instance?.SetAnchor(transform, NetworkObjectId);
-            DetectNotGrabbable();
         }
         
         public void OnCollisionEnter(Collision collision)
@@ -127,11 +128,12 @@ namespace Gameplay.Items
             
             foreach (var passif in _instance.Passifs)
             {
+                ABPrint.Print("Collision Enter");
                 passif.OnCollide(collision, this);
             }
         }
 
-        void DetectNotGrabbable()
+        bool DetectNotGrabbable()
         {
             if (Instance != null)
             {
@@ -139,20 +141,12 @@ namespace Gameplay.Items
                 {
                     if (passif is NotGrabbableModule)
                     {
-                        DisableOutlineRpc();
-                        
-                        Destroy(this);
-                        
-                        return;
+                        return true;
                     }
                 }
             }
-        }
 
-        [Rpc(SendTo.Everyone)]
-        private void DisableOutlineRpc()
-        {
-            Destroy(outline);
+            return false;
         }
 
         public void CreateSuspiciousSound(ulong clientId, float force, float distance)
@@ -170,14 +164,6 @@ namespace Gameplay.Items
                 MaxDistance = distance,
                 Position = transform.position
             });
-        }
-
-        private void FixedUpdate()
-        {
-            foreach (IPassif passif in Instance.Passifs)
-            { 
-                passif.OnFixedUpdate(_rb);
-            }
         }
         
         [Rpc(SendTo.Server)]
