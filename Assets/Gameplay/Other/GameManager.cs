@@ -10,6 +10,11 @@ using UnityEngine.SceneManagement;
 
 namespace Gameplay.Other
 {
+    public struct OnGameEnded_EVENT
+    {
+        public bool Win;
+    }
+    
     public class GameManager : NetworkBusListener
     {
         private bool _hasGoal = false;
@@ -36,6 +41,9 @@ namespace Gameplay.Other
         
         public override void OnNetworkDespawn()
         {
+            _win.OnValueChanged -= OnWin;
+            _loose.OnValueChanged -= OnLoose;
+            
             if (IsServer)
             {
                 if (NetworkManager != null) NetworkManager.OnClientDisconnectCallback -= OnClientDisconnected;
@@ -48,7 +56,7 @@ namespace Gameplay.Other
 
         private void CheckAllPlayersDown()
         {
-            if (!IsServer || _loose.Value) return;
+            if (!IsServer || _loose.Value || _win.Value) return;
             
             int total = 0;
             foreach (var client in NetworkManager.ConnectedClients.Values)
@@ -65,29 +73,24 @@ namespace Gameplay.Other
 
             ABPrint.Print("All players are down", ABColor.Red);
             _loose.Value = true;
-            SendToAllClientRpc();
         }
 
-        [ClientRpc]
-        void SendToAllClientRpc()
-        {
-            if (NetworkManager.Singleton != null)
-            {
-                NetworkManager.Singleton.Shutdown();
-                Debug.Log("Shutting down networkManager");
-            }
-                
-
-            SceneManager.LoadScene("HUB");
-        }
+        
         private void SetHasGoal(OnGrabGoal_EVENT data)
         {
             _hasGoal = true;   
         }
         private void SetDropGoal(OnDropGoal_EVENT data) => _hasGoal = false;
         
-        private void OnWin(bool previousValue, bool newValue) { }
-        private void OnLoose(bool previousValue, bool newValue) { }
+        private void OnWin(bool previous, bool current)
+        {
+            if (current) InvokeEvent(new OnGameEnded_EVENT { Win = true });
+        }
+
+        private void OnLoose(bool previous, bool current)
+        {
+            if (current) InvokeEvent(new OnGameEnded_EVENT { Win = false });
+        }
         
         void TryToWin(OnTryToWin_EVENT data)
         {
@@ -102,7 +105,7 @@ namespace Gameplay.Other
                 return;
             }
 
-            ABPrint.Print("Try to win");
+            if (_win.Value || _loose.Value) return;
             
             if (_hasGoal)
             {
