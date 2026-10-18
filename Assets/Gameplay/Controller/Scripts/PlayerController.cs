@@ -118,7 +118,7 @@ namespace Gameplay.Controller
                 return;
             }
 
-            foreach (var mesh in meshRenderer) mesh.enabled = false;
+            foreach (var mesh in meshRenderer) mesh.gameObject.layer = LayerMask.NameToLayer("HideToOwner");
             pseudoText.gameObject.SetActive(false);
 
             SendPersonalisation();
