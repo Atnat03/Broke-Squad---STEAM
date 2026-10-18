@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5765028851917898739}
   - component: {fileID: 2655506131803740346}
   - component: {fileID: 4515865531962470843}
+  - component: {fileID: 2935475981514402160}
   m_Layer: 6
   m_Name: Model
   m_TagString: Untagged
@@ -69,7 +70,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7fe402927471c80499ceeb802888a61f, type: 2}
+  - {fileID: 8982858641556852613, guid: 3f8fa04d654c13f43a72fbca091f3f82, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -153,6 +154,18 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &2935475981514402160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6163071748137435413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher
 --- !u!1 &8883205150769975146
 GameObject:
   m_ObjectHideFlags: 0
@@ -279,7 +292,7 @@ MonoBehaviour:
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 1
+  m_InScenePlaced: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -346,4 +359,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ItemPickup
   ShowTopMostFoldoutHeaderGroup: 1
+  _rackRatio: 0.5
   _itemIndex: {fileID: 11400000, guid: e2aafdd38899b1d4ca81ec479e8115c2, type: 2}

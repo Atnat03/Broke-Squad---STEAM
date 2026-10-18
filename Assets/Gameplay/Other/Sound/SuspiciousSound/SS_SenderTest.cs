@@ -40,7 +40,6 @@ namespace Gameplay.Other.SuspiciousSound
             {
                 FromClientID = OwnerClientId,
                 Force = _settingsSound.Force,
-                MaxDistance = _settingsSound.MaxDistance,
             });
         }
     }

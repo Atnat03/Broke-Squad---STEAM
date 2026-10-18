@@ -45,6 +45,15 @@ namespace Gameplay.IA
         
         private bool IsLockDown => _lockDownManager != null && _lockDownManager.IsLockDown;
 
+        [Header("Lockdown Alert")]
+        [SerializeField] private float _timerAlertLockDown = 3f;
+        private readonly NetworkVariable<float> _lockDownAlertTimer = new();
+        
+        
+        public Action<float> OnLockDownAlertChange;
+        public Action OnStartInvestigate;
+        public Action OnStopInvestigate;
+        
         /*
         [HideInInspector] public Transform PlayerTarget = null;
         [HideInInspector] public Transform SuspectTarget = null;
@@ -67,10 +76,12 @@ namespace Gameplay.IA
             
             _lockDownManager = LockDownManager.instance;
             _lockDownManager.SubscribeGuard(this);
+
+            _lockDownAlertTimer.OnValueChanged += LockDownTimerChange;
             
             SetUpStateMachine();
         }
-        
+
         public override void OnNetworkDespawn()
         {
             GuardHealth.OnStun -= HandleStun;
@@ -147,6 +158,17 @@ namespace Gameplay.IA
             _stateMachine.Update();
 
             ABPrint.Print(_stateMachine.CurrentStateName, ABColor.Orange);
+
+
+            if (_lockDownAlertTimer.Value > 0)
+            {
+                _lockDownAlertTimer.Value -= Time.deltaTime;
+                
+                if(_lockDownAlertTimer.Value <= 0)
+                {
+                    InvokeEvent(new OnLockDownStart_EVENT());
+                }
+            }
         }
 
         private void LateUpdate()
@@ -179,6 +201,25 @@ namespace Gameplay.IA
                 
                 OnDetectSound?.Invoke();
             }
+        }
+
+        public void ResetTimerAlert()
+        {
+            if (_lockDownManager.IsLockDown) return;
+            
+            if (!IsServer)
+            {
+                return;
+            }
+
+            _lockDownAlertTimer.Value = _timerAlertLockDown;
+        }
+
+        private void LockDownTimerChange(float previousValue, float newValue)
+        {
+            ABPrint.Print("ALERT : " + newValue / _timerAlertLockDown, ABColor.Orange);
+            
+            OnLockDownAlertChange?.Invoke(newValue / _timerAlertLockDown);
         }
     }
 }

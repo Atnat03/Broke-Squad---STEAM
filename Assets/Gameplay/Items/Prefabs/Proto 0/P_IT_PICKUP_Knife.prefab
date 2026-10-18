@@ -104,7 +104,7 @@ MonoBehaviour:
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 1
+  m_InScenePlaced: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -171,6 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ItemPickup
   ShowTopMostFoldoutHeaderGroup: 1
+  _rackRatio: 0.5
   _itemIndex: {fileID: 11400000, guid: 0cfa8ab253c20894ea6e650ed2c3227b, type: 2}
 --- !u!1 &5859568901392631938
 GameObject:
@@ -185,6 +186,8 @@ GameObject:
   - component: {fileID: 3432533006357271110}
   - component: {fileID: 1451383501143502901}
   - component: {fileID: 8929187352458124559}
+  - component: {fileID: 7050431314180561126}
+  - component: {fileID: 520151061685134789}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -303,3 +306,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.09173523, y: 0.2664145, z: 0.02241361}
   m_Center: {x: -0.029588819, y: 0.1336893, z: 0}
+--- !u!114 &7050431314180561126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5859568901392631938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher
+--- !u!114 &520151061685134789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5859568901392631938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher

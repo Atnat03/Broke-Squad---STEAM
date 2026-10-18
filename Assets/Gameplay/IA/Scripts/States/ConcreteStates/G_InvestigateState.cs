@@ -48,6 +48,8 @@ namespace Gameplay.IA
                 OnInvestigationEnded?.Invoke();
                 return;
             }
+            
+            _behavior.OnStartInvestigate?.Invoke();
 
             _motor.SetTarget(_investigatePosition);
             _motor.SetSpeed(_investigateSpeed);
@@ -74,11 +76,14 @@ namespace Gameplay.IA
             _lineOfSight.OnGetNewTarget -= SeePlayerWhileInvestigate;
 
             if (_routine != null) _behavior.StopCoroutine(_routine);
+            
+            _behavior.OnStopInvestigate?.Invoke();
 
             _routine = null;
             _isInvestigating = false;
             
             _behavior.LastSoundSource = null;
+            
         }
 
         private void SeePlayerWhileInvestigate()

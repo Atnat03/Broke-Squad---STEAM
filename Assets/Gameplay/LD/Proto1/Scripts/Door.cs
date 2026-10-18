@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Gameplay.LD.Proto1;
 using Gameplay.LD.Proto1.Scripts;
 using MyPrint;
 using Unity.Netcode;
@@ -18,12 +19,11 @@ public class Door : OnlineInteractable
 
     void Awake()
     {
-        _keyCondition = GetComponent<KeyCondition>(); 
+        _keyCondition = GetComponent<KeyCondition>();
     }
 
     public override void OnNetworkSpawn()
     {
-        
         _opened.OnValueChanged += OnOpenedChanged;
 
         if (!IsServer) return;
@@ -64,7 +64,23 @@ public class Door : OnlineInteractable
     {
         if(!canBeInteracted) return;
         if (_locked.Value) return;
-        ABPrint.Print("TryOpen");
+
+        SetOpen(!_opened.Value);
+    }
+
+    protected override void OnInteract()
+    {
+        ABPrint.Print("canBeInteracted");
+
+        if(!canBeInteracted) return;
+        
+        ABPrint.Print("_locked");
+
+        
+        if (_locked.Value) return;
+        
+        ABPrint.Print("OnInteract");
+
         SetOpen(!_opened.Value);
     }
 
@@ -77,13 +93,10 @@ public class Door : OnlineInteractable
     public bool TryUnlock(Vector2Int range)
     {
         if (!IsServer)
-        {
-            TryUnlockRpc(range.x, range.y);
             return false;
-        }
-
+        
         if (!_locked.Value) return false;
-
+        
         if (_keyCondition.TryOpen(range))
         {
             _locked.Value = false;
@@ -93,9 +106,4 @@ public class Door : OnlineInteractable
 
         return false;
     }
-
-    [Rpc(SendTo.Server)]
-    private void TryUnlockRpc(int rangeX, int rangeY) => TryUnlock(new Vector2Int(rangeX, rangeY));
-    
-    
 }

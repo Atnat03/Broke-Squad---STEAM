@@ -285,13 +285,12 @@ namespace Gameplay.Controller
         }
 
         [Rpc(SendTo.Server)]
-        public void SendEventSoundServerRpc(float force, float dis)
+        public void SendEventSoundServerRpc(float force)
         {
             InvokeEvent(new OnCreateSuspiciousSound_EVENT
             {
                 FromClientID = OwnerClientId,
                 Force = force,
-                MaxDistance = dis,
                 Position = transform.position,
             });
         }
