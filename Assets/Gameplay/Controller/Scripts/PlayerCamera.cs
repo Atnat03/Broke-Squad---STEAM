@@ -124,10 +124,11 @@ namespace Gameplay.Controller
         private void Update()
         {
             if(autoUpdateProfileValue) GetDataFromProfile();
-            
+
+            if (!player.InputEnabled) return;
             if (_override != null && player.IsDown) _override.Release();
 
-            if (_leanMode && _override == null)
+            if (_leanMode && _override == null) 
             {
                 float dir = _invertLeanMode ? -1f : 1f;
                 _leanModeValue = Mathf.Clamp(_leanModeValue + _mouseMovement.x * _leanModeSensitivity * dir, -1f, 1f);

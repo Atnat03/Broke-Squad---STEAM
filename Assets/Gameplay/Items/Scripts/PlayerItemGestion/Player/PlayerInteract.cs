@@ -16,7 +16,7 @@ namespace Gameplay.Items
         [SerializeField] private LayerMask _interactableMask;
         [SerializeField] private LayerMask _obstacleMask;
         private IInteractable _currentHoverInteractable = null;
-
+        
         #region Network Start
         
         public override void OnNetworkSpawn()

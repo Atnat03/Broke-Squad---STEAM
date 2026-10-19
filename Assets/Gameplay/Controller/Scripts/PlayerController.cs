@@ -69,6 +69,7 @@ namespace Gameplay.Controller
         public float ForwardDot => _motor?.ForwardDot ?? 0f;
         public bool IsMovingForward => ForwardDot > 0.1f;
         public bool IsMovingBackward => ForwardDot < -0.1f;
+        public bool InputEnabled => _input == null || _input.Enabled;
         
         public ControllerProfileSO Profile => profile;
         public PlayerMotor Motor => _motor;
@@ -118,7 +119,7 @@ namespace Gameplay.Controller
                 return;
             }
 
-            foreach (var mesh in meshRenderer) mesh.enabled = false;
+            foreach (var mesh in meshRenderer) mesh.gameObject.layer = LayerMask.NameToLayer("HideToOwner");
             pseudoText.gameObject.SetActive(false);
 
             SendPersonalisation();
@@ -297,7 +298,15 @@ namespace Gameplay.Controller
         
 
         #endregion
+        
+        public void SetInputEnabled(bool value)
+        {
+            if (!IsOwner || _input == null) return;
+            _input.Enabled = value;
 
+            if (!value) _motor?.StopMoving();
+        }
+        
         public void SnapTo(Vector3 position, float yawDegrees)
         {
             _rb.position = position;

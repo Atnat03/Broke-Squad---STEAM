@@ -53,16 +53,20 @@ namespace Network.HUB
         public Action<Lobby> OnUpdateLobbyInfo;
         public Action<string> OnUpdatedMap;
         public Action OnTryToJoinGame;
+        public Action OnLeaveLobby;
 
         private async void Start()
         {
             try
             {
-                await UnityServices.InitializeAsync();
+                if (UnityServices.State != ServicesInitializationState.Initialized)
+                    await UnityServices.InitializeAsync();
                 
-                AuthenticationService.Instance.SwitchProfile("player_" + Random.Range(0, 100000));
-
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                if (!AuthenticationService.Instance.IsSignedIn)
+                {
+                    AuthenticationService.Instance.SwitchProfile("player_" + Random.Range(0, 100000));
+                    await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                }
 
                 _playerName = "Player " + Random.Range(0, 99);
                 
@@ -84,6 +88,16 @@ namespace Network.HUB
         //Method to call from other script to create lobby
         public void TryCreateLobby(string lobbyName) => CreateLobby(lobbyName);
 
+        private void ResetLobbyState()
+        {
+            _hostLobby = null;
+            _joinedLobby = null;
+            _relayJoined = false;
+            _heartbeatTimer = 0f;
+            _lobbyUpdateTimer = 0f;
+
+            OnLeaveLobby?.Invoke();
+        }
         #endregion
 
         #region Update Lobby
@@ -126,9 +140,15 @@ namespace Network.HUB
             if (_lobbyUpdateTimer >= 0) return;
             _lobbyUpdateTimer = _lobbyUpdateTimerMax;
 
+            string lobbyId = _joinedLobby.Id;
+            
             try
             {
-                _joinedLobby = await LobbyService.Instance.GetLobbyAsync(_joinedLobby.Id);
+                Lobby lobby = await LobbyService.Instance.GetLobbyAsync(lobbyId);
+                
+                if (_joinedLobby == null || _joinedLobby.Id != lobbyId) return;
+                
+                _joinedLobby = lobby;
 
                 OnUpdateLobbyInfo?.Invoke(_joinedLobby);
                 
@@ -141,6 +161,11 @@ namespace Network.HUB
                     _relayJoined = true;
                     _relayJoined = await RelayManager.instance.JoinRelay(relayData.Value);
                 }
+            }
+            catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyNotFound || e.Reason == LobbyExceptionReason.Forbidden)
+            {
+                if (_joinedLobby != null && _joinedLobby.Id == lobbyId)
+                    ResetLobbyState();
             }
             catch (Exception e)
             {
@@ -229,6 +254,14 @@ namespace Network.HUB
 
                 string map = _joinedLobby.Data[KEY_MAP].Value;
 
+                if (NetworkManager.Singleton == null || _joinedLobby == null) return;
+
+                string idToDelete = _joinedLobby.Id;
+                ResetLobbyState(); 
+
+                try { await LobbyService.Instance.DeleteLobbyAsync(idToDelete); }
+                catch (LobbyServiceException e) { Debug.Log(e); }
+                
                 NetworkManager.Singleton.SceneManager.LoadScene(
                     map,
                     LoadSceneMode.Single
@@ -343,11 +376,27 @@ namespace Network.HUB
 
         #region Manage Lobby
 
+        public void LeaveCurrentLobby() => LeaveLobby();
         private async void LeaveLobby()
         {
+            if (_joinedLobby == null) return;
+
+            string lobbyId = _joinedLobby.Id;
+            bool wasHost = IsLobbyHost(); 
+            
+            ResetLobbyState();
+
             try
             {
-                await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, AuthenticationService.Instance.PlayerId);
+                if (wasHost)
+                {
+                    await LobbyService.Instance.DeleteLobbyAsync(lobbyId);
+                }
+                else
+                {
+                    await LobbyService.Instance.RemovePlayerAsync(lobbyId, AuthenticationService.Instance.PlayerId);
+                }
+                    
             }
             catch (LobbyServiceException e)
             {

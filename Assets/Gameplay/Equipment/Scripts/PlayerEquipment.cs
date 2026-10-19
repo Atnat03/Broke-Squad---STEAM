@@ -13,7 +13,7 @@ namespace Gameplay.Equipment
         [SerializeField] private Camera _camera;
         [SerializeField] private float _rangeDrop = 2f;
 
-        BackPack _currentBackPack; // résolu sur tous les peers
+        BackPack _currentBackPack;
 
         readonly NetworkVariable<NetworkObjectReference> _backPackRef = new();
         readonly NetworkVariable<bool> _hasBackPack = new();
@@ -79,7 +79,7 @@ namespace Gameplay.Equipment
             if (!backpackObject.TryGetComponent(out BackPackPhysics physics) || physics.IsCarried) return;
 
             physics.SetCarried(true);
-            _backPackRef.Value = backpackObject;   // <-- la ligne qui manquait
+            _backPackRef.Value = backpackObject;
             _hasBackPack.Value = true;
         }
 
@@ -92,9 +92,13 @@ namespace Gameplay.Equipment
             Vector3 fwd = _camera.transform.forward;
 
             if (Physics.Raycast(origin, fwd, out RaycastHit hit, _rangeDrop, ~0, QueryTriggerInteraction.Ignore))
+            {
                 TryDrop(hit.point + hit.normal * 0.3f);
+            }            
             else
+            {
                 TryDrop(origin + fwd * _rangeDrop);
+            }        
         }
 
         private void TryDrop(Vector3 position)
@@ -110,7 +114,7 @@ namespace Gameplay.Equipment
             if (ResolveBackPack() && _currentBackPack.TryGetComponent(out BackPackPhysics physics))
                 physics.DropAt(position);
 
-            _hasBackPack.Value = false; // déclenche OnHasBackPackChanged (visibilité + null)
+            _hasBackPack.Value = false;
         }
 
         [Rpc(SendTo.Server)]

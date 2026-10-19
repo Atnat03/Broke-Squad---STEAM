@@ -39,6 +39,8 @@ namespace Gameplay.Controller
         public Action OnPinging;
 
         public Action OnTryDropEquipment;
+        
+        public Action OnPause;
 
         private void Awake()
         {
@@ -83,8 +85,9 @@ namespace Gameplay.Controller
             _playerInputs.Gameplay.Ping.performed += PerformPing;
 
             _playerInputs.Gameplay.EquimentDrop.performed += PerformDropEquipment;
+            
+            _playerInputs.Gameplay.Pause.performed += PerformPause;
         }
-
 
         private void OnDisable()
         {
@@ -116,6 +119,8 @@ namespace Gameplay.Controller
             
             _playerInputs.Gameplay.EquimentDrop.performed -= PerformDropEquipment;
 
+            _playerInputs.Gameplay.Pause.performed -= PerformPause;
+            
             _playerInputs.Disable();
         }
 
@@ -233,6 +238,11 @@ namespace Gameplay.Controller
         private void PerformDropEquipment(InputAction.CallbackContext obj)
         {
             OnTryDropEquipment?.Invoke();
+        }
+        
+        private void PerformPause(InputAction.CallbackContext obj)
+        {
+            OnPause?.Invoke();
         }
         
         private void OnDestroy() => _playerInputs.Dispose();

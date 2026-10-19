@@ -12,6 +12,12 @@ namespace Gameplay.Items
         [SerializeField] private Vector2Int _canOpenIndexRange = new Vector2Int(0, 2);
         [SerializeField] private bool _canOpenAllDoors = false;
         
+        [Header("SFX")] 
+        [SerializeField, SoundName] private string _stringNameGoodKey;
+        [SerializeField, SoundName] private string _stringNameWringKey;
+        [SerializeField, Range(0, 1)] private float _volume = 0.5f;
+
+        
         public ICondition Condition => ConditionParent;
         
         public void StartFirstAction()
@@ -42,7 +48,25 @@ namespace Gameplay.Items
                 
                 if(b)
                 {
+                    //SFX
+                    Context.Inventory.InvokeEvent(new PlaySoundEvent
+                    {
+                        position = origin,
+                        volume = _volume,
+                        soundName = _stringNameGoodKey
+                    });
+                    
                     ConsumeCondition(new OnModuleDoAction_EVENT());
+                }
+                else
+                {
+                    //SFX
+                    Context.Inventory.InvokeEvent(new PlaySoundEvent
+                    {
+                        position = origin,
+                        volume = _volume,
+                        soundName = _stringNameWringKey
+                    });
                 }
             }
         }
