@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
   m_Name: SO_IT_Lockpick
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
-  ID: 0
+  ID: 16
   ItemName: Lock Pick
   VisualPrefab: {fileID: 5140823498472930773, guid: dd1a236e42aa4944998e6678ea4e4640, type: 3}
   PickupPrefab: {fileID: 4298730320902700740, guid: 0c624b13728883a49a6e5aeeb0a60b0d, type: 3}
   Icon: {fileID: 21300000, guid: f939f9c5bf353794eb9559056ed58ff5, type: 3}
+  OffsetInHand: {x: 0, y: 0, z: 0}
   FirstActionList:
   - rid: 7202345609054912654
   SecondActionList:
@@ -39,6 +40,8 @@ MonoBehaviour:
         _minTorqueForce: {x: 0, y: 0, z: 0}
         _maxTorqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: {x: 0.2, y: 0, z: 0.7}
+        _stringName: Joueur/Throw Item
+        _volume: 0.5
     - rid: 7202345609054912642
       type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -73,7 +76,6 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 0.5
         _canDamagePlayer: 1
-        _minVelocityForSound: 3
     - rid: 7202345609054912654
       type: {class: OpenDoorModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -81,6 +83,9 @@ MonoBehaviour:
           rid: 7202345609054912655
         _canOpenIndexRange: {x: 1, y: 100}
         _canOpenAllDoors: 0
+        _stringNameGoodKey: 
+        _stringNameWringKey: 
+        _volume: 0.5
     - rid: 7202345609054912655
       type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:

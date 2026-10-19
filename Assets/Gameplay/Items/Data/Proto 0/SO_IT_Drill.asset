@@ -40,6 +40,8 @@ MonoBehaviour:
         _minTorqueForce: {x: 0, y: 0, z: 0}
         _maxTorqueForce: {x: 0, y: 0, z: 5}
         _spawnDistance: {x: 0.2, y: 0, z: 0.7}
+        _stringName: Joueur/Throw Item
+        _volume: 0.5
     - rid: 7202345609054912642
       type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -81,8 +83,11 @@ MonoBehaviour:
           rid: 7202345730816608149
         _canOpenIndexRange: {x: 100, y: 200}
         _canOpenAllDoors: 0
+        _stringNameGoodKey: 
+        _stringNameWringKey: 
+        _volume: 0.5
     - rid: 7202345730816608149
       type: {class: ElectricUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
-        _maxPercentValue: 100
+        _startPercentValue: 100
         _electricNeededToUse: 50
