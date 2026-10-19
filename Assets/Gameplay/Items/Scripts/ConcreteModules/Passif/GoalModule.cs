@@ -1,4 +1,5 @@
 ﻿using System;
+using Gameplay.IA;
 using MyPrint;
 using UnityEngine;
 
@@ -26,12 +27,13 @@ namespace Gameplay.Items
                 ValueB = false
             });
         }
-
+        
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {
             if (data.ValueB)
             {
                 Context.Inventory.InvokeEvent(new OnGrabGoal_EVENT());
+                Context.Inventory.InvokeEvent(new OnLockDownStart_EVENT());
             }
             else
             {

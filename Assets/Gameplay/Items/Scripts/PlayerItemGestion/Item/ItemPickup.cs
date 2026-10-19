@@ -31,7 +31,7 @@ namespace Gameplay.Items
         private ItemInstance _instance;
         
         public ItemInstance Instance => _instance ??= new ItemInstance(_itemIndex);
-
+        
         public Action OnCollide;
         
         public override void OnNetworkDespawn()
@@ -104,6 +104,8 @@ namespace Gameplay.Items
 
         public void Interact(ulong clientId)
         {
+            if (DetectNotGrabbable()) return;
+            
             InvokeEvent(new OnPickupItem_EVENT
             {
                 ClientId = clientId,
@@ -115,7 +117,6 @@ namespace Gameplay.Items
         {
             _instance = instance;
             instance?.SetAnchor(transform, NetworkObjectId);
-            DetectNotGrabbable();
         }
         
         public void OnCollisionEnter(Collision collision)
@@ -127,11 +128,12 @@ namespace Gameplay.Items
             
             foreach (var passif in _instance.Passifs)
             {
+                ABPrint.Print("Collision Enter");
                 passif.OnCollide(collision, this);
             }
         }
 
-        void DetectNotGrabbable()
+        bool DetectNotGrabbable()
         {
             if (Instance != null)
             {
@@ -139,27 +141,19 @@ namespace Gameplay.Items
                 {
                     if (passif is NotGrabbableModule)
                     {
-                        DisableOutlineRpc();
-                        
-                        Destroy(this);
-                        
-                        return;
+                        return true;
                     }
                 }
             }
+
+            return false;
         }
 
-        [Rpc(SendTo.Everyone)]
-        private void DisableOutlineRpc()
-        {
-            Destroy(outline);
-        }
-
-        public void CreateSuspiciousSound(ulong clientId, float force, float distance)
+        public void CreateSuspiciousSound(ulong clientId, float force)
         {
             if (!IsServer)
             {
-                CreateSuspiciousSoundRpc(clientId, force, distance);
+                CreateSuspiciousSoundRpc(clientId, force);
                 return;
             }
             
@@ -167,12 +161,11 @@ namespace Gameplay.Items
             {
                 FromClientID = clientId,
                 Force = force,
-                MaxDistance = distance,
                 Position = transform.position
             });
         }
-
+        
         [Rpc(SendTo.Server)]
-        void CreateSuspiciousSoundRpc(ulong clientId, float force, float distance) => CreateSuspiciousSound(clientId, force, distance);
+        void CreateSuspiciousSoundRpc(ulong clientId, float force) => CreateSuspiciousSound(clientId, force);
     }
 }

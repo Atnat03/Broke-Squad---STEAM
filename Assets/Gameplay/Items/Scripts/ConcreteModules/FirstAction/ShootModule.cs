@@ -56,19 +56,25 @@ namespace Gameplay.Items
             Quaternion rotation = Quaternion.LookRotation(data.Direction);
             
             NetworkObject ammo = Context.SpawnGameObject(_ammoPrefab.PickupPrefab.gameObject, data.Position, rotation);
-
-            ItemInstance item = Context.Inventory.GetCurrentItemInHand();
+            
+            ItemInstance item = new ItemInstance(_ammoPrefab);
             
             if (item == null || item.Data.PickupPrefab == null)
                 return;
             
             if (ammo.TryGetComponent(out ItemPickup pickup))
             {
+                ABPrint.Print(item.Data.ItemName);
                 pickup.Setup(item);
             }
             
             if (ammo.TryGetComponent(out Rigidbody rb))
             {
+                foreach (IPassif p in item.Passifs)
+                {
+                    p.OnThrow(rb);
+                }
+                
                 rb.useGravity = false;
                 pickup.OnCollide += () => rb.useGravity = true;
                 

@@ -1,3 +1,4 @@
+using System;
 using Gameplay;
 using Unity.Netcode;
 using UnityEngine;
@@ -10,7 +11,7 @@ public abstract class OnlineInteractable : NetworkBehaviour, IInteractable
 
     public UnityEvent onInteractableOpen;
     public UnityEvent onInteractableClose;
-
+    
     public void SetOutline(bool state) => outline.enabled = state;
     
     public void Interact(ulong clientId)
@@ -18,11 +19,22 @@ public abstract class OnlineInteractable : NetworkBehaviour, IInteractable
         if (IsServer) ServerInteract(clientId);
         else InteractServerRpc();
     }
+
+    public void OnInteractParent()
+    {
+        if (IsServer) OnInteract();
+        else OnInteractServerRpc();
+    }
     
     [Rpc(SendTo.Server)]
     void InteractServerRpc() => ServerInteract(OwnerClientId);
     
     protected abstract void ServerInteract(ulong senderClientId);
+    
+    [Rpc(SendTo.Server)]
+    void OnInteractServerRpc() => OnInteract();
+    
+    protected abstract void OnInteract();
 
     [Rpc(SendTo.Everyone)]
     protected void OpenEventsRpc() => onInteractableOpen?.Invoke();

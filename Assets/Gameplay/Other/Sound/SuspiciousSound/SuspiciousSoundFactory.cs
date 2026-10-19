@@ -38,7 +38,7 @@ namespace Gameplay.Other.SuspiciousSound
                 direction = player.TransformDirection(direction);
                 
                 float f = data.Force;
-                float d = data.MaxDistance;
+                float d = data.Force;
                 
                 int hitCount = Physics.RaycastNonAlloc(data.Position, direction, _hits, d);
 
