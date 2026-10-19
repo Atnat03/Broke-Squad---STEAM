@@ -22,6 +22,8 @@ public class VoiceChatState : NetworkBehaviour
         {
             _toggle.SetIsOnWithoutNotify(_activated.Value);
             _toggle.onValueChanged.AddListener(SetActivated);
+
+            GetComponent<AudioSource>().volume = 50f;
         }
     }
 
