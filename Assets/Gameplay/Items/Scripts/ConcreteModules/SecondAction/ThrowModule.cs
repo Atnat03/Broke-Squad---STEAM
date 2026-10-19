@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using MyPrint;
+using ScriptableObjectsDefinitions;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -26,6 +27,10 @@ namespace Gameplay.Items
         
         private float _charge;
         private Coroutine _chargeCoroutine;
+
+        [Header("SFX")] 
+        [SerializeField, SoundName] private string _stringName;
+        [SerializeField, Range(0, 1)] private float _volume = 0.5f;
         
         #region Action Gestion
 
@@ -112,6 +117,14 @@ namespace Gameplay.Items
             //Torque
             Vector3 currentTorqueForce = Vector3.Lerp(_minTorqueForce, _maxTorqueForce, Mathf.Clamp01(data.ValueF));
             rb.AddTorque(camRot * currentTorqueForce, ForceMode.VelocityChange);
+            
+            //SFX
+            Context.Inventory.InvokeEvent(new PlaySoundEvent
+            {
+                position = thrown.transform.position,
+                volume = _volume,
+                soundName = _stringName
+            });
             
             foreach (IPassif passif in thrown.Instance.Passifs)
             {
