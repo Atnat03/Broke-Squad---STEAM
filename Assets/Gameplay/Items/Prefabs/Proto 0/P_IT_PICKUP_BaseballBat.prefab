@@ -83,7 +83,7 @@ MonoBehaviour:
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 1
+  m_InScenePlaced: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -171,6 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ItemPickup
   ShowTopMostFoldoutHeaderGroup: 1
+  _rackRatio: 0.5
   _itemIndex: {fileID: 11400000, guid: 8bdf3e1037b01a34dafcbf4dc16e601a, type: 2}
 --- !u!1 &3272707195262305289
 GameObject:
@@ -185,6 +186,7 @@ GameObject:
   - component: {fileID: 3851197385565680258}
   - component: {fileID: 4233905353587860128}
   - component: {fileID: 103753604124746708}
+  - component: {fileID: 1568349495685907975}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -303,3 +305,15 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.09799426, y: 1.1150899, z: 0.09799425}
   m_Center: {x: 0, y: 0.3161565, z: -0.00000033527613}
+--- !u!114 &1568349495685907975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3272707195262305289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher

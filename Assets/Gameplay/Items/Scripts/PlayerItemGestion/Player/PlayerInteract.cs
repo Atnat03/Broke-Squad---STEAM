@@ -6,6 +6,7 @@ namespace Gameplay.Items
 {
     public class PlayerInteract : NetworkBusListener
     {
+        [SerializeField] private PlayerCamera _playerCamera;
         [Header("References")]
         [SerializeField] private PlayerInput _playerInput;
         
@@ -13,6 +14,7 @@ namespace Gameplay.Items
         [SerializeField] private Camera _camera;
         [SerializeField] private float _maxDistanceToInteract = 2f;
         [SerializeField] private LayerMask _interactableMask;
+        [SerializeField] private LayerMask _obstacleMask;
         private IInteractable _currentHoverInteractable = null;
 
         #region Network Start
@@ -40,13 +42,15 @@ namespace Gameplay.Items
         {
             if (!IsOwner || _camera == null) return;
 
-            IInteractable target = GetAimingInteractable();
+            IInteractable target = (_playerCamera != null && _playerCamera.HasOverride) ? null : GetAimingInteractable();
             
             if (target == _currentHoverInteractable) return;
             
             if (target == null && _currentHoverInteractable != null)
                 _currentHoverInteractable.SetOutline(false);
 
+            _currentHoverInteractable?.SetOutline(false);
+            
             _currentHoverInteractable = target;
 
             if (_currentHoverInteractable != null)
@@ -55,10 +59,12 @@ namespace Gameplay.Items
         
         private IInteractable GetAimingInteractable()
         {
+            int rayMask = _interactableMask | _obstacleMask;
+
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
-                    out RaycastHit hit, _maxDistanceToInteract, _interactableMask, QueryTriggerInteraction.Ignore))
-            { 
-                if(hit.collider.TryGetComponent(out IInteractable interact))
+                    out RaycastHit hit, _maxDistanceToInteract, rayMask, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.collider.TryGetComponent(out IInteractable interact))
                 {
                     return interact;
                 }
@@ -70,6 +76,12 @@ namespace Gameplay.Items
         // When press E => check if they're an IInteractable in front of us then Interact with it is there is
         private void TryToInteract()
         {
+            if (_playerCamera != null && _playerCamera.HasOverride)
+            {
+                _playerCamera.ReleaseOverride();
+                return;
+            }
+            
             if (_currentHoverInteractable != null)
             {
                 _currentHoverInteractable.Interact(OwnerClientId);

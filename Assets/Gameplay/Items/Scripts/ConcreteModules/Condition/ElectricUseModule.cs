@@ -8,13 +8,14 @@ namespace Gameplay.Items
     [Serializable]
     public class ElectricUseModule : ItemModule, ICondition, IServerAction, IReplicatedModule
     {
-        [SerializeField] private float _maxPercentValue = 100;
+        private float _maxPercentValue = 100;
+        [SerializeField] private float _startPercentValue = 100;
         [SerializeField, Tooltip("En %")] private float _electricNeededToUse = 10;
         private float _currentPercentValue;
         private FixedString32Bytes _keyEvent = "ELECTRIC_USE_MODULE";
         
-        protected override void SetModule() => _currentPercentValue = _maxPercentValue;
-        public bool CheckCondition() => _currentPercentValue-_electricNeededToUse > 0;
+        protected override void SetModule() => _currentPercentValue = _startPercentValue;
+        public bool CheckCondition() => _currentPercentValue-_electricNeededToUse >= 0;
 
         public void UseItem()
         {
@@ -58,22 +59,13 @@ namespace Gameplay.Items
             });
         }
         
-        public bool AddEnergy(int amount)
+        public bool AddEnergy(float amount)
         {
-            if (_currentPercentValue >= _maxPercentValue)
+            if (amount <= 0f || _currentPercentValue >= _maxPercentValue)
                 return false;
-            
-            if (amount >= 0)
-            {
-                _currentPercentValue += amount;
-                
-                if (_currentPercentValue > _maxPercentValue) 
-                    _currentPercentValue = _maxPercentValue;
-                
-                return true;
-            }
 
-            return false;
+            _currentPercentValue = Mathf.Min(_currentPercentValue + amount, _maxPercentValue);
+            return true;
         }
 
         public void ServerExecute(OnModuleDoAction_EVENT data) => UseItem();

@@ -1,5 +1,6 @@
 ﻿using System;
 using Gameplay.Other.SuspiciousSound;
+using MyPrint;
 using UnityEngine;
 
 namespace Gameplay.Items
@@ -10,18 +11,26 @@ namespace Gameplay.Items
         [SerializeField] private float _miniVelocityToDoSound = 1;
         [SerializeField] private SO_SuspiciousSoundSettings _suspiciousSoundSettings;
         
+        private Rigidbody _rb;
+        
         public void OnCollide(Collision collision, ItemPickup item)
         {
-            float speed = collision.relativeVelocity.magnitude;
+            if (_rb == null && !item.TryGetComponent(out _rb)) return;
+
+            float speed = collision.impulse.magnitude / _rb.mass;
             
             if (speed <= _miniVelocityToDoSound) return;
             
-            Context.SendSuspiciousSound(Context.Inventory.OwnerClientId, item.transform.position, _suspiciousSoundSettings);
+            item.CreateSuspiciousSound(
+                item.OwnerClientId, 
+                _suspiciousSoundSettings.Force);
         }
 
         public void OnThrow(Rigidbody rb)
-        { }
-
+        {
+            _rb = rb;
+        }
+        
         public void OnStartHolding()
         { }
 

@@ -1,9 +1,11 @@
+using System;
+using Bus;
 using UnityEngine;
 
 namespace Gameplay.Controller
 {
     [RequireComponent(typeof(Camera))]
-    public class PlayerCamera : MonoBehaviour
+    public class PlayerCamera : MonoBusListener
     {
         
         [SerializeField] private CameraProfileSO profile;
@@ -58,6 +60,18 @@ namespace Gameplay.Controller
         private float _leanSmoothTime = 0.08f;
         private float _leanCameraRadius = 0.15f;
         private float _leanWallPadding = 0.05f;
+        private float _leanModeSensitivity = 0.02f;
+        private bool _invertLeanMode = false;
+        private bool _lockControllerOnLean = true;
+        private bool _leanMode;
+        
+        public bool IsLeanMode => _leanMode;
+        public bool LocksController => (_leanMode && _lockControllerOnLean) || (_override?.LocksController ?? false);
+        
+        public bool HasOverride => _override != null && _override.LocksController;
+        public void ReleaseOverride() => _override?.Release();
+
+        private float _leanModeValue;
         [SerializeField] private LayerMask leanObstacleMask; 
         
         private float _leanAmount;  
@@ -77,12 +91,25 @@ namespace Gameplay.Controller
         private float _bobPhase;
         private float _bobWeight;
         private float _backwardFactor;
+        
+        private ICameraOverride _override;
+        private float _lastWeight;
+        public float OverrideWeight => _override?.Weight ?? 0f;
 
         private void Awake()
         {
             _cam = GetComponent<Camera>();
-            playerInput.OnMouseMovement += value => _mouseMovement = value;
+            playerInput.OnMouseMovement += OnMouseMove;
+            playerInput.OnLeanInput += EnterLeanMode;
+            playerInput.OnLeanInputCanceled += ExitLeanMode;
             _bob = _walkBob;
+        }
+
+        private void OnDestroy()
+        {
+            playerInput.OnMouseMovement -= OnMouseMove;
+            playerInput.OnLeanInput -= EnterLeanMode;
+            playerInput.OnLeanInputCanceled -= ExitLeanMode;
         }
 
         private void Start()
@@ -98,9 +125,20 @@ namespace Gameplay.Controller
         {
             if(autoUpdateProfileValue) GetDataFromProfile();
             
-            _yRotation += _mouseMovement.x * sensX;
-            _xRotation -= _mouseMovement.y * sensY;
-            _xRotation = Mathf.Clamp(_xRotation, _minLookAngle, _maxLookAngle);
+            if (_override != null && player.IsDown) _override.Release();
+
+            if (_leanMode && _override == null)
+            {
+                float dir = _invertLeanMode ? -1f : 1f;
+                _leanModeValue = Mathf.Clamp(_leanModeValue + _mouseMovement.x * _leanModeSensitivity * dir, -1f, 1f);
+            }
+            else
+            {
+                _yRotation += _mouseMovement.x * sensX;
+                _xRotation -= _mouseMovement.y * sensY;
+                _xRotation = Mathf.Clamp(_xRotation, _minLookAngle, _maxLookAngle);
+                _override?.ProcessLook(ref _yRotation, ref _xRotation);
+            }
 
             player.SetYaw(_yRotation);
         }
@@ -121,8 +159,49 @@ namespace Gameplay.Controller
             transform.rotation = look * Quaternion.Euler(0f, 0f, bobRoll + leanRoll);
 
             transform.position = _smoothPos + yawOnly * (bobOffset + leanOffset);
+            
+            var pose = new CameraPose
+            {
+                position = _smoothPos + yawOnly * (bobOffset + leanOffset),
+                rotation = look * Quaternion.Euler(0f, 0f, bobRoll + leanRoll),
+                fov = _cam.fieldOfView
+            };
+
+            if (_override != null)
+            {
+                _override.Tick(dt);
+                pose = _override.Apply(pose);
+                if (_override.IsFinished) _override = null;
+            }
+
+            transform.SetPositionAndRotation(pose.position, pose.rotation);
+            _cam.fieldOfView = pose.fov;
+            float w = OverrideWeight;
+            if (!Mathf.Approximately(w, _lastWeight))
+            {
+                _lastWeight = w;
+                InvokeEvent(new KeyholeWeightChanged_EVENT { Weight = w });
+            }
+            
         }
 
+        private void OnMouseMove(Vector2 value) => _mouseMovement = value;
+        private void EnterLeanMode() => _leanMode = true;
+
+        public void SetOverride(ICameraOverride o)
+        {
+            _override = o;
+            _leanMode = false;
+            _leanModeValue = 0f;
+            o.OnEnter(ref _yRotation, ref _xRotation);
+        }
+        
+        private void ExitLeanMode()
+        {
+            _leanMode = false;
+            _leanModeValue = 0f; 
+        }
+        
         private void UpdateFov(float dt)
         {
             float target = player.IsCrouching ? _crouchFov
@@ -198,7 +277,8 @@ namespace Gameplay.Controller
 
         private Vector3 UpdateLean(float dt, Quaternion yawOnly, out float roll)
         {
-            float target = _leanEnabled && !player.IsSprinting ? player.LeanInput : 0f;
+            float input = _leanMode ? _leanModeValue : player.LeanInput;
+            float target = _leanEnabled && !player.IsSprinting ? input : 0f;
             _leanAmount = Mathf.SmoothDamp(_leanAmount, target, ref _leanVel, _leanSmoothTime);
 
             roll = 0f;
@@ -254,6 +334,9 @@ namespace Gameplay.Controller
             _leanCameraRadius = profile.leanCameraRadius;
             _leanWallPadding = profile.leanWallPadding;
             _downBob = profile.downBob;
+            _leanModeSensitivity = profile.leanModeSensitivity;
+            _invertLeanMode = profile.invertLeanMode;
+            _lockControllerOnLean = profile.lockControllerOnLean;
 
         }
         

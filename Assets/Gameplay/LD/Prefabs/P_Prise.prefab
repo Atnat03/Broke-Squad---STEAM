@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2333968045222785437}
   - component: {fileID: -7830063957090585088}
-  - component: {fileID: 7754416351090704598}
   - component: {fileID: 1170445352419740507}
+  - component: {fileID: 7923186148379322702}
   m_Layer: 0
   m_Name: P_Prise
   m_TagString: Untagged
@@ -63,22 +63,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &7754416351090704598
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1106497380845668977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3642fa98d98d47d8b62035a0dcef04a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.PriseElectrique
-  ShowTopMostFoldoutHeaderGroup: 1
-  _chargeDistance: 2
-  _chargePerSeconde: 1
-  _plugSound: 
 --- !u!65 &1170445352419740507
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -100,6 +84,20 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7923186148379322702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106497380845668977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7846f804df05f3d4aa00224cd0afbfe5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElectricPlug
+  ShowTopMostFoldoutHeaderGroup: 1
+  _percentageGainPerSecond: 5
 --- !u!1001 &6845142165004731132
 PrefabInstance:
   m_ObjectHideFlags: 0

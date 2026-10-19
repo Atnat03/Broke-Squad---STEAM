@@ -28,20 +28,28 @@ namespace Gameplay.IA
         public override void OnEnter()
         {
             _behavior.SetColor(_color);
-            
+    
             _isInvestigating = false;
             _routine = null;
 
-            Transform target = _lineOfSight.SuspiciousTarget;
-            _hasDestination = target != null;
-
-            if (!_hasDestination)
+            if (_behavior.LastSoundSource != null)
             {
+                _investigatePosition = _behavior.LastSoundPosition;
+                _hasDestination = true;
+            }
+            else if (_behavior.GuardSight.SuspiciousTarget != null)
+            {
+                _investigatePosition = _behavior.GuardSight.SuspiciousTarget.position;
+                _hasDestination = true;
+            }
+            else
+            {
+                _hasDestination = false;
                 OnInvestigationEnded?.Invoke();
                 return;
             }
-
-            _investigatePosition = target.position;
+            
+            _behavior.OnStartInvestigate?.Invoke();
 
             _motor.SetTarget(_investigatePosition);
             _motor.SetSpeed(_investigateSpeed);
@@ -68,9 +76,14 @@ namespace Gameplay.IA
             _lineOfSight.OnGetNewTarget -= SeePlayerWhileInvestigate;
 
             if (_routine != null) _behavior.StopCoroutine(_routine);
+            
+            _behavior.OnStopInvestigate?.Invoke();
 
             _routine = null;
             _isInvestigating = false;
+            
+            _behavior.LastSoundSource = null;
+            
         }
 
         private void SeePlayerWhileInvestigate()

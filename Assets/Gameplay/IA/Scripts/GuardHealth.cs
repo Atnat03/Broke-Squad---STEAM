@@ -11,13 +11,15 @@ namespace Gameplay.IA
 {
     public class GuardHealth : NetworkBusListener, IDamageable, IStunnable
     {
-        public float Health => _currentHealth.Value;
+        public float HealthRatio => _currentHealth.Value / _baseHealth;
         public bool IsKO => _isKO.Value;
         
         [SerializeField] private float _baseHealth = 100;
         
         private readonly NetworkVariable<float> _currentHealth = new NetworkVariable<float>(0);
         private readonly NetworkVariable<bool> _isKO = new NetworkVariable<bool>();
+
+        public GuardBehavior GuardBrain;
         
         //Action
         public Action OnTakeDamage;
@@ -44,6 +46,8 @@ namespace Gameplay.IA
             
             OnTakeDamage?.Invoke();
 
+            GuardBrain.ResetTimerAlert();
+            
             if (_currentHealth.Value <= 0)
             {
                 _isKO.Value = true;

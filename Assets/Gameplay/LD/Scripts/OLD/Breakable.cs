@@ -1,0 +1,88 @@
+using Bus;
+using Unity.Netcode;
+using UnityEngine;
+using UnityEngine.Serialization;
+
+public interface IBreakable
+{
+    void Break(float force);
+}
+
+public class Breakable : NetworkBusListener, IBreakable
+{
+    [SerializeField] private GameObject _normalMesh;
+    [SerializeField] private float solidity = 20f;
+    [SerializeField] private bool _dropPickableItem = false;
+
+    [Header("Sans drop d'item")]
+    [SerializeField] private Rigidbody[] _breakMesh;
+
+    [Header("Avec drop d'item")]
+    [SerializeField] private NetworkObject _dropItemPrefabs;
+    [SerializeField] private Transform[] _pickupSpawnPoints;
+
+    [Header("SFX")]
+    [SerializeField, SoundName] private string _breakSound;
+    
+    Collider _collider;
+    
+    public override void OnNetworkSpawn()
+    {
+        _normalMesh.SetActive(true);
+        _collider = GetComponent<Collider>();
+
+        foreach (var rb in _breakMesh)
+            rb.gameObject.SetActive(false);
+    }
+
+    public void Break(float force)
+    {
+        AskServerToBreakRpc(force);
+    }
+
+    [Rpc(SendTo.Server)]
+    private void AskServerToBreakRpc(float force)
+    {
+        if (force < solidity) return;
+        
+        float radius = transform.localScale.magnitude;
+
+        if (_dropPickableItem)
+        {
+            for (int i = 0; i < _pickupSpawnPoints.Length; i++)
+            {
+                Transform p = _pickupSpawnPoints[i];
+                NetworkObject obj = Instantiate(_dropItemPrefabs, p.position, p.rotation);
+                obj.Spawn();
+
+                if (obj.TryGetComponent(out Rigidbody rb))
+                    rb.AddExplosionForce(force, transform.position, radius);
+            }
+        }
+
+        ReplicateBreakRpc(force);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void ReplicateBreakRpc(float force)
+    {
+        InvokeEvent(new PlaySoundEvent
+        {
+            position = transform.position,
+            soundName = _breakSound,
+            volume = 0.3f
+        });
+        
+        _normalMesh.SetActive(false);
+        _collider.enabled = false;
+
+        if (_dropPickableItem) return;
+
+        float radius = transform.localScale.magnitude;
+        foreach (var rb in _breakMesh)
+        {
+            rb.gameObject.SetActive(true);
+            rb.AddExplosionForce(force, transform.position, radius);
+        }
+    }
+}
