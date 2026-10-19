@@ -43,6 +43,7 @@ namespace Network.HUB
             _lobbyManager.OnUpdateLobbyInfo += UpdateLobbyInfo;
             _lobbyManager.OnUpdatedMap += UpdateSelectedMapName;
             _lobbyManager.OnTryToJoinGame += ActivateLoadingScreen;
+            _lobbyManager.OnLeaveLobby += LeaveLobbyUI;
         }
         
         private void OnDisable()
@@ -52,6 +53,7 @@ namespace Network.HUB
             _lobbyManager.OnUpdateLobbyInfo -= UpdateLobbyInfo;
             _lobbyManager.OnUpdatedMap -= UpdateSelectedMapName;
             _lobbyManager.OnTryToJoinGame -= ActivateLoadingScreen; 
+            _lobbyManager.OnLeaveLobby -= LeaveLobbyUI; 
             
             _elementList.Clear();
         }
@@ -106,6 +108,19 @@ namespace Network.HUB
             ABPrint.Print("Join Lobby : " +  lobby.Name, ABColor.Yellow);
         }
         
+        private void LeaveLobbyUI()
+        {
+            foreach (GameObject p in _elementPlayerList) Destroy(p);
+            
+            _elementPlayerList.Clear();
+
+            _lobbyNameText.text = string.Empty;
+            _loadingScreen.SetActive(false);
+
+            _inLobbyCanva.SetActive(false);
+            _creationCanva.SetActive(true);
+        }
+        
         private void UpdateLobbyInfo(Lobby lobby)
         {
             var list = lobby.Players;
@@ -116,10 +131,16 @@ namespace Network.HUB
                 _elementPlayerList.Add(newPlayer);
             }
 
-            for (int i = list.Count; i < _elementList.Count; i++)
+            for (int i = 0; i < list.Count; i++)
             {
-                _elementList[i].gameObject.SetActive(false);
+                _elementPlayerList[i].SetActive(true);
             }
+
+            for (int i = list.Count; i < _elementPlayerList.Count; i++)
+            {
+                _elementPlayerList[i].SetActive(false);
+            }
+                
             
             if(!_lobbyNameText.text.Equals(lobby.Name))
                 _lobbyNameText.text = lobby.Name;
