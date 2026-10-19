@@ -68,6 +68,7 @@ namespace Gameplay.Items
         {
             SetOutline(false);
             _onRack.OnValueChanged += OnRackChanged;
+            
             ApplyRack();
         }
         
@@ -104,6 +105,7 @@ namespace Gameplay.Items
 
         public void Interact(ulong clientId)
         {
+            ABPrint.PrintBool(DetectNotGrabbable());
             if (DetectNotGrabbable()) return;
             
             InvokeEvent(new OnPickupItem_EVENT

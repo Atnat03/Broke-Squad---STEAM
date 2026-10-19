@@ -121,8 +121,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.6022977, y: 2.277018, z: 1.232336}
-  m_Center: {x: 0.0048499405, y: 0.97327065, z: 0.38795877}
+  m_Size: {x: 0.36468002, y: 2.277018, z: 1.232336}
+  m_Center: {x: -0.0041930825, y: 0.97327065, z: 0.38795877}
 --- !u!114 &8876441711350258589
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,6 +182,7 @@ GameObject:
   - component: {fileID: 167810362394262520}
   - component: {fileID: 2849818669863214062}
   - component: {fileID: 7003672189557671796}
+  - component: {fileID: 4118800696247449486}
   m_Layer: 0
   m_Name: Keyhole
   m_TagString: Untagged
@@ -261,6 +262,24 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4118800696247449486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1403313907570113567}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 10
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &1551656079732412970
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,8 +576,8 @@ Transform:
   m_GameObject: {fileID: 2635443080897833543}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0.06099989, y: -0.22007656, z: -0.80303633}
-  m_LocalScale: {x: 0.16640407, y: 0.13070916, z: 0.115585126}
+  m_LocalPosition: {x: 0.15347, y: -0.22419, z: -0.80815}
+  m_LocalScale: {x: 0.19337337, y: 0.1696086, z: 0.3005352}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9114463866667031457}
@@ -654,7 +673,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fa38479a0de4c7bb789ec8da6ced23a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.KeyholeTarget
-  _outline: {fileID: 2653694021476092757}
+  _outline: {fileID: 4118800696247449486}
   viewPoint: {fileID: 9114463866667031457}
   standPoint: {fileID: 0}
   maxYaw: 25
@@ -862,8 +881,8 @@ Transform:
   m_GameObject: {fileID: 7696287090993818455}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: -0.7071068}
-  m_LocalPosition: {x: -0.07100009, y: -0.22007656, z: -0.80303633}
-  m_LocalScale: {x: 0.16640408, y: 0.13070916, z: 0.11558513}
+  m_LocalPosition: {x: -0.13416, y: -0.22007656, z: -0.80499}
+  m_LocalScale: {x: 0.19888721, y: 0.13070916, z: 0.24190119}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8988255786064908810}
@@ -945,8 +964,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 1.3593168, z: 1.1941535}
+  m_Center: {x: 0.000000028150565, y: -0.059886046, z: -0.09707691}
 --- !u!114 &5229007061071891584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -959,7 +978,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fa38479a0de4c7bb789ec8da6ced23a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.KeyholeTarget
-  _outline: {fileID: 2109332032893930503}
+  _outline: {fileID: 4118800696247449486}
   viewPoint: {fileID: 8988255786064908810}
   standPoint: {fileID: 0}
   maxYaw: 25

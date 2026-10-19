@@ -16,7 +16,7 @@ MonoBehaviour:
   ItemName: Red Key
   VisualPrefab: {fileID: 5580790480248973274, guid: 61dd618df07765141bfc612b8a5f82ea, type: 3}
   PickupPrefab: {fileID: 5770803975633269364, guid: 0e2e78460c960b844ac6283e0403b54c, type: 3}
-  Icon: {fileID: 21300000, guid: a0d14db13341bd14c88ca2930b84b6c6, type: 3}
+  Icon: {fileID: 21300000, guid: aac96c44198bd1a4da363dfa37e16289, type: 3}
   OffsetInHand: {x: 0.05, y: 0.25, z: 0}
   FirstActionList:
   - rid: 7202345609054912654
@@ -78,6 +78,11 @@ MonoBehaviour:
       type: {class: OpenDoorModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: -2
+          rid: 7202345858985623558
         _canOpenIndexRange: {x: 3, y: 3}
         _canOpenAllDoors: 0
+    - rid: 7202345858985623558
+      type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _numberOfUse: 1
+        _destroyWhenEmpty: 0

@@ -241,6 +241,16 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""bfae6921-f66b-4a0a-b55d-c3a8193ba589"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -496,6 +506,17 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""action"": ""EquimentDrop"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9779ce72-e38a-4294-8609-d14b686f1b56"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -611,6 +632,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
         m_Gameplay_MouseRoll = m_Gameplay.FindAction("MouseRoll", throwIfNotFound: true);
         m_Gameplay_Ping = m_Gameplay.FindAction("Ping", throwIfNotFound: true);
         m_Gameplay_EquimentDrop = m_Gameplay.FindAction("EquimentDrop", throwIfNotFound: true);
+        m_Gameplay_Pause = m_Gameplay.FindAction("Pause", throwIfNotFound: true);
         // Cheats
         m_Cheats = asset.FindActionMap("Cheats", throwIfNotFound: true);
         m_Cheats_Invicibility = m_Cheats.FindAction("Invicibility", throwIfNotFound: true);
@@ -713,6 +735,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_MouseRoll;
     private readonly InputAction m_Gameplay_Ping;
     private readonly InputAction m_Gameplay_EquimentDrop;
+    private readonly InputAction m_Gameplay_Pause;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -785,6 +808,10 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @EquimentDrop => m_Wrapper.m_Gameplay_EquimentDrop;
         /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Pause".
+        /// </summary>
+        public InputAction @Pause => m_Wrapper.m_Gameplay_Pause;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
@@ -855,6 +882,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @EquimentDrop.started += instance.OnEquimentDrop;
             @EquimentDrop.performed += instance.OnEquimentDrop;
             @EquimentDrop.canceled += instance.OnEquimentDrop;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         /// <summary>
@@ -911,6 +941,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @EquimentDrop.started -= instance.OnEquimentDrop;
             @EquimentDrop.performed -= instance.OnEquimentDrop;
             @EquimentDrop.canceled -= instance.OnEquimentDrop;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         /// <summary>
@@ -1185,6 +1218,13 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnEquimentDrop(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPause(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Cheats" which allows adding and removing callbacks.
