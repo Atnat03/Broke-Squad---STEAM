@@ -11,6 +11,10 @@ namespace Gameplay.Items
         [SerializeField] public int _percentGain = 10;
         [SerializeField] private float _range = 2f;
 
+        [Header("SFX")] 
+        [SerializeField, SoundName] private string _stringName;
+        [SerializeField, Range(0, 1)] private float _volume = 0.5f;
+        
         public ICondition Condition => ConditionParent;
 
         public void StartFirstAction()
@@ -27,6 +31,14 @@ namespace Gameplay.Items
             Context.SendToServer(this, new OnModuleDoAction_EVENT
             {
                 Target = pickup.NetworkObject
+            });
+            
+            //SFX
+            Context.Inventory.InvokeEvent(new PlaySoundEvent
+            {
+                position = Context.Core.transform.position,
+                volume = _volume,
+                soundName = _stringName
             });
         }
 
