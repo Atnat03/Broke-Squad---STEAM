@@ -139,19 +139,7 @@ MonoBehaviour:
   Outline: {fileID: 5369203765261530551}
   onInteractableOpen:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2546254149331435970}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Open
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onInteractableClose:
     m_PersistentCalls:
       m_Calls:
@@ -171,6 +159,40 @@ MonoBehaviour:
   RequiredButtons: []
   canBeInteracted: 1
   startLocked: 0
+  openSound: 
+  closeSound: 
+  faceAxis: 1
+  invertSide: 0
+  onOpenFront:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2546254149331435970}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Open
+          m_BoolArgument: 0
+        m_CallState: 2
+  onOpenBack:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2546254149331435970}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: OpenOtherSide
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1403313907570113567
 GameObject:
   m_ObjectHideFlags: 0
