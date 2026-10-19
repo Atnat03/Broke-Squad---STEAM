@@ -10,6 +10,7 @@ namespace Gameplay.Other
     public class PauseSystemTest : NetworkBehaviour
     {
         [SerializeField] private PlayerInput _playerInput;
+        [SerializeField] private PlayerController _playerController;
         
         [Header("UI")]
         [SerializeField] private GameObject _uiPause;
@@ -34,6 +35,8 @@ namespace Gameplay.Other
             
             Cursor.visible = !_isPause;
             Cursor.lockState = !_isPause ? CursorLockMode.Locked : CursorLockMode.None;
+
+            _playerController.SetInputEnabled(!_isPause);
         }
     }
 }
