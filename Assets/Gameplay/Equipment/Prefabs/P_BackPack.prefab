@@ -157,7 +157,6 @@ GameObject:
   - component: {fileID: 3468220500886007129}
   - component: {fileID: 1155504798890321782}
   - component: {fileID: 1361189199033659099}
-  - component: {fileID: 3174607528070098112}
   m_Layer: 0
   m_Name: Backpack_Model
   m_TagString: Untagged
@@ -276,18 +275,6 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
---- !u!114 &3174607528070098112
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3348625723698463196}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher
 --- !u!1 &3851870087616749391
 GameObject:
   m_ObjectHideFlags: 0
@@ -320,7 +307,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.477, y: 0.5615, z: -0.208}
-  m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
+  m_LocalScale: {x: 1.2000003, y: 1.1999999, z: 1.2000002}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2755548481834952297}
@@ -349,7 +336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 106371361
+  GlobalObjectIdHash: 1228100379
   InScenePlacedSourceGlobalObjectIdHash: 106371361
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -397,8 +384,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.477777, y: 0.81082326, z: 0.27988762}
-  m_Center: {x: -0.0027799606, y: 0.044101685, z: 0.061460167}
+  m_Size: {x: 0.6676773, y: 0.9654102, z: 0.44233176}
+  m_Center: {x: -0.0034448006, y: 0.12139509, z: 0.14268202}
 --- !u!114 &6156854458461327871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1210,7 +1197,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -275997909501793380, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2618376861
+      value: 1599462843
       objectReference: {fileID: 0}
     - target: {fileID: -275997909501793380, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: SceneMigrationSynchronization
@@ -1226,7 +1213,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Size.y
-      value: 0.105699174
+      value: 0.16480573
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Size.z
@@ -1234,11 +1221,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Center.x
-      value: 0.015389003
+      value: 0.015389005
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Center.y
-      value: -0.052551117
+      value: -0.022997841
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Center.z
@@ -1329,7 +1316,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -275997909501793380, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2250650190
+      value: 2822385653
       objectReference: {fileID: 0}
     - target: {fileID: -275997909501793380, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: SceneMigrationSynchronization
@@ -1345,7 +1332,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Size.y
-      value: 0.085168526
+      value: 0.15888256
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Size.z
@@ -1353,11 +1340,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Center.x
-      value: -0.0061538443
+      value: -0.006153844
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Center.y
-      value: -0.04127167
+      value: -0.004414652
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Center.z
@@ -1448,7 +1435,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -275997909501793380, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 1292856551
+      value: 2848620670
       objectReference: {fileID: 0}
     - target: {fileID: -275997909501793380, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: SceneMigrationSynchronization
@@ -1464,7 +1451,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Size.y
-      value: 0.11231112
+      value: 0.17954716
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Center.x
@@ -1472,7 +1459,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Center.y
-      value: -0.049245153
+      value: -0.015627144
       objectReference: {fileID: 0}
     - target: {fileID: 3278187072591512794, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1559,7 +1546,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -275997909501793380, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 3082685830
+      value: 2120802593
       objectReference: {fileID: 0}
     - target: {fileID: -275997909501793380, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: SceneMigrationSynchronization
@@ -1575,7 +1562,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Size.y
-      value: 0.11231112
+      value: 0.16547297
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Center.x
@@ -1583,7 +1570,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Center.y
-      value: -0.049245153
+      value: -0.022664217
       objectReference: {fileID: 0}
     - target: {fileID: 3278187072591512794, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1670,7 +1657,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -275997909501793380, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 1866594821
+      value: 3994522086
       objectReference: {fileID: 0}
     - target: {fileID: -275997909501793380, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: SceneMigrationSynchronization
@@ -1686,7 +1673,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Size.y
-      value: 0.084313974
+      value: 0.14650089
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Size.z
@@ -1694,11 +1681,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Center.x
-      value: -0.0052992874
+      value: -0.005299287
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Center.y
-      value: -0.041698948
+      value: -0.010605513
       objectReference: {fileID: 0}
     - target: {fileID: 247634679838881517, guid: f9c584349ef508d4fa3007f354634f44, type: 3}
       propertyPath: m_Center.z
