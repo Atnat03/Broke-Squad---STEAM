@@ -23,8 +23,7 @@ namespace Gameplay.Items
             
             item.CreateSuspiciousSound(
                 item.OwnerClientId, 
-                _suspiciousSoundSettings.Force,
-                _suspiciousSoundSettings.MaxDistance);
+                _suspiciousSoundSettings.Force);
         }
 
         public void OnThrow(Rigidbody rb)

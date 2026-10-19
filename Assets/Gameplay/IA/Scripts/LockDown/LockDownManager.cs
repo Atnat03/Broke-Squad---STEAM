@@ -138,7 +138,7 @@ namespace Gameplay.IA
         {
             foreach (GuardBehavior g in _guardList)
             {
-                if (g.CurrentState is G_PursuitState || g.CurrentState is G_InvestigateState)
+                if (g.CurrentState is G_PursuitState)
                     return false;
             }
             
