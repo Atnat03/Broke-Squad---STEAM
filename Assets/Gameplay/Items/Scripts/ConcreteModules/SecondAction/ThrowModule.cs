@@ -129,7 +129,7 @@ namespace Gameplay.Items
             GameObject newObj = Context.InstantiateGameObject(
                 item.Data.PickupPrefab.gameObject, 
                 pos, 
-                item.Data.PickupPrefab.transform.rotation * rot);
+                rot * item.Data.PickupPrefab.transform.rotation);
 
             if (newObj == null) return null;
             if (!newObj.TryGetComponent(out ItemPickup pickup)) return null;
