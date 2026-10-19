@@ -25,6 +25,9 @@ public class Door : OnlineInteractable
     [SerializeField] bool invertSide;
     public UnityEvent onOpenFront; 
     public UnityEvent onOpenBack;
+    public UnityEvent onCloseFront; 
+    public UnityEvent onCloseBack;
+    
     Transform Ref => transform;
     
     readonly NetworkVariable<bool> _locked = new(false);
@@ -63,6 +66,8 @@ public class Door : OnlineInteractable
         
         if (current == 0)
         {
+            if(previous == 1) onCloseFront?.Invoke();
+            if(previous == -1) onCloseBack?.Invoke();
             onInteractableClose?.Invoke();
             InvokeEvent(new PlaySoundEvent
             {
