@@ -12,6 +12,10 @@ namespace Gameplay.Items
         [SerializeField] private Vector3 _shootPos_SECURITY;
         [SerializeField] private float _shootForce;
         
+        [Header("SFX")] 
+        [SerializeField, SoundName] private string _stringName;
+        [SerializeField, Range(0, 1)] private float _volume = 0.5f;
+        
         public ICondition Condition => ConditionParent;
         public void StartFirstAction()
         {
@@ -80,6 +84,14 @@ namespace Gameplay.Items
                 
                 rb.AddForce(data.Direction * data.ValueF, ForceMode.Impulse);
             }
+            
+            //SFX
+            Context.Inventory.InvokeEvent(new PlaySoundEvent
+            {
+                position = pickup.transform.position,
+                volume = _volume,
+                soundName = _stringName
+            });
         }
     }
 }

@@ -32,6 +32,12 @@ namespace Gameplay.Items
         private ItemInstance[] _slots;
         private readonly NetworkVariable<int> _selectedSlot = new(0);
         
+        [Header("SFX")] 
+        [SerializeField, SoundName] private string _sfxPickUp;
+        [SerializeField, SoundName] private string _sfxDrop;
+        [SerializeField, Range(0, 1)] private float _volume = 0.5f;
+        
+        
         private PlayerInventoryReplication _replication;
         private readonly NetworkVariable<int> _heldItemId = new(-1);
         private ItemCore _currentItem;
@@ -220,7 +226,15 @@ namespace Gameplay.Items
             if (!netObj.TryGetComponent(out ItemPickup pickup)) return;
             
             if (pickup.Instance == null) return;
-
+            
+            //SFX
+            InvokeEvent(new PlaySoundEvent
+            {
+                position = transform.position,
+                volume = _volume,
+                soundName = _sfxPickUp
+            });
+            
             int slot = FindFreeSlot();
             if (slot == -1) return;
             
@@ -272,6 +286,14 @@ namespace Gameplay.Items
             ItemPickup pickup = Instantiate(item.Data.PickupPrefab, pos, transform.rotation);
             pickup.GetComponent<NetworkObject>().Spawn();
             pickup.Setup(item);
+            
+            //SFX
+            InvokeEvent(new PlaySoundEvent
+            {
+                position = transform.position,
+                volume = _volume,
+                soundName = _sfxDrop
+            });
                 
             ClearCurrentSlot();
         }

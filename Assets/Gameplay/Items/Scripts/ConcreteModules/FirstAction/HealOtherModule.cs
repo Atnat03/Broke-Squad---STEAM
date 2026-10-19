@@ -9,6 +9,10 @@ namespace Gameplay.Items
     {
         [SerializeField] private float _healAmount = 10;
         
+        [Header("SFX")] 
+        [SerializeField, SoundName] private string _stringName;
+        [SerializeField, Range(0, 1)] private float _volume = 0.5f;
+        
         public ICondition Condition => ConditionParent;
 
         public void StartFirstAction()
@@ -22,6 +26,14 @@ namespace Gameplay.Items
                 Context.SendToServer(this, new OnModuleDoAction_EVENT
                 {
                     Target = data.NetworkObject
+                });
+                
+                //SFX
+                Context.Inventory.InvokeEvent(new PlaySoundEvent
+                {
+                    position = Context.Core.transform.position,
+                    volume = _volume,
+                    soundName = _stringName
                 });
                 
                 ConsumeCondition(new OnModuleDoAction_EVENT());

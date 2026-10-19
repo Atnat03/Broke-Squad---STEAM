@@ -16,6 +16,10 @@ namespace Gameplay.Items
         [SerializeField] private float _suspectSoundSendIntervale = 1f;
         [SerializeField] private SO_SuspiciousSoundSettings _suspiciousSoundSettings;
 
+        [Header("SFX")] 
+        [SerializeField, SoundName] private string _stringName;
+        [SerializeField, Range(0, 1)] private float _volume = 0.5f;
+        
         private float _elapsed;
         private bool _active;
         private int _runId;
@@ -26,7 +30,19 @@ namespace Gameplay.Items
         
         public ICondition Condition => ConditionParent;
 
-        public void StartFirstAction() => Context.SendToServer(this, new OnModuleDoAction_EVENT());
+        public void StartFirstAction()
+        {
+            Context.SendToServer(this, new OnModuleDoAction_EVENT());
+            
+            //SFX
+            Context.Inventory.InvokeEvent(new PlaySoundEvent
+            {
+                position = Context.Core.transform.position,
+                volume = _volume,
+                soundName = _stringName
+            });
+        }
+        
         public void StopFirstAction() { }
 
         public void ServerExecute(OnModuleDoAction_EVENT data)
