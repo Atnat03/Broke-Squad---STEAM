@@ -28,7 +28,7 @@ public abstract class OnlineInteractable : NetworkBusListener, IInteractable
     }
     
     [Rpc(SendTo.Server)]
-    void InteractServerRpc() => ServerInteract(OwnerClientId);
+    void InteractServerRpc(RpcParams rpcParams = default) => ServerInteract(rpcParams.Receive.SenderClientId);
     
     protected abstract void ServerInteract(ulong senderClientId);
     
