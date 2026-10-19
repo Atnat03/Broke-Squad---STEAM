@@ -1,10 +1,11 @@
 using System;
+using Bus;
 using Gameplay;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 
-public abstract class OnlineInteractable : NetworkBehaviour, IInteractable
+public abstract class OnlineInteractable : NetworkBusListener, IInteractable
 {
     [SerializeField] Outline Outline;
     public Outline outline => Outline;
@@ -27,7 +28,7 @@ public abstract class OnlineInteractable : NetworkBehaviour, IInteractable
     }
     
     [Rpc(SendTo.Server)]
-    void InteractServerRpc() => ServerInteract(OwnerClientId);
+    void InteractServerRpc(RpcParams rpcParams = default) => ServerInteract(rpcParams.Receive.SenderClientId);
     
     protected abstract void ServerInteract(ulong senderClientId);
     

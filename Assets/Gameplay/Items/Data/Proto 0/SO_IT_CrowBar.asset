@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
   m_Name: SO_IT_CrowBar
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
-  ID: 0
+  ID: 6
   ItemName: CrowBar
   VisualPrefab: {fileID: 8591074632576193216, guid: 3d0d59bf43b3dd04e92e5fa75b54a2f0, type: 3}
   PickupPrefab: {fileID: 1040478823868464577, guid: 821569a89cf532949ae9771ba0e79499, type: 3}
   Icon: {fileID: 21300000, guid: 7987f2946dd1a90459ee9c0166eb4bd6, type: 3}
+  OffsetInHand: {x: 0, y: 0, z: 0}
   FirstActionList:
   - rid: 7202345609054912647
   - rid: 7202345609054912648
@@ -40,6 +41,8 @@ MonoBehaviour:
         _minTorqueForce: {x: 0, y: 0, z: 0}
         _maxTorqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: {x: 0.2, y: 0, z: 0.7}
+        _stringName: Joueur/Throw Item
+        _volume: 0.5
     - rid: 7202345609054912642
       type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -74,13 +77,14 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 1
         _canDamagePlayer: 1
-        _minVelocityForSound: 3
     - rid: 7202345609054912647
       type: {class: BreakThingsModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
           rid: -2
         _force: 15
+        _stringName: 
+        _volume: 0.5
     - rid: 7202345609054912648
       type: {class: OpenDoorModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -88,6 +92,9 @@ MonoBehaviour:
           rid: 7202345609054912649
         _canOpenIndexRange: {x: 0, y: 500}
         _canOpenAllDoors: 0
+        _stringNameGoodKey: 
+        _stringNameWringKey: 
+        _volume: 0.5
     - rid: 7202345609054912649
       type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
