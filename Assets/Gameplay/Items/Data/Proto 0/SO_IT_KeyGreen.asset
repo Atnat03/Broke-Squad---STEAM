@@ -16,7 +16,7 @@ MonoBehaviour:
   ItemName: Green Key
   VisualPrefab: {fileID: 6608782098284845839, guid: e0154e30a4454fa409bc61337fde68f2, type: 3}
   PickupPrefab: {fileID: 1879260688563835194, guid: 5977c7c949c632845a32ad8db4a3c257, type: 3}
-  Icon: {fileID: 21300000, guid: a0d14db13341bd14c88ca2930b84b6c6, type: 3}
+  Icon: {fileID: 21300000, guid: cf9bd90c01abdc74398978dbcc66f219, type: 3}
   OffsetInHand: {x: 0.05, y: 0.25, z: 0}
   FirstActionList:
   - rid: 7202345609054912654
@@ -78,6 +78,11 @@ MonoBehaviour:
       type: {class: OpenDoorModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: -2
+          rid: 7202345858985623557
         _canOpenIndexRange: {x: 2, y: 2}
         _canOpenAllDoors: 0
+    - rid: 7202345858985623557
+      type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _numberOfUse: 1
+        _destroyWhenEmpty: 0
