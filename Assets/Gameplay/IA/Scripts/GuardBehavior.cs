@@ -194,8 +194,6 @@ namespace Gameplay.IA
         {
             if (f >= _strengthToBeingAwake)
             {
-                ABPrint.Print("suspicious sound detected !! ", ABColor.Orange);
-
                 LastSoundSource = newTarget;
                 LastSoundPosition = newTarget != null ? newTarget.position : transform.position;
                 
@@ -217,8 +215,6 @@ namespace Gameplay.IA
 
         private void LockDownTimerChange(float previousValue, float newValue)
         {
-            ABPrint.Print("ALERT : " + newValue / _timerAlertLockDown, ABColor.Orange);
-            
             OnLockDownAlertChange?.Invoke(newValue / _timerAlertLockDown);
         }
     }

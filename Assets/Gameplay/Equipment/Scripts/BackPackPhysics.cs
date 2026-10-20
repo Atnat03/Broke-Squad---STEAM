@@ -1,6 +1,8 @@
-﻿using Unity.Netcode;
+﻿using MyPrint;
+using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Gameplay.Equipment
 {
@@ -55,7 +57,7 @@ namespace Gameplay.Equipment
         public void DropAt(Vector3 pos)
         {
             if (!IsServer) return;
-
+            
             SetCarried(false);
 
             transform.position = pos;

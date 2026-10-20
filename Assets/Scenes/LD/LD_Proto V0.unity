@@ -4031,6 +4031,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ce0130b5fee47ec9c814e898a23bebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.IA.Scripts.GuardFieldOfView
+  ShowTopMostFoldoutHeaderGroup: 1
   _radius: 5
   _angle: 80
   _eyeHeight: 3.11
@@ -4050,6 +4051,7 @@ MonoBehaviour:
   _obstructionMask:
     serializedVersion: 2
     m_Bits: 119
+  GuardBrain: {fileID: 0}
 --- !u!114 &57904145
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8598,6 +8600,14 @@ PrefabInstance:
     - target: {fileID: 4162616921081820461, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
       propertyPath: m_Name
       value: BigDoor Wall (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4207826872950415313, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4207826872950415313, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3152532029
       objectReference: {fileID: 0}
     - target: {fileID: 4823144851279345071, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
       propertyPath: m_ProvidesContacts
@@ -21810,6 +21820,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ce0130b5fee47ec9c814e898a23bebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.IA.Scripts.GuardFieldOfView
+  ShowTopMostFoldoutHeaderGroup: 1
   _radius: 5
   _angle: 80
   _eyeHeight: 3.11
@@ -21829,6 +21840,7 @@ MonoBehaviour:
   _obstructionMask:
     serializedVersion: 2
     m_Bits: 119
+  GuardBrain: {fileID: 0}
 --- !u!114 &323666618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24505,6 +24517,14 @@ PrefabInstance:
     - target: {fileID: 4162616921081820461, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
       propertyPath: m_Name
       value: BigDoor Wall (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4207826872950415313, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4207826872950415313, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3280734120
       objectReference: {fileID: 0}
     - target: {fileID: 4433996805146337738, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -28381,6 +28401,14 @@ PrefabInstance:
     - target: {fileID: 1300779062787853891, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
       propertyPath: m_Name
       value: SmallDoor Wall (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8198104724775512622, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8198104724775512622, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1321098204
       objectReference: {fileID: 0}
     - target: {fileID: 8514064350674785333, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -37212,6 +37240,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: BigDoor Wall (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 4207826872950415313, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4207826872950415313, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1213274011
+      objectReference: {fileID: 0}
     - target: {fileID: 4823144851279345071, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
       propertyPath: m_ProvidesContacts
       value: 1
@@ -40508,6 +40544,107 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ade581d45e17ef647a1d8975c14a468f, type: 3}
+--- !u!1001 &643581045
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2436435632977631548, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_Name
+      value: PlayerSpawner
+      objectReference: {fileID: 0}
+    - target: {fileID: 2933874659770122154, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2933874659770122154, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2939898734493148862, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2939898734493148862, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1145006236
+      objectReference: {fileID: 0}
+    - target: {fileID: 2939898734493148862, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 371113402
+      objectReference: {fileID: 0}
+    - target: {fileID: 3054939412360649404, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3054939412360649404, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4448849954189059002, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4448849954189059002, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7968669124932709784, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 6.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7968669124932709784, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.59
+      objectReference: {fileID: 0}
+    - target: {fileID: 7968669124932709784, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.79
+      objectReference: {fileID: 0}
+    - target: {fileID: 7968669124932709784, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7968669124932709784, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7968669124932709784, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7968669124932709784, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7968669124932709784, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7968669124932709784, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7968669124932709784, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9202100904481601691, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9202100904481601691, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 46fe55e3cb5898e4f88566309c4d653a, type: 3}
 --- !u!1001 &646327116
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -45578,6 +45715,14 @@ PrefabInstance:
     - target: {fileID: 1300779062787853891, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
       propertyPath: m_Name
       value: SmallDoor Wall (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8198104724775512622, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8198104724775512622, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2939172343
       objectReference: {fileID: 0}
     - target: {fileID: 8514064350674785333, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -55178,6 +55323,14 @@ PrefabInstance:
     - target: {fileID: 4162616921081820461, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
       propertyPath: m_Name
       value: BigDoor Wall (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4207826872950415313, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4207826872950415313, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3801136365
       objectReference: {fileID: 0}
     - target: {fileID: 4433996805146337738, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -75799,6 +75952,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: SmallDoor Wall (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 8198104724775512622, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8198104724775512622, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 415071913
+      objectReference: {fileID: 0}
     - target: {fileID: 8514064350674785333, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -78533,6 +78694,18 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 28fa386dd4f9d4d41bc328deb3023d32, type: 2}
+    - target: {fileID: 8002077530412153049, guid: a91819c91f4ac0b419487684cb818bcd, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8002077530412153049, guid: a91819c91f4ac0b419487684cb818bcd, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 4112702020
+      objectReference: {fileID: 0}
+    - target: {fileID: 8002077530412153049, guid: a91819c91f4ac0b419487684cb818bcd, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 2909227536
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -84203,6 +84376,14 @@ PrefabInstance:
     - target: {fileID: 4162616921081820461, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
       propertyPath: m_Name
       value: BigDoor Wall (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4207826872950415313, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4207826872950415313, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1484808675
       objectReference: {fileID: 0}
     - target: {fileID: 4433996805146337738, guid: 89ace245727b36a48bca39acfd7851c1, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -100511,6 +100692,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: SmallDoor Wall (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8198104724775512622, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8198104724775512622, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3083352279
+      objectReference: {fileID: 0}
     - target: {fileID: 8514064350674785333, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -101795,6 +101984,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: SmallDoor Wall (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 8198104724775512622, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8198104724775512622, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 187250586
+      objectReference: {fileID: 0}
     - target: {fileID: 8514064350674785333, guid: 06a95d4df0efcd2438cd97e1c5395362, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -102739,6 +102936,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ce0130b5fee47ec9c814e898a23bebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.IA.Scripts.GuardFieldOfView
+  ShowTopMostFoldoutHeaderGroup: 1
   _radius: 5
   _angle: 80
   _eyeHeight: 3.11
@@ -102758,6 +102956,7 @@ MonoBehaviour:
   _obstructionMask:
     serializedVersion: 2
     m_Bits: 119
+  GuardBrain: {fileID: 0}
 --- !u!114 &1717320812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108543,6 +108742,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ce0130b5fee47ec9c814e898a23bebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.IA.Scripts.GuardFieldOfView
+  ShowTopMostFoldoutHeaderGroup: 1
   _radius: 5
   _angle: 80
   _eyeHeight: 3.11
@@ -108562,6 +108762,7 @@ MonoBehaviour:
   _obstructionMask:
     serializedVersion: 2
     m_Bits: 119
+  GuardBrain: {fileID: 0}
 --- !u!114 &1796100193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109188,6 +109389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ce0130b5fee47ec9c814e898a23bebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.IA.Scripts.GuardFieldOfView
+  ShowTopMostFoldoutHeaderGroup: 1
   _radius: 5
   _angle: 80
   _eyeHeight: 3.11
@@ -109207,6 +109409,7 @@ MonoBehaviour:
   _obstructionMask:
     serializedVersion: 2
     m_Bits: 119
+  GuardBrain: {fileID: 0}
 --- !u!114 &1803394660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139929,3 +140132,4 @@ SceneRoots:
   - {fileID: 2096287312}
   - {fileID: 711720503}
   - {fileID: 1024884914}
+  - {fileID: 643581045}
