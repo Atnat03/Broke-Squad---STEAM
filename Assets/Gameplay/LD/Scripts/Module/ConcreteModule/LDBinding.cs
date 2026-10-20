@@ -12,18 +12,17 @@ namespace Gameplay.LD
     }
 
     [Serializable]
-    public class LDBindingData
+    public class LDBinding
     {
-        public int TriggerID;
+        [Tooltip("Qu'est ce qui déclenche")]
+        public LDTriggerModule Trigger;
+        [Tooltip("Start : lance les effets / stop : les arrêtes")]
         public BindingAction Action = BindingAction.Start;
-
-        [Tooltip("0 = immédiat")]
         [Min(0f)] public float Delay;
-
-        [Tooltip("Annule les délais en attente de l'élément (ex : désamorcer avant que le piège frappe).")]
         public bool CancelsPendingDelays;
-
-        public List<int> ConditionIDs = new();
-        public List<int> EffectIDs = new();
+        [Tooltip("Liste des conditions")]
+        public LDConditionModule[] Conditions;
+        [Tooltip("Liste des effets")]
+        public LDEffectModule[] Effects;
     }
 }

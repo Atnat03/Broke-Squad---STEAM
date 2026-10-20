@@ -12,11 +12,6 @@ namespace Gameplay.LD
             AllClients,
         }
 
-        protected override void OnInitialize(ModuleConfig config)
-        {
-            
-        }
-
         public abstract void Activate(LDActivation activation);
 
         public virtual void Stop()
