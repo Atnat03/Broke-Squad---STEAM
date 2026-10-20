@@ -334,8 +334,10 @@ namespace Gameplay.Controller
         private IEnumerator StunRoutine(float duration)
         {
             Motor.CanMove = false;
+            Debug.Log("[LD] Stun" + Motor.CanMove);
             yield return new WaitForSeconds(duration);
             Motor.CanMove = true;
+            Debug.Log("[LD] Stun arpès" + Motor.CanMove);
             _stunRoutine = null;
 
         }

@@ -7389,6 +7389,52 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 803626021}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &805062098
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 805062099}
+  - component: {fileID: 805062100}
+  m_Layer: 0
+  m_Name: stun
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &805062099
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 805062098}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2107162071}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &805062100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 805062098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4f8127cfb745a64aa171f346a8639be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.StunEffect
+  ShowTopMostFoldoutHeaderGroup: 1
+  _stunDuration: 1
 --- !u!1001 &840916633
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20259,7 +20305,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4112417550617395185, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
       propertyPath: _bindings.Array.data[0].Effects.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4112417550617395185, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
       propertyPath: _bindings.Array.data[1].Effects.Array.size
@@ -20268,7 +20314,7 @@ PrefabInstance:
     - target: {fileID: 4112417550617395185, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
       propertyPath: '_bindings.Array.data[0].Effects.Array.data[2]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 805062100}
     - target: {fileID: 4112417550617395185, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
       propertyPath: '_bindings.Array.data[1].Effects.Array.data[1]'
       value: 
@@ -20363,9 +20409,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4036118305315603678, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 805062099}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+--- !u!4 &2107162071 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4036118305315603678, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+  m_PrefabInstance: {fileID: 2107162070}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2117962011
 GameObject:
   m_ObjectHideFlags: 0
