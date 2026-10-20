@@ -105,7 +105,6 @@ namespace Gameplay.Items
 
         public void Interact(ulong clientId)
         {
-            ABPrint.PrintBool(DetectNotGrabbable());
             if (DetectNotGrabbable()) return;
             
             InvokeEvent(new OnPickupItem_EVENT
@@ -130,7 +129,6 @@ namespace Gameplay.Items
             
             foreach (var passif in _instance.Passifs)
             {
-                ABPrint.Print("Collision Enter");
                 passif.OnCollide(collision, this);
             }
         }

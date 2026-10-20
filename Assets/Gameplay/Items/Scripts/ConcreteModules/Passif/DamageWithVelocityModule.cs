@@ -17,7 +17,6 @@ namespace Gameplay.Items
         [SerializeField] private float _weightFactor = 1;
         [SerializeField] private float _mass = 1;
         [SerializeField] private bool _canDamagePlayer = false;
-        //[SerializeField] private float _minVelocityForSound = 3;
         
         private Rigidbody _rb;
         
@@ -26,7 +25,7 @@ namespace Gameplay.Items
             if (collision.collider == item.GetComponent<Collider>()) return;
             if (_rb == null && !item.TryGetComponent(out _rb)) return;
 
-            float speed = collision.impulse.magnitude / _rb.mass;
+            float speed = collision.impulse.magnitude;
             
             if (collision.gameObject.TryGetComponent<IDamageable>(out var damage))
             {
@@ -40,8 +39,6 @@ namespace Gameplay.Items
 
                 if (collision.gameObject.TryGetComponent<PlayerData.PlayerHealth>(out var damageable))
                 {
-                    ABPrint.Print("Is a player", ABColor.Purple);
-                    
                     if (!_canDamagePlayer)
                         return;
                 }
