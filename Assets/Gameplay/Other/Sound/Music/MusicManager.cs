@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using Bus;
+using Gameplay.IA;
 using Gameplay.Items;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -11,6 +12,7 @@ namespace Gameplay.Other.Sound.Music
         [Header("Music")]
         [SerializeField] private AudioClip _normalMusic;
         [SerializeField] private AudioClip _dangerousMusic;
+        [SerializeField] private AudioClip _lockDownMusic;
         [SerializeField] private AudioSource _audioSource;
         [SerializeField] private AudioMixerGroup _musicGroup;
 
@@ -20,9 +22,11 @@ namespace Gameplay.Other.Sound.Music
                 _audioSource.outputAudioMixerGroup = _musicGroup;
             
             ListenToEvent<OnGrabGoal_EVENT>(ChangeMusicToDangerous);
-            ListenToEvent<OnDropGoal_EVENT>(ChangeMusicToNormal);
+            ListenToEvent<OnDropGoal_EVENT>(_=>ChangeMusicToNormal());
+            ListenToEvent<OnLockDownStart_EVENT>(ChangeMusicToLockDown);
+            ListenToEvent<OnLockDownEnd_EVENT>(_=>ChangeMusicToNormal());
         }
-
+        
         private void Start()
         {
             PlayTheMusic(_normalMusic);
@@ -33,9 +37,14 @@ namespace Gameplay.Other.Sound.Music
             PlayTheMusic(_dangerousMusic);
         }
 
-        private void ChangeMusicToNormal(OnDropGoal_EVENT data)
+        private void ChangeMusicToNormal()
         {
             PlayTheMusic(_normalMusic);
+        }
+
+        private void ChangeMusicToLockDown(OnLockDownStart_EVENT obj)
+        {
+            PlayTheMusic(_lockDownMusic);
         }
 
         private void PlayTheMusic(AudioClip clip)
