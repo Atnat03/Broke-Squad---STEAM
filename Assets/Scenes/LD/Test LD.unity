@@ -502,14 +502,13 @@ GameObject:
   - component: {fileID: 244986481}
   - component: {fileID: 244986488}
   - component: {fileID: 244986480}
-  - component: {fileID: 244986487}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &244986480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -523,7 +522,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
-  profile: {fileID: 0}
+  profile: {fileID: 11400000, guid: 8806d4a4bfbed3f4ea4161fbf516a103, type: 2}
   ground:
     groundLayer:
       serializedVersion: 2
@@ -701,38 +700,6 @@ Transform:
   - {fileID: 1843538071}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &244986487
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 244986479}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae808d3c9a4847b390cbfcee942ac77e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.Scripts.PlayerItemGestion.PlayerInventory
-  ShowTopMostFoldoutHeaderGroup: 1
-  _parent: {fileID: 0}
-  _remoteParent: {fileID: 0}
-  _database: {fileID: 0}
-  _playerController: {fileID: 0}
-  _camera: {fileID: 1197007967}
-  _range: 5
-  _layerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  _itemCount: 3
-  _slotPrefabUI: {fileID: 0}
-  _parentInventory: {fileID: 0}
-  _emptyIcon: {fileID: 0}
-  _throwUI: {fileID: 0}
-  _throwImage: {fileID: 0}
-  _electicUI: {fileID: 0}
-  _electicPercent: {fileID: 0}
-  _useAmountText: {fileID: 0}
-  _pickUpSFX: 
 --- !u!114 &244986488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -747,82 +714,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
   GlobalObjectIdHash: 1889416167
   InScenePlacedSourceGlobalObjectIdHash: 0
-  m_InScenePlacedDisabledByDefault: 1
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  m_InScenePlaced: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
---- !u!1 &262465495
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 262465497}
-  - component: {fileID: 262465498}
-  - component: {fileID: 262465496}
-  m_Layer: 0
-  m_Name: LD Spawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &262465496
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 262465495}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed737eb32d0c3cd42a167d2b9676a2dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.LDElementSpawner
-  ShowTopMostFoldoutHeaderGroup: 1
-  _parentPrefab: {fileID: 116225365248365684, guid: d1df1dbc606bde748bfec14f8066e21b, type: 3}
-  _debugData: {fileID: 11400000, guid: 09365643ddab42e45bf32cd27a336167, type: 2}
---- !u!4 &262465497
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 262465495}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.25, y: 0.437, z: 4.34}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &262465498
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 262465495}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 751770940
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  m_InScenePlacedDisabledByDefault: 1
+  m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
@@ -3091,43 +2983,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbeeb924d692441ca2d868a9cfc97468, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.Door
-  ShowTopMostFoldoutHeaderGroup: 1
-  _doorID: 1
-  _eventOpen:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1874917782}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Open
-          m_BoolArgument: 0
-        m_CallState: 2
-  _eventClose:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1874917782}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Close
-          m_BoolArgument: 0
-        m_CallState: 2
-  _canOpenWithoutKey: 1
-  _toggleCooldown: 0.3
-  _openSound: 
-  _closeSound: 
-  _tryToOpenClosedDoorSound: 
 --- !u!114 &1467233677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3235,10 +3090,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3642fa98d98d47d8b62035a0dcef04a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.PriseElectrique
-  ShowTopMostFoldoutHeaderGroup: 1
-  _chargeDistance: 1
-  _chargePerSeconde: 10
-  _plugSound: 
 --- !u!135 &1499691525
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4931,6 +4782,75 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2127389312}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &468251409985880993
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7118444900667349471, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.85901
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118444900667349471, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.908
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118444900667349471, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.36354
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118444900667349471, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118444900667349471, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118444900667349471, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118444900667349471, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118444900667349471, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118444900667349471, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118444900667349471, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7540479693432915842, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7540479693432915842, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 568440030
+      objectReference: {fileID: 0}
+    - target: {fileID: 7540479693432915842, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 161168684
+      objectReference: {fileID: 0}
+    - target: {fileID: 7859373864538463776, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
+      propertyPath: m_Name
+      value: PiegeTest
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6aa602f97faa0d346ad8195232c99240, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -4944,4 +4864,4 @@ SceneRoots:
   - {fileID: 1499691523}
   - {fileID: 1450516963}
   - {fileID: 244986486}
-  - {fileID: 262465497}
+  - {fileID: 468251409985880993}
