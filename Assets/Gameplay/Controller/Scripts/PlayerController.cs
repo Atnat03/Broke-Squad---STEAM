@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Bus;
 using Gameplay.Controller.States;
 using Gameplay.LD;
@@ -17,7 +18,7 @@ namespace Gameplay.Controller
     public class PlayerController : NetworkBusListener
     {
         #region Variables
-        
+
         [Header("Profile")]
         [SerializeField] private ControllerProfileSO profile;
 
@@ -37,10 +38,10 @@ namespace Gameplay.Controller
         [Header("Tied Up")]
         [SerializeField] private float tiedUpSpeed = 1f;
 
-        [Header("SFX")] 
+        [Header("SFX")]
         [SerializeField, SoundName] private string _jumpSound;
         [SerializeField, SoundName] private string _crouchSound;
-        
+
         [Header("Components")]
         private Rigidbody _rb;
         private CapsuleCollider _capsule;
@@ -49,10 +50,10 @@ namespace Gameplay.Controller
         private PlayerMotor _motor;
         private PlayerStamina _stamina;
         private StateMachine _stateMachine;
-        
+
         private int _syncedColor;
         private string _syncedName = "";
-        
+
         private readonly NetworkVariable<bool> _netCrouching = new(false,
             NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
@@ -62,7 +63,7 @@ namespace Gameplay.Controller
         public bool IsCrouching => IsOwner ? _stateMachine?.CurrentState is CrouchState : _netCrouching.Value;
         public bool IsSprinting => IsOwner && _stateMachine?.CurrentState is SprintState;
         public bool IsDown => health != null && health.IsDowned;
-        
+
         public float MaxStamina => profile.maxStamina;
         public float LeanInput => _input?.Lean ?? 0f;
         public Vector3 HorizontalVelocity => _motor?.HorizontalVelocity ?? Vector3.zero;
@@ -70,31 +71,33 @@ namespace Gameplay.Controller
         public bool IsMovingForward => ForwardDot > 0.1f;
         public bool IsMovingBackward => ForwardDot < -0.1f;
         public bool InputEnabled => _input == null || _input.Enabled;
-        
+
         public ControllerProfileSO Profile => profile;
         public PlayerMotor Motor => _motor;
         public PlayerBody Body => body;
         public PlayerStamina Stamina => _stamina;
         public LadderChecker LadderChecker => ladderChecker;
         public float TiedUpSpeed => tiedUpSpeed;
-        
+
         private bool WantsCrouch() => _input.CrouchHeld || (IsCrouching && !body.CanStandUp());
         private bool WantsSprint() => _input.SprintHeld && _input.Move.y > 0.1f && _stamina.CanSprint && !playerCamera.LocksController;
 
         public void PlayCrouchSound() => PlaySound(_crouchSound, 0.5f);
 
         public void SetYaw(float yawDegrees) => _rb.MoveRotation(Quaternion.Euler(0f, yawDegrees, 0f));
-        
+
         public Vector2 MoveInput => _input != null && !playerCamera.LocksController ? _input.Move : Vector2.zero;
-        
+
         public void StartLadderCooldown() => _ladderCooldown = Profile.ladderRegrabCooldown;
-        
+
         private bool WantsClimb() =>
             _ladderCooldown <= 0f
             && ladderChecker.Touching
             && MoveInput.y > 0.1f;
-        
+
         private bool KeepClimbing() => ladderChecker.Touching && !(IsGrounded && MoveInput.y < -0.1f);
+
+        private Coroutine _stunRoutine;
         #endregion
 
         #region Initialization
@@ -125,7 +128,7 @@ namespace Gameplay.Controller
             SendPersonalisation();
             SetUpModules();
             SetUpStateMachine();
-            
+
         }
 
         public override void OnNetworkDespawn()
@@ -156,7 +159,7 @@ namespace Gameplay.Controller
 
             body.Init(transform, _capsule, profile);
         }
-        
+
         private void SetUpModules()
         {
             _playerInput = TryGetComponent(out PlayerInput existing) ? existing : gameObject.AddComponent<PlayerInput>();
@@ -182,7 +185,7 @@ namespace Gameplay.Controller
             var tiedState = new TiedUpState(this);
             var climbState = new ClimbState(this);
 
-            
+
 
             Any(tiedState, new FuncPredicate(() => health.IsDowned));
             At(tiedState, movementState, new FuncPredicate(() => !health.IsDowned && !body.CanStandUp()));
@@ -192,8 +195,8 @@ namespace Gameplay.Controller
             At(crouchState, movementState, new FuncPredicate(() => !WantsCrouch()));
             At(movementState, sprintState, new FuncPredicate(WantsSprint));
             At(sprintState, movementState, new FuncPredicate(() => !WantsSprint()));
-            At(movementState, climbState,  new FuncPredicate(WantsClimb));
-            At(sprintState, climbState,  new FuncPredicate(WantsClimb));
+            At(movementState, climbState, new FuncPredicate(WantsClimb));
+            At(sprintState, climbState, new FuncPredicate(WantsClimb));
             At(climbState, movementState, new FuncPredicate(() => !KeepClimbing()));
 
             _stateMachine.SetState(movementState);
@@ -215,7 +218,7 @@ namespace Gameplay.Controller
                 body.ApplyRemote(Time.deltaTime, _netCrouching.Value, IsDown);
                 return;
             }
-            
+
             _motor.CanMove = !playerCamera.LocksController;
             _stateMachine.Update();
             body.UpdateEye(Time.deltaTime);
@@ -224,15 +227,15 @@ namespace Gameplay.Controller
         private void FixedUpdate()
         {
             if (!IsSpawned || !IsOwner) return;
-            
+
             float dt = Time.fixedDeltaTime;
             ground.Check(body, _rb, transform);
             ladderChecker.Check(body, transform);
             _ladderCooldown -= dt;
-            _stateMachine.FixedUpdate();       
+            _stateMachine.FixedUpdate();
             body.Tick(dt);
             _motor.FixedTick(dt);
-            _stamina.Tick(dt);                    
+            _stamina.Tick(dt);
 
             _netCrouching.Value = IsCrouching;
 
@@ -240,11 +243,11 @@ namespace Gameplay.Controller
         }
 
         private void LateUpdate() { if (IsOwner) _stateMachine.LateUpdate(); }
-        
+
         #endregion
 
         #region  Sound
-        
+
         public void PlaySound(string clip, float volumeToPlay)
         {
             InvokeEvent(new PlaySoundEvent
@@ -295,10 +298,10 @@ namespace Gameplay.Controller
                 Position = transform.position,
             });
         }
-        
+
 
         #endregion
-        
+
         public void SetInputEnabled(bool value)
         {
             if (!IsOwner || _input == null) return;
@@ -306,21 +309,35 @@ namespace Gameplay.Controller
 
             if (!value) _motor?.StopMoving();
         }
-        
+
         public void SnapTo(Vector3 position, float yawDegrees)
         {
             _rb.position = position;
-            _rb.linearVelocity = Vector3.zero;   
+            _rb.linearVelocity = Vector3.zero;
             SetYaw(yawDegrees);
         }
 
         [ClientRpc]
         public void TeleportClientRpc(Vector3 position, Quaternion rotation)
         {
-            if(!IsOwner) return;
+            if (!IsOwner) return;
             _rb.position = position;
             _rb.rotation = rotation;
         }
-        
+
+        public void Stun(float duration)
+        {
+            if (_stunRoutine != null) StopCoroutine(_stunRoutine);
+            _stunRoutine = StartCoroutine(StunRoutine(duration));
+        }
+
+        private IEnumerator StunRoutine(float duration)
+        {
+            Motor.CanMove = false;
+            yield return new WaitForSeconds(duration);
+            Motor.CanMove = true;
+            _stunRoutine = null;
+
+        }
     }
 }
