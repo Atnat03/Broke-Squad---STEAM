@@ -66,7 +66,9 @@ namespace Gameplay.Controller
             _play?.Invoke(walkSound[Random.Range(0, walkSound.Length)], volume);
 
             if (_controller == null) return;
-            _controller.SendEventSoundServerRpc(_settings.Force, _settings.MaxDistance);
+            if(_controller.IsCrouching) return;
+            
+            _controller.SendEventSoundServerRpc(_settings.Force);
             
         }
         

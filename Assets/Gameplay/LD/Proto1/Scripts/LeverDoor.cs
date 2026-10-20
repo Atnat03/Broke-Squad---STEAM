@@ -12,4 +12,11 @@ public class LeverDoor : OnlineInteractable
         if (activated.Value) OpenEventsRpc(); else CloseEventsRpc();
         StateChanged?.Invoke();
     }
+
+    protected override void OnInteract()
+    {
+        activated.Value = !activated.Value;
+        if (activated.Value) OpenEventsRpc(); else CloseEventsRpc();
+        StateChanged?.Invoke();
+    }
 }

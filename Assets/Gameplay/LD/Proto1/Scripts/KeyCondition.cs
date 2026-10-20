@@ -2,7 +2,7 @@
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Gameplay.LD.Proto1.Scripts
+namespace Gameplay.LD.Proto1
 {
     [RequireComponent(typeof(Door))]
     public class KeyCondition : NetworkBehaviour

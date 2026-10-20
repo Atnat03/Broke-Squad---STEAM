@@ -10,12 +10,18 @@ namespace Gameplay.Items
     {
         [SerializeField] private float _minVelocity = 1;
         
+        private Rigidbody _rb;
+        
         public void OnCollide(Collision collision, ItemPickup item)
         {
-            float speed = collision.relativeVelocity.magnitude;
+            if (_rb == null && !item.TryGetComponent(out _rb)) return;
+
+            float speed = collision.impulse.magnitude / _rb.mass;
             
+            ABPrint.Print("Speed : " + speed);
+
             if (speed <= _minVelocity) return;
-            
+
             if (collision.collider.TryGetComponent(out ActivatedByItem ld))
             {
                 ld.TriggerActivation();
@@ -23,7 +29,9 @@ namespace Gameplay.Items
         }
 
         public void OnThrow(Rigidbody rb)
-        { }
+        {
+            _rb = rb;
+        }
 
         public void OnStartHolding()
         { }

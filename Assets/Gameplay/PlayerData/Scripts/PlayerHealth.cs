@@ -123,6 +123,11 @@
             private void OnDownedChanged(bool previous, bool downed)
             {
                 OnChangedDown?.Invoke(downed);
+                InvokeEvent(new DownedChanged_EVENT()
+                {
+                    Downed = downed,
+                    PlayerId = OwnerClientId
+                });
             }
             
             #endregion

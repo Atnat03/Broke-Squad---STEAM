@@ -8,12 +8,13 @@ namespace Gameplay.Items
     [Serializable]
     public class ElectricUseModule : ItemModule, ICondition, IServerAction, IReplicatedModule
     {
-        [SerializeField] private float _maxPercentValue = 100;
+        private float _maxPercentValue = 100;
+        [SerializeField] private float _startPercentValue = 100;
         [SerializeField, Tooltip("En %")] private float _electricNeededToUse = 10;
         private float _currentPercentValue;
         private FixedString32Bytes _keyEvent = "ELECTRIC_USE_MODULE";
         
-        protected override void SetModule() => _currentPercentValue = _maxPercentValue;
+        protected override void SetModule() => _currentPercentValue = _startPercentValue;
         public bool CheckCondition() => _currentPercentValue-_electricNeededToUse >= 0;
 
         public void UseItem()

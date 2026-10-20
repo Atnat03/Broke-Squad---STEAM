@@ -14,9 +14,6 @@ namespace Gameplay.IA
         [Header("Settings")] 
         [SerializeField] private float _lockDownDuration = 10f;
         
-        [Header("View")]
-        [SerializeField] private GameObject _lockDownPrefab;
-        
         public bool IsLockDown => _isLockDown.Value;
         public float RatioDuration => _currentDuration.Value / _lockDownDuration;
         
@@ -25,9 +22,6 @@ namespace Gameplay.IA
 
         private List<GuardBehavior> _guardList = new List<GuardBehavior>();
         
-        public Action OnStartLockDown;
-        public Action OnEndLockDown;
-
         private void Awake()
         {
             instance = this;
@@ -102,12 +96,10 @@ namespace Gameplay.IA
         
         private void OnLockDownChange(bool previousValue, bool newValue)
         {
-            _lockDownPrefab.SetActive(newValue);
-            
             if (newValue)
-                OnStartLockDown?.Invoke();
+                InvokeEvent(new OnLockDownStart_EVENT());
             else
-                OnEndLockDown?.Invoke();
+                InvokeEvent(new OnLockDownEnd_EVENT());
         }
         
         
@@ -146,7 +138,7 @@ namespace Gameplay.IA
         {
             foreach (GuardBehavior g in _guardList)
             {
-                if (g.CurrentState is G_PursuitState || g.CurrentState is G_InvestigateState)
+                if (g.CurrentState is G_PursuitState)
                     return false;
             }
             
