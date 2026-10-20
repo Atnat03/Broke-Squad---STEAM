@@ -13,6 +13,7 @@ public class Door : OnlineInteractable
     [Header("Interactables Dependents")]
     [SerializeField] List<LeverDoor> RequiredLevers;
     [SerializeField] List<ButtonDoor> RequiredButtons;
+    [SerializeField] List<HoldButtonDoor> RequiredHeldButtons;
     [SerializeField] bool canBeInteracted;
     [SerializeField] bool startLocked;
     
@@ -48,6 +49,7 @@ public class Door : OnlineInteractable
         _locked.Value = startLocked;
         foreach (var l in RequiredLevers) l.StateChanged += Evaluate;
         foreach (var b in RequiredButtons) b.StateChanged += Evaluate;
+        foreach (var b in RequiredHeldButtons) b.StateChanged += Evaluate;
     }
 
     public override void OnNetworkDespawn()
@@ -57,6 +59,7 @@ public class Door : OnlineInteractable
         if (!IsServer) return;
         foreach (var l in RequiredLevers) l.StateChanged -= Evaluate;
         foreach (var b in RequiredButtons) b.StateChanged -= Evaluate;
+        foreach (var b in RequiredHeldButtons) b.StateChanged -= Evaluate;
     }
     
     void OnStateChanged(int previous, int current)
@@ -101,6 +104,7 @@ public class Door : OnlineInteractable
         bool allActive = true;
         foreach (var l in RequiredLevers) allActive &= l.activated.Value;
         foreach (var b in RequiredButtons) allActive &= b.activated.Value;
+        foreach (var b in RequiredHeldButtons) allActive &= b.Activated.Value;
 
         bool shouldBeLocked = !allActive;
         if (_locked.Value == shouldBeLocked) return; 
