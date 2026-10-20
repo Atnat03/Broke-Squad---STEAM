@@ -39,13 +39,15 @@ MonoBehaviour:
         _minTorqueForce: {x: 0, y: 0, z: 0}
         _maxTorqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: {x: 0.2, y: 0, z: 0.7}
+        _stringName: Joueur/Throw Item
+        _volume: 0.5
     - rid: 7202345609054912642
       type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 4
         _maxVelocity: 9
         _minDamage: 2
-        _maxDamage: 6
+        _maxDamage: 15
         _damageCurve:
           serializedVersion: 2
           m_Curve:
@@ -70,6 +72,6 @@ MonoBehaviour:
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
-        _weightFactor: 2
-        _mass: 1
+        _weightFactor: 1
+        _mass: 2
         _canDamagePlayer: 1

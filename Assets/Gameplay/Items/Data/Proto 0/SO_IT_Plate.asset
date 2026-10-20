@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
   m_Name: SO_IT_Plate
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
-  ID: 0
+  ID: 20
   ItemName: Plate
   VisualPrefab: {fileID: 7940754319919314549, guid: 9920a290dc6e1bc42a32d35a395d3af1, type: 3}
   PickupPrefab: {fileID: 3111835526134044472, guid: fc2529790519543479d63961d51dba5e, type: 3}
   Icon: {fileID: 21300000, guid: 8ee7060603d7dbe46af9722ac15ad218, type: 3}
+  OffsetInHand: {x: 0, y: 0, z: 0}
   FirstActionList: []
   SecondActionList:
   - rid: 7202345609054912641
@@ -39,6 +40,8 @@ MonoBehaviour:
         _minTorqueForce: {x: 0, y: 0, z: 0}
         _maxTorqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: {x: 0.2, y: 0, z: 0.7}
+        _stringName: Joueur/Throw Item
+        _volume: 0.5
     - rid: 7202345609054912642
       type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -73,8 +76,8 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 0.5
         _canDamagePlayer: 1
-        _minVelocityForSound: 3
     - rid: 7202345609054912658
       type: {class: BreakWithVelocity, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _minVelocityForDestroy: 2
+        _force: 10

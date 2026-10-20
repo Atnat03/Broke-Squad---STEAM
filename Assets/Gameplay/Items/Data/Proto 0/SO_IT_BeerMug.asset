@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
   m_Name: SO_IT_BeerMug
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
-  ID: 0
+  ID: 2
   ItemName: Beer Mug
   VisualPrefab: {fileID: 3031184694542905832, guid: 3fe9289b94011534180aa9f7f43d7390, type: 3}
   PickupPrefab: {fileID: 5497363147457083949, guid: 0c956020943e3594faba2016a8efa22f, type: 3}
   Icon: {fileID: 21300000, guid: a4bebc7973c550f4f96caf942ab10181, type: 3}
+  OffsetInHand: {x: 0, y: 0, z: 0}
   FirstActionList: []
   SecondActionList:
   - rid: 7202345609054912641
@@ -39,6 +40,8 @@ MonoBehaviour:
         _minTorqueForce: {x: 0, y: 0, z: 0}
         _maxTorqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: {x: 0.2, y: 0, z: 0.7}
+        _stringName: Joueur/Throw Item
+        _volume: 0.5
     - rid: 7202345609054912642
       type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -73,8 +76,8 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 0.5
         _canDamagePlayer: 1
-        _minVelocityForSound: 3
     - rid: 7202345609054912646
       type: {class: BreakWithVelocity, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _minVelocityForDestroy: 5
+        _force: 10

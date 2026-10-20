@@ -19,7 +19,7 @@ namespace Gameplay.LD
 
         public void SetFlag(LDFlag flag, bool value) => Element.SetFlag(flag, value);
 
-        internal void RequestInteract(int moduleID) => Element.RequestInteract(moduleID);
+        internal void RequestInteract(LDElementModule module) => Element.RequestInteract(module);
 
         public event Action<LDFlag> OnFlagChanged
         {
