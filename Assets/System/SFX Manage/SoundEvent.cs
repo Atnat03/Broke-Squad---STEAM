@@ -17,9 +17,3 @@ public struct PlaySoundEvent
     public bool is2D; // true pour UI
     public bool shared; // true si son envoyé au autres joueurs 
 }
-
-public struct SfxSettingsChangedEvent
-{
-    public float volume;
-    public bool muted;
-}

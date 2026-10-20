@@ -35,6 +35,7 @@ namespace Gameplay.Other
             
             Cursor.visible = !_isPause;
             Cursor.lockState = !_isPause ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = _isPause;
 
             _playerController.SetInputEnabled(!_isPause);
         }
