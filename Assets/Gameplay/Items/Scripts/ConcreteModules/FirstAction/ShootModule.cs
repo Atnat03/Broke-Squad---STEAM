@@ -27,7 +27,7 @@ namespace Gameplay.Items
 
             Vector3 aimPoint = ray.origin + ray.direction * 100f;
 
-            if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+            if (Physics.Raycast(ray, out RaycastHit hit, 100f, ~0,  QueryTriggerInteraction.Ignore))
             {
                 aimPoint = hit.point;
             }
@@ -59,7 +59,7 @@ namespace Gameplay.Items
             Vector3 finalPos = pos;
             Vector3 dir = Context.Camera.transform.forward;
             
-            if (Physics.Raycast(pos, dir, out RaycastHit hit, 0.25f))
+            if (Physics.Raycast(pos, dir, out RaycastHit hit, 0.25f, ~0,  QueryTriggerInteraction.Ignore))
             {
                 finalPos -= dir * 1.1f;
             }
