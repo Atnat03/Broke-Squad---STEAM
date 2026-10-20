@@ -74,7 +74,9 @@ public class Door : OnlineInteractable
                 soundName = closeSound,
                 position = transform.position,
                 volume = 0.8f,
-                pitch = Random.Range(0.95f, 1.05f) 
+                pitch = Random.Range(0.95f, 1.05f),
+                is2D = false,
+                shared = false
             });
             return;
         }
@@ -84,7 +86,9 @@ public class Door : OnlineInteractable
             soundName = openSound,
             position = transform.position,
             volume = 0.8f,
-            pitch = Random.Range(0.95f, 1.05f) 
+            pitch = Random.Range(0.95f, 1.05f),
+            is2D = false,
+            shared = false
         });
         if (current > 0) onOpenFront?.Invoke();
         else onOpenBack?.Invoke();

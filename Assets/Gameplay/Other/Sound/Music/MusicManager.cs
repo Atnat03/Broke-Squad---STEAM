@@ -2,6 +2,7 @@
 using Bus;
 using Gameplay.Items;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Gameplay.Other.Sound.Music
 {
@@ -11,10 +12,14 @@ namespace Gameplay.Other.Sound.Music
         [SerializeField] private AudioClip _normalMusic;
         [SerializeField] private AudioClip _dangerousMusic;
         [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private AudioMixerGroup _musicGroup;
 
         private void Awake()
         {
-           ListenToEvent<OnGrabGoal_EVENT>(ChangeMusicToDangerous);
+            if (_audioSource != null && _musicGroup != null)
+                _audioSource.outputAudioMixerGroup = _musicGroup;
+            
+            ListenToEvent<OnGrabGoal_EVENT>(ChangeMusicToDangerous);
             ListenToEvent<OnDropGoal_EVENT>(ChangeMusicToNormal);
         }
 
