@@ -62,7 +62,7 @@ namespace Gameplay.Items
             int rayMask = _interactableMask | _obstacleMask;
 
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
-                    out RaycastHit hit, _maxDistanceToInteract, rayMask, QueryTriggerInteraction.Ignore))
+                    out RaycastHit hit, _maxDistanceToInteract, rayMask, QueryTriggerInteraction.Collide))
             {
                 if (hit.collider.TryGetComponent(out IInteractable interact))
                 {
