@@ -75,6 +75,7 @@ namespace Gameplay.Items
                 for (int i = 0; i < _slots.Length; i++)
                     _slotIds.Add(-1);
             }
+            
             _slotIds.OnListChanged += OnSlotIdsChanged;
             
             OnSetupInventory?.Invoke(_slots.Length);
@@ -154,7 +155,7 @@ namespace Gameplay.Items
         private void OnSelectedSlotChanged(int previousValue, int newValue)
         {
             OnSlotSelectedChanged?.Invoke(true);
-            OnSlotsChanged?.Invoke(); // NEW
+            OnSlotsChanged?.Invoke();
         }
 
         private void OnHeldItemChanged(int oldId, int newId)
@@ -313,16 +314,7 @@ namespace Gameplay.Items
         {
             if (_playerController.IsDown) return;
             
-            ItemInstance item = GetCurrentItemInHand();
-            if (item == null) return;
-            
-            Vector3 prefabSize = Vector3.up * (item.Data.PickupPrefab.transform.position.y / 2);
-            Vector3 pos = transform.position + transform.forward + prefabSize;
-            
-            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out var hit, _dropRange, ~0, QueryTriggerInteraction.Ignore))
-            {
-                pos = hit.point + prefabSize;
-            }
+            Vector3 pos = transform.position + transform.forward;
             
             if (HasItemInHand())
                 DropItemRpc(pos);
@@ -337,7 +329,14 @@ namespace Gameplay.Items
             ItemInstance item = GetCurrentItemInHand();
             if (item == null) return;
             
-            ItemPickup pickup = Instantiate(item.Data.PickupPrefab, pos, transform.rotation);
+            Vector3 prefabSize = Vector3.up * (item.Data.PickupPrefab.transform.position.y / 2);
+                        
+            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out var hit, _dropRange, ~0, QueryTriggerInteraction.Ignore))
+            {
+                pos = hit.point + prefabSize;
+            }
+            
+            ItemPickup pickup = Instantiate(item.Data.PickupPrefab, pos+prefabSize, transform.rotation);
             pickup.GetComponent<NetworkObject>().Spawn();
             pickup.Setup(item);
             
