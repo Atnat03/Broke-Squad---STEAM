@@ -1,11 +1,8 @@
-using System;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using MyPrint;
 using System.Collections.Generic;
-using Network.Connections;
-using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
@@ -159,28 +156,23 @@ namespace Network.HUB
 
             for (int i = 0; i < list.Count; i++)
             {
-                Unity.Services.Lobbies.Models.Player player = list[i];
+                var player = list[i];
 
                 string nom = "Unknown";
 
-                if (player.Data.TryGetValue("PlayerName", out PlayerDataObject valueName))
+                if (player.Data.TryGetValue(_lobbyManager.KEY_PLAYER_NAME, out PlayerDataObject valueName))
                     nom = valueName.Value;
                 
                 int colorId = 0;
-			
-                if(player.Data.TryGetValue("ColorId", out PlayerDataObject valueSkin))
-                    int.TryParse(valueSkin.Value, out colorId);
-			
+                
+                if (player.Data != null && player.Data.TryGetValue(_lobbyManager.KEY_PLAYER_COLOR, out PlayerDataObject valueSkin) && int.TryParse(valueSkin.Value, out int parsedColor))
+                    colorId = parsedColor;
+                
                 bool isReady = false;
 
-                if(player.Data.TryGetValue("IsReady", out PlayerDataObject valueReady))
+                if(player.Data.TryGetValue(_lobbyManager.KEY_PLAYER_READY, out PlayerDataObject valueReady))
                     isReady = valueReady.Value == "1";
-
-                if (player.Id == AuthenticationService.Instance.PlayerId)
-                {
-                    //SetReady(isReady);
-                }
-			
+                
                 if (_dataPlayerList[i].Name != nom || _dataPlayerList[i].ColorID != colorId || _dataPlayerList[i].IsReady != isReady)
                 {
                     _dataPlayerList[i] = new PlayerDataLobby
@@ -189,7 +181,7 @@ namespace Network.HUB
                         ColorID = colorId,
                         IsReady = isReady
                     };
-
+                    
                     _elementPlayerList[i].SetData(_dataPlayerList[i]);
                 }
             }
@@ -203,14 +195,16 @@ namespace Network.HUB
 
                 Transform t = _playerVisualSpawner.GetSpawnPoint(index);
                 PlayerElementVisual ui = Instantiate(_playerVisualPrefab, t.position, t.rotation);
-                _elementPlayerList.Add(ui);
-
-                _dataPlayerList.Add(new PlayerDataLobby
+                
+                PlayerDataLobby newData = new PlayerDataLobby
                 {
                     Name = "",
                     ColorID = 0,
                     IsReady = false
-                });
+                };
+                
+                _elementPlayerList.Add(ui);
+                _dataPlayerList.Add(newData);
             }
         }
 
