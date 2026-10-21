@@ -38,6 +38,10 @@ namespace Gameplay.Controller
         [Header("Tied Up")]
         [SerializeField] private float tiedUpSpeed = 1f;
 
+        [Header("Stun")]
+        private float _stunTimer;
+        public bool IsStunned => _stunTimer > 0f;
+        
         [Header("SFX")]
         [SerializeField, SoundName] private string _jumpSound;
         [SerializeField, SoundName] private string _crouchSound;
@@ -50,7 +54,7 @@ namespace Gameplay.Controller
         private PlayerMotor _motor;
         private PlayerStamina _stamina;
         private StateMachine _stateMachine;
-
+        
         private int _syncedColor;
         private string _syncedName = "";
 
@@ -80,13 +84,14 @@ namespace Gameplay.Controller
         public float TiedUpSpeed => tiedUpSpeed;
 
         private bool WantsCrouch() => _input.CrouchHeld || (IsCrouching && !body.CanStandUp());
-        private bool WantsSprint() => _input.SprintHeld && _input.Move.y > 0.1f && _stamina.CanSprint && !playerCamera.LocksController;
+        private bool WantsSprint() => _input.SprintHeld && MoveInput.y > 0.1f && _stamina.CanSprint;
 
         public void PlayCrouchSound() => PlaySound(_crouchSound, 0.5f);
 
         public void SetYaw(float yawDegrees) => _rb.MoveRotation(Quaternion.Euler(0f, yawDegrees, 0f));
 
-        public Vector2 MoveInput => _input != null && !playerCamera.LocksController ? _input.Move : Vector2.zero;
+        private bool CanAct => !playerCamera.LocksController && !IsStunned;
+        public Vector2 MoveInput => _input != null && CanAct ? _input.Move : Vector2.zero;
 
         public void StartLadderCooldown() => _ladderCooldown = Profile.ladderRegrabCooldown;
 
@@ -133,6 +138,7 @@ namespace Gameplay.Controller
 
         public override void OnNetworkDespawn()
         {
+            _stunTimer = 0f;
             _input?.Dispose();
             _input = null;
             base.OnNetworkDespawn();
@@ -219,7 +225,8 @@ namespace Gameplay.Controller
                 return;
             }
 
-            _motor.CanMove = !playerCamera.LocksController;
+            _stunTimer -= Time.deltaTime;
+            _motor.CanMove = !playerCamera.LocksController && !IsStunned;
             _stateMachine.Update();
             body.UpdateEye(Time.deltaTime);
         }
@@ -239,7 +246,7 @@ namespace Gameplay.Controller
 
             _netCrouching.Value = IsCrouching;
 
-            footsteps.Tick(dt, IsGrounded, !playerCamera.LocksController && _input.Move.sqrMagnitude > 0.01f, IsCrouching, IsSprinting);
+            footsteps.Tick(dt, IsGrounded, MoveInput.sqrMagnitude > 0.01f, IsCrouching, IsSprinting);
         }
 
         private void LateUpdate() { if (IsOwner) _stateMachine.LateUpdate(); }
@@ -327,19 +334,17 @@ namespace Gameplay.Controller
 
         public void Stun(float duration)
         {
-            if (_stunRoutine != null) StopCoroutine(_stunRoutine);
-            _stunRoutine = StartCoroutine(StunRoutine(duration));
+            if (IsOwner) ApplyStun(duration);
+            else StunOwnerRpc(duration);
         }
 
-        private IEnumerator StunRoutine(float duration)
-        {
-            Motor.CanMove = false;
-            Debug.Log("[LD] Stun" + Motor.CanMove);
-            yield return new WaitForSeconds(duration);
-            Motor.CanMove = true;
-            Debug.Log("[LD] Stun arpès" + Motor.CanMove);
-            _stunRoutine = null;
+        [Rpc(SendTo.Owner)]
+        private void StunOwnerRpc(float duration) => ApplyStun(duration);
 
+        private void ApplyStun(float duration)
+        {
+            _stunTimer = Mathf.Max(_stunTimer, duration); 
+            _motor?.StopMoving();                  
         }
     }
 }
