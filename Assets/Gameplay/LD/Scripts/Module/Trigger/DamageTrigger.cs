@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Gameplay.LD
 {
-    public class DamageTrigger : LDTriggerModule, IDamageable
+    public class DamageTrigger : LDTriggerModule, IDamageable, IBreakable
     {
         [Tooltip("Seuil mini des dégats pour être compter")]
         [SerializeField] private float _damageTreshold = 10f;
@@ -35,5 +35,6 @@ namespace Gameplay.LD
             Raise(new LDActivation(null, transform.position));
         }
 
+        public void Break(float force) => ApplyDamage(force);
     }
 }
