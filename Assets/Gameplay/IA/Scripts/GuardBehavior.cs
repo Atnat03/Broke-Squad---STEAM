@@ -166,11 +166,22 @@ namespace Gameplay.IA
                 
                 if(_lockDownAlertTimer.Value <= 0)
                 {
-                    InvokeEvent(new OnLockDownStart_EVENT());
+                    if(!GuardSight.Target.TryGetComponent<PlayerController>(out var controller)) return;
+
+                    TriggerLockDownClientRpc(controller.OwnerClientId);
                 }
             }
         }
 
+        [Rpc(SendTo.Everyone)]
+        private void TriggerLockDownClientRpc(ulong clientID)
+        {
+            InvokeEvent(new OnLockDownStart_EVENT
+            {
+                ClientID = clientID 
+            });
+        }
+        
         private void LateUpdate()
         {
             if (IsServer) _stateMachine.LateUpdate();
