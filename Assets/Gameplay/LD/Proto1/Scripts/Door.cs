@@ -107,7 +107,8 @@ public class Door : OnlineInteractable
         foreach (var b in RequiredHeldButtons) allActive &= b.Activated.Value;
 
         bool shouldBeLocked = !allActive;
-        if (_locked.Value == shouldBeLocked) return; 
+        
+        //if (_locked.Value == shouldBeLocked) return; 
 
         _locked.Value = shouldBeLocked;
         SetOpen(allActive); 
