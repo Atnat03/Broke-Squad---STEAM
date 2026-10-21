@@ -1,8 +1,6 @@
-using System;
 using Network.Connections;
+using Network.HUB;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class SelectColorPrefab : MonoBehaviour
@@ -21,6 +19,14 @@ public class SelectColorPrefab : MonoBehaviour
             _selectedImage.gameObject.SetActive(true);
             
             PlayerLocalData.instance.PlayerColor = color;
+        });
+    }
+
+    public void AddClickChangeColor(LobbyManager man, int id)
+    {
+        _buttonSelected.onClick.AddListener(() =>
+        {
+            man.SetColorButton(id);
         });
     }
 

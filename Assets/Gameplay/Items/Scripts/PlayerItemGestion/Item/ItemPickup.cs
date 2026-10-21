@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Bus;
 using Gameplay.Controller.Minimap;
 using Gameplay.Other.SuspiciousSound;
+using JetBrains.Annotations;
 using MyPrint;
 using Unity.Netcode;
 using Unity.Netcode.Components;
@@ -33,7 +34,6 @@ namespace Gameplay.Items
         [SerializeField] private bool _canBeVisibleByMiniMap = true;
         private Vector3 _iconPos = Vector3.up * 5;
         private bool _alreadySeen = false;
-        
         
         public Outline outline => _outline;
         
@@ -120,9 +120,25 @@ namespace Gameplay.Items
 
         private void CreateSprite()
         {
-            if (_minimapIcon) return;
             if (!_canBeVisibleByMiniMap) return;
+
+            if (!IsServer)
+            {
+                CreateSpriteServerRpc();
+                return;
+            }
             
+            if (_minimapIcon) return;
+
+            CreateSpriteClientRpc();
+        }
+
+        [Rpc(SendTo.Server)]
+        private void CreateSpriteServerRpc() => CreateSprite();
+
+        [Rpc(SendTo.Everyone)]
+        private void CreateSpriteClientRpc()
+        {
             _minimapIcon = new GameObject("MinimapIcon")
             {
                 transform =
@@ -144,14 +160,21 @@ namespace Gameplay.Items
         {
             if (DetectNotGrabbable()) return;
             
+            if (IsServer)
+                DestroyIconMapServerRpc();
+            
             InvokeEvent(new OnPickupItem_EVENT
             {
                 ClientId = clientId,
                 ItemPickUpRef = NetworkObject
             });
-            
-            Destroy(_minimapIcon.gameObject);
         }
+
+        [Rpc(SendTo.Server)]
+        private void DestroyIconMapServerRpc() => DestroyIconMapClientRpc();
+        
+        [Rpc(SendTo.Everyone)]
+        private void DestroyIconMapClientRpc() =>  Destroy(_minimapIcon.gameObject);
         
         public void Setup(ItemInstance instance)
         {

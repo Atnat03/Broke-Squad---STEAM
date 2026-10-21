@@ -9,14 +9,16 @@ public class LeverDoor : OnlineInteractable
     protected override void ServerInteract(ulong sender)
     {
         activated.Value = !activated.Value;
-        if (activated.Value) OpenEventsRpc(); else CloseEventsRpc();
+        if (activated.Value) OpenEventsRpc(); 
+        else CloseEventsRpc();
         StateChanged?.Invoke();
     }
 
     protected override void OnInteract()
     {
         activated.Value = !activated.Value;
-        if (activated.Value) OpenEventsRpc(); else CloseEventsRpc();
+        if (activated.Value) OpenEventsRpc(); 
+        else CloseEventsRpc();
         StateChanged?.Invoke();
     }
 }
