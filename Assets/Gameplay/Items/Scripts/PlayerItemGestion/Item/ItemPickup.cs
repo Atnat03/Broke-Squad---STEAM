@@ -181,6 +181,8 @@ namespace Gameplay.Items
             _instance = instance;
             instance?.SetAnchor(transform, NetworkObjectId);
             
+            GetComponent<BoxCollider>().isTrigger = true;
+            
             _alreadySeen = true;
             CreateSprite();
         }
