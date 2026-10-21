@@ -12,8 +12,8 @@ public class PlayerMinimap : NetworkBehaviour
 {
     [SerializeField] private PlayerController _controller;
     [SerializeField] private Camera _camMapPrefab;
-    
-    [Header("Sprite")]
+
+    [Header("Sprite")] 
     [SerializeField] private SpriteRenderer _playerArrowSprite;
     [SerializeField] private Color[] _possibleColor;
     

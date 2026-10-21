@@ -28,10 +28,12 @@ namespace Gameplay.Items
         
         [SerializeField] private SO_Item _itemData;
         private Outline _outline;
-        
-        [Header("Minimap")]
+
+        [Header("Minimap")] 
+        [SerializeField] private bool _canBeVisibleByMiniMap = true;
         private Vector3 _iconPos = Vector3.up * 5;
         private bool _alreadySeen = false;
+        
         
         public Outline outline => _outline;
         
@@ -119,12 +121,13 @@ namespace Gameplay.Items
         private void CreateSprite()
         {
             if (_minimapIcon) return;
+            if (!_canBeVisibleByMiniMap) return;
             
             _minimapIcon = new GameObject("MinimapIcon")
             {
                 transform =
                 {
-                    localPosition = _iconPos + Vector3.up * 10,
+                    localPosition = _iconPos + Vector3.up,
                     localRotation = Quaternion.Euler(90, 0, 0)
                 }
             };
