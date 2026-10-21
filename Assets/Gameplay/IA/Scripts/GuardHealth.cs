@@ -65,12 +65,19 @@ namespace Gameplay.IA
                 return;
             }
             
-            StartCoroutine(PerformStun(stunDuration));
+            PerformStunClientRpc(stunDuration);
+            
         }
         
         [Rpc(SendTo.Server)]
         private void ApplyStunRpc(float stunDuration) => ApplyStun(stunDuration);
-
+        
+        [Rpc(SendTo.Everyone)]
+        private void PerformStunClientRpc(float stunDuration)
+        {
+            StartCoroutine(PerformStun(stunDuration));
+        }
+        
         IEnumerator PerformStun(float stunDuration)
         {
             OnStun?.Invoke(true);

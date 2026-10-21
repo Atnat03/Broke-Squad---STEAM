@@ -27,7 +27,7 @@ namespace Gameplay.Items
 
             Vector3 aimPoint = ray.origin + ray.direction * 100f;
 
-            if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+            if (Physics.Raycast(ray, out RaycastHit hit, 100f, ~0,  QueryTriggerInteraction.Ignore))
             {
                 aimPoint = hit.point;
             }
@@ -38,6 +38,8 @@ namespace Gameplay.Items
             {
                 pos = Context.Core.transform.GetChild(0).position;
             }
+
+            pos = CheckWall(pos);
             
             Vector3 origin = pos;
             Vector3 direction = (aimPoint - origin).normalized;
@@ -50,6 +52,19 @@ namespace Gameplay.Items
             });
             
             ConsumeCondition(new OnModuleDoAction_EVENT());
+        }
+
+        private Vector3 CheckWall(Vector3 pos)
+        {
+            Vector3 finalPos = pos;
+            Vector3 dir = Context.Camera.transform.forward;
+            
+            if (Physics.Raycast(pos, dir, out RaycastHit hit, 0.25f, ~0,  QueryTriggerInteraction.Ignore))
+            {
+                finalPos -= dir * 1.1f;
+            }
+
+            return finalPos;
         }
 
         public void StopFirstAction()

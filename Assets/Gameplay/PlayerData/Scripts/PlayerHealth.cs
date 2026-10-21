@@ -1,4 +1,5 @@
     using System;
+    using System.Collections;
     using Bus;
     using Gameplay.LD.Scripts;
     using Unity.Netcode;
@@ -16,6 +17,7 @@
             [SerializeField, SoundName] private string[] _takeDamageSound;
             [SerializeField, SoundName] private string _deathSound;
             [SerializeField, SoundName] private string _rezSound;
+            [SerializeField] private MeshRenderer _bodyMesh;
 
             private readonly NetworkVariable<int> _playerHp = new NetworkVariable<int>(MaxHpValue,
                     NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -66,6 +68,7 @@
 
                 _playerHp.Value = Mathf.Max(0, _playerHp.Value - (int)damage);
                 PlayHurtRpc();
+                HitMarkClientRpc();
                 
                 if (_playerHp.Value <= 0)
                 {
@@ -162,6 +165,23 @@
                     position = transform.position,
                     volume = volume
                 });
+            }
+
+            [Rpc(SendTo.Everyone)]
+            private void HitMarkClientRpc()
+            {
+                StartCoroutine(HitMarkColor());
+            }
+
+            IEnumerator HitMarkColor()
+            {
+                Color previousColor = _bodyMesh.material.color;
+                
+                _bodyMesh.material.color = Color.white;
+                
+                yield return new WaitForSeconds(0.2f);
+                
+                _bodyMesh.material.color = previousColor;
             }
             
             #endregion
