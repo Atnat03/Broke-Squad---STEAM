@@ -14,6 +14,7 @@ public class Door : OnlineInteractable
     [SerializeField] List<LeverDoor> RequiredLevers;
     [SerializeField] List<ButtonDoor> RequiredButtons;
     [SerializeField] List<HoldButtonDoor> RequiredHeldButtons;
+    [SerializeField] List<Digicode> RequiredDigicodes;
     [SerializeField] bool canBeInteracted;
     [SerializeField] bool startLocked;
     
@@ -50,6 +51,7 @@ public class Door : OnlineInteractable
         foreach (var l in RequiredLevers) l.StateChanged += Evaluate;
         foreach (var b in RequiredButtons) b.StateChanged += Evaluate;
         foreach (var b in RequiredHeldButtons) b.StateChanged += Evaluate;
+        foreach (var d in RequiredDigicodes) d.StateChanged += Evaluate;
     }
 
     public override void OnNetworkDespawn()
@@ -60,6 +62,7 @@ public class Door : OnlineInteractable
         foreach (var l in RequiredLevers) l.StateChanged -= Evaluate;
         foreach (var b in RequiredButtons) b.StateChanged -= Evaluate;
         foreach (var b in RequiredHeldButtons) b.StateChanged -= Evaluate;
+        foreach (var d in RequiredDigicodes) d.StateChanged -= Evaluate;
     }
     
     void OnStateChanged(int previous, int current)
@@ -105,6 +108,7 @@ public class Door : OnlineInteractable
         foreach (var l in RequiredLevers) allActive &= l.activated.Value;
         foreach (var b in RequiredButtons) allActive &= b.activated.Value;
         foreach (var b in RequiredHeldButtons) allActive &= b.Activated.Value;
+        foreach (var d in RequiredDigicodes) allActive &= d.unlocked.Value;
 
         bool shouldBeLocked = !allActive;
         
