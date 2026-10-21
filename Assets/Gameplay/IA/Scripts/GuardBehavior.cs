@@ -177,15 +177,20 @@ namespace Gameplay.IA
         }
         
         public void SetColor(Color color) => _meshRenderer.material.color = color;
+
+        private Color _previousColor;
         
         private void HandleStun(bool isStunned)
         {
             if (isStunned)
             {
+                _previousColor = _meshRenderer.material.color;
+                _meshRenderer.material.color = Color.dodgerBlue;
                 GuardMotor.StopAgent();
             }
             else
             {
+                _meshRenderer.material.color = _previousColor;
                 GuardMotor.StartAgent();
             }
         }

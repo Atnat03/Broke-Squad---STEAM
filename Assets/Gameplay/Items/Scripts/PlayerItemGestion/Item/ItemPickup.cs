@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Bus;
+using Gameplay.Controller.Minimap;
 using Gameplay.Other.SuspiciousSound;
 using MyPrint;
 using Unity.Netcode;
 using Unity.Netcode.Components;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace Gameplay.Items
 {
@@ -23,14 +26,20 @@ namespace Gameplay.Items
         readonly NetworkVariable<bool> _onRack = new();
         Vector3 _baseSize, _baseScale;
         
-        [SerializeField] private SO_Item _itemIndex;
+        [SerializeField] private SO_Item _itemData;
         private Outline _outline;
+        
+        [Header("Minimap")]
+        private Vector3 _iconPos = Vector3.up * 5;
+        private bool _alreadySeen = false;
         
         public Outline outline => _outline;
         
         private ItemInstance _instance;
         
-        public ItemInstance Instance => _instance ??= new ItemInstance(_itemIndex);
+        public ItemInstance Instance => _instance ??= new ItemInstance(_itemData);
+        
+        GameObject _minimapIcon = null;
         
         public Action OnCollide;
         
@@ -61,12 +70,10 @@ namespace Gameplay.Items
                     if (c != _box) list.Add(c);
                 _collidersOffOnRack = list.ToArray();
             }
-            
         }
 
         public override void OnNetworkSpawn()
         {
-            SetOutline(false);
             _onRack.OnValueChanged += OnRackChanged;
             
             ApplyRack();
@@ -99,13 +106,39 @@ namespace Gameplay.Items
 
         public void SetOutline(bool state)
         {
-            if(outline != null)
+            if (!_alreadySeen)
+            {
+                _alreadySeen = true;
+                CreateSprite();
+            }
+            
+            if(outline)
                 outline.enabled = state;
+        }
+
+        private void CreateSprite()
+        {
+            if (_minimapIcon) return;
+            
+            _minimapIcon = new GameObject("MinimapIcon")
+            {
+                transform =
+                {
+                    localPosition = _iconPos + Vector3.up * 10,
+                    localRotation = Quaternion.Euler(90, 0, 0)
+                }
+            };
+            
+            _minimapIcon.transform.localScale *= 0.4f;
+            _minimapIcon.layer = LayerMask.NameToLayer("TargetMiniMap");
+                
+            _minimapIcon.AddComponent<SpriteRenderer>().sprite = _itemData.Icon;
+
+            _minimapIcon.AddComponent<FreezeRotationMinimap>().SetTarget(transform);
         }
 
         public void Interact(ulong clientId)
         {
-            ABPrint.PrintBool(DetectNotGrabbable());
             if (DetectNotGrabbable()) return;
             
             InvokeEvent(new OnPickupItem_EVENT
@@ -113,12 +146,17 @@ namespace Gameplay.Items
                 ClientId = clientId,
                 ItemPickUpRef = NetworkObject
             });
+            
+            Destroy(_minimapIcon.gameObject);
         }
         
         public void Setup(ItemInstance instance)
         {
             _instance = instance;
             instance?.SetAnchor(transform, NetworkObjectId);
+            
+            _alreadySeen = true;
+            CreateSprite();
         }
         
         public void OnCollisionEnter(Collision collision)
@@ -130,7 +168,6 @@ namespace Gameplay.Items
             
             foreach (var passif in _instance.Passifs)
             {
-                ABPrint.Print("Collision Enter");
                 passif.OnCollide(collision, this);
             }
         }

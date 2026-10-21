@@ -15,6 +15,7 @@ namespace Gameplay.Items
     public class PlayerInventory : NetworkBusListener
     {
         public SO_ItemDataBase DataBase => _database;
+        public PlayerController Controller => _playerController;
         
         [Header("References")]
         [SerializeField] private PlayerController _playerController;
@@ -31,6 +32,8 @@ namespace Gameplay.Items
         [SerializeField] private int _itemCount = 3;
         private ItemInstance[] _slots;
         private readonly NetworkVariable<int> _selectedSlot = new(0);
+
+        private readonly NetworkList<int> _slotIds = new();
         
         [Header("SFX")] 
         [SerializeField, SoundName] private string _sfxPickUp;
@@ -44,6 +47,10 @@ namespace Gameplay.Items
         
         public ItemInstance GetHeldInstance() => _currentItem != null ? _currentItem.Instance : null;
         
+        public int SlotCount => _slotIds.Count;
+        public int SelectedSlot => _selectedSlot.Value;
+        public int GetSlotItemId(int index) => index >= 0 && index < _slotIds.Count ? _slotIds[index] : -1;
+        
         //Actions
         public Action<int> OnSetupInventory;
         public Action OnPickupItem;
@@ -51,11 +58,25 @@ namespace Gameplay.Items
         public Action<int, int> OnUpdateSlots;
         public Action<bool> OnSlotSelectedChanged;
         
+        public Action OnSlotsChanged;
+        
+        public static event Action<PlayerInventory> OnInventorySpawned;
+        public static event Action<PlayerInventory> OnInventoryDespawned;
+        
         public override void OnNetworkSpawn()
         {
             _replication = GetComponent<PlayerInventoryReplication>();
             
             _slots = new ItemInstance[Mathf.Max(1, _itemCount)];
+            
+            if (IsServer)
+            {
+                _slotIds.Clear();
+                for (int i = 0; i < _slots.Length; i++)
+                    _slotIds.Add(-1);
+            }
+            
+            _slotIds.OnListChanged += OnSlotIdsChanged;
             
             OnSetupInventory?.Invoke(_slots.Length);
             
@@ -72,6 +93,21 @@ namespace Gameplay.Items
             }
             
             _playerInput.OnMouseRoll += OnSelectedItemChange;
+            
+            OnInventorySpawned?.Invoke(this);
+        }
+        
+        public override void OnNetworkDespawn()
+        {
+            base.OnNetworkDespawn();
+            
+            _slotIds.OnListChanged -= OnSlotIdsChanged;
+            OnInventoryDespawned?.Invoke(this);
+        }
+        
+        private void OnSlotIdsChanged(NetworkListEvent<int> changeEvent)
+        {
+            OnSlotsChanged?.Invoke();
         }
 
         public void OnSelectedItemChange(int ratio)
@@ -92,6 +128,14 @@ namespace Gameplay.Items
             _selectedSlot.Value = index;
             RefreshHeldItem();
         }
+        
+        private void SetSlot(int index, ItemInstance item)
+        {
+            _slots[index] = item;
+            
+            if (IsServer && index < _slotIds.Count)
+                _slotIds[index] = item != null ? item.Data.ID : -1;
+        }
 
         private void RefreshHeldItem()
         {
@@ -111,6 +155,7 @@ namespace Gameplay.Items
         private void OnSelectedSlotChanged(int previousValue, int newValue)
         {
             OnSlotSelectedChanged?.Invoke(true);
+            OnSlotsChanged?.Invoke();
         }
 
         private void OnHeldItemChanged(int oldId, int newId)
@@ -145,6 +190,16 @@ namespace Gameplay.Items
             ItemCore core = go.AddComponent<ItemCore>();
             GameObject visual = Instantiate(data.VisualPrefab, core.transform);
             visual.transform.localPosition = data.OffsetInHand;
+
+            if (IsOwner)
+            {
+                visual.gameObject.layer = LayerMask.NameToLayer("ItemInHand");
+                
+                foreach (Transform child in visual.transform)
+                {
+                    child.gameObject.layer = LayerMask.NameToLayer("ItemInHand");
+                }
+            }
             
             ItemInstance instance;
             if (NetworkManager.Singleton.IsServer)
@@ -238,7 +293,7 @@ namespace Gameplay.Items
             int slot = FindFreeSlot();
             if (slot == -1) return;
             
-            _slots[slot] = pickup.Instance;
+            SetSlot(slot, pickup.Instance);
             netObj.Despawn();
 
             SelectSlot(slot);
@@ -259,16 +314,7 @@ namespace Gameplay.Items
         {
             if (_playerController.IsDown) return;
             
-            ItemInstance item = GetCurrentItemInHand();
-            if (item == null) return;
-            
-            Vector3 prefabSize = Vector3.up * (item.Data.PickupPrefab.transform.position.y / 2);
-            Vector3 pos = transform.position + transform.forward + prefabSize;
-            
-            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out var hit, _dropRange, ~0, QueryTriggerInteraction.Ignore))
-            {
-                pos = hit.point + prefabSize;
-            }
+            Vector3 pos = transform.position + transform.forward;
             
             if (HasItemInHand())
                 DropItemRpc(pos);
@@ -283,7 +329,14 @@ namespace Gameplay.Items
             ItemInstance item = GetCurrentItemInHand();
             if (item == null) return;
             
-            ItemPickup pickup = Instantiate(item.Data.PickupPrefab, pos, transform.rotation);
+            Vector3 prefabSize = Vector3.up * (item.Data.PickupPrefab.transform.position.y / 2);
+                        
+            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out var hit, _dropRange, ~0, QueryTriggerInteraction.Ignore))
+            {
+                pos = hit.point + prefabSize;
+            }
+            
+            ItemPickup pickup = Instantiate(item.Data.PickupPrefab, pos+prefabSize, transform.rotation);
             pickup.GetComponent<NetworkObject>().Spawn();
             pickup.Setup(item);
             
@@ -309,7 +362,7 @@ namespace Gameplay.Items
             foreach (ISecondAction s in item.SecondActionList)
                 s?.Condition?.DisableItemInHand();
             
-            _slots[_selectedSlot.Value] = null;
+            SetSlot(_selectedSlot.Value, null);
             RefreshHeldItem();
         }
         
