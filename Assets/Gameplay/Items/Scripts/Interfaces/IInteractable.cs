@@ -8,4 +8,10 @@
         
         public void Interact(ulong clientId);
     }
+    
+    public interface IHoldInteractable : IInteractable
+    {
+        void HoldStart(ulong clientId);
+        void HoldEnd(ulong clientId);
+    }
 }
