@@ -148,7 +148,7 @@ namespace Gameplay.Items
                 }
             };
             
-            _minimapIcon.transform.localScale *= 0.4f;
+            _minimapIcon.transform.localScale *= 0.6f;
             _minimapIcon.layer = LayerMask.NameToLayer("TargetMiniMap");
                 
             _minimapIcon.AddComponent<SpriteRenderer>().sprite = _itemData.Icon;

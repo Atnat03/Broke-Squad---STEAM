@@ -41,6 +41,10 @@ namespace Network.HUB
         [SerializeField] private Button _startGameButton;
         [SerializeField] private GameObject _loadingScreen;
         
+        [Header("In Lobby Scene")]
+        [SerializeField] private GameObject _inLobbyScene;
+        [SerializeField] private Camera _firstCamera;
+        
         private void OnEnable()
         {
             _lobbyManager.OnJoinLobby += JoinLobbyUI;
@@ -65,6 +69,9 @@ namespace Network.HUB
 
         private void Start()
         {
+            _firstCamera.gameObject.SetActive(true);
+            _inLobbyScene.gameObject.SetActive(false);
+            
             _inLobbyCanva.SetActive(false);
             _creationCanva.SetActive(true);
 
@@ -104,6 +111,9 @@ namespace Network.HUB
         private void JoinLobbyUI(Lobby lobby, bool isHost)
         {
             SwitchCanva();
+            
+            _inLobbyScene.gameObject.SetActive(true);
+            _firstCamera.gameObject.SetActive(false);
 
             foreach (GameObject g in _onlyHostUI)
             {
@@ -125,6 +135,9 @@ namespace Network.HUB
 
             _inLobbyCanva.SetActive(false);
             _creationCanva.SetActive(true);
+            
+            _inLobbyScene.gameObject.SetActive(false);
+            _firstCamera.gameObject.SetActive(true);
         }
         
         private void UpdateUI(List<Unity.Services.Lobbies.Models.Player> list)
