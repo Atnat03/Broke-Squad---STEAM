@@ -63,9 +63,8 @@ namespace Gameplay.Items
 
             Vector3 pos = Context.Camera.transform.position;
             Vector3 forward = Context.Camera.transform.forward;
-            float maxSize = held.Data.PickupPrefab.transform.localScale.z;
 
-            Vector3 finalPos = GetThrowStartPos(pos, forward, maxSize);
+            Vector3 finalPos = GetThrowStartPos(pos, forward);
 
             Context.SendToServer(this, new OnModuleDoAction_EVENT
             {
@@ -78,11 +77,11 @@ namespace Gameplay.Items
         }
 
         // Calculate if a wall is a front of us
-        private Vector3 GetThrowStartPos(Vector3 pos, Vector3 dir, float maxSize)
+        private Vector3 GetThrowStartPos(Vector3 pos, Vector3 dir)
         {
             Vector3 finalPos = pos;
             
-            if (Physics.Raycast(pos, dir, out RaycastHit hit, maxSize, ~0, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(pos, dir, out RaycastHit hit, 1.5f, ~0, QueryTriggerInteraction.Ignore))
             {
                 finalPos -= dir * 1.1f;
             }
