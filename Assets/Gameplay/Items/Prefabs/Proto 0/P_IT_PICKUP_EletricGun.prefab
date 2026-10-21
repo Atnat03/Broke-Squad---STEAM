@@ -22,15 +22,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 167bc7b16034c004abe684e6d8141ed6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.3405495
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 167bc7b16034c004abe684e6d8141ed6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.057238698
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 167bc7b16034c004abe684e6d8141ed6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -6.456814
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 167bc7b16034c004abe684e6d8141ed6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -79,6 +79,18 @@ PrefabInstance:
     - target: {fileID: 2019476641730943265, guid: 167bc7b16034c004abe684e6d8141ed6, type: 3}
       propertyPath: m_Name
       value: Model
+      objectReference: {fileID: 0}
+    - target: {fileID: 2698046702691497697, guid: 167bc7b16034c004abe684e6d8141ed6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.356
+      objectReference: {fileID: 0}
+    - target: {fileID: 2698046702691497697, guid: 167bc7b16034c004abe684e6d8141ed6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.556
+      objectReference: {fileID: 0}
+    - target: {fileID: 2698046702691497697, guid: 167bc7b16034c004abe684e6d8141ed6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.027
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -166,7 +178,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.8, y: 1.5, z: 2.5}
-  m_Center: {x: -1.3589405, y: 0.574518, z: -2.0948}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4903913565550905644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,13 +192,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
   GlobalObjectIdHash: 599673626
-  InScenePlacedSourceGlobalObjectIdHash: 0
+  InScenePlacedSourceGlobalObjectIdHash: 599673626
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 0
+  m_InScenePlaced: 1
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -254,7 +266,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ItemPickup
   ShowTopMostFoldoutHeaderGroup: 1
   _rackRatio: 0.5
-  _itemIndex: {fileID: 11400000, guid: 726e9e5b932169b4e842345da5cf61d8, type: 2}
+  _itemData: {fileID: 11400000, guid: 726e9e5b932169b4e842345da5cf61d8, type: 2}
 --- !u!1 &6353283439321821011 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2019476641730943265, guid: 167bc7b16034c004abe684e6d8141ed6, type: 3}
@@ -288,7 +300,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6353283439321821011}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
   m_Name: 
