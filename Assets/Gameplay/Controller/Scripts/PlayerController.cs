@@ -89,12 +89,15 @@ namespace Gameplay.Controller
         
         public void StartLadderCooldown() => _ladderCooldown = Profile.ladderRegrabCooldown;
         
-        private bool WantsClimb() =>
-            _ladderCooldown <= 0f
-            && ladderChecker.Touching
-            && MoveInput.y > 0.1f;
+        private bool WantsClimb() => _ladderCooldown <= 0f && ladderChecker.Touching && MoveInput.y > 0.1f;
         
         private bool KeepClimbing() => ladderChecker.Touching && !(IsGrounded && MoveInput.y < -0.1f);
+
+        public string PlayerName { get; private set; }
+        public int PlayerColorId { get; private set; }
+        
+        public Action OnPersonalisationChanged;
+        
         #endregion
 
         #region Initialization
@@ -271,6 +274,7 @@ namespace Gameplay.Controller
         {
             _syncedColor = colorId;
             _syncedName = playerName;
+            
             ReplicatePersonalisationRpc(colorId, playerName);
         }
 
@@ -283,6 +287,11 @@ namespace Gameplay.Controller
             if (PlayerLocalData.instance == null) return;
             meshRenderer[0].material.color = PlayerLocalData.instance.PossibleColor[colorId];
             pseudoText.text = playerName;
+            
+            PlayerColorId = colorId;
+            PlayerName = playerName;
+            
+            OnPersonalisationChanged?.Invoke();
         }
 
         [Rpc(SendTo.Server)]

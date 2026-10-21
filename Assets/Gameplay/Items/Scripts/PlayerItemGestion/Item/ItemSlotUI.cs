@@ -5,6 +5,8 @@ namespace Gameplay.Items
 {
     public class ItemSlotUI : MonoBehaviour
     {
+        public Image Icon => _icon;
+        
         [SerializeField] private Image _icon;
         [SerializeField] private Image _selectedImage;
 
