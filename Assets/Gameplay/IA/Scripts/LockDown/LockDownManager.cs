@@ -97,7 +97,10 @@ namespace Gameplay.IA
         private void OnLockDownChange(bool previousValue, bool newValue)
         {
             if (newValue)
-                InvokeEvent(new OnLockDownStart_EVENT());
+                InvokeEvent(new OnLockDownStart_EVENT
+                {
+                    ClientID = ulong.MaxValue
+                });
             else
                 InvokeEvent(new OnLockDownEnd_EVENT());
         }

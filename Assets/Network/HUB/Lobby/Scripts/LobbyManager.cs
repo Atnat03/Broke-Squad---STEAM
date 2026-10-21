@@ -28,6 +28,9 @@ namespace Network.HUB
         //KeyDataName
         private string KEY_RELAY = "Relay";
         private string KEY_MAP = "Map";
+        private string KEY_PLAYER_NAME = "PlayerName";
+        private string KEY_PLAYER_COLOR = "ColorId";
+        private string KEY_PLAYER_READY = "IsReady";
 
         //Current time before update Lobbies
         private float _heartbeatTimer;
@@ -50,7 +53,7 @@ namespace Network.HUB
         //Actions
         public Action<Lobby, bool> OnJoinLobby;
         public Action<List<Lobby>> OnUpdateJoinedLobby;
-        public Action<Lobby> OnUpdateLobbyInfo;
+        public Action<List<Player>> OnUpdateLobbyInfo;
         public Action<string> OnUpdatedMap;
         public Action OnTryToJoinGame;
         public Action OnLeaveLobby;
@@ -68,7 +71,7 @@ namespace Network.HUB
                     await AuthenticationService.Instance.SignInAnonymouslyAsync();
                 }
 
-                _playerName = "Player " + Random.Range(0, 99);
+                _playerName = "...";
                 
                 string _sceneName = SceneUtility.GetScenePathByBuildIndex(1);
                 _sceneNameToPlayTogether = System.IO.Path.GetFileNameWithoutExtension(_sceneName);
@@ -150,7 +153,7 @@ namespace Network.HUB
                 
                 _joinedLobby = lobby;
 
-                OnUpdateLobbyInfo?.Invoke(_joinedLobby);
+                OnUpdateLobbyInfo?.Invoke(_joinedLobby.Players);
                 
                 if (IsLobbyHost() || _relayJoined) return;
 
@@ -195,20 +198,31 @@ namespace Network.HUB
         {
             if (!IsLobbyHost()) return;
 
+            if (!CheckAllPlayerReady()) return;
+
             InvokeEvent(new OnStartCreateGame_EVENT());
             
             try
             {
-                Debug.Log($"[StartGame] NetworkManager avant CreateRelay = {NetworkManager.Singleton}");
-
+                Player me = _joinedLobby.Players.Find(p => p.Id == AuthenticationService.Instance.PlayerId);
+                
+                if (me.Data.ContainsKey(KEY_PLAYER_NAME) && _playerName.Equals("..."))
+                {
+                    await LobbyService.Instance.UpdatePlayerAsync(
+                        _joinedLobby.Id,
+                        AuthenticationService.Instance.PlayerId,
+                        new UpdatePlayerOptions
+                        {
+                            Data = new Dictionary<string, PlayerDataObject>
+                            {
+                                { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, "Player : " + Random.Range(0, 99)) }
+                            }
+                        });
+                }
+                
                 string relayCode = await RelayManager.instance.CreateRelay();
-
-                Debug.Log($"[StartGame] Relay créé : {relayCode}");
-                Debug.Log($"[StartGame] NetworkManager après CreateRelay = {NetworkManager.Singleton}");
-
                 if (NetworkManager.Singleton == null)
                 {
-                    Debug.LogError("[StartGame] NetworkManager.Singleton est NULL après CreateRelay !");
                     return;
                 }
 
@@ -224,11 +238,6 @@ namespace Network.HUB
                         }
                     });
 
-                Debug.Log($"[StartGame] Lobby mis à jour");
-                Debug.Log($"[StartGame] NetworkManager = {NetworkManager.Singleton}");
-                Debug.Log($"[StartGame] IsHost = {NetworkManager.Singleton.IsHost}");
-                Debug.Log($"[StartGame] IsListening = {NetworkManager.Singleton.IsListening}");
-
                 int expected = _joinedLobby.Players.Count;
 
                 float timeout = 20f;
@@ -243,14 +252,8 @@ namespace Network.HUB
 
                 if (NetworkManager.Singleton == null)
                 {
-                    Debug.LogError("[StartGame] NetworkManager détruit/disparu pendant l'attente !");
                     return;
                 }
-
-                Debug.Log(
-                    $"[StartGame] Clients connectés : " +
-                    $"{NetworkManager.Singleton.ConnectedClientsIds.Count}/{expected}"
-                );
 
                 string map = _joinedLobby.Data[KEY_MAP].Value;
 
@@ -455,7 +458,9 @@ namespace Network.HUB
             {
                 Data = new Dictionary<string, PlayerDataObject>
                 {
-                    { "PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, _playerName) }
+                    { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, _playerName) },
+                    { KEY_PLAYER_COLOR,     new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, "0") },
+                    { KEY_PLAYER_READY,     new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, "0") }
                 }
             };
         }
@@ -470,7 +475,7 @@ namespace Network.HUB
         
         public void SetMapButton(string id) => SetMap(id);
   
-        public async void SetMap(string newMapName)
+        private async void SetMap(string newMapName)
         {
             if (!IsLobbyHost()) return;
 
@@ -496,7 +501,110 @@ namespace Network.HUB
                 Debug.Log(e);
             }
         }
+        
+        public void SetColorButton(int newSkinId) => SetColor(newSkinId);
+        
+        private async void SetColor(int newSkinId)
+        {
+            try
+            {
+                await LobbyService.Instance.UpdatePlayerAsync(
+                    _joinedLobby.Id,
+                    AuthenticationService.Instance.PlayerId,
+                    new UpdatePlayerOptions
+                    {
+                        Data = new Dictionary<string, PlayerDataObject>
+                        {
+                            { KEY_PLAYER_COLOR, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, newSkinId.ToString()) }
+                        }
+                    });
 
+                Debug.Log("Skin updated: " + newSkinId);
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+        }
+        
+        public void SetNameButton(string newName) => SetName(newName);
+        
+        private async void SetName(string newName)
+        {
+            try
+            {
+                await LobbyService.Instance.UpdatePlayerAsync(
+                    _joinedLobby.Id,
+                    AuthenticationService.Instance.PlayerId,
+                    new UpdatePlayerOptions
+                    {
+                        Data = new Dictionary<string, PlayerDataObject>
+                        {
+                            { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, newName) }
+                        }
+                    });
+                
+                _playerName = newName;
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+        }
+        
+        public void SetReadyButton() => SetReady();
+        
+        public async void SetReady()
+        {
+            try
+            {
+                Player me = _joinedLobby.Players.Find(p => p.Id == AuthenticationService.Instance.PlayerId);
+
+                if (me == null)
+                {
+                    Debug.LogError("Local player not found in lobby");
+                    return;
+                }
+
+                string current  = me.Data.ContainsKey(KEY_PLAYER_READY) ? me.Data[KEY_PLAYER_READY].Value : "0";
+                string newState = current == "0" ? "1" : "0";
+
+                await LobbyService.Instance.UpdatePlayerAsync(
+                    _joinedLobby.Id,
+                    AuthenticationService.Instance.PlayerId,
+                    new UpdatePlayerOptions
+                    {
+                        Data = new Dictionary<string, PlayerDataObject>
+                        {
+                            { KEY_PLAYER_READY, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, newState) }
+                        }
+                    });
+
+                Debug.Log(KEY_PLAYER_READY + newState);
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+        }
+        
+        public bool CheckAllPlayerReady()
+        {
+            if (_joinedLobby == null) return false;
+            if (_joinedLobby.Players == null || _joinedLobby.Players.Count == 0) return false;
+
+            foreach (Player player in _joinedLobby.Players)
+            {
+                if (player.Data == null ||
+                    !player.Data.ContainsKey(KEY_PLAYER_READY) ||
+                    player.Data[KEY_PLAYER_READY].Value != "1")
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
 
         #endregion
     }

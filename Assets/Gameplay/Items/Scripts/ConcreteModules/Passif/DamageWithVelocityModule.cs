@@ -25,7 +25,7 @@ namespace Gameplay.Items
             if (collision.collider == item.GetComponent<Collider>()) return;
             if (_rb == null && !item.TryGetComponent(out _rb)) return;
 
-            float speed = collision.impulse.magnitude;
+            float speed = _rb.linearVelocity.magnitude;
             
             if (collision.gameObject.TryGetComponent<IDamageable>(out var damage))
             {
