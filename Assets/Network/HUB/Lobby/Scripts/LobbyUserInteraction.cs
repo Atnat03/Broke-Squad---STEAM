@@ -14,7 +14,7 @@ namespace Network.HUB
         
         [Header("Input Fields")]
         [SerializeField] private TMP_InputField _lobbyNameInputField;
-
+        
         void Awake()
         {
             _createLobbyButton.onClick.AddListener(() => _lobbyManager.TryCreateLobby(_lobbyNameInputField.text));
