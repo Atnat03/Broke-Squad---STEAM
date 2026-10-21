@@ -167,7 +167,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Proto1.Turret
   ShowTopMostFoldoutHeaderGroup: 1
-  startActive: 1
   detectionRange: 10
   requireLineOfSight: 1
   obstacleMask:
@@ -180,8 +179,8 @@ MonoBehaviour:
   turretHead: {fileID: 406084401004714201}
   rotationSpeed: 8
   lineRenderer: {fileID: 6962799528328261540}
-  idleLaserColor: {r: 1, g: 0.8, b: 0, a: 0.6}
-  lockedLaserColor: {r: 1, g: 0.1, b: 0.1, a: 1}
+  idleLaserColor: {r: 1, g: 0.8, b: 0, a: 0.47843137}
+  lockedLaserColor: {r: 1, g: 0.1, b: 0.1, a: 0.46666667}
   inactivePitch: 60
   inactiveRotationSpeed: 3
 --- !u!120 &6962799528328261540
@@ -238,7 +237,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 1
+    widthMultiplier: 0.5
     widthCurve:
       serializedVersion: 2
       m_Curve:
