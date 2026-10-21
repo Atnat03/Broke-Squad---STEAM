@@ -1,7 +1,10 @@
 ﻿using System;
 using Bus;
+using Gameplay.Controller;
 using Gameplay.IA;
 using MyPrint;
+using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +15,10 @@ namespace Gameplay.UI
         [Header("UI")]
         [SerializeField] private GameObject _lockDownUI;
         [SerializeField] private Image _lockDownCooldownImage;
+        
+        [Header("Text")]
+        [SerializeField] private TextMeshProUGUI _lockDownTriggerPlayer;
+        [SerializeField] private string _triggerPlayerMessage = " a été repéré ! Le bâtiment est en état d'alerte !";
         
         private LockDownManager _manager;
 
@@ -32,6 +39,12 @@ namespace Gameplay.UI
         private void StartLockDown(OnLockDownStart_EVENT data)
         {
             _lockDownUI.SetActive(true);
+
+            if (!NetworkManager.Singleton.ConnectedClients[data.ClientID].PlayerObject.gameObject.TryGetComponent<PlayerController>(out var controller)) return;
+
+            string playerName = controller.PlayerName;
+
+            _lockDownTriggerPlayer.text = playerName + _triggerPlayerMessage;
         }
 
         private void EndLockDown(OnLockDownEnd_EVENT data)
