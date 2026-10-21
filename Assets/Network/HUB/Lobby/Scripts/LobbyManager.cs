@@ -26,11 +26,11 @@ namespace Network.HUB
         private Lobby _joinedLobby;
         
         //KeyDataName
-        private string KEY_RELAY = "Relay";
-        private string KEY_MAP = "Map";
-        private string KEY_PLAYER_NAME = "PlayerName";
-        private string KEY_PLAYER_COLOR = "ColorId";
-        private string KEY_PLAYER_READY = "IsReady";
+        public string KEY_RELAY = "Relay";
+        public string KEY_MAP = "Map";
+        public string KEY_PLAYER_NAME = "PlayerName";
+        public string KEY_PLAYER_COLOR = "ColorId";
+        public string KEY_PLAYER_READY = "IsReady";
 
         //Current time before update Lobbies
         private float _heartbeatTimer;
@@ -329,9 +329,18 @@ namespace Network.HUB
                 };
 
                 Lobby lobby = await LobbyService.Instance.JoinLobbyByIdAsync(id, options);
-                _joinedLobby = lobby;
-                
-                OnJoinLobby.Invoke(_joinedLobby, false);
+
+                int colorId = GetFirstFreeColor(lobby.Players);
+
+                _joinedLobby = await LobbyService.Instance.UpdatePlayerAsync(lobby.Id, AuthenticationService.Instance.PlayerId, new UpdatePlayerOptions
+                    {
+                        Data = new Dictionary<string, PlayerDataObject>
+                        {
+                            { KEY_PLAYER_COLOR, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, colorId.ToString()) }
+                        }
+                    });
+
+                OnJoinLobby?.Invoke(_joinedLobby, false);
             }
             catch (LobbyServiceException e)
             {
@@ -525,6 +534,33 @@ namespace Network.HUB
             {
                 Debug.Log(e);
             }
+        }
+        
+        private int GetFirstFreeColor(List<Player> players)
+        {
+            int maxColors = PlayerLocalData.instance.PossibleColor.Length;
+            string myId = AuthenticationService.Instance.PlayerId;
+
+            HashSet<int> used = new();
+
+            foreach (Player p in players)
+            {
+                if (p.Id == myId) continue;
+
+                if (p.Data != null
+                    && p.Data.TryGetValue(KEY_PLAYER_COLOR, out PlayerDataObject d)
+                    && int.TryParse(d.Value, out int c))
+                {
+                    used.Add(c);
+                }
+            }
+
+            for (int i = 0; i < maxColors; i++)
+            {
+                if (!used.Contains(i)) return i;
+            }
+
+            return 0;
         }
         
         public void SetNameButton(string newName) => SetName(newName);

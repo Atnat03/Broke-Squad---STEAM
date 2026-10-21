@@ -4194,6 +4194,17 @@ MonoBehaviour:
   - {r: 0, g: 0, b: 0, a: 1}
   PlayerName: 
   PlayerColor: 0
+  _potentialPseudo:
+  - John Pork
+  - Jean Porc
+  - Juan Porco
+  - Giovanni Porco
+  - Johnathan Porke
+  - "Jon P\xF4ku"
+  - Jean Bon
+  - Dzhon Pork
+  - "\U0001F416"
+  - Gros lardon
 --- !u!1 &314229713
 GameObject:
   m_ObjectHideFlags: 0
@@ -11534,7 +11545,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00004316699}
+  m_AnchoredPosition: {x: 0, y: -0.0000009096689}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &709989895
@@ -12796,7 +12807,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2018433652}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9999968
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -22926,7 +22937,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00003365062}
+  m_AnchoredPosition: {x: 0, y: -0.0000009096689}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1292845508
@@ -24748,6 +24759,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab06fc6a0db0bb042b5244d12a6b1b33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LobbyManager
+  KEY_RELAY: Relay
+  KEY_MAP: Map
+  KEY_PLAYER_NAME: PlayerName
+  KEY_PLAYER_COLOR: ColorId
+  KEY_PLAYER_READY: IsReady
   _lobbyUpdateTimerMax: 1
   _heartbeatTimerMax: 15
   _lobbyListUpdateTimerMax: 1.5
@@ -34825,7 +34841,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 992166229}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99999684
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
