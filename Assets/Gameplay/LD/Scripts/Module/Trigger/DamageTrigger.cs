@@ -25,12 +25,14 @@ namespace Gameplay.LD
             if (!Context.IsServer) return;
             if (damage < _damageTreshold) return;
 
-            if(_health > 0)
+            if (_health > 0)
             {
                 if (_currentHealth <= 0f) return;
                 _currentHealth -= damage;
                 if (_currentHealth > 0f) return;
             }
+
+            Debug.Log("[LD] damage detecté");
 
             Raise(new LDActivation(null, transform.position));
         }
