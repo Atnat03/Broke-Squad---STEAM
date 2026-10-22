@@ -125,6 +125,13 @@ namespace Gameplay.Items
         
         private void SelectSlot(int index)
         {
+            if (index != _selectedSlot.Value)
+            {
+                ItemInstance previous = GetCurrentItemInHand();
+                if (previous != null)
+                    UnableCondition(previous);
+            }
+
             _selectedSlot.Value = index;
             RefreshHeldItem();
         }
@@ -312,8 +319,6 @@ namespace Gameplay.Items
         
         private void OnDrop()
         {
-            if (_playerController.IsDown) return;
-            
             Vector3 pos = transform.position + transform.forward;
             
             if (HasItemInHand())
@@ -356,14 +361,20 @@ namespace Gameplay.Items
             ItemInstance item = GetCurrentItemInHand();
             if (item == null) return;
             
+            UnableCondition(item);
+
+            SetSlot(_selectedSlot.Value, null);
+            RefreshHeldItem();
+        }
+
+        private void UnableCondition(ItemInstance item)
+        {
             foreach (IFirstAction f in item.FirstActionList)
                 f?.Condition?.DisableItemInHand();
             
             foreach (ISecondAction s in item.SecondActionList)
                 s?.Condition?.DisableItemInHand();
-            
-            SetSlot(_selectedSlot.Value, null);
-            RefreshHeldItem();
+
         }
         
         public void DestroyItemInHand()
