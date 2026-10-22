@@ -1,12 +1,9 @@
 using Bus;
+using Gameplay.LD;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public interface IBreakable
-{
-    void Break(float force);
-}
 
 public class Breakable : NetworkBusListener, IBreakable
 {

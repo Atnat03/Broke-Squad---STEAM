@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Bus;
+using Gameplay.Items;
 using MyPrint;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -17,10 +19,14 @@ namespace Gameplay.IA
         public bool IsLockDown => _isLockDown.Value;
         public float RatioDuration => _currentDuration.Value / _lockDownDuration;
         
-        private readonly NetworkVariable<bool> _isLockDown = new NetworkVariable<bool>();
+        private readonly NetworkVariable<FixedString32Bytes> _triggerPlayerName = new NetworkVariable<FixedString32Bytes>();
+        private readonly NetworkVariable<bool> _isGoal = new NetworkVariable<bool>();
         private readonly NetworkVariable<float> _currentDuration = new NetworkVariable<float>();
+        private readonly NetworkVariable<bool> _isLockDown = new NetworkVariable<bool>();
 
         private List<GuardBehavior> _guardList = new List<GuardBehavior>();
+
+        public Action<string> OnLockDownStart;
         
         private void Awake()
         {
@@ -41,13 +47,27 @@ namespace Gameplay.IA
 
         #region Start Lock Down
 
-        private void TryStartLockDown(OnLockDownStart_EVENT ev)
+        private void TryStartLockDown(OnLockDownStart_EVENT ev) => StartLockDown(ev.PlayerTriggerName, ev.isGoal);
+
+        public void StartLockDown(FixedString32Bytes triggerPlayerName, bool isGoal = false)
         {
             if (_isLockDown.Value)
                 return;
-            
-            StartLockDown();
+
+            if (!IsServer)
+            {
+                StartLockDownServerRpc(triggerPlayerName, isGoal);
+                return;
+            }
+
+            _triggerPlayerName.Value = triggerPlayerName;
+            _isGoal.Value = isGoal;
+            _isLockDown.Value = true;
+            _currentDuration.Value = _lockDownDuration;
         }
+
+        [Rpc(SendTo.Server)]
+        private void StartLockDownServerRpc(FixedString32Bytes triggerPlayerName, bool isGoal) => StartLockDown(triggerPlayerName, isGoal);
 
         void StartLockDown()
         {
@@ -57,6 +77,7 @@ namespace Gameplay.IA
                 return;
             }
 
+            _isGoal.Value = false;
             _isLockDown.Value = true;
             _currentDuration.Value = _lockDownDuration;
         }
@@ -92,19 +113,18 @@ namespace Gameplay.IA
         private void EndLockDownServerRpc() => EndLockDown();
 
         #endregion
-
         
         private void OnLockDownChange(bool previousValue, bool newValue)
         {
             if (newValue)
                 InvokeEvent(new OnLockDownStart_EVENT
                 {
-                    ClientID = ulong.MaxValue
+                    PlayerTriggerName = _triggerPlayerName.Value,
+                    isGoal = _isGoal.Value
                 });
             else
                 InvokeEvent(new OnLockDownEnd_EVENT());
         }
-        
         
         private void OnDurationChange(float previousValue, float newValue)
         {

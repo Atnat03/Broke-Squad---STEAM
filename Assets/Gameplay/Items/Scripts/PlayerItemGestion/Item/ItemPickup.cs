@@ -32,8 +32,9 @@ namespace Gameplay.Items
 
         [Header("Minimap")] 
         [SerializeField] private bool _canBeVisibleByMiniMap = true;
-        private Vector3 _iconPos = Vector3.up * 5;
+        private Vector3 _iconPos = Vector3.up * 1.5f;
         private bool _alreadySeen = false;
+        GameObject _minimapIcon = null;
         
         public Outline outline => _outline;
         
@@ -41,7 +42,6 @@ namespace Gameplay.Items
         
         public ItemInstance Instance => _instance ??= new ItemInstance(_itemData);
         
-        GameObject _minimapIcon = null;
         
         public Action OnCollide;
         
@@ -143,7 +143,7 @@ namespace Gameplay.Items
             {
                 transform =
                 {
-                    localPosition = _iconPos + Vector3.up,
+                    localPosition = _iconPos,
                     localRotation = Quaternion.Euler(90, 0, 0)
                 }
             };
@@ -160,8 +160,7 @@ namespace Gameplay.Items
         {
             if (DetectNotGrabbable()) return;
             
-            if (IsServer)
-                DestroyIconMapServerRpc();
+            DestroyIconMapServerRpc();
             
             InvokeEvent(new OnPickupItem_EVENT
             {

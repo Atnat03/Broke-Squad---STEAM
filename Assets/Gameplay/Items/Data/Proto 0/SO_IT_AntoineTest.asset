@@ -19,7 +19,7 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: 54f27fe4c3cd82b4184d233cd7434215, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
   FirstActionList:
-  - rid: 7203101205303918821
+  - rid: 7203101290131620230
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -82,17 +82,17 @@ MonoBehaviour:
       data:
         _minVelocityForDestroy: 5
         _force: 10
-    - rid: 7203101205303918821
-      type: {class: OpenDoorModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+    - rid: 7203101290131620230
+      type: {class: ShootModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: 7203101205303918822
-        _canOpenIndexRange: {x: 0, y: 2}
-        _canOpenAllDoors: 0
-        _stringNameGoodKey: 
-        _stringNameWringKey: 
+          rid: 7203101290131620231
+        _ammoPrefab: {fileID: 11400000, guid: 0cfa8ab253c20894ea6e650ed2c3227b, type: 2}
+        _shootPos_SECURITY: {x: 0, y: 0, z: 0}
+        _shootForce: 10
+        _stringName: 
         _volume: 0.5
-    - rid: 7203101205303918822
+    - rid: 7203101290131620231
       type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _numberOfUse: 3
