@@ -312,8 +312,6 @@ namespace Gameplay.Items
         
         private void OnDrop()
         {
-            if (_playerController.IsDown) return;
-            
             Vector3 pos = transform.position + transform.forward;
             
             if (HasItemInHand())
