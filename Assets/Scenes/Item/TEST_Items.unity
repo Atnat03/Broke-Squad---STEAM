@@ -4199,6 +4199,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5532766476487111222, guid: 6dcee2d9c67c0e54eabb85fdea900e60, type: 3}
   m_PrefabInstance: {fileID: 387873989}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &387873993 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8748822476701992181, guid: 6dcee2d9c67c0e54eabb85fdea900e60, type: 3}
+  m_PrefabInstance: {fileID: 387873989}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
 --- !u!1 &403473417
 GameObject:
   m_ObjectHideFlags: 0
@@ -13733,6 +13744,56 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Scripts.Outliner
   _outline: {fileID: 1262818778}
+--- !u!1 &1268551691
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1268551693}
+  - component: {fileID: 1268551692}
+  m_Layer: 0
+  m_Name: loot item
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1268551692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268551691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bf9b21ba8ef1c8499282af6c8d50589, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.SpawnItemsEffect
+  ShowTopMostFoldoutHeaderGroup: 1
+  _itemPrefab: {fileID: 387873993}
+  _pickupSpawnPoints:
+  - {fileID: 1479856168429624061}
+  _explosionForce: 300
+  _breakSound: 
+--- !u!4 &1268551693
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268551691}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1479856168429624060}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1283259375
 GameObject:
   m_ObjectHideFlags: 0
@@ -21573,6 +21634,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestBreak
       objectReference: {fileID: 0}
+    - target: {fileID: 3324458949432920073, guid: 91ae541a239085044a17f24c7f2ab1ae, type: 3}
+      propertyPath: _bindings.Array.data[0].Effects.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3324458949432920073, guid: 91ae541a239085044a17f24c7f2ab1ae, type: 3}
+      propertyPath: '_bindings.Array.data[0].Effects.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1268551692}
     - target: {fileID: 4334889809724137900, guid: 91ae541a239085044a17f24c7f2ab1ae, type: 3}
       propertyPath: m_InScenePlaced
       value: 1
@@ -21627,9 +21696,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4388145305813363480, guid: 91ae541a239085044a17f24c7f2ab1ae, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1268551693}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 91ae541a239085044a17f24c7f2ab1ae, type: 3}
+--- !u!4 &1479856168429624060 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4388145305813363480, guid: 91ae541a239085044a17f24c7f2ab1ae, type: 3}
+  m_PrefabInstance: {fileID: 1479856168429624059}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1479856168429624061 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7660515220579581297, guid: 91ae541a239085044a17f24c7f2ab1ae, type: 3}
+  m_PrefabInstance: {fileID: 1479856168429624059}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1604404419379194082
 PrefabInstance:
   m_ObjectHideFlags: 0
