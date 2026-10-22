@@ -19,6 +19,7 @@ namespace Gameplay.UI
         [Header("Text")]
         [SerializeField] private TextMeshProUGUI _lockDownTriggerPlayer;
         [SerializeField] private string _triggerPlayerMessage = " a été repéré ! Le bâtiment est en état d'alerte !";
+        [SerializeField] private string _triggerPlayerMessageGoal = " a le tableau, COURREZ !!";
         
         private LockDownManager _manager;
 
@@ -39,12 +40,10 @@ namespace Gameplay.UI
         private void StartLockDown(OnLockDownStart_EVENT data)
         {
             _lockDownUI.SetActive(true);
+            
+            string playerName = data.PlayerTriggerName.Value;
 
-            if (!NetworkManager.Singleton.ConnectedClients[data.ClientID].PlayerObject.gameObject.TryGetComponent<PlayerController>(out var controller)) return;
-
-            string playerName = controller.PlayerName;
-
-            _lockDownTriggerPlayer.text = playerName + _triggerPlayerMessage;
+            _lockDownTriggerPlayer.text = playerName + (data.isGoal ? _triggerPlayerMessageGoal :_triggerPlayerMessage);
         }
 
         private void EndLockDown(OnLockDownEnd_EVENT data)
