@@ -29,6 +29,7 @@ namespace Gameplay.LD
         {
             if (!Context.IsServer) return;
             if (Vector3.Distance(player.transform.position, transform.position) > _range) return;
+            Debug.Log("[LD] interact");
             Raise(new LDActivation(player, player.transform.position));
         }
     }

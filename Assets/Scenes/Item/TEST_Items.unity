@@ -17925,7 +17925,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Other.Sound.Music.MusicManager
   _normalMusic: {fileID: 8300000, guid: afd430dac1e07564bb521ee1c5e5054c, type: 3}
   _dangerousMusic: {fileID: 8300000, guid: ff74951f1c3716f49b4edc5c9440d766, type: 3}
+  _lockDownMusic: {fileID: 0}
   _audioSource: {fileID: 1740916131}
+  _musicGroup: {fileID: 0}
 --- !u!114 &1740916133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17972,6 +17974,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5b6caf39e85c8ec46984c678db487e21, type: 2}
   - {fileID: 11400000, guid: aa1aca4cd85e65342b8ecd43f69f28c3, type: 2}
   poolSize: 10
+  sfxGroup: {fileID: 0}
 --- !u!4 &1740916135
 Transform:
   m_ObjectHideFlags: 0
@@ -25011,6 +25014,75 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3801472622845352308, guid: 5a6c215c708779e4d97feb847180b76e, type: 3}
   m_PrefabInstance: {fileID: 5271063549431223397}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5282615115499212634
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4441680450698499687, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7.07971
+      objectReference: {fileID: 0}
+    - target: {fileID: 4441680450698499687, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.82
+      objectReference: {fileID: 0}
+    - target: {fileID: 4441680450698499687, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 7.20342
+      objectReference: {fileID: 0}
+    - target: {fileID: 4441680450698499687, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4441680450698499687, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4441680450698499687, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4441680450698499687, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4441680450698499687, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4441680450698499687, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4441680450698499687, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5290710019840033558, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5290710019840033558, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1955714105
+      objectReference: {fileID: 0}
+    - target: {fileID: 5290710019840033558, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 349593195
+      objectReference: {fileID: 0}
+    - target: {fileID: 9200322010527145856, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
+      propertyPath: m_Name
+      value: TestDoor
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 25adfe4064782e04585c0dfaf6a33787, type: 3}
 --- !u!1001 &5392666265734562581
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26836,3 +26908,4 @@ SceneRoots:
   - {fileID: 5392666265734562581}
   - {fileID: 2107162070}
   - {fileID: 1479856168429624059}
+  - {fileID: 5282615115499212634}

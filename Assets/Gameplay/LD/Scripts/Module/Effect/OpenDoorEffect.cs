@@ -25,6 +25,7 @@ namespace Gameplay.LD
 
         public override void Activate(LDActivation activation)
         {
+            Debug.Log($"[LD] Porte activation");
             switch (_mode)
             {
                 case DoorMode.Toggle:
