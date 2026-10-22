@@ -8,6 +8,24 @@ namespace Gameplay.Equipment
 
     public class CoatRack : NetworkBusListener, IInteractable
     {
+        [SerializeField] private Collider _collider;
+
+        private bool HasPickup => GetComponentInChildren<ItemPickup>() != null;
+
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+            RefreshCollider();
+        }
+        
+        private void OnTransformChildrenChanged() => RefreshCollider();
+
+        private void RefreshCollider()
+        {
+            if (_collider != null)
+                _collider.enabled = !HasPickup;
+        }
+        
         public void Interact(ulong clientId)
         {
             if (IsServer)
@@ -21,6 +39,8 @@ namespace Gameplay.Equipment
 
         private void HandleInteract(ulong clientId)
         {
+            if (HasPickup) return;
+            
             if (!NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client)) return;
 
             PlayerInventory playerSender = client.PlayerObject.GetComponentInChildren<PlayerInventory>();

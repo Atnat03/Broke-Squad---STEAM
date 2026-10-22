@@ -13,7 +13,6 @@ using UnityEngine.Animations;
 
 namespace Gameplay.Items
 {
-    [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(BoxCollider))]
     [RequireComponent(typeof(NetworkTransform))]
     public class ItemPickup : NetworkBusListener, IInteractable
@@ -25,7 +24,7 @@ namespace Gameplay.Items
         private Rigidbody _rb;
         private BoxCollider _box;
         readonly NetworkVariable<bool> _onRack = new();
-        Vector3 _baseSize, _baseScale;
+        Vector3 _baseSize,_baseSizeRack, _baseScale;
         
         [SerializeField] private SO_Item _itemData;
         private Outline _outline;
@@ -62,7 +61,8 @@ namespace Gameplay.Items
             _nt.SyncScaleY = false;
             _nt.SyncScaleZ = false;
             
-            _baseSize = _box.size;
+            _baseSizeRack = new Vector3(_box.size.x, _box.size.y / 2, _box.size.z);
+            _baseSize = new Vector3(_box.size.x, _box.size.y, _box.size.z);
             _baseScale = transform.localScale;
 
             if (_collidersOffOnRack == null || _collidersOffOnRack.Length == 0)
@@ -94,15 +94,32 @@ namespace Gameplay.Items
         {
             bool on = _onRack.Value;
 
-            _rb.isKinematic = on;
-            _rb.useGravity = !on;
+            if (on)
+            {
+                if (_rb != null)
+                {
+                    Destroy(_rb);
+                    _rb = null;
+                }
+            }
+            else
+            {
+                if (_rb == null)
+                    _rb = gameObject.AddComponent<Rigidbody>();
+
+                _rb.isKinematic = false;
+                _rb.useGravity = true;
+            }
+
             foreach (var c in _collidersOffOnRack)
             {
                 if (c != null)
                     c.enabled = !on;
             }
-            
-            _box.size = on ? _baseSize / _rackRatio : _baseSize;
+
+            _box.size = on ? new Vector3(_baseSizeRack.x / _rackRatio, 
+                (_baseSizeRack.y / _rackRatio) / 2,
+                _baseSizeRack.z / _rackRatio) : _baseSize;
             transform.localScale = on ? _baseScale * _rackRatio : _baseScale;
         }
 

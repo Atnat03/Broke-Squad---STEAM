@@ -113,6 +113,7 @@ namespace Gameplay.Items
         public void OnSelectedItemChange(int ratio)
         {
             if (!IsOwner) return;
+            
             AskForChangeSelectedItemRpc(ratio);
         }
         
@@ -131,7 +132,7 @@ namespace Gameplay.Items
                 if (previous != null)
                     UnableCondition(previous);
             }
-
+            
             _selectedSlot.Value = index;
             RefreshHeldItem();
         }
