@@ -165,5 +165,18 @@ namespace Gameplay.Controller
                 _rb.position -= Vector3.up * _ground.Gap;
         }
         
+        public void LaunchOffLadder(Vector3 awayFromLadder)
+        {
+            awayFromLadder.y = 0f;
+            awayFromLadder.Normalize();
+
+            float g = Mathf.Abs(Physics.gravity.y) * _profile.gravityMultiplier;
+            float liftVel = Mathf.Sqrt(2f * g * _profile.ladderJumpOffLift);
+            Vector3 push = awayFromLadder * _profile.ladderJumpOffSpeed;
+
+            _rb.linearVelocity = new Vector3(push.x, liftVel, push.z);
+            _ground.ForceAirborne();
+        }
+        
     }
 }
