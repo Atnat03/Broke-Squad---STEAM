@@ -141,9 +141,10 @@ namespace Gameplay.Controller
 
         private void SetUpComponents()
         {
+            
             _rb = GetComponent<Rigidbody>();
             _capsule = GetComponent<CapsuleCollider>();
-
+            if(!IsOwner)_rb.isKinematic = true;
             _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             _rb.interpolation = RigidbodyInterpolation.Interpolate;
             _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
