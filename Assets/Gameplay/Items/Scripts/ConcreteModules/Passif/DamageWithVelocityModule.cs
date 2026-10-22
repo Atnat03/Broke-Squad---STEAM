@@ -1,7 +1,6 @@
 ﻿using System;
 using Gameplay.LD.Scripts;
 using MyPrint;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Gameplay.Items
@@ -29,6 +28,8 @@ namespace Gameplay.Items
             
             if (collision.gameObject.TryGetComponent<IDamageable>(out var damage))
             {
+               if (speed <= 0.5f) return;
+
                 float t = Mathf.InverseLerp(_minVelocityForDamage, _maxVelocity, speed);
                 float curved = _damageCurve.Evaluate(t);
                 float dmg = Mathf.Lerp(_minDamage, _maxDamage, curved) * _weightFactor;
