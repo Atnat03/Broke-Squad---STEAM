@@ -12,5 +12,8 @@ namespace Gameplay.LD
         Activated = 1 << 1,
         Triggered = 1 << 2,
         Active = 1 << 3,
+        Locked = 1 << 4,
+        OpenFront = 1 << 5,
+        OpenBack = 1 << 6
     }
 }
