@@ -26,8 +26,9 @@ namespace Gameplay.Items
             if (_rb == null && !item.TryGetComponent(out _rb)) return;
 
             float speed = _rb.linearVelocity.magnitude;
-            
-            if (collision.gameObject.TryGetComponent<IDamageable>(out var damage))
+
+            IDamageable child = collision.gameObject.GetComponentInChildren<IDamageable>();
+            if (collision.gameObject.TryGetComponent<IDamageable>(out var damage) || child != null)
             {
                 if (speed <= _minVelocityForDamage) return;
 
@@ -42,8 +43,8 @@ namespace Gameplay.Items
                     if (!_canDamagePlayer)
                         return;
                 }
-                
-                damage.ApplyDamage(dmg);
+
+                (child ?? damage).ApplyDamage(dmg);
             }
         }
 
