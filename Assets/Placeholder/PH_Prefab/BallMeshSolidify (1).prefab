@@ -16,9 +16,10 @@ GameObject:
   - component: {fileID: 2848594416714104142}
   - component: {fileID: 1432518282436890395}
   - component: {fileID: 6369560220399071946}
-  m_Layer: 17
+  - component: {fileID: 3095952847417941179}
+  m_Layer: 0
   m_Name: BallMeshSolidify (1)
-  m_TagString: Untagged
+  m_TagString: WeBalling
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -31,7 +32,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1218223272203024926}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00000003774895, y: 0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.37, y: 9.02, z: -56.05}
   m_LocalScale: {x: 0.44036406, y: 0.44036406, z: 0.44036406}
   m_ConstrainProportionsScale: 0
@@ -158,8 +159,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 240913364
-  InScenePlacedSourceGlobalObjectIdHash: 0
+  GlobalObjectIdHash: 861160538
+  InScenePlacedSourceGlobalObjectIdHash: 104795005
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -217,6 +218,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GlassSpawnKey
   ShowTopMostFoldoutHeaderGroup: 1
   _item: {fileID: 11400000, guid: bf823f7c9ea0c08408dde4be33051e66, type: 2}
+--- !u!114 &3095952847417941179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1218223272203024926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkTransform
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1001 &1646173370947641940
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -231,7 +278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 40753581769249184, guid: 02f55986761978b47911e35b9360a90b, type: 3}
       propertyPath: m_Layer
-      value: 17
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 952276324182010773, guid: 02f55986761978b47911e35b9360a90b, type: 3}
       propertyPath: m_InScenePlaced
@@ -243,7 +290,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5409140151024598094, guid: 02f55986761978b47911e35b9360a90b, type: 3}
       propertyPath: m_Layer
-      value: 17
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7966060095078676032, guid: 02f55986761978b47911e35b9360a90b, type: 3}
       propertyPath: m_LocalScale.x
