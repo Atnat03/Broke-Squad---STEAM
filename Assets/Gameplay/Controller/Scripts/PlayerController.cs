@@ -96,14 +96,26 @@ namespace Gameplay.Controller
 
         public void StartLadderCooldown() => _ladderCooldown = Profile.ladderRegrabCooldown;
         
-        private bool WantsClimb() => _ladderCooldown <= 0f && ladderChecker.Touching && MoveInput.y > 0.1f;
+        private bool WantsClimb() => _ladderCooldown <= 0f && ladderChecker.Touching;
+
+        public float ClimbInput => ladderChecker.GetClimbInput(_motor.DesiredDirection);
+
+        private bool KeepClimbing() =>
+            (ladderChecker.Touching || ladderChecker.HeadTouching)
+            && !(IsGrounded && ClimbInput < 0f)
+            && !_ladderJumpRequested;
         
-        private bool KeepClimbing() => ladderChecker.Touching && !(IsGrounded && MoveInput.y < -0.1f);
+        private bool _ladderJumpRequested;
+        public bool LadderJumpRequested => _ladderJumpRequested;
+        public void RequestLadderJump() => _ladderJumpRequested = true;
+        public void ClearLadderJump() => _ladderJumpRequested = false;
+        
 
         public string PlayerName { get; private set; }
         public int PlayerColorId { get; private set; }
         
         public Action OnPersonalisationChanged;
+        public event Action JumpPressed;
         
         #endregion
 
@@ -179,6 +191,7 @@ namespace Gameplay.Controller
 
             _motor = new PlayerMotor(_rb, transform, profile, ground, _input, body);
             _motor.OnJump += () => PlaySound(_jumpSound, 0.5f);
+            _input.OnJumpPressed += () => JumpPressed?.Invoke();
             _input.OnJumpPressed += _motor.BufferJump;
 
             footsteps.Init(PlaySound, this);
@@ -240,7 +253,8 @@ namespace Gameplay.Controller
 
             float dt = Time.fixedDeltaTime;
             ground.Check(body, _rb, transform);
-            ladderChecker.Check(body, transform);
+            Vector3 probeDir = _stateMachine.CurrentState is ClimbState ? -ladderChecker.LadderNormal : _motor.DesiredDirection;
+            ladderChecker.Check(body, probeDir);
             _ladderCooldown -= dt;
             _stateMachine.FixedUpdate();
             body.Tick(dt);
