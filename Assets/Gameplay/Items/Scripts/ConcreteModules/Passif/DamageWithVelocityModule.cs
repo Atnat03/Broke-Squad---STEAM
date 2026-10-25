@@ -17,7 +17,7 @@ namespace Gameplay.Items
         [SerializeField] private float _weightFactor = 1;
         [SerializeField] private float _mass = 1;
         [SerializeField] private bool _canDamagePlayer = false;
-        [SerializeField] private float _minVelocityForSound = 3;
+        //[SerializeField] private float _minVelocityForSound = 3;
         
         public void OnCollide(Collision collision, ItemPickup item)
         {
@@ -47,7 +47,9 @@ namespace Gameplay.Items
 
 
         public void OnThrow(Rigidbody rb)
-        { }
+        {
+            rb.mass = _mass;
+        }
 
         public void OnStartHolding()
         { }

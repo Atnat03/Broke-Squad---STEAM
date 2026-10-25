@@ -104,7 +104,7 @@ namespace MetaVoiceChat.NetProviders.NGO
 		/* =========================================================================================
 		 *										RPCs
 		 =========================================================================================== */
-		[Rpc(SendTo.Server, Delivery = RpcDelivery.Unreliable, RequireOwnership = false)]
+		[Rpc(SendTo.Server, Delivery = RpcDelivery.Unreliable)]
 		private void RelayFrameServerRpc(NGOFrame frame, RpcParams rpcParams = default)
 		{
 			float additionalLatency = frame.additionalLatency + Time.deltaTime;
@@ -112,7 +112,7 @@ namespace MetaVoiceChat.NetProviders.NGO
 			ReceiveFrameClientRpc(frame);
 		}
 
-		[Rpc(SendTo.NotOwner, Delivery = RpcDelivery.Unreliable, RequireOwnership = false)]
+		[Rpc(SendTo.NotOwner, Delivery = RpcDelivery.Unreliable)]
 		private void ReceiveFrameClientRpc(NGOFrame frame, RpcParams rpcParams = default)
 		{
 			float latency = frame.additionalLatency;

@@ -23,6 +23,7 @@ MonoBehaviour:
   - rid: 7203100960112246928
   PassifList:
   - rid: 7203100960112246929
+  - rid: 7203100995761471812
   references:
     version: 2
     RefIds:
@@ -80,3 +81,8 @@ MonoBehaviour:
         _mass: 1
         _canDamagePlayer: 0
         _minVelocityForSound: 3
+    - rid: 7203100995761471812
+      type: {class: CreateSuspiciousSoundModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _miniVelocityToDoSound: 5
+        _suspiciousSoundSettings: {fileID: 11400000, guid: 8029d65674b61e844acad36af99f168f, type: 2}
