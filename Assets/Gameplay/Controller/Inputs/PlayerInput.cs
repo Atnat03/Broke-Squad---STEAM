@@ -7,6 +7,8 @@ namespace Gameplay.Controller
 {
     public class PlayerInput : MonoBehaviour
     {
+        private PlayerController _controller;
+        
         private Player _playerInputs;
         
         public Action OnStartLeftInput;
@@ -27,11 +29,9 @@ namespace Gameplay.Controller
         public Action OnInteractInputCanceled;
         public Action OnDropInput;
         public Action OnDropInputCanceled;
-
-        public  Action OnLeanLeftInput;
-        public  Action OnLeanLeftInputCanceled;
-        public  Action OnLeanRightInput;
-        public  Action OnLeanRightInputCanceled;
+        
+        public  Action OnLeanInput;
+        public  Action OnLeanInputCanceled;
 
         public Action<int> OnMouseRoll;
 
@@ -40,9 +40,14 @@ namespace Gameplay.Controller
 
         public Action OnPinging;
 
+        public Action OnTryDropEquipment;
+        
+        public Action OnPause;
+
         private void Awake()
         {
             _playerInputs = new Player();
+            _controller = GetComponent<PlayerController>();
         }
 
         private void OnEnable()
@@ -72,10 +77,8 @@ namespace Gameplay.Controller
             _playerInputs.Gameplay.Drop.performed += PerformDrop;
             _playerInputs.Gameplay.Drop.canceled += PerformCanceled;
             
-            _playerInputs.Gameplay.RightLean.performed += PerformRightLean;
-            _playerInputs.Gameplay.RightLean.canceled += PerformRightLeanCanceled;
-            _playerInputs.Gameplay.LeftLean.performed += PerformLeftLean;
-            _playerInputs.Gameplay.LeftLean.canceled += PerformLeftLeanCanceled;
+            _playerInputs.Gameplay.Lean.performed += PerformLean;
+            _playerInputs.Gameplay.Lean.canceled += PerformLeanCanceled;
             
             _playerInputs.Gameplay.MouseMovement.performed += PerformeMouseMovement;
             _playerInputs.Gameplay.MouseMovement.canceled += PerformeMouseMovement;
@@ -83,8 +86,11 @@ namespace Gameplay.Controller
             _playerInputs.Gameplay.MouseRoll.performed += PerformMouseRoll;
 
             _playerInputs.Gameplay.Ping.performed += PerformPing;
+
+            _playerInputs.Gameplay.EquimentDrop.performed += PerformDropEquipment;
+            
+            _playerInputs.Gameplay.Pause.performed += PerformPause;
         }
-        
 
         private void OnDisable()
         {
@@ -113,27 +119,39 @@ namespace Gameplay.Controller
             _playerInputs.Gameplay.MouseRoll.performed -= PerformMouseRoll;
             
             _playerInputs.Gameplay.Ping.performed -= PerformPing;
+            
+            _playerInputs.Gameplay.EquimentDrop.performed -= PerformDropEquipment;
 
+            _playerInputs.Gameplay.Pause.performed -= PerformPause;
+            
             _playerInputs.Disable();
         }
 
         private void PerformLeftClick(InputAction.CallbackContext context)
         {
+            if (_controller.IsDown) return;
+            
             OnStartLeftInput?.Invoke();
         }
 
         private void PerformRightClick(InputAction.CallbackContext context)
         {
+            if (_controller.IsDown) return;
+            
             OnStartRightInput?.Invoke();
         }
 
         private void PerformLeftRelease(InputAction.CallbackContext context)
         {
+            if (_controller.IsDown) return;
+            
             OnEndLeftInput?.Invoke();
         }
 
         private void PerformRightRelease(InputAction.CallbackContext context)
         {
+            if (_controller.IsDown) return;
+            
             OnEndRightInput?.Invoke();
         }
 
@@ -176,6 +194,8 @@ namespace Gameplay.Controller
 
         private void PerformInteract(InputAction.CallbackContext context)
         {
+            if (_controller.IsDown) return;
+            
             OnInteractInput?.Invoke();
         }
 
@@ -199,24 +219,14 @@ namespace Gameplay.Controller
             OnMouseMovement?.Invoke(context.ReadValue<Vector2>());
         }
 
-        private void PerformRightLean(InputAction.CallbackContext context)
+        private void PerformLean(InputAction.CallbackContext context)
         {
-            OnLeanRightInput?.Invoke();
+            OnLeanInput?.Invoke();
         }
 
-        private void PerformRightLeanCanceled(InputAction.CallbackContext context)
+        private void PerformLeanCanceled(InputAction.CallbackContext context)
         {
-            OnLeanRightInputCanceled?.Invoke();
-        }
-
-        private void PerformLeftLean(InputAction.CallbackContext context)
-        {
-            OnLeanLeftInput?.Invoke();
-        }
-
-        private void PerformLeftLeanCanceled(InputAction.CallbackContext context)
-        {
-            OnLeanLeftInputCanceled?.Invoke();
+            OnLeanInputCanceled?.Invoke();
         }
         
         private void PerformMouseRoll(InputAction.CallbackContext obj)
@@ -236,6 +246,16 @@ namespace Gameplay.Controller
         private void PerformPing(InputAction.CallbackContext obj)
         {
             OnPinging?.Invoke();
+        }
+        
+        private void PerformDropEquipment(InputAction.CallbackContext obj)
+        {
+            OnTryDropEquipment?.Invoke();
+        }
+        
+        private void PerformPause(InputAction.CallbackContext obj)
+        {
+            OnPause?.Invoke();
         }
         
         private void OnDestroy() => _playerInputs.Dispose();

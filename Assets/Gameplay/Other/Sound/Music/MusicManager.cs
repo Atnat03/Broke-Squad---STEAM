@@ -1,40 +1,85 @@
 ﻿using System.Collections;
 using Bus;
+using Gameplay.IA;
 using Gameplay.Items;
+using MyPrint;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Gameplay.Other.Sound.Music
 {
-    public class MusicManager : MonoBusListener
+    public class MusicManager : NetworkBusListener
     {
         [Header("Music")]
-        [SerializeField] private AudioClip _normalMusic;
-        [SerializeField] private AudioClip _dangerousMusic;
+        [SerializeField] private AudioClip[] _musicList;
         [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private AudioMixerGroup _musicGroup;
 
-        private void Awake()
+        private bool _canChangeMusic = true;
+        
+        public override void OnNetworkSpawn()
         {
-           ListenToEvent<OnGrabGoal_EVENT>(ChangeMusicToDangerous);
-            ListenToEvent<OnDropGoal_EVENT>(ChangeMusicToNormal);
-        }
+            if (!IsServer)
+                return;
 
-        private void Start()
-        {
-            PlayTheMusic(_normalMusic);
+            if (_audioSource != null && _musicGroup != null)
+                _audioSource.outputAudioMixerGroup = _musicGroup;
+
+            ListenToEvent<OnGrabGoal_EVENT>(ChangeMusicToDangerous);
+            ListenToEvent<OnDropGoal_EVENT>(_ => ChangeMusicToNormal());
+            ListenToEvent<OnLockDownStart_EVENT>(ChangeMusicToLockDown);
+            ListenToEvent<OnLockDownEnd_EVENT>(_ => ChangeMusicToNormal());
+
+            PlayTheMusicClientRpc(0);
         }
 
         private void ChangeMusicToDangerous(OnGrabGoal_EVENT data)
         {
-            PlayTheMusic(_dangerousMusic);
+            if (!_canChangeMusic) return;
+            
+            PlayTheMusicClientRpc(1);
+            
+            StartCoroutine(BufferingMusicChange());
         }
 
-        private void ChangeMusicToNormal(OnDropGoal_EVENT data)
+        private void ChangeMusicToNormal()
         {
-            PlayTheMusic(_normalMusic);
+            if (!_canChangeMusic) return;
+            
+            PlayTheMusicClientRpc(0);
+            
+            StartCoroutine(BufferingMusicChange());
         }
 
-        private void PlayTheMusic(AudioClip clip)
+        private void ChangeMusicToLockDown(OnLockDownStart_EVENT data)
         {
+            if (!_canChangeMusic) return;
+            
+            PlayTheMusicClientRpc(2);
+
+            StartCoroutine(BufferingMusicChange());
+        }
+
+        private IEnumerator BufferingMusicChange()
+        {
+            _canChangeMusic = false;
+            
+            yield return new WaitForSeconds(0.2f);
+
+            _canChangeMusic = true;
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void PlayTheMusicClientRpc(int idClip)
+        {
+            if (_musicList == null ||
+                idClip < 0 ||
+                idClip >= _musicList.Length)
+                return;
+
+            AudioClip clip = _musicList[idClip];
+
             if (clip == null || _audioSource == null)
                 return;
 

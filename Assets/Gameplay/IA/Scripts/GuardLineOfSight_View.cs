@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using Gameplay.IA.Scripts;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace Gameplay.IA
         private Mesh _mesh;
         private readonly List<Vector3> _vertices = new();
         private readonly List<int> _tri = new();
-
+        
         private void Start()
         {
             CreateMesh();

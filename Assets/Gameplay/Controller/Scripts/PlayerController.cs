@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections;
 using Bus;
 using Gameplay.Controller.States;
+using Gameplay.LD;
 using Gameplay.Other.SuspiciousSound;
 using Gameplay.PlayerData;
+using MyPrint;
 using Network.Connections;
 using TMPro;
 using Unity.Netcode;
@@ -16,7 +19,7 @@ namespace Gameplay.Controller
     public class PlayerController : NetworkBusListener
     {
         #region Variables
-        
+
         [Header("Profile")]
         [SerializeField] private ControllerProfileSO profile;
 
@@ -24,6 +27,7 @@ namespace Gameplay.Controller
         [SerializeField] private GroundChecker ground;
         [SerializeField] private PlayerBody body;
         [SerializeField] private PlayerFootsteps footsteps;
+        [SerializeField] private LadderChecker ladderChecker;
 
         [Header("To Assign")]
         public PlayerCamera playerCamera;
@@ -35,10 +39,14 @@ namespace Gameplay.Controller
         [Header("Tied Up")]
         [SerializeField] private float tiedUpSpeed = 1f;
 
+        [Header("Stun")]
+        private float _stunTimer;
+        public bool IsStunned => _stunTimer > 0f;
+        
         [Header("SFX")]
         [SerializeField, SoundName] private string _jumpSound;
         [SerializeField, SoundName] private string _crouchSound;
-        
+
         [Header("Components")]
         private Rigidbody _rb;
         private CapsuleCollider _capsule;
@@ -50,35 +58,64 @@ namespace Gameplay.Controller
         
         private int _syncedColor;
         private string _syncedName = "";
-        
+
         private readonly NetworkVariable<bool> _netCrouching = new(false,
             NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-        
+
+        private float _ladderCooldown;
         public PlayerHealth Health => health;
         public bool IsGrounded => ground.IsGrounded;
         public bool IsCrouching => IsOwner ? _stateMachine?.CurrentState is CrouchState : _netCrouching.Value;
         public bool IsSprinting => IsOwner && _stateMachine?.CurrentState is SprintState;
         public bool IsDown => health != null && health.IsDowned;
-        
+
         public float MaxStamina => profile.maxStamina;
         public float LeanInput => _input?.Lean ?? 0f;
         public Vector3 HorizontalVelocity => _motor?.HorizontalVelocity ?? Vector3.zero;
         public float ForwardDot => _motor?.ForwardDot ?? 0f;
         public bool IsMovingForward => ForwardDot > 0.1f;
         public bool IsMovingBackward => ForwardDot < -0.1f;
-        
+        public bool InputEnabled => _input == null || _input.Enabled;
+
         public ControllerProfileSO Profile => profile;
         public PlayerMotor Motor => _motor;
         public PlayerBody Body => body;
         public PlayerStamina Stamina => _stamina;
+        public LadderChecker LadderChecker => ladderChecker;
         public float TiedUpSpeed => tiedUpSpeed;
-        
+
         private bool WantsCrouch() => _input.CrouchHeld || (IsCrouching && !body.CanStandUp());
-        private bool WantsSprint() => _input.SprintHeld && _input.Move.y > 0.1f && _stamina.CanSprint;
+        private bool WantsSprint() => _input.SprintHeld && MoveInput.y > 0.1f && _stamina.CanSprint;
 
         public void PlayCrouchSound() => PlaySound(_crouchSound, 0.5f);
 
         public void SetYaw(float yawDegrees) => _rb.MoveRotation(Quaternion.Euler(0f, yawDegrees, 0f));
+
+        private bool CanAct => !playerCamera.LocksController && !IsStunned;
+        public Vector2 MoveInput => _input != null && CanAct ? _input.Move : Vector2.zero;
+
+        public void StartLadderCooldown() => _ladderCooldown = Profile.ladderRegrabCooldown;
+        
+        private bool WantsClimb() => _ladderCooldown <= 0f && ladderChecker.Touching;
+
+        public float ClimbInput => ladderChecker.GetClimbInput(_motor.DesiredDirection);
+
+        private bool KeepClimbing() =>
+            (ladderChecker.Touching || ladderChecker.HeadTouching)
+            && !(IsGrounded && ClimbInput < 0f)
+            && !_ladderJumpRequested;
+        
+        private bool _ladderJumpRequested;
+        public bool LadderJumpRequested => _ladderJumpRequested;
+        public void RequestLadderJump() => _ladderJumpRequested = true;
+        public void ClearLadderJump() => _ladderJumpRequested = false;
+        
+
+        public string PlayerName { get; private set; }
+        public int PlayerColorId { get; private set; }
+        
+        public Action OnPersonalisationChanged;
+        public event Action JumpPressed;
         
         #endregion
 
@@ -104,17 +141,18 @@ namespace Gameplay.Controller
                 return;
             }
 
-            foreach (var mesh in meshRenderer) mesh.enabled = false;
+            foreach (var mesh in meshRenderer) mesh.gameObject.layer = LayerMask.NameToLayer("HideToOwner");
             pseudoText.gameObject.SetActive(false);
 
             SendPersonalisation();
             SetUpModules();
             SetUpStateMachine();
-            
+
         }
 
         public override void OnNetworkDespawn()
         {
+            _stunTimer = 0f;
             _input?.Dispose();
             _input = null;
             base.OnNetworkDespawn();
@@ -122,9 +160,10 @@ namespace Gameplay.Controller
 
         private void SetUpComponents()
         {
+            
             _rb = GetComponent<Rigidbody>();
             _capsule = GetComponent<CapsuleCollider>();
-
+            if(!IsOwner)_rb.isKinematic = true;
             _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             _rb.interpolation = RigidbodyInterpolation.Interpolate;
             _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
@@ -141,7 +180,7 @@ namespace Gameplay.Controller
 
             body.Init(transform, _capsule, profile);
         }
-        
+
         private void SetUpModules()
         {
             _playerInput = TryGetComponent(out PlayerInput existing) ? existing : gameObject.AddComponent<PlayerInput>();
@@ -150,8 +189,9 @@ namespace Gameplay.Controller
             _stamina = new PlayerStamina(profile, (current, max) =>
                 InvokeEvent(new StaminaChanged_EVENT { Current = current, MaxStamina = max }));
 
-            _motor = new PlayerMotor(_rb, transform, profile, ground, _input);
+            _motor = new PlayerMotor(_rb, transform, profile, ground, _input, body);
             _motor.OnJump += () => PlaySound(_jumpSound, 0.5f);
+            _input.OnJumpPressed += () => JumpPressed?.Invoke();
             _input.OnJumpPressed += _motor.BufferJump;
 
             footsteps.Init(PlaySound, this);
@@ -162,19 +202,24 @@ namespace Gameplay.Controller
             _stateMachine = new StateMachine();
 
             var movementState = new MovementState(this);
-            var sprintState   = new SprintState(this);
-            var crouchState   = new CrouchState(this);
-            var tiedState     = new TiedUpState(this);
+            var sprintState = new SprintState(this);
+            var crouchState = new CrouchState(this);
+            var tiedState = new TiedUpState(this);
+            var climbState = new ClimbState(this);
+
+
 
             Any(tiedState, new FuncPredicate(() => health.IsDowned));
             At(tiedState, movementState, new FuncPredicate(() => !health.IsDowned && !body.CanStandUp()));
             At(tiedState, crouchState, new FuncPredicate(() => !health.IsDowned && body.CanStandUp()));
-            
-            At(movementState, crouchState,   new FuncPredicate(WantsCrouch));
-            At(sprintState,   crouchState,   new FuncPredicate(WantsCrouch));
-            At(crouchState,   movementState, new FuncPredicate(() => !WantsCrouch()));
-            At(movementState, sprintState,   new FuncPredicate(WantsSprint));
-            At(sprintState,   movementState, new FuncPredicate(() => !WantsSprint()));
+            At(movementState, crouchState, new FuncPredicate(WantsCrouch));
+            At(sprintState, crouchState, new FuncPredicate(WantsCrouch));
+            At(crouchState, movementState, new FuncPredicate(() => !WantsCrouch()));
+            At(movementState, sprintState, new FuncPredicate(WantsSprint));
+            At(sprintState, movementState, new FuncPredicate(() => !WantsSprint()));
+            At(movementState, climbState, new FuncPredicate(WantsClimb));
+            At(sprintState, climbState, new FuncPredicate(WantsClimb));
+            At(climbState, movementState, new FuncPredicate(() => !KeepClimbing()));
 
             _stateMachine.SetState(movementState);
         }
@@ -195,7 +240,9 @@ namespace Gameplay.Controller
                 body.ApplyRemote(Time.deltaTime, _netCrouching.Value, IsDown);
                 return;
             }
-            
+
+            _stunTimer -= Time.deltaTime;
+            _motor.CanMove = !playerCamera.LocksController && !IsStunned;
             _stateMachine.Update();
             body.UpdateEye(Time.deltaTime);
         }
@@ -203,26 +250,28 @@ namespace Gameplay.Controller
         private void FixedUpdate()
         {
             if (!IsSpawned || !IsOwner) return;
-            
+
             float dt = Time.fixedDeltaTime;
             ground.Check(body, _rb, transform);
-            
-            _stateMachine.FixedUpdate();       
+            Vector3 probeDir = _stateMachine.CurrentState is ClimbState ? -ladderChecker.LadderNormal : _motor.DesiredDirection;
+            ladderChecker.Check(body, probeDir);
+            _ladderCooldown -= dt;
+            _stateMachine.FixedUpdate();
             body.Tick(dt);
             _motor.FixedTick(dt);
-            _stamina.Tick(dt);                    
+            _stamina.Tick(dt);
 
             _netCrouching.Value = IsCrouching;
 
-            footsteps.Tick(dt, IsGrounded, _input.Move.sqrMagnitude > 0.01f, IsCrouching, IsSprinting);
+            footsteps.Tick(dt, IsGrounded, MoveInput.sqrMagnitude > 0.01f, IsCrouching, IsSprinting);
         }
 
         private void LateUpdate() { if (IsOwner) _stateMachine.LateUpdate(); }
-        
+
         #endregion
 
         #region  Sound
-        
+
         public void PlaySound(string clip, float volumeToPlay)
         {
             InvokeEvent(new PlaySoundEvent
@@ -249,6 +298,7 @@ namespace Gameplay.Controller
         {
             _syncedColor = colorId;
             _syncedName = playerName;
+            
             ReplicatePersonalisationRpc(colorId, playerName);
         }
 
@@ -261,21 +311,63 @@ namespace Gameplay.Controller
             if (PlayerLocalData.instance == null) return;
             meshRenderer[0].material.color = PlayerLocalData.instance.PossibleColor[colorId];
             pseudoText.text = playerName;
+            
+            PlayerColorId = colorId;
+            PlayerName = playerName;
+            
+            OnPersonalisationChanged?.Invoke();
         }
 
         [Rpc(SendTo.Server)]
-        public void SendEventSoundServerRpc(float force, float dis)
+        public void SendEventSoundServerRpc(float force)
         {
             InvokeEvent(new OnCreateSuspiciousSound_EVENT
             {
                 FromClientID = OwnerClientId,
                 Force = force,
-                MaxDistance = dis,
                 Position = transform.position,
             });
         }
-        
+
 
         #endregion
+
+        public void SetInputEnabled(bool value)
+        {
+            if (!IsOwner || _input == null) return;
+            _input.Enabled = value;
+
+            if (!value) _motor?.StopMoving();
+        }
+
+        public void SnapTo(Vector3 position, float yawDegrees)
+        {
+            _rb.position = position;
+            _rb.linearVelocity = Vector3.zero;
+            SetYaw(yawDegrees);
+        }
+
+        [ClientRpc]
+        public void TeleportClientRpc(Vector3 position, Quaternion rotation)
+        {
+            if (!IsOwner) return;
+            _rb.position = position;
+            _rb.rotation = rotation;
+        }
+
+        public void Stun(float duration)
+        {
+            if (IsOwner) ApplyStun(duration);
+            else StunOwnerRpc(duration);
+        }
+
+        [Rpc(SendTo.Owner)]
+        private void StunOwnerRpc(float duration) => ApplyStun(duration);
+
+        private void ApplyStun(float duration)
+        {
+            _stunTimer = Mathf.Max(_stunTimer, duration); 
+            _motor?.StopMoving();                  
+        }
     }
 }

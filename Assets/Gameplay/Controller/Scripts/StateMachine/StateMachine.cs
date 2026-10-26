@@ -12,18 +12,27 @@
         
         public IState CurrentState => _current?.State;
         public string CurrentStateName => _current?.State?.GetType().Name ?? "None";
-    
-        public void Update() => _current?.State.OnUpdate();
+
+        public void Update()
+        {
+            EvaluateTransitions();
+            _current?.State.OnUpdate();   
+        }
         
         public void FixedUpdate()
         {
-            ITransition transition = GetTransition();
-            if (transition != null) ChangeState(transition.TargetState);
+            EvaluateTransitions();
             _current?.State.OnFixedUpdate();
         }
     
         public void LateUpdate() => _current?.State.OnLateUpdate();
     
+        private void EvaluateTransitions()
+        {
+            ITransition transition = GetTransition();
+            if (transition != null) ChangeState(transition.TargetState);
+        }
+        
         public void SetState(IState newState)
         {
             _current = _nodes[newState.GetType()];

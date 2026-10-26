@@ -203,17 +203,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""priority"": 0
                 },
                 {
-                    ""name"": ""RightLean"",
-                    ""type"": ""Button"",
-                    ""id"": ""7390eba6-7217-4df9-9779-d1a07590da99"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false,
-                    ""priority"": 0
-                },
-                {
-                    ""name"": ""LeftLean"",
+                    ""name"": ""Lean"",
                     ""type"": ""Button"",
                     ""id"": ""5c1cd1ad-a541-4712-8cdf-79c398b862b0"",
                     ""expectedControlType"": """",
@@ -236,6 +226,26 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""name"": ""Ping"",
                     ""type"": ""Button"",
                     ""id"": ""ed4e293e-3ddc-4cf0-a28c-ef36bd51a4af"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
+                    ""name"": ""EquimentDrop"",
+                    ""type"": ""Button"",
+                    ""id"": ""a9d431c1-d975-4c5f-a4e0-198e085134e6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""bfae6921-f66b-4a0a-b55d-c3a8193ba589"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -422,23 +432,23 @@ public partial class @Player: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""d35678a4-42f3-4449-8eda-39fa8ad5ac40"",
-                    ""path"": ""<Keyboard>/r"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""RightLean"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""cb2126e1-69fc-467c-9eca-39000ce03967"",
                     ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""LeftLean"",
+                    ""action"": ""Lean"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e99a2fa7-8068-4cd0-8b96-0d5540435868"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Lean"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -485,6 +495,28 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""action"": ""Ping"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d41dced2-e70f-4ee9-aec7-1801d0404bea"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquimentDrop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9779ce72-e38a-4294-8609-d14b686f1b56"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -526,6 +558,16 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""name"": ""Take Damage"",
                     ""type"": ""Button"",
                     ""id"": ""9ead8427-7029-4b39-a273-c022a9d304a3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
+                    ""name"": ""CheatPannel"",
+                    ""type"": ""Button"",
+                    ""id"": ""1c97ae42-3abb-4c8e-a6a3-98231aec2b36"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -577,6 +619,17 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""action"": ""Revive"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""105d20d6-8a3a-4260-8ea3-f6628ec76ca2"",
+                    ""path"": ""<Keyboard>/0"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CheatPannel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -596,16 +649,18 @@ public partial class @Player: IInputActionCollection2, IDisposable
         m_Gameplay_Interact = m_Gameplay.FindAction("Interact", throwIfNotFound: true);
         m_Gameplay_Drop = m_Gameplay.FindAction("Drop", throwIfNotFound: true);
         m_Gameplay_MouseMovement = m_Gameplay.FindAction("MouseMovement", throwIfNotFound: true);
-        m_Gameplay_RightLean = m_Gameplay.FindAction("RightLean", throwIfNotFound: true);
-        m_Gameplay_LeftLean = m_Gameplay.FindAction("LeftLean", throwIfNotFound: true);
+        m_Gameplay_Lean = m_Gameplay.FindAction("Lean", throwIfNotFound: true);
         m_Gameplay_MouseRoll = m_Gameplay.FindAction("MouseRoll", throwIfNotFound: true);
         m_Gameplay_Ping = m_Gameplay.FindAction("Ping", throwIfNotFound: true);
+        m_Gameplay_EquimentDrop = m_Gameplay.FindAction("EquimentDrop", throwIfNotFound: true);
+        m_Gameplay_Pause = m_Gameplay.FindAction("Pause", throwIfNotFound: true);
         // Cheats
         m_Cheats = asset.FindActionMap("Cheats", throwIfNotFound: true);
         m_Cheats_Invicibility = m_Cheats.FindAction("Invicibility", throwIfNotFound: true);
         m_Cheats_Revive = m_Cheats.FindAction("Revive", throwIfNotFound: true);
         m_Cheats_Heal = m_Cheats.FindAction("Heal", throwIfNotFound: true);
         m_Cheats_TakeDamage = m_Cheats.FindAction("Take Damage", throwIfNotFound: true);
+        m_Cheats_CheatPannel = m_Cheats.FindAction("CheatPannel", throwIfNotFound: true);
     }
 
     ~@Player()
@@ -698,10 +753,11 @@ public partial class @Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Interact;
     private readonly InputAction m_Gameplay_Drop;
     private readonly InputAction m_Gameplay_MouseMovement;
-    private readonly InputAction m_Gameplay_RightLean;
-    private readonly InputAction m_Gameplay_LeftLean;
+    private readonly InputAction m_Gameplay_Lean;
     private readonly InputAction m_Gameplay_MouseRoll;
     private readonly InputAction m_Gameplay_Ping;
+    private readonly InputAction m_Gameplay_EquimentDrop;
+    private readonly InputAction m_Gameplay_Pause;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -758,13 +814,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @MouseMovement => m_Wrapper.m_Gameplay_MouseMovement;
         /// <summary>
-        /// Provides access to the underlying input action "Gameplay/RightLean".
+        /// Provides access to the underlying input action "Gameplay/Lean".
         /// </summary>
-        public InputAction @RightLean => m_Wrapper.m_Gameplay_RightLean;
-        /// <summary>
-        /// Provides access to the underlying input action "Gameplay/LeftLean".
-        /// </summary>
-        public InputAction @LeftLean => m_Wrapper.m_Gameplay_LeftLean;
+        public InputAction @Lean => m_Wrapper.m_Gameplay_Lean;
         /// <summary>
         /// Provides access to the underlying input action "Gameplay/MouseRoll".
         /// </summary>
@@ -773,6 +825,14 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Gameplay/Ping".
         /// </summary>
         public InputAction @Ping => m_Wrapper.m_Gameplay_Ping;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/EquimentDrop".
+        /// </summary>
+        public InputAction @EquimentDrop => m_Wrapper.m_Gameplay_EquimentDrop;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Pause".
+        /// </summary>
+        public InputAction @Pause => m_Wrapper.m_Gameplay_Pause;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -832,18 +892,21 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @MouseMovement.started += instance.OnMouseMovement;
             @MouseMovement.performed += instance.OnMouseMovement;
             @MouseMovement.canceled += instance.OnMouseMovement;
-            @RightLean.started += instance.OnRightLean;
-            @RightLean.performed += instance.OnRightLean;
-            @RightLean.canceled += instance.OnRightLean;
-            @LeftLean.started += instance.OnLeftLean;
-            @LeftLean.performed += instance.OnLeftLean;
-            @LeftLean.canceled += instance.OnLeftLean;
+            @Lean.started += instance.OnLean;
+            @Lean.performed += instance.OnLean;
+            @Lean.canceled += instance.OnLean;
             @MouseRoll.started += instance.OnMouseRoll;
             @MouseRoll.performed += instance.OnMouseRoll;
             @MouseRoll.canceled += instance.OnMouseRoll;
             @Ping.started += instance.OnPing;
             @Ping.performed += instance.OnPing;
             @Ping.canceled += instance.OnPing;
+            @EquimentDrop.started += instance.OnEquimentDrop;
+            @EquimentDrop.performed += instance.OnEquimentDrop;
+            @EquimentDrop.canceled += instance.OnEquimentDrop;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         /// <summary>
@@ -888,18 +951,21 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @MouseMovement.started -= instance.OnMouseMovement;
             @MouseMovement.performed -= instance.OnMouseMovement;
             @MouseMovement.canceled -= instance.OnMouseMovement;
-            @RightLean.started -= instance.OnRightLean;
-            @RightLean.performed -= instance.OnRightLean;
-            @RightLean.canceled -= instance.OnRightLean;
-            @LeftLean.started -= instance.OnLeftLean;
-            @LeftLean.performed -= instance.OnLeftLean;
-            @LeftLean.canceled -= instance.OnLeftLean;
+            @Lean.started -= instance.OnLean;
+            @Lean.performed -= instance.OnLean;
+            @Lean.canceled -= instance.OnLean;
             @MouseRoll.started -= instance.OnMouseRoll;
             @MouseRoll.performed -= instance.OnMouseRoll;
             @MouseRoll.canceled -= instance.OnMouseRoll;
             @Ping.started -= instance.OnPing;
             @Ping.performed -= instance.OnPing;
             @Ping.canceled -= instance.OnPing;
+            @EquimentDrop.started -= instance.OnEquimentDrop;
+            @EquimentDrop.performed -= instance.OnEquimentDrop;
+            @EquimentDrop.canceled -= instance.OnEquimentDrop;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         /// <summary>
@@ -941,6 +1007,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Cheats_Revive;
     private readonly InputAction m_Cheats_Heal;
     private readonly InputAction m_Cheats_TakeDamage;
+    private readonly InputAction m_Cheats_CheatPannel;
     /// <summary>
     /// Provides access to input actions defined in input action map "Cheats".
     /// </summary>
@@ -968,6 +1035,10 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Cheats/TakeDamage".
         /// </summary>
         public InputAction @TakeDamage => m_Wrapper.m_Cheats_TakeDamage;
+        /// <summary>
+        /// Provides access to the underlying input action "Cheats/CheatPannel".
+        /// </summary>
+        public InputAction @CheatPannel => m_Wrapper.m_Cheats_CheatPannel;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1006,6 +1077,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @TakeDamage.started += instance.OnTakeDamage;
             @TakeDamage.performed += instance.OnTakeDamage;
             @TakeDamage.canceled += instance.OnTakeDamage;
+            @CheatPannel.started += instance.OnCheatPannel;
+            @CheatPannel.performed += instance.OnCheatPannel;
+            @CheatPannel.canceled += instance.OnCheatPannel;
         }
 
         /// <summary>
@@ -1029,6 +1103,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @TakeDamage.started -= instance.OnTakeDamage;
             @TakeDamage.performed -= instance.OnTakeDamage;
             @TakeDamage.canceled -= instance.OnTakeDamage;
+            @CheatPannel.started -= instance.OnCheatPannel;
+            @CheatPannel.performed -= instance.OnCheatPannel;
+            @CheatPannel.canceled -= instance.OnCheatPannel;
         }
 
         /// <summary>
@@ -1147,19 +1224,12 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMouseMovement(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "RightLean" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Lean" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnRightLean(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "LeftLean" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnLeftLean(InputAction.CallbackContext context);
+        void OnLean(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "MouseRoll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -1174,6 +1244,20 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPing(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "EquimentDrop" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEquimentDrop(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPause(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Cheats" which allows adding and removing callbacks.
@@ -1210,5 +1294,12 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTakeDamage(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CheatPannel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCheatPannel(InputAction.CallbackContext context);
     }
 }

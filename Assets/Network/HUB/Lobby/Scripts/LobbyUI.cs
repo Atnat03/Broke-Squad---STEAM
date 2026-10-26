@@ -1,8 +1,8 @@
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections.Generic;
 using MyPrint;
+using System.Collections.Generic;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
@@ -22,10 +22,12 @@ namespace Network.HUB
         private readonly List<LobbyListElement> _elementList = new();
         
         [Header("In Lobby UI")]
-        [SerializeField] private GameObject _playerNotifPrefab;
-        [SerializeField] private Transform _playerNotifParent;
+        [SerializeField] private PlayerElementVisual _playerVisualPrefab;
+        [SerializeField] private PlayerVisualLobbySpawner _playerVisualSpawner;
         [SerializeField] private TextMeshProUGUI _lobbyNameText;
-        private readonly List<GameObject> _elementPlayerList = new();
+        
+        private readonly List<PlayerElementVisual> _elementPlayerList = new();
+        private readonly List<PlayerDataLobby> _dataPlayerList = new();
 
         [Header("Scene List UI")] 
         [SerializeField] private GameObject[] _onlyHostUI;
@@ -36,28 +38,37 @@ namespace Network.HUB
         [SerializeField] private Button _startGameButton;
         [SerializeField] private GameObject _loadingScreen;
         
+        [Header("In Lobby Scene")]
+        [SerializeField] private GameObject _inLobbyScene;
+        [SerializeField] private Camera _firstCamera;
+        
         private void OnEnable()
         {
             _lobbyManager.OnJoinLobby += JoinLobbyUI;
             _lobbyManager.OnUpdateJoinedLobby += UpdateLobbyList;
-            _lobbyManager.OnUpdateLobbyInfo += UpdateLobbyInfo;
+            _lobbyManager.OnUpdateLobbyInfo += UpdateUI;
             _lobbyManager.OnUpdatedMap += UpdateSelectedMapName;
             _lobbyManager.OnTryToJoinGame += ActivateLoadingScreen;
+            _lobbyManager.OnLeaveLobby += LeaveLobbyUI;
         }
         
         private void OnDisable()
         {
             _lobbyManager.OnJoinLobby -= JoinLobbyUI;
             _lobbyManager.OnUpdateJoinedLobby -= UpdateLobbyList;
-            _lobbyManager.OnUpdateLobbyInfo -= UpdateLobbyInfo;
+            _lobbyManager.OnUpdateLobbyInfo -= UpdateUI;
             _lobbyManager.OnUpdatedMap -= UpdateSelectedMapName;
             _lobbyManager.OnTryToJoinGame -= ActivateLoadingScreen; 
+            _lobbyManager.OnLeaveLobby -= LeaveLobbyUI; 
             
             _elementList.Clear();
         }
 
         private void Start()
         {
+            _firstCamera.gameObject.SetActive(true);
+            _inLobbyScene.gameObject.SetActive(false);
+            
             _inLobbyCanva.SetActive(false);
             _creationCanva.SetActive(true);
 
@@ -97,6 +108,9 @@ namespace Network.HUB
         private void JoinLobbyUI(Lobby lobby, bool isHost)
         {
             SwitchCanva();
+            
+            _inLobbyScene.gameObject.SetActive(true);
+            _firstCamera.gameObject.SetActive(false);
 
             foreach (GameObject g in _onlyHostUI)
             {
@@ -106,23 +120,92 @@ namespace Network.HUB
             ABPrint.Print("Join Lobby : " +  lobby.Name, ABColor.Yellow);
         }
         
-        private void UpdateLobbyInfo(Lobby lobby)
+        private void LeaveLobbyUI()
         {
-            var list = lobby.Players;
+            foreach (PlayerElementVisual p in _elementPlayerList) Destroy(p.gameObject);
             
-            while (_elementPlayerList.Count < list.Count)
+            _elementPlayerList.Clear();
+            _dataPlayerList.Clear();
+
+            _lobbyNameText.text = string.Empty;
+            _loadingScreen.SetActive(false);
+
+            _inLobbyCanva.SetActive(false);
+            _creationCanva.SetActive(true);
+            
+            _inLobbyScene.gameObject.SetActive(false);
+            _firstCamera.gameObject.SetActive(true);
+        }
+        
+        private void UpdateUI(List<Unity.Services.Lobbies.Models.Player> list)
+        {
+            if (list.Count > _dataPlayerList.Count)
             {
-                GameObject newPlayer = Instantiate(_playerNotifPrefab, _playerNotifParent);
-                _elementPlayerList.Add(newPlayer);
+                AddPlayer(list.Count - _dataPlayerList.Count);
             }
 
-            for (int i = list.Count; i < _elementList.Count; i++)
+            if (list.Count < _dataPlayerList.Count)
             {
-                _elementList[i].gameObject.SetActive(false);
+                for (int i = _dataPlayerList.Count - 1; i >= list.Count; i--)
+                {
+                    Destroy(_elementPlayerList[i].gameObject);
+                    _elementPlayerList.RemoveAt(i);
+                    _dataPlayerList.RemoveAt(i);
+                }
             }
-            
-            if(!_lobbyNameText.text.Equals(lobby.Name))
-                _lobbyNameText.text = lobby.Name;
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                var player = list[i];
+
+                string nom = "Unknown";
+
+                if (player.Data.TryGetValue(_lobbyManager.KEY_PLAYER_NAME, out PlayerDataObject valueName))
+                    nom = valueName.Value;
+                
+                int colorId = 0;
+                
+                if (player.Data != null && player.Data.TryGetValue(_lobbyManager.KEY_PLAYER_COLOR, out PlayerDataObject valueSkin) && int.TryParse(valueSkin.Value, out int parsedColor))
+                    colorId = parsedColor;
+                
+                bool isReady = false;
+
+                if(player.Data.TryGetValue(_lobbyManager.KEY_PLAYER_READY, out PlayerDataObject valueReady))
+                    isReady = valueReady.Value == "1";
+                
+                if (_dataPlayerList[i].Name != nom || _dataPlayerList[i].ColorID != colorId || _dataPlayerList[i].IsReady != isReady)
+                {
+                    _dataPlayerList[i] = new PlayerDataLobby
+                    {
+                        Name = nom,
+                        ColorID = colorId,
+                        IsReady = isReady
+                    };
+                    
+                    _elementPlayerList[i].SetData(_dataPlayerList[i]);
+                }
+            }
+        }
+        
+        private void AddPlayer(int delta)
+        {
+            for (int i = 0; i < delta; i++)
+            {
+                int index = _elementPlayerList.Count;
+
+                Transform t = _playerVisualSpawner.GetSpawnPoint(index);
+                PlayerElementVisual ui = Instantiate(_playerVisualPrefab, t.position, t.rotation);
+                
+                PlayerDataLobby newData = new PlayerDataLobby
+                {
+                    Name = "",
+                    ColorID = 0,
+                    IsReady = false
+                };
+                
+                _elementPlayerList.Add(ui);
+                _dataPlayerList.Add(newData);
+            }
         }
 
         private void SwitchCanva()
@@ -136,9 +219,14 @@ namespace Network.HUB
             _selectedSceneName.text = newName;
         }
         
-        private void ActivateLoadingScreen()
+        public void ActivateLoadingScreen()
         {
             _loadingScreen.SetActive(true);
+        }
+
+        private void Update()
+        {
+            _startGameButton.interactable = _lobbyManager.CheckAllPlayerReady();
         }
     }
 }

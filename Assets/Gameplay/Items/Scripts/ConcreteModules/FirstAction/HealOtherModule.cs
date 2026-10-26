@@ -1,0 +1,55 @@
+﻿using System;
+using Gameplay.PlayerData;
+using UnityEngine;
+
+namespace Gameplay.Items
+{
+    [Serializable]
+    public class HealOtherModule : ActionModule, IFirstAction, IServerAction
+    {
+        [SerializeField] private float _healAmount = 10;
+        
+        [Header("SFX")] 
+        [SerializeField, SoundName] private string _stringName;
+        [SerializeField, Range(0, 1)] private float _volume = 0.5f;
+        
+        public ICondition Condition => ConditionParent;
+
+        public void StartFirstAction()
+        {
+            if (!CanUse()) return;
+            
+            Transform cam = Context.Camera.transform;
+
+            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, 2f) && hit.transform.TryGetComponent(out PlayerHealth data))
+            {
+                Context.SendToServer(this, new OnModuleDoAction_EVENT
+                {
+                    Target = data.NetworkObject
+                });
+                
+                //SFX
+                Context.Inventory.InvokeEvent(new PlaySoundEvent
+                {
+                    position = Context.Core.transform.position,
+                    volume = _volume,
+                    soundName = _stringName
+                });
+                
+                ConsumeCondition(new OnModuleDoAction_EVENT());
+            }
+        }
+
+        public void StopFirstAction()
+        { }
+
+        public void ServerExecute(OnModuleDoAction_EVENT data)
+        {
+            // PlayerData => PlayerHealth.Heal()
+            if (data.GetTarget().TryGetComponent(out PlayerHealth playerData))
+            {
+                playerData.Heal(_healAmount);
+            }
+        }
+    }
+}

@@ -43,7 +43,7 @@ namespace Gameplay.Items
         public void SendEventToEveryOne(OnModuleDoAction_EVENT data) => EventEveryoneRpc(data);
 
         public void SendSuspiciousSoundEvent(ulong clientId, Vector3 pos, SO_SuspiciousSoundSettings settings) => 
-            SendSuspiciousSoundEventRpc(clientId, settings.Force, settings.MaxDistance, pos);
+            SendSuspiciousSoundEventRpc(clientId, settings.Force, pos);
         
         [Rpc(SendTo.SpecifiedInParams)]
         private void EventRpc(OnModuleDoAction_EVENT data, RpcParams rpcParams = default) => EventBus.InvokeEvent(data);
@@ -52,13 +52,12 @@ namespace Gameplay.Items
         private void EventEveryoneRpc(OnModuleDoAction_EVENT data) => EventBus.InvokeEvent(data);
 
         [Rpc(SendTo.Server)]
-        private void SendSuspiciousSoundEventRpc(ulong clientId, float force, float distance, Vector3 origin)
+        private void SendSuspiciousSoundEventRpc(ulong clientId, float force, Vector3 origin)
         {
             InvokeEvent(new OnCreateSuspiciousSound_EVENT
             {
                 FromClientID = clientId,
                 Force = force,
-                MaxDistance = distance,
                 Position = origin
             });
         }

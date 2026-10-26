@@ -9,27 +9,19 @@ namespace Gameplay.IA
     [Serializable]
     public class G_PatrolState : G_BaseState
     {
-        [SerializeField] private float _patrolSeep = 1f;
+        [SerializeField] private float _patrolSpeed = 1f;
         
         [SerializeField] Transform[] _patrolNodes;
         private int _currentPatrolNode = 0;
 
         [SerializeField] private float _distanceCloseToChangePoint = 2;
         
-        private Transform _myTransform;
-
-        public override void OnStart()
-        {
-            if (_behavior)
-            {
-                _myTransform = _behavior.transform;
-            }
-        }
-        
         public override void OnEnter()
         {
-            _behavior.GuardMotor.SetTarget(NearestPoint());
-            _behavior.GuardMotor.SetSpeed(_patrolSeep);
+            _behavior.SetColor(_color);
+            
+            _motor.SetTarget(NearestPoint());
+            _motor.SetSpeed(_patrolSpeed);
         }
 
         public override void OnUpdate()
@@ -71,7 +63,7 @@ namespace Gameplay.IA
         private void NextPoint()
         {
             _currentPatrolNode = (_currentPatrolNode + 1) % _patrolNodes.Length;
-            _behavior.GuardMotor.SetTarget(_patrolNodes[_currentPatrolNode].position);
+            _motor.SetTarget(_patrolNodes[_currentPatrolNode].position);
         }
     }
 }

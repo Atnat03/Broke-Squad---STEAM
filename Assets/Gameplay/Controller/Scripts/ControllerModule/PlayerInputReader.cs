@@ -6,43 +6,55 @@ namespace Gameplay.Controller
     public class PlayerInputReader : IDisposable
     {
         private readonly PlayerInput _playerInput;
+
+        private Vector2 _move;
+        private bool _sprintHeld, _crouchHeld, _leftLeanHeld, _rightLeanHeld;
+        private bool _enabled = true;
         
-        public Vector2 Move {get ; private set;}
-        public bool SprintHeld {get ; private set;}
-        public bool CrouchHeld {get ; private set;}
-        public bool LeftLeanHeld {get ; private set;}
-        public bool RightLeanHeld {get ; private set;}
+        public Vector2 Move => _enabled ? _move : Vector2.zero;
+        public bool SprintHeld => _enabled && _sprintHeld;
+        public bool CrouchHeld => _enabled && _crouchHeld;
+        public bool LeftLeanHeld => _enabled && _leftLeanHeld;
+        public bool RightLeanHeld => _enabled && _rightLeanHeld;
         public float Lean => (RightLeanHeld ? 1f : 0f) - (LeftLeanHeld ? 1f : 0f);
 
+        public bool Enabled
+        {
+            get => _enabled;
+            set
+            {
+                if (_enabled == value) return;
+                _enabled = value;
+                OnEnabledChanged?.Invoke(value);
+            }
+        }
+
         public Action OnJumpPressed;
+        public event Action<bool> OnEnabledChanged;
 
         public PlayerInputReader(PlayerInput playerInput)
         {
             _playerInput = playerInput;
-            
+
             _playerInput.OnMoveInput += OnMove;
             _playerInput.OnJumpInput += OnJump;
             _playerInput.OnCrouchInput += OnCrouch;
             _playerInput.OnCrouchInputCanceled += OnCrouchCanceled;
             _playerInput.OnSprintInput += OnSprint;
             _playerInput.OnSprintInputCanceled += OnSprintCanceled;
-            _playerInput.OnLeanRightInput += OnLeanRight;
-            _playerInput.OnLeanRightInputCanceled += OnLeanRightCanceled;
-            _playerInput.OnLeanLeftInput += OnLeanLeft;
-            _playerInput.OnLeanLeftInputCanceled += OnLeanLeftCanceled;
         }
-        
-        private void OnMove(Vector2 v) => Move = v;
-        private void OnJump() => OnJumpPressed?.Invoke();
-        private void OnCrouch() => CrouchHeld = true;
-        private void OnCrouchCanceled() => CrouchHeld = false;
-        private void OnSprint() => SprintHeld = true;
-        private void OnSprintCanceled() => SprintHeld = false;
-        private void OnLeanRight() => RightLeanHeld = true;
-        private void OnLeanRightCanceled() => RightLeanHeld = false;
-        private void OnLeanLeft() => LeftLeanHeld = true;
-        private void OnLeanLeftCanceled() => LeftLeanHeld = false;
-        
+
+        private void OnMove(Vector2 v) => _move = v;
+        private void OnJump() { if (_enabled) OnJumpPressed?.Invoke(); }
+        private void OnCrouch() => _crouchHeld = true;
+        private void OnCrouchCanceled() => _crouchHeld = false;
+        private void OnSprint() => _sprintHeld = true;
+        private void OnSprintCanceled() => _sprintHeld = false;
+        private void OnLeanRight() => _rightLeanHeld = true;
+        private void OnLeanRightCanceled() => _rightLeanHeld = false;
+        private void OnLeanLeft() => _leftLeanHeld = true;
+        private void OnLeanLeftCanceled() => _leftLeanHeld = false;
+
         public void Dispose()
         {
             _playerInput.OnMoveInput -= OnMove;
@@ -51,10 +63,6 @@ namespace Gameplay.Controller
             _playerInput.OnCrouchInputCanceled -= OnCrouchCanceled;
             _playerInput.OnSprintInput -= OnSprint;
             _playerInput.OnSprintInputCanceled -= OnSprintCanceled;
-            _playerInput.OnLeanRightInput -= OnLeanRight;
-            _playerInput.OnLeanRightInputCanceled -= OnLeanRightCanceled;
-            _playerInput.OnLeanLeftInput -= OnLeanLeft;
-            _playerInput.OnLeanLeftInputCanceled -= OnLeanLeftCanceled;
         }
     }
 }

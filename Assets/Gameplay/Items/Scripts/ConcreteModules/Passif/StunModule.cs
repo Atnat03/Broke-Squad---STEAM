@@ -10,10 +10,14 @@ namespace Gameplay.Items
         [SerializeField] private float _minVelocityForStun = 2;
         [SerializeField] private float _stunDuration = 1f;
         
+        private Rigidbody _rb;
+        
         public void OnCollide(Collision collision, ItemPickup item)
         {
-            float speed = collision.relativeVelocity.magnitude;
+            if (_rb == null && !item.TryGetComponent(out _rb)) return;
 
+            float speed = collision.impulse.magnitude;
+            
             if(speed < _minVelocityForStun) return;
             
             if (collision.gameObject.TryGetComponent<IStunnable>(out var stun))
@@ -22,7 +26,10 @@ namespace Gameplay.Items
             }        
         }
 
-        public void OnThrow(Rigidbody rb) { }
+        public void OnThrow(Rigidbody rb)
+        {
+            _rb = rb;
+        }
         public void OnStartHolding() { }
         public void OnStopHolding() { }
     }

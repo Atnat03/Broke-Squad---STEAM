@@ -11,4 +11,10 @@ namespace Gameplay.PlayerData
         public float Current;
         public float MaxStamina;
     }
+
+    public struct DownedChanged_EVENT
+    {
+        public bool Downed;
+        public ulong PlayerId;
+    }
 }

@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections;
+using Bus;
 using Unity.Netcode;
 using Gameplay.Controller;
+using Gameplay.Controller.Gameplay.Controller;
 using Gameplay.IA.Scripts;
+using JetBrains.Annotations;
 using MyPrint;
 using UnityEngine;
 using UnityEngine.AI;
@@ -12,52 +16,78 @@ namespace Gameplay.IA
     [RequireComponent(typeof(GuardMotor))]
     [RequireComponent(typeof(GuardHealth))]
     [RequireComponent(typeof(GuardLineOfSight))]
-    public class GuardBehavior : NetworkBehaviour
+    public class GuardBehavior : NetworkBusListener
     {
         [SerializeField] G_PatrolState _patrolState;
+        [SerializeField] G_PatrolState _patrolState_LOCKDOWN;
         [SerializeField] G_InvestigateState _investigateState;
+        [SerializeField] G_InvestigateState _investigateState_LOCKDOWN;
         [SerializeField] G_PursuitState _pursuitState;
+        [SerializeField] G_PursuitState _pursuitState_LOCKDOWN;
         [SerializeField] G_KoState _koState;
         
         [HideInInspector] public GuardHealth GuardHealth;
         [HideInInspector] public GuardMotor GuardMotor;
         [HideInInspector] public GuardLineOfSight GuardSight;
+
+        [SerializeField] private MeshRenderer _meshRenderer;
+
+        [Header("Sound")] 
+        [SerializeField] private float _strengthToBeingAwake = 10;
         
-        [Header("DebugVisuel")]
-        [SerializeField] MeshRenderer _meshRenderer;
-        [SerializeField] Color _normalColor;
-        [SerializeField] Color _duringDetectionColor;
-        [SerializeField] Color _hasTargetColor;
+        [HideInInspector] public Vector3 LastSoundPosition;
+        [HideInInspector] public Transform LastSoundSource;
         
         private StateMachine _stateMachine;
+
+        public IState CurrentState => _stateMachine.CurrentState;
         
-        public override void OnNetworkSpawn()
+        private LockDownManager _lockDownManager;
+        
+        private bool IsLockDown => _lockDownManager != null && _lockDownManager.IsLockDown;
+
+        [Header("Lockdown Alert")]
+        [SerializeField] private float _timerAlertLockDown = 3f;
+        private readonly NetworkVariable<float> _lockDownAlertTimer = new();
+        
+        
+        public Action<float> OnLockDownAlertChange;
+        public Action OnStartInvestigate;
+        public Action OnStopInvestigate;
+        
+        /*
+        [HideInInspector] public Transform PlayerTarget = null;
+        [HideInInspector] public Transform SuspectTarget = null;
+        */
+
+        public Action OnDetectSound;
+
+        private void Awake()
         {
             GuardHealth = GetComponent<GuardHealth>();
             GuardMotor = GetComponent<GuardMotor>();
             GuardSight = GetComponent<GuardLineOfSight>();
+            GuardSight.GuardBrain = this;
+            GuardHealth.GuardBrain = this;
+        }
 
-            GuardSight.OnTargetSeen += GetTarget;
-            GuardSight.OnDetectionProgressChanged += Detection;
-            GuardSight.OnTargetLost += LostTarget;
+        public override void OnNetworkSpawn()
+        {
+            GuardHealth.OnStun += HandleStun;
+            
+            _lockDownManager = LockDownManager.instance;
+            _lockDownManager.SubscribeGuard(this);
+
+            _lockDownAlertTimer.OnValueChanged += LockDownTimerChange;
             
             SetUpStateMachine();
         }
 
-        private void Detection(float ratio)
+        public override void OnNetworkDespawn()
         {
-            if(ratio is > 0.1f and < 0.9f)
-                _meshRenderer.material.color = _duringDetectionColor;
-        }
-
-        private void LostTarget()
-        {
-            _meshRenderer.material.color = _normalColor;
-        }
-
-        private void GetTarget(Transform obj)
-        {
-            _meshRenderer.material.color = _hasTargetColor;
+            GuardHealth.OnStun -= HandleStun;
+            
+            _lockDownManager.UnSubscribeGuard(this);
         }
 
         private void SetUpStateMachine()
@@ -65,9 +95,56 @@ namespace Gameplay.IA
             _stateMachine = new StateMachine();
             
             _patrolState.SetBehaviour(this);
+            _pursuitState.SetBehaviour(this);
+            _investigateState.SetBehaviour(this);
             
-            //At(idle, patrol, new FuncPredicate(() => true));
-            Any(_patrolState, new FuncPredicate(() => true));
+            /*
+             _patrolState_LOCKDOWN.SetBehaviour(this);
+            _pursuitState_LOCKDOWN.SetBehaviour(this);
+            _investigateState_LOCKDOWN.SetBehaviour(this);
+            */
+            
+            _koState.SetBehaviour(this);
+            
+            //Get new target
+            TriggerPredicate onGetNewTargetPatrol = new TriggerPredicate();
+            GuardSight.OnGetNewTarget += onGetNewTargetPatrol.Trigger;
+            At(_patrolState, _pursuitState, onGetNewTargetPatrol);
+            
+            TriggerPredicate onGetNewTargetInvestigate = new TriggerPredicate();
+            _investigateState.OnFindPlayer += onGetNewTargetInvestigate.Trigger;
+            At(_investigateState, _pursuitState, onGetNewTargetInvestigate);
+            
+            //Loose target
+            TriggerPredicate onLooseTarget = new TriggerPredicate();
+            GuardSight.OnTargetLost += onLooseTarget.Trigger;
+            At(_pursuitState, _patrolState, onLooseTarget);
+            //At(_pursuitState, _patrolState, new FuncPredicate(GuardMotor.TargetKO));
+            
+            TriggerPredicate onPursuitEnded = new TriggerPredicate();
+            _pursuitState.OnPursuitEnded += onPursuitEnded.Trigger;
+            At(_pursuitState, _patrolState, onPursuitEnded);
+            
+            TriggerPredicate onEndInvestigate = new TriggerPredicate();
+            _investigateState.OnInvestigationEnded += onEndInvestigate.Trigger;
+            At(_investigateState, _patrolState, onEndInvestigate);
+            
+            TriggerPredicate onGetNewSuspiciousTarget = new TriggerPredicate();
+            GuardSight.OnGetNewSuspicious += onGetNewSuspiciousTarget.Trigger;
+            At(_patrolState, _investigateState, onGetNewSuspiciousTarget);
+            
+            // From patrol to investigate by suspicious sound
+            TriggerPredicate onDetectSound = new TriggerPredicate();
+            OnDetectSound += onDetectSound.Trigger;
+            At(_patrolState, _investigateState, onDetectSound);
+            
+            //KO
+            Any(_koState, new FuncPredicate(() => GuardHealth.IsKO));
+
+            //Event on take damage
+            TriggerPredicate onHit = new TriggerPredicate();
+            GuardHealth.OnTakeDamage += onHit.Trigger;
+            Any(_pursuitState, onHit);
             
             _stateMachine.SetState(_patrolState);
         }
@@ -77,16 +154,96 @@ namespace Gameplay.IA
 
         private void Update()
         {
-            if(IsServer)
-            {
-                _stateMachine.Update();
+            if (!IsServer && _stateMachine == null) return;
+            
+            _stateMachine.Update();
 
-                Transform found = GuardSight.Target;
-                if(found)
-                    ABPrint.Print(found.name, ABColor.Pink);
+            ABPrint.Print(_stateMachine.CurrentStateName, ABColor.Orange);
+
+
+            if (_lockDownAlertTimer.Value > 0)
+            {
+                _lockDownAlertTimer.Value -= Time.deltaTime;
+                
+                if(_lockDownAlertTimer.Value <= 0)
+                {
+                    if(!GuardSight.Target.TryGetComponent<PlayerController>(out var controller)) return;
+
+                    TriggerLockDownClientRpc(controller.PlayerName);
+                }
             }
         }
+
+        [Rpc(SendTo.Everyone)]
+        private void TriggerLockDownClientRpc(string playerName)
+        {
+            InvokeEvent(new OnLockDownStart_EVENT
+            {
+                PlayerTriggerName = playerName
+            });
+        }
         
-        private void LateUpdate() { if (IsServer) _stateMachine.LateUpdate(); }
+        private void LateUpdate()
+        {
+            if (IsServer) _stateMachine.LateUpdate();
+        }
+
+        public void SetColor(Color color)
+        {
+            if (!IsServer) return;
+            
+            ReplicateColorRpc(color.r, color.g, color.b);
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void ReplicateColorRpc(float r, float g, float b)
+        {
+            _meshRenderer.material.color = new Color(r, g, b);   
+        }
+
+        private Color _previousColor;
+        
+        private void HandleStun(bool isStunned)
+        {
+            if (isStunned)
+            {
+                _previousColor = _meshRenderer.material.color;
+                _meshRenderer.material.color = Color.dodgerBlue;
+                GuardMotor.StopAgent();
+            }
+            else
+            {
+                _meshRenderer.material.color = _previousColor;
+                GuardMotor.StartAgent();
+            }
+        }
+
+        public void TriggerBySound(float f, Transform newTarget)
+        {
+            if (f >= _strengthToBeingAwake)
+            {
+                LastSoundSource = newTarget;
+                LastSoundPosition = newTarget != null ? newTarget.position : transform.position;
+                
+                OnDetectSound?.Invoke();
+            }
+        }
+
+        public void ResetTimerAlert()
+        {
+            if (_lockDownManager.IsLockDown) return;
+            
+            if (!IsServer)
+            {
+                return;
+            }
+
+            _lockDownAlertTimer.Value = _timerAlertLockDown;
+        }
+
+        private void LockDownTimerChange(float previousValue, float newValue)
+        {
+            OnLockDownAlertChange?.Invoke(newValue / _timerAlertLockDown);
+        }
     }
 }
