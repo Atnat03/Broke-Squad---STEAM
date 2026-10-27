@@ -7,16 +7,18 @@ namespace Gameplay.LD.ProceduralGeneration
         public RoomData[] pool;
 
         [Header("Grid")]
-        public int width = 4;
-        public int height = 4;
+        public int floorCount = 2;
+        public int maxExtent = 8;
         public float cellSize = 10f;
+        public float floorHeight = 4f;
         public Vector2Int startOrigin = Vector2Int.zero;
 
         [Header("Contraintes")]
+        public int targetRooms = 20;
+        public int minRooms = 12;
+        public int minRoomsPerFloor = 1;
         public int minCellDistance = 4;
         public int minRoomDistance = 3;
-        public int maxVoidCells = 16;
-        [Range(0, 100)] public int voidPercent = 30;
 
         [Header("Debug")]
         public bool buildOnStart = true;
@@ -37,18 +39,20 @@ namespace Gameplay.LD.ProceduralGeneration
 
             var gen = new MapGenerator()
             {
-                width = width, height = height,
+                floorCount = floorCount,
+                maxExtent = maxExtent,
                 startOrigin = startOrigin,
+                targetRooms = targetRooms,
+                minRooms = minRooms,
+                minRoomsPerFloor = minRoomsPerFloor,
                 minCellDistance = minCellDistance,
-                minRoomDistance = minRoomDistance,
-                maxVoidCells = maxVoidCells,
-                voidPercent = voidPercent
+                minRoomDistance = minRoomDistance
             };
 
             Result = gen.Generate(seed, pool);
             if (Result == null)
             {
-                Debug.LogError("Mansion: aucune map valide. Ajoute des fillers (toutes combinaisons de portes) ou assouplis les contraintes.");
+                Debug.LogError("Mansion: aucune map valide. Ajoute des dead ends et des rooms à 2-3 portes ou assouplis les contraintes.");
                 return;
             }
 
@@ -57,7 +61,7 @@ namespace Gameplay.LD.ProceduralGeneration
                 if (room.variant.data.prefab == null) continue;
 
                 var c = room.PivotCell;
-                var worldPos = transform.position + new Vector3(c.x * cellSize, 0f, -c.y * cellSize);
+                var worldPos = transform.position + new Vector3(c.x * cellSize, c.z * floorHeight, -c.y * cellSize);
                 var worldRot = transform.rotation * Quaternion.Euler(0f, 90f * room.variant.rotation, 0f);
 
                 var go = Instantiate(room.variant.data.prefab, worldPos, worldRot, transform);
@@ -76,10 +80,21 @@ namespace Gameplay.LD.ProceduralGeneration
         void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.yellow;
-            for (int x = 0; x < width; x++)
-            for (int y = 0; y < height; y++)
-                Gizmos.DrawWireCube(transform.position + new Vector3(x * cellSize, 0, -y * cellSize),
+            for (int z = 0; z < floorCount; z++)
+                Gizmos.DrawWireCube(
+                    transform.position + new Vector3(startOrigin.x * cellSize, z * floorHeight, -startOrigin.y * cellSize),
                     new Vector3(cellSize, 0.1f, cellSize));
+
+            if (Result == null) return;
+            Gizmos.color = Color.cyan;
+            foreach (var room in Result.rooms)
+                foreach (var p in room.variant.pos)
+                {
+                    var c = p + room.origin;
+                    Gizmos.DrawWireCube(
+                        transform.position + new Vector3(c.x * cellSize, c.z * floorHeight, -c.y * cellSize),
+                        new Vector3(cellSize, 0.1f, cellSize));
+                }
         }
     }
 }

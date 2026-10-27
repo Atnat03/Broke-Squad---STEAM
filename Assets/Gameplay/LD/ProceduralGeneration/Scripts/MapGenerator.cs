@@ -8,17 +8,18 @@ namespace Gameplay.LD.ProceduralGeneration
     {
         public RoomData data;
         public int rotation;
-        public Vector2Int[] pos;
+        public Vector3Int[] pos;
         public Socket[][] sockets;
-        public Vector2Int pivot;
+        public Vector3Int pivot;
+        public int doorCount;
     }
 
     public class PlacedRoom
     {
         public int id;
         public RoomVariant variant;
-        public Vector2Int origin;
-        public Vector2Int PivotCell => origin + variant.pivot;
+        public Vector3Int origin;
+        public Vector3Int PivotCell => origin + variant.pivot;
     }
 
     public class MapResult
@@ -32,8 +33,11 @@ namespace Gameplay.LD.ProceduralGeneration
 
     public class MapGenerator
     {
-        public int width = 4;
-        public int height = 4;
+        public int floorCount = 2;
+        public int targetRooms = 20;
+        public int minRooms = 12;
+        public int maxExtent = 8;
+        public int minRoomsPerFloor = 1;
 
         public Vector2Int startOrigin = Vector2Int.zero;
         public int minCellDistance = 3;
@@ -42,13 +46,11 @@ namespace Gameplay.LD.ProceduralGeneration
         public bool requireAllReachable = true;
         public int maxAttempts = 300;
         public int solverBudget = 20000;
-        public int maxVoidCells = 16;
-        public int voidPercent = 30;
 
-        private static readonly Vector2Int[] Delta = { new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(0, 1), new Vector2Int(-1, 0) };
-
-        private const int VoidId = -1;
-        private static readonly Socket[] VoidSockets = { Socket.Wall, Socket.Wall, Socket.Wall, Socket.Wall };
+        private static readonly Vector3Int[] Delta =
+        {
+            new Vector3Int(0, -1, 0), new Vector3Int(1, 0, 0), new Vector3Int(0, 1, 0), new Vector3Int(-1, 0, 0)
+        };
 
         struct Cell
         {
@@ -56,14 +58,14 @@ namespace Gameplay.LD.ProceduralGeneration
             public Socket[] sockets;
         }
 
-        readonly Dictionary<Vector2Int, Cell> grid = new Dictionary<Vector2Int, Cell>();
+        readonly Dictionary<Vector3Int, Cell> grid = new Dictionary<Vector3Int, Cell>();
         readonly List<PlacedRoom> placed = new List<PlacedRoom>();
         readonly Dictionary<RoomData, int> used = new Dictionary<RoomData, int>();
         readonly Dictionary<RoomData, List<RoomVariant>> roomVariants = new Dictionary<RoomData, List<RoomVariant>>();
 
+        RoomData finalData;
         int nextId;
         int nodes;
-        int voidCount;
 
         static List<RoomVariant> GenerateRoomVariants(RoomData d)
         {
@@ -71,14 +73,14 @@ namespace Gameplay.LD.ProceduralGeneration
             var seen = new HashSet<string>();
 
             int n = d.cells.Count;
-            var pos = new Vector2Int[n];
+            var pos = new Vector3Int[n];
             var sock = new Socket[n][];
             for (int i = 0; i < n; i++)
             {
                 pos[i] = d.cells[i].pos;
                 sock[i] = d.cells[i].ToArray();
             }
-            var pivot = Vector2Int.zero;
+            var pivot = Vector3Int.zero;
 
             int rots = d.allowRotation ? 4 : 1;
             for (int r = 0; r < rots; r++)
@@ -87,17 +89,19 @@ namespace Gameplay.LD.ProceduralGeneration
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        pos[i] = new Vector2Int(-pos[i].y, pos[i].x);
+                        pos[i] = new Vector3Int(-pos[i].y, pos[i].x, pos[i].z);
                         var s = sock[i];
                         sock[i] = new[] { s[3], s[0], s[1], s[2] };
                     }
-                    pivot = new Vector2Int(-pivot.y, pivot.x);
+                    pivot = new Vector3Int(-pivot.y, pivot.x, pivot.z);
                 }
 
                 var first = pos[0];
                 for (int i = 1; i < n; i++)
                 {
-                    if (pos[i].y < first.y || (pos[i].y == first.y && pos[i].x < first.x))
+                    if (pos[i].z < first.z
+                        || (pos[i].z == first.z && pos[i].y < first.y)
+                        || (pos[i].z == first.z && pos[i].y == first.y && pos[i].x < first.x))
                     {
                         first = pos[i];
                     }
@@ -107,27 +111,41 @@ namespace Gameplay.LD.ProceduralGeneration
                 {
                     data = d,
                     rotation = r,
-                    pos = new Vector2Int[n],
+                    pos = new Vector3Int[n],
                     sockets = new Socket[n][],
                     pivot = pivot - first,
                 };
 
+                var self = new HashSet<Vector3Int>();
                 for (int i = 0; i < n; i++)
                 {
                     variant.pos[i] = pos[i] - first;
                     variant.sockets[i] = (Socket[])sock[i].Clone();
+                    self.Add(variant.pos[i]);
                 }
+
+                int doors = 0;
+                for (int i = 0; i < n; i++)
+                    for (int dir = 0; dir < 4; dir++)
+                        if (variant.sockets[i][dir] == Socket.Door && !self.Contains(variant.pos[i] + Delta[dir]))
+                            doors++;
+                variant.doorCount = doors;
 
                 var order = new List<int>();
                 for (int i = 0; i < n; i++)
                 {
                     order.Add(i);
                 }
-                order.Sort((a, b) => variant.pos[a].y != variant.pos[b].y ? variant.pos[a].y.CompareTo(variant.pos[b].y) : variant.pos[a].x.CompareTo(variant.pos[b].x));
+                order.Sort((a, b) =>
+                {
+                    if (variant.pos[a].z != variant.pos[b].z) return variant.pos[a].z.CompareTo(variant.pos[b].z);
+                    if (variant.pos[a].y != variant.pos[b].y) return variant.pos[a].y.CompareTo(variant.pos[b].y);
+                    return variant.pos[a].x.CompareTo(variant.pos[b].x);
+                });
                 var key = new System.Text.StringBuilder();
                 foreach (int i in order)
                 {
-                    key.Append(variant.pos[i].x).Append(',').Append(variant.pos[i].y).Append(':');
+                    key.Append(variant.pos[i].x).Append(',').Append(variant.pos[i].y).Append(',').Append(variant.pos[i].z).Append(':');
                     foreach (var s in variant.sockets[i]) key.Append((int)s);
                     key.Append(';');
                 }
@@ -144,11 +162,14 @@ namespace Gameplay.LD.ProceduralGeneration
             return list;
         }
 
-        bool InBounds(Vector2Int p) => p.x >= 0 && p.y >= 0 && p.x < width && p.y < height;
+        bool InBounds(Vector3Int p) =>
+            p.z >= 0 && p.z < floorCount &&
+            Math.Abs(p.x - startOrigin.x) <= maxExtent &&
+            Math.Abs(p.y - startOrigin.y) <= maxExtent;
 
-        bool CanPlace(RoomVariant v, Vector2Int o)
+        bool CanPlace(RoomVariant v, Vector3Int o)
         {
-            var self = new HashSet<Vector2Int>();
+            var self = new HashSet<Vector3Int>();
             foreach (var t in v.pos)
             {
                 var p = t + o;
@@ -162,28 +183,20 @@ namespace Gameplay.LD.ProceduralGeneration
                 for (int d = 0; d < 4; d++)
                 {
                     var q = p + Delta[d];
-                    var s = v.sockets[i][d];
-
                     if (self.Contains(q)) continue;
-                    if (!InBounds(q)) { if (s == Socket.Door) return false; continue; }
 
                     if (grid.TryGetValue(q, out var other))
                     {
-                        if (other.roomId == VoidId)
-                        {
-                            if (s == Socket.Door) return false;
-                            continue;
-                        }
+                        var s = v.sockets[i][d];
                         var os = other.sockets[(d + 2) % 4];
                         if ((s == Socket.Door) != (os == Socket.Door)) return false;
-                        if (s == Socket.Window || os == Socket.Window) return false;
                     }
                 }
             }
             return true;
         }
 
-        PlacedRoom Place(RoomVariant v, Vector2Int o)
+        PlacedRoom Place(RoomVariant v, Vector3Int o)
         {
             var pr = new PlacedRoom { id = nextId++, variant = v, origin = o };
             for (int i = 0; i < v.pos.Length; i++)
@@ -200,67 +213,72 @@ namespace Gameplay.LD.ProceduralGeneration
             used[pr.variant.data]--;
         }
 
-        bool TryVoid(Vector2Int cell, System.Random rng, List<RoomData> fillers)
+        List<(Vector3Int cell, int dir)> OpenDoors()
         {
-            for (int d = 0; d < 4; d++)
-            {
-                if (grid.TryGetValue(cell + Delta[d], out var n) && n.roomId != VoidId
-                    && n.sockets[(d + 2) % 4] == Socket.Door)
-                    return false;
-            }
-            grid[cell] = new Cell { roomId = VoidId, sockets = VoidSockets };
-            voidCount++;
-            if (Solve(rng, fillers)) return true;
-            grid.Remove(cell);
-            voidCount--;
-            return false;
+            var list = new List<(Vector3Int, int)>();
+            foreach (var kv in grid)
+                for (int d = 0; d < 4; d++)
+                    if (kv.Value.sockets[d] == Socket.Door && !grid.ContainsKey(kv.Key + Delta[d]))
+                        list.Add((kv.Key, d));
+            return list;
+        }
+
+        bool FinalPlaced() => used.TryGetValue(finalData, out int c) && c > 0;
+
+        int Weight(RoomVariant v)
+        {
+            int w = v.data.weight * 10;
+            int doors = Math.Max(1, v.doorCount);
+            w = placed.Count < targetRooms ? w * doors : w / doors;
+            if (v.data == finalData && !FinalPlaced() && placed.Count > targetRooms / 2) w *= 5;
+            return Math.Max(1, w);
         }
 
         bool Solve(System.Random rng, List<RoomData> fillers)
         {
             if (++nodes > solverBudget) return false;
 
-            Vector2Int empty = default;
-            bool found = false;
-            for (int y = 0; y < height && !found; y++)
-            for (int x = 0; x < width; x++)
-                if (!grid.ContainsKey(new Vector2Int(x, y))) { empty = new Vector2Int(x, y); found = true; break; }
-            if (!found) return true;
+            var open = OpenDoors();
+            if (open.Count == 0) return placed.Count >= minRooms && FinalPlaced();
 
-            bool canVoid = voidCount < maxVoidCells;
-            bool voidFirst = canVoid && rng.Next(100) < voidPercent;
-            if (voidFirst && TryVoid(empty, rng, fillers)) return true;
-            if (nodes > solverBudget) return false;
+            var (cell, dir) = open[rng.Next(open.Count)];
+            var target = cell + Delta[dir];
+            int need = (dir + 2) % 4;
 
-            var options = new List<RoomVariant>();
+            var options = new List<(RoomVariant v, Vector3Int o)>();
             foreach (var d in fillers)
             {
                 used.TryGetValue(d, out int u);
-                if (u >= d.maxCount) continue;
-                options.AddRange(Variants(d));
+                int cap = d == finalData ? 1 : d.maxCount;
+                if (u >= cap) continue;
+                foreach (var variant in Variants(d))
+                    for (int i = 0; i < variant.pos.Length; i++)
+                        if (variant.sockets[i][need] == Socket.Door)
+                        {
+                            var origin = target - variant.pos[i];
+                            if (CanPlace(variant, origin)) options.Add((variant, origin));
+                        }
             }
 
             while (options.Count > 0)
             {
                 int total = 0;
-                foreach (var o in options) total += o.data.weight;
+                foreach (var op in options) total += Weight(op.v);
                 int roll = rng.Next(total), idx = 0;
                 for (; idx < options.Count; idx++)
                 {
-                    roll -= options[idx].data.weight;
+                    roll -= Weight(options[idx].v);
                     if (roll < 0) break;
                 }
-                var v = options[idx];
+                var (v, o) = options[idx];
                 options.RemoveAt(idx);
 
-                if (!CanPlace(v, empty)) continue;
-                var pr = Place(v, empty);
+                var pr = Place(v, o);
                 if (Solve(rng, fillers)) return true;
                 Remove(pr);
                 if (nodes > solverBudget) return false;
             }
 
-            if (canVoid && !voidFirst && TryVoid(empty, rng, fillers)) return true;
             return false;
         }
 
@@ -292,9 +310,21 @@ namespace Gameplay.LD.ProceduralGeneration
             return dist;
         }
 
+        bool FloorsValid()
+        {
+            if (minRoomsPerFloor <= 0) return true;
+            var perFloor = new HashSet<int>[floorCount];
+            for (int i = 0; i < floorCount; i++) perFloor[i] = new HashSet<int>();
+            foreach (var kv in grid) perFloor[kv.Key.z].Add(kv.Value.roomId);
+            for (int i = 0; i < floorCount; i++)
+                if (perFloor[i].Count < minRoomsPerFloor) return false;
+            return true;
+        }
+
         public MapResult Generate(int seed, IList<RoomData> pool)
         {
-            RoomData startData = null, finalData = null;
+            RoomData startData = null;
+            finalData = null;
             var fillers = new List<RoomData>();
             foreach (var d in pool)
             {
@@ -303,6 +333,7 @@ namespace Gameplay.LD.ProceduralGeneration
                 else fillers.Add(d);
             }
             if (startData == null || finalData == null) throw new InvalidOperationException("Need a start and final room");
+            fillers.Add(finalData);
 
             var rng = new System.Random(seed);
 
@@ -313,26 +344,27 @@ namespace Gameplay.LD.ProceduralGeneration
                 used.Clear();
                 nextId = 0;
                 nodes = 0;
-                voidCount = 0;
 
                 var sv = Variants(startData)[0];
-                if (!CanPlace(sv, startOrigin)) throw new InvalidOperationException("La room de départ ne rentre pas à startOrigin.");
-                var start = Place(sv, startOrigin);
+                var startCell = new Vector3Int(startOrigin.x, startOrigin.y, 0);
+                if (!CanPlace(sv, startCell)) throw new InvalidOperationException("La room de départ ne rentre pas à startOrigin.");
+                var start = Place(sv, startCell);
 
-                var candidates = new List<(RoomVariant v, Vector2Int o)>();
-                foreach (var v in Variants(finalData))
-                    for (int y = 0; y < height; y++)
-                        for (int x = 0; x < width; x++)
-                        {
-                            var o = new Vector2Int(x, y);
-                            if (CanPlace(v, o) && MinManhattan(v, o, start) >= minCellDistance)
-                                candidates.Add((v, o));
-                        }
-                if (candidates.Count == 0) continue;
-                var pick = candidates[rng.Next(candidates.Count)];
-                var final = Place(pick.v, pick.o);
+                var initialOpen = OpenDoors();
+                for (int f = 0; f < floorCount; f++)
+                {
+                    bool hasDoor = false;
+                    foreach (var od in initialOpen)
+                        if (od.cell.z == f) { hasDoor = true; break; }
+                    if (!hasDoor) throw new InvalidOperationException("La room de départ n'a aucune porte à l'étage " + f);
+                }
 
                 if (!Solve(rng, fillers)) continue;
+                if (!FloorsValid()) continue;
+
+                PlacedRoom final = placed.Find(p => p.variant.data == finalData);
+                if (final == null) continue;
+                if (MinManhattan(final.variant, final.origin, start) < minCellDistance) continue;
 
                 var dist = RoomDistances(start);
                 if (!dist.TryGetValue(final.id, out int pathLen) || pathLen < minRoomDistance) continue;
@@ -348,14 +380,14 @@ namespace Gameplay.LD.ProceduralGeneration
             return null;
         }
 
-        int MinManhattan(RoomVariant v, Vector2Int o, PlacedRoom other)
+        int MinManhattan(RoomVariant v, Vector3Int o, PlacedRoom other)
         {
             int best = int.MaxValue;
             foreach (var a in v.pos)
                 foreach (var b in other.variant.pos)
                 {
                     var pa = a + o; var pb = b + other.origin;
-                    best = Math.Min(best, Math.Abs(pa.x - pb.x) + Math.Abs(pa.y - pb.y));
+                    best = Math.Min(best, Math.Abs(pa.x - pb.x) + Math.Abs(pa.y - pb.y) + Math.Abs(pa.z - pb.z));
                 }
             return best;
         }

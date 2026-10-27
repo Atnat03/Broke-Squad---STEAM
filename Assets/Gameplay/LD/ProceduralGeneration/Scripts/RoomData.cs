@@ -10,7 +10,7 @@ namespace Gameplay.LD.ProceduralGeneration
     [Serializable]
     public class RoomCell
     {
-        public Vector2Int pos;
+        public Vector3Int pos;
         public Socket north, east, south, west;
  
         public Socket[] ToArray() => new[] { north, east, south, west };
