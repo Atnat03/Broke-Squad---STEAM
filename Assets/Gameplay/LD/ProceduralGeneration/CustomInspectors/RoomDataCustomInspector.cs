@@ -17,10 +17,11 @@ namespace Gameplay.LD.ProceduralGeneration
             new Vector2Int(0, -1), new Vector2Int(-1, 0)
         };
 
-        private static readonly string[] BrushNames = { "Wall", "Door", "Window", "None" };
-        private static readonly string[] SideModeNames = { "Front (X/Z)", "Side (Y/Z)" };
-
-        private Socket brush = Socket.Door;
+        private static readonly string[] BrushNames = { "Wall", "Door", "None" };
+        private static readonly Socket[] BrushSockets = { Socket.Wall, Socket.Door, Socket.None };
+        private int brushIndex = 1;
+        private Socket brush => BrushSockets[brushIndex];
+        
         private int currentFloor;
         private int sideMode;
         private bool showRawCells;
@@ -77,7 +78,7 @@ namespace Gameplay.LD.ProceduralGeneration
         {
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("Types", GUILayout.Width(40));
-            brush = (Socket)GUILayout.Toolbar((int)brush, BrushNames, GUILayout.Height(24));
+            brushIndex = GUILayout.Toolbar(brushIndex, BrushNames, GUILayout.Height(24));
             EditorGUILayout.EndHorizontal();
         }
 
@@ -275,6 +276,8 @@ namespace Gameplay.LD.ProceduralGeneration
             }
         }
 
+        public string[] SideModeNames { get; set; }
+
         private void DrawEdge(RoomData data, Dictionary<Vector3Int, RoomCell> map,
             RoomCell cell, int dir, Rect e)
         {
@@ -364,10 +367,9 @@ namespace Gameplay.LD.ProceduralGeneration
         {
             switch (s)
             {
-                case Socket.Wall:   return new Color(0.10f, 0.10f, 0.10f);
-                case Socket.Door:   return new Color(0.90f, 0.55f, 0.15f);
-                case Socket.Window: return new Color(0.35f, 0.75f, 0.95f);
-                default:            return new Color(0.30f, 0.30f, 0.30f, 0.35f);
+                case Socket.Wall: return new Color(0.10f, 0.10f, 0.10f);
+                case Socket.Door: return new Color(0.90f, 0.55f, 0.15f);
+                default:          return new Color(0.30f, 0.30f, 0.30f, 0.35f);
             }
         }
 

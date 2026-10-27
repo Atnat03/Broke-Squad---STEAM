@@ -20,6 +20,11 @@ namespace Gameplay.LD.ProceduralGeneration
         public int minCellDistance = 4;
         public int minRoomDistance = 3;
 
+        [Header("Solver")]
+        public int maxAttempts = 50;
+        public int solverBudget = 2000;
+        public int maxMillis = 2000;
+
         [Header("Debug")]
         public bool buildOnStart = true;
         public int debugSeed = 12345;
@@ -46,13 +51,16 @@ namespace Gameplay.LD.ProceduralGeneration
                 minRooms = minRooms,
                 minRoomsPerFloor = minRoomsPerFloor,
                 minCellDistance = minCellDistance,
-                minRoomDistance = minRoomDistance
+                minRoomDistance = minRoomDistance,
+                maxAttempts = maxAttempts,
+                solverBudget = solverBudget,
+                maxMillis = maxMillis
             };
 
             Result = gen.Generate(seed, pool);
             if (Result == null)
             {
-                Debug.LogError("Mansion: aucune map valide. Ajoute des dead ends et des rooms à 2-3 portes ou assouplis les contraintes.");
+                Debug.LogError("Mansion: aucune map valide (ou temps dépassé). Ajoute des dead ends (1 porte) et des rooms à 2-3 portes, ou assouplis les contraintes.");
                 return;
             }
 

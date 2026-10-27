@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 namespace Gameplay.LD.ProceduralGeneration
@@ -9,6 +10,7 @@ namespace Gameplay.LD.ProceduralGeneration
         public RoomData data;
         public int rotation;
         public Vector3Int[] pos;
+        public HashSet<Vector3Int> set;
         public Socket[][] sockets;
         public Vector3Int pivot;
         public int doorCount;
@@ -44,8 +46,9 @@ namespace Gameplay.LD.ProceduralGeneration
 
         public int minRoomDistance = 4;
         public bool requireAllReachable = true;
-        public int maxAttempts = 300;
-        public int solverBudget = 20000;
+        public int maxAttempts = 50;
+        public int solverBudget = 2000;
+        public int maxMillis = 2000;
 
         private static readonly Vector3Int[] Delta =
         {
@@ -66,6 +69,8 @@ namespace Gameplay.LD.ProceduralGeneration
         RoomData finalData;
         int nextId;
         int nodes;
+        bool timeUp;
+        Stopwatch clock;
 
         static List<RoomVariant> GenerateRoomVariants(RoomData d)
         {
@@ -123,6 +128,7 @@ namespace Gameplay.LD.ProceduralGeneration
                     variant.sockets[i] = (Socket[])sock[i].Clone();
                     self.Add(variant.pos[i]);
                 }
+                variant.set = self;
 
                 int doors = 0;
                 for (int i = 0; i < n; i++)
@@ -132,10 +138,7 @@ namespace Gameplay.LD.ProceduralGeneration
                 variant.doorCount = doors;
 
                 var order = new List<int>();
-                for (int i = 0; i < n; i++)
-                {
-                    order.Add(i);
-                }
+                for (int i = 0; i < n; i++) order.Add(i);
                 order.Sort((a, b) =>
                 {
                     if (variant.pos[a].z != variant.pos[b].z) return variant.pos[a].z.CompareTo(variant.pos[b].z);
@@ -169,12 +172,10 @@ namespace Gameplay.LD.ProceduralGeneration
 
         bool CanPlace(RoomVariant v, Vector3Int o)
         {
-            var self = new HashSet<Vector3Int>();
-            foreach (var t in v.pos)
+            for (int i = 0; i < v.pos.Length; i++)
             {
-                var p = t + o;
+                var p = v.pos[i] + o;
                 if (!InBounds(p) || grid.ContainsKey(p)) return false;
-                self.Add(p);
             }
 
             for (int i = 0; i < v.pos.Length; i++)
@@ -183,13 +184,13 @@ namespace Gameplay.LD.ProceduralGeneration
                 for (int d = 0; d < 4; d++)
                 {
                     var q = p + Delta[d];
-                    if (self.Contains(q)) continue;
+                    if (v.set.Contains(q - o)) continue;
 
                     if (grid.TryGetValue(q, out var other))
                     {
-                        var s = v.sockets[i][d];
-                        var os = other.sockets[(d + 2) % 4];
-                        if ((s == Socket.Door) != (os == Socket.Door)) return false;
+                        bool a = v.sockets[i][d] == Socket.Door;
+                        bool b = other.sockets[(d + 2) % 4] == Socket.Door;
+                        if (a != b) return false;
                     }
                 }
             }
@@ -234,18 +235,12 @@ namespace Gameplay.LD.ProceduralGeneration
             return Math.Max(1, w);
         }
 
-        bool Solve(System.Random rng, List<RoomData> fillers)
+        List<(RoomVariant v, Vector3Int o)> Options(Vector3Int cell, int dir, List<RoomData> fillers)
         {
-            if (++nodes > solverBudget) return false;
-
-            var open = OpenDoors();
-            if (open.Count == 0) return placed.Count >= minRooms && FinalPlaced();
-
-            var (cell, dir) = open[rng.Next(open.Count)];
+            var options = new List<(RoomVariant, Vector3Int)>();
             var target = cell + Delta[dir];
             int need = (dir + 2) % 4;
 
-            var options = new List<(RoomVariant v, Vector3Int o)>();
             foreach (var d in fillers)
             {
                 used.TryGetValue(d, out int u);
@@ -258,6 +253,27 @@ namespace Gameplay.LD.ProceduralGeneration
                             var origin = target - variant.pos[i];
                             if (CanPlace(variant, origin)) options.Add((variant, origin));
                         }
+            }
+            return options;
+        }
+
+        bool Solve(System.Random rng, List<RoomData> fillers)
+        {
+            if (timeUp) return false;
+            if (++nodes > solverBudget) return false;
+            if ((nodes & 31) == 0 && clock.ElapsedMilliseconds > maxMillis) { timeUp = true; return false; }
+
+            var open = OpenDoors();
+            if (open.Count == 0) return placed.Count >= minRooms && FinalPlaced();
+
+            List<(RoomVariant v, Vector3Int o)> options = null;
+            int start = rng.Next(open.Count);
+            for (int k = 0; k < open.Count; k++)
+            {
+                var (cell, dir) = open[(start + k) % open.Count];
+                var opts = Options(cell, dir, fillers);
+                if (opts.Count == 0) return false;
+                if (options == null || opts.Count < options.Count) options = opts;
             }
 
             while (options.Count > 0)
@@ -276,7 +292,7 @@ namespace Gameplay.LD.ProceduralGeneration
                 var pr = Place(v, o);
                 if (Solve(rng, fillers)) return true;
                 Remove(pr);
-                if (nodes > solverBudget) return false;
+                if (timeUp || nodes > solverBudget) return false;
             }
 
             return false;
@@ -336,9 +352,13 @@ namespace Gameplay.LD.ProceduralGeneration
             fillers.Add(finalData);
 
             var rng = new System.Random(seed);
+            clock = Stopwatch.StartNew();
+            timeUp = false;
 
             for (int attempt = 1; attempt <= maxAttempts; attempt++)
             {
+                if (timeUp || clock.ElapsedMilliseconds > maxMillis) break;
+
                 grid.Clear();
                 placed.Clear();
                 used.Clear();
