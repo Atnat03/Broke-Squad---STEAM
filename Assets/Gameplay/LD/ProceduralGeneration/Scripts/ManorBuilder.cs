@@ -13,7 +13,7 @@ namespace Gameplay.LD.ProceduralGeneration
         public float floorHeight = 4f;
         public Vector2Int startOrigin = Vector2Int.zero;
 
-        [Header("Contraintes")]
+        [Header("Constraint")]
         public int targetRooms = 20;
         public int minRooms = 12;
         public int minRoomsPerFloor = 1;
@@ -42,99 +42,104 @@ namespace Gameplay.LD.ProceduralGeneration
             int seed = debugSeed;
             Clear();
 
-            var gen = new MapGenerator()
-            {
-                floorCount = floorCount,
-                maxExtent = maxExtent,
-                startOrigin = startOrigin,
-                targetRooms = targetRooms,
-                minRooms = minRooms,
-                minRoomsPerFloor = minRoomsPerFloor,
-                minCellDistance = minCellDistance,
-                minRoomDistance = minRoomDistance,
-                maxAttempts = maxAttempts,
-                solverBudget = solverBudget,
-                maxMillis = maxMillis
-            };
+            MapGenerator generator = new MapGenerator();
+            generator.floorCount = floorCount;
+            generator.maxExtent = maxExtent;
+            generator.startOrigin = startOrigin;
+            generator.targetRooms = targetRooms;
+            generator.minRooms = minRooms;
+            generator.minRoomsPerFloor = minRoomsPerFloor;
+            generator.minCellDistance = minCellDistance;
+            generator.minRoomDistance = minRoomDistance;
+            generator.maxAttempts = maxAttempts;
+            generator.solverBudget = solverBudget;
+            generator.maxMillis = maxMillis;
 
-            Result = gen.Generate(seed, pool);
+            Result = generator.Generate(seed, pool);
             if (Result == null)
             {
                 Debug.LogError("Mansion: No Valid map or used to much time to generate mansion");
                 return;
             }
 
-            foreach (var room in Result.rooms)
+            foreach (PlacedRoom room in Result.rooms)
             {
-                var data = room.variant.data;
-                if (data.prefab == null) continue;
+                RoomData roomData = room.variant.roomData;
+                if (roomData.prefab == null) continue;
 
-                var c = room.PivotCell;
-                var worldPos = transform.position + new Vector3(c.x * cellSize, c.z * floorHeight, -c.y * cellSize);
-                var worldRot = transform.rotation * Quaternion.Euler(0f, 90f * room.variant.rotation, 0f);
+                Vector3Int pivotCell = room.PivotCell;
+                Vector3 worldPosition = transform.position + new Vector3(pivotCell.x * cellSize, pivotCell.z * floorHeight, -pivotCell.y * cellSize);
+                Quaternion worldRotation = transform.rotation * Quaternion.Euler(0f, 90f * room.variant.rotationIndex, 0f);
 
-                var go = Instantiate(data.prefab, worldPos, worldRot, transform);
-                go.name = $"{data.name}_{room.id}";
-                AlignToFootprint(go, room);
+                GameObject instance = Instantiate(roomData.prefab, worldPosition, worldRotation, transform);
+                instance.name = roomData.name + "_" + room.id;
+                AlignToFootprint(instance, room);
             }
 
-            
-
-            Debug.Log($"Mansion seed {seed} : {Result.rooms.Count} rooms, path start->final = {Result.pathLength} rooms, {Result.attempts} tries.");
-        }
-
-        void AlignToFootprint(GameObject go, PlacedRoom room)
-        {
-            var renderers = go.GetComponentsInChildren<Renderer>();
-            if (renderers.Length == 0) return;
-
-            var bounds = renderers[0].bounds;
-            foreach (var r in renderers) bounds.Encapsulate(r.bounds);
-
-            var min = new Vector3Int(int.MaxValue, int.MaxValue, int.MaxValue);
-            var max = new Vector3Int(int.MinValue, int.MinValue, int.MinValue);
-            foreach (var p in room.variant.pos)
-            {
-                var cell = p + room.origin;
-                min = Vector3Int.Min(min, cell);
-                max = Vector3Int.Max(max, cell);
-            }
-
-            var target = transform.position + new Vector3(
-                (min.x + max.x) * 0.5f * cellSize,
-                min.z * floorHeight,
-                -(min.y + max.y) * 0.5f * cellSize);
-
-            go.transform.position += new Vector3(
-                target.x - bounds.center.x,
-                target.y - bounds.min.y,
-                target.z - bounds.center.z);
+            Debug.Log("Mansion seed " + seed + " : " + Result.rooms.Count + " rooms, path start->final = " + Result.pathLength + " rooms, " + Result.attempts + " tries.");
         }
         
+        void AlignToFootprint(GameObject instance, PlacedRoom room)
+        {
+            Renderer[] renderers = instance.GetComponentsInChildren<Renderer>();
+            if (renderers.Length == 0) return;
+
+            Bounds bounds = renderers[0].bounds;
+            for (int i = 1; i < renderers.Length; i++)
+            {
+                bounds.Encapsulate(renderers[i].bounds);
+            }
+
+            Vector3Int minCell = new Vector3Int(int.MaxValue, int.MaxValue, int.MaxValue);
+            Vector3Int maxCell = new Vector3Int(int.MinValue, int.MinValue, int.MinValue);
+            for (int i = 0; i < room.variant.cellPositions.Length; i++)
+            {
+                Vector3Int cell = room.variant.cellPositions[i] + room.origin;
+                minCell = Vector3Int.Min(minCell, cell);
+                maxCell = Vector3Int.Max(maxCell, cell);
+            }
+
+            Vector3 targetPosition = transform.position + new Vector3(
+                (minCell.x + maxCell.x) * 0.5f * cellSize,
+                minCell.z * floorHeight,
+                -(minCell.y + maxCell.y) * 0.5f * cellSize);
+
+            instance.transform.position += new Vector3(
+                targetPosition.x - bounds.center.x,
+                targetPosition.y - bounds.min.y,
+                targetPosition.z - bounds.center.z);
+        }
+
         public void Clear()
         {
             for (int i = transform.childCount - 1; i >= 0; i--)
+            {
                 Destroy(transform.GetChild(i).gameObject);
+            }
         }
 
         void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.yellow;
             for (int z = 0; z < floorCount; z++)
+            {
                 Gizmos.DrawWireCube(
                     transform.position + new Vector3(startOrigin.x * cellSize, z * floorHeight, -startOrigin.y * cellSize),
                     new Vector3(cellSize, 0.1f, cellSize));
+            }
 
             if (Result == null) return;
+
             Gizmos.color = Color.cyan;
-            foreach (var room in Result.rooms)
-                foreach (var p in room.variant.pos)
+            foreach (PlacedRoom room in Result.rooms)
+            {
+                for (int i = 0; i < room.variant.cellPositions.Length; i++)
                 {
-                    var c = p + room.origin;
-                    Gizmos.DrawWireCube(
-                        transform.position + new Vector3(c.x * cellSize, c.z * floorHeight, -c.y * cellSize),
+                    Vector3Int cell = room.variant.cellPositions[i] + room.origin;
+                    Gizmos.DrawWireCube(transform.position + new Vector3(cell.x * cellSize, cell.z * floorHeight, -cell.y * cellSize),
                         new Vector3(cellSize, 0.1f, cellSize));
                 }
+            }
         }
     }
 }
