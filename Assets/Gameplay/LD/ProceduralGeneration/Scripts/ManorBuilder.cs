@@ -60,25 +60,57 @@ namespace Gameplay.LD.ProceduralGeneration
             Result = gen.Generate(seed, pool);
             if (Result == null)
             {
-                Debug.LogError("Mansion: aucune map valide (ou temps dépassé). Ajoute des dead ends (1 porte) et des rooms à 2-3 portes, ou assouplis les contraintes.");
+                Debug.LogError("Mansion: No Valid map or used to much time to generate mansion");
                 return;
             }
 
             foreach (var room in Result.rooms)
             {
-                if (room.variant.data.prefab == null) continue;
+                var data = room.variant.data;
+                if (data.prefab == null) continue;
 
                 var c = room.PivotCell;
                 var worldPos = transform.position + new Vector3(c.x * cellSize, c.z * floorHeight, -c.y * cellSize);
                 var worldRot = transform.rotation * Quaternion.Euler(0f, 90f * room.variant.rotation, 0f);
 
-                var go = Instantiate(room.variant.data.prefab, worldPos, worldRot, transform);
-                go.name = $"{room.variant.data.name}_{room.id}";
+                var go = Instantiate(data.prefab, worldPos, worldRot, transform);
+                go.name = $"{data.name}_{room.id}";
+                AlignToFootprint(go, room);
             }
 
-            Debug.Log($"Mansion seed {seed} : {Result.rooms.Count} rooms, chemin start->final = {Result.pathLength} rooms, {Result.attempts} tentative(s).");
+            
+
+            Debug.Log($"Mansion seed {seed} : {Result.rooms.Count} rooms, path start->final = {Result.pathLength} rooms, {Result.attempts} tries.");
         }
 
+        void AlignToFootprint(GameObject go, PlacedRoom room)
+        {
+            var renderers = go.GetComponentsInChildren<Renderer>();
+            if (renderers.Length == 0) return;
+
+            var bounds = renderers[0].bounds;
+            foreach (var r in renderers) bounds.Encapsulate(r.bounds);
+
+            var min = new Vector3Int(int.MaxValue, int.MaxValue, int.MaxValue);
+            var max = new Vector3Int(int.MinValue, int.MinValue, int.MinValue);
+            foreach (var p in room.variant.pos)
+            {
+                var cell = p + room.origin;
+                min = Vector3Int.Min(min, cell);
+                max = Vector3Int.Max(max, cell);
+            }
+
+            var target = transform.position + new Vector3(
+                (min.x + max.x) * 0.5f * cellSize,
+                min.z * floorHeight,
+                -(min.y + max.y) * 0.5f * cellSize);
+
+            go.transform.position += new Vector3(
+                target.x - bounds.center.x,
+                target.y - bounds.min.y,
+                target.z - bounds.center.z);
+        }
+        
         public void Clear()
         {
             for (int i = transform.childCount - 1; i >= 0; i--)

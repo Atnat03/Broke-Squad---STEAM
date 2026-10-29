@@ -192,6 +192,8 @@ namespace Gameplay.LD.ProceduralGeneration
                         bool b = other.sockets[(d + 2) % 4] == Socket.Door;
                         if (a != b) return false;
                     }
+                    else if (v.sockets[i][d] == Socket.Door && !InBounds(q))
+                        return false;
                 }
             }
             return true;
@@ -226,12 +228,23 @@ namespace Gameplay.LD.ProceduralGeneration
 
         bool FinalPlaced() => used.TryGetValue(finalData, out int c) && c > 0;
 
-        int Weight(RoomVariant v)
+        int[] FloorCounts()
+        {
+            var c = new int[floorCount];
+            foreach (var k in grid.Keys) c[k.z]++;
+            return c;
+        }
+
+        int Weight(RoomVariant v, Vector3Int o, int[] floors, int minFloor)
         {
             int w = v.data.weight * 10;
-            int doors = Math.Max(1, v.doorCount);
-            w = placed.Count < targetRooms ? w * doors : w / doors;
+            int outgoing = Math.Max(1, v.doorCount - 1);
+            w = placed.Count < targetRooms ? w * outgoing : w / outgoing;
             if (v.data == finalData && !FinalPlaced() && placed.Count > targetRooms / 2) w *= 5;
+
+            foreach (var p in v.pos)
+                if (floors[p.z + o.z] == minFloor) { w *= 3; break; }
+
             return Math.Max(1, w);
         }
 
@@ -274,20 +287,29 @@ namespace Gameplay.LD.ProceduralGeneration
                 var opts = Options(cell, dir, fillers);
                 if (opts.Count == 0) return false;
                 if (options == null || opts.Count < options.Count) options = opts;
+                if (options.Count == 1) break;
             }
+
+            var floors = FloorCounts();
+            int minFloor = int.MaxValue;
+            foreach (int f in floors) minFloor = Math.Min(minFloor, f);
+
+            var weights = new List<int>(options.Count);
+            foreach (var op in options) weights.Add(Weight(op.v, op.o, floors, minFloor));
 
             while (options.Count > 0)
             {
                 int total = 0;
-                foreach (var op in options) total += Weight(op.v);
+                foreach (int w in weights) total += w;
                 int roll = rng.Next(total), idx = 0;
                 for (; idx < options.Count; idx++)
                 {
-                    roll -= Weight(options[idx].v);
+                    roll -= weights[idx];
                     if (roll < 0) break;
                 }
                 var (v, o) = options[idx];
                 options.RemoveAt(idx);
+                weights.RemoveAt(idx);
 
                 var pr = Place(v, o);
                 if (Solve(rng, fillers)) return true;
@@ -339,20 +361,21 @@ namespace Gameplay.LD.ProceduralGeneration
 
         public MapResult Generate(int seed, IList<RoomData> pool)
         {
-            RoomData startData = null;
-            finalData = null;
-            var fillers = new List<RoomData>();
+            var starts = new List<RoomData>();
+            var finals = new List<RoomData>();
+            var baseFillers = new List<RoomData>();
             foreach (var d in pool)
             {
-                if (d.kind == RoomKind.Start) startData = d;
-                else if (d.kind == RoomKind.Final) finalData = d;
-                else fillers.Add(d);
+                if (d.kind == RoomKind.Start) starts.Add(d);
+                else if (d.kind == RoomKind.Final) finals.Add(d);
+                else baseFillers.Add(d);
             }
-            if (startData == null || finalData == null) throw new InvalidOperationException("Need a start and final room");
-            fillers.Add(finalData);
+            if (starts.Count == 0 || finals.Count == 0) throw new InvalidOperationException("Need a start and final room");
 
             var rng = new System.Random(seed);
             clock = Stopwatch.StartNew();
+            
+            
             timeUp = false;
 
             for (int attempt = 1; attempt <= maxAttempts; attempt++)
@@ -364,8 +387,13 @@ namespace Gameplay.LD.ProceduralGeneration
                 used.Clear();
                 nextId = 0;
                 nodes = 0;
+                
+                var startData = starts[rng.Next(starts.Count)];
+                finalData = finals[rng.Next(finals.Count)];
+                var fillers = new List<RoomData>(baseFillers) { finalData };
 
                 var sv = Variants(startData)[0];
+                
                 var startCell = new Vector3Int(startOrigin.x, startOrigin.y, 0);
                 if (!CanPlace(sv, startCell)) throw new InvalidOperationException("La room de départ ne rentre pas à startOrigin.");
                 var start = Place(sv, startCell);
