@@ -27,6 +27,7 @@ namespace Gameplay.LD.ProceduralGeneration
     public class MapResult
     {
         public List<PlacedRoom> rooms;
+        public List<DoorConnection> doors;
         public PlacedRoom start;
         public PlacedRoom final;
         public int pathLength;
@@ -44,6 +45,15 @@ namespace Gameplay.LD.ProceduralGeneration
         public RoomVariant variant;
         public Vector3Int origin;
         public int weight;
+    }
+    
+    public class DoorConnection
+    {
+        public Vector3Int cellA;
+        public Vector3Int cellB;
+        public int direction;
+        public int roomIdA;
+        public int roomIdB;
     }
 
     public class MapGenerator
@@ -440,6 +450,37 @@ namespace Gameplay.LD.ProceduralGeneration
         }
 
       
+        List<DoorConnection> FindDoorConnections()
+        {
+            List<DoorConnection> connections = new List<DoorConnection>();
+
+            foreach (KeyValuePair<Vector3Int, GridCell> pair in gridCells)
+            {
+                for (int dir = 1; dir <= 2; dir++)
+                {
+                    if (pair.Value.sockets[dir] != Socket.Door) continue;
+
+                    Vector3Int neighbourPosition = pair.Key + directionOffsets[dir];
+                    if (!gridCells.TryGetValue(neighbourPosition, out var neighbourCell)) continue;
+
+                    if (neighbourCell.roomId == pair.Value.roomId) continue;
+
+                    int oppositeDirection = (dir + 2) % 4;
+                    if (neighbourCell.sockets[oppositeDirection] != Socket.Door) continue;
+
+                    DoorConnection connection = new DoorConnection();
+                    connection.cellA = pair.Key;
+                    connection.cellB = neighbourPosition;
+                    connection.direction = dir;
+                    connection.roomIdA = pair.Value.roomId;
+                    connection.roomIdB = neighbourCell.roomId;
+                    connections.Add(connection);
+                }
+            }
+
+            return connections;
+        }
+        
         bool Solve(System.Random random, List<RoomData> fillerRooms)
         {
             if (timeIsUp) return false;
@@ -706,11 +747,13 @@ namespace Gameplay.LD.ProceduralGeneration
                 MapResult result = new MapResult
                 {
                     rooms = new List<PlacedRoom>(placedRooms),
+                    doors = FindDoorConnections(),
                     start = startRoom,
                     final = finalRoom,
                     pathLength = pathLength,
                     attempts = attempt
                 };
+                
                 return result;
             }
 

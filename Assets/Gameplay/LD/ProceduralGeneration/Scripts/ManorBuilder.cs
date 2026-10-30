@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Gameplay.LD.ProceduralGeneration
@@ -5,7 +6,8 @@ namespace Gameplay.LD.ProceduralGeneration
     public class ManorBuilder : MonoBehaviour
     {
         public RoomData[] pool;
-
+        public Dictionary<int, Vector3> RoomOffsets { get; } = new Dictionary<int, Vector3>();
+        
         [Header("Grid")]
         public int floorCount = 2;
         public int maxExtent = 8;
@@ -33,14 +35,19 @@ namespace Gameplay.LD.ProceduralGeneration
 
         void Start()
         {
-            if (buildOnStart) Build();
+            if (buildOnStart) Build(debugSeed);
         }
 
         [ContextMenu("Build")]
-        public void Build()
+        public void DebugSeed()
         {
-            int seed = debugSeed;
+            Build(debugSeed);
+        }
+        
+        public void Build(int seed)
+        {
             Clear();
+            RoomOffsets.Clear();
 
             MapGenerator generator = new MapGenerator();
             generator.floorCount = floorCount;
@@ -73,16 +80,17 @@ namespace Gameplay.LD.ProceduralGeneration
 
                 GameObject instance = Instantiate(roomData.prefab, worldPosition, worldRotation, transform);
                 instance.name = roomData.name + "_" + room.id;
-                AlignToFootprint(instance, room);
+                Vector3 alignmentOffset = AlignToFootprint(instance, room);
+                RoomOffsets[room.id] = alignmentOffset;
             }
 
             Debug.Log("Mansion seed " + seed + " : " + Result.rooms.Count + " rooms, path start->final = " + Result.pathLength + " rooms, " + Result.attempts + " tries.");
         }
         
-        void AlignToFootprint(GameObject instance, PlacedRoom room)
+        Vector3 AlignToFootprint(GameObject instance, PlacedRoom room)
         {
             Renderer[] renderers = instance.GetComponentsInChildren<Renderer>();
-            if (renderers.Length == 0) return;
+            if (renderers.Length == 0) return Vector3.zero;
 
             Bounds bounds = renderers[0].bounds;
             for (int i = 1; i < renderers.Length; i++)
@@ -104,10 +112,13 @@ namespace Gameplay.LD.ProceduralGeneration
                 minCell.z * floorHeight,
                 -(minCell.y + maxCell.y) * 0.5f * cellSize);
 
-            instance.transform.position += new Vector3(
+            Vector3 offset = new Vector3(
                 targetPosition.x - bounds.center.x,
                 targetPosition.y - bounds.min.y,
                 targetPosition.z - bounds.center.z);
+
+            instance.transform.position += offset;
+            return offset;
         }
 
         public void Clear()
@@ -116,6 +127,11 @@ namespace Gameplay.LD.ProceduralGeneration
             {
                 Destroy(transform.GetChild(i).gameObject);
             }
+        }
+        
+        public Vector3 CellToWorld(Vector3Int cell)
+        {
+            return transform.position + new Vector3(cell.x * cellSize, cell.z * floorHeight, -cell.y * cellSize);
         }
 
         void OnDrawGizmosSelected()
