@@ -919,6 +919,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5078103501963477528, guid: 4bd2a5308d9dea843816d4dd0ac4b2e6, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5078103501963477528, guid: 4bd2a5308d9dea843816d4dd0ac4b2e6, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3138610683
+      objectReference: {fileID: 0}
     - target: {fileID: 7837670794363769680, guid: 4bd2a5308d9dea843816d4dd0ac4b2e6, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.94
@@ -1073,6 +1081,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6901628395603834001, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6901628395603834001, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1048949515
+      objectReference: {fileID: 0}
+    - target: {fileID: 6901628395603834001, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 2619473960
+      objectReference: {fileID: 0}
+    - target: {fileID: 8545049633250417979, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
+      propertyPath: onOpenBack.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3262548810679205053}
+    - target: {fileID: 8545049633250417979, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
+      propertyPath: onCloseBack.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3262548810679205053}
+    - target: {fileID: 8545049633250417979, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
+      propertyPath: onOpenFront.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3262548810679205053}
+    - target: {fileID: 8545049633250417979, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
+      propertyPath: onCloseFront.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3262548810679205053}
     - target: {fileID: 8986416144889146364, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
       propertyPath: m_Name
       value: SM_Door_Test
@@ -1080,186 +1116,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8986416144889146364, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3262548810679205050}
-    - targetCorrespondingSourceObject: {fileID: 8986416144889146364, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3262548810679205051}
-    - targetCorrespondingSourceObject: {fileID: 8986416144889146364, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3262548810679205052}
-    - targetCorrespondingSourceObject: {fileID: 8986416144889146364, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3262548810679205053}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
---- !u!1 &3262548810679205049 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8986416144889146364, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
+--- !u!95 &3262548810679205053 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 3370342352684326053, guid: 422043e403173b7428cc33615b4ad7ec, type: 3}
   m_PrefabInstance: {fileID: 3262548810679205048}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3262548810679205050
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3262548810679205049}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3811584144
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  m_InScenePlacedDisabledByDefault: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  m_InScenePlaced: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
---- !u!114 &3262548810679205051
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3262548810679205049}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ea8ad3ae955cbe47a342e7b848a3f9c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Door
-  ShowTopMostFoldoutHeaderGroup: 1
-  Outline: {fileID: 0}
-  onInteractableOpen:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractableClose:
-    m_PersistentCalls:
-      m_Calls: []
-  RequiredLevers: []
-  RequiredButtons: []
-  RequiredHeldButtons: []
-  RequiredDigicodes: []
-  canBeInteracted: 1
-  startLocked: 0
-  openSound: Enviro/Open Door
-  closeSound: Enviro/Close Door
-  faceAxis: 1
-  invertSide: 0
-  onOpenFront:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3262548810679205053}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Open
-          m_BoolArgument: 0
-        m_CallState: 2
-  onOpenBack:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3262548810679205053}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: OpenOtherSide
-          m_BoolArgument: 0
-        m_CallState: 2
-  onCloseFront:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3262548810679205053}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Close
-          m_BoolArgument: 0
-        m_CallState: 2
-  onCloseBack:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3262548810679205053}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: CloseOtherSide
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!64 &3262548810679205052
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3262548810679205049}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -841780958184596066, guid: d6a6dd9e7ebbeca44a7ec62792ea5dfb, type: 3}
---- !u!95 &3262548810679205053
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3262548810679205049}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 9fd5534097640c045b0308f32da0a48c, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &9028940255204432316
 PrefabInstance:
   m_ObjectHideFlags: 0
