@@ -113,6 +113,7 @@ namespace Gameplay.Items
         public void OnSelectedItemChange(int ratio)
         {
             if (!IsOwner) return;
+            
             AskForChangeSelectedItemRpc(ratio);
         }
         
@@ -125,6 +126,13 @@ namespace Gameplay.Items
         
         private void SelectSlot(int index)
         {
+            if (index != _selectedSlot.Value)
+            {
+                ItemInstance previous = GetCurrentItemInHand();
+                if (previous != null)
+                    UnableCondition(previous);
+            }
+            
             _selectedSlot.Value = index;
             RefreshHeldItem();
         }
@@ -273,6 +281,16 @@ namespace Gameplay.Items
 
             PickUpRpc(data.ItemPickUpRef);
         }
+
+        public void TryAddItem(ItemInstance instance)
+        {
+            int slot = FindFreeSlot();
+            if (slot == -1) return;
+            
+            SetSlot(slot, instance);
+
+            SelectSlot(slot);
+        }
         
         [Rpc(SendTo.Server)]
         private void PickUpRpc(NetworkObjectReference pickupRef)
@@ -312,8 +330,6 @@ namespace Gameplay.Items
         
         private void OnDrop()
         {
-            if (_playerController.IsDown) return;
-            
             Vector3 pos = transform.position + transform.forward;
             
             if (HasItemInHand())
@@ -321,7 +337,6 @@ namespace Gameplay.Items
         }
         
         public bool HasItemInHand() => _heldItemId.Value != -1;
-        
         
         [Rpc(SendTo.Server)]
         private void DropItemRpc(Vector3 pos)
@@ -356,14 +371,20 @@ namespace Gameplay.Items
             ItemInstance item = GetCurrentItemInHand();
             if (item == null) return;
             
+            UnableCondition(item);
+
+            SetSlot(_selectedSlot.Value, null);
+            RefreshHeldItem();
+        }
+
+        private void UnableCondition(ItemInstance item)
+        {
             foreach (IFirstAction f in item.FirstActionList)
                 f?.Condition?.DisableItemInHand();
             
             foreach (ISecondAction s in item.SecondActionList)
                 s?.Condition?.DisableItemInHand();
-            
-            SetSlot(_selectedSlot.Value, null);
-            RefreshHeldItem();
+
         }
         
         public void DestroyItemInHand()

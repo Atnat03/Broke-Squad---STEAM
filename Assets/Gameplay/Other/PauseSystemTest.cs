@@ -19,12 +19,9 @@ namespace Gameplay.Other
         
         public override void OnNetworkSpawn()
         {
-            if (IsServer)
-            {
-                _playerInput.OnPause += UpdatePause;
+            _playerInput.OnPause += UpdatePause;
                 
-                _uiPause.gameObject.SetActive(false);
-            }
+            _uiPause.gameObject.SetActive(false);
         }
 
         private void UpdatePause()

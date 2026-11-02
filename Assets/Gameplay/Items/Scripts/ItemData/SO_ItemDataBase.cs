@@ -7,7 +7,7 @@ namespace Gameplay.Items
     [CreateAssetMenu(fileName = "new Data Base", menuName = "Items/DataBase")]
     public class SO_ItemDataBase : ScriptableObject
     {
-        [SerializeField] private List<SO_Item> _data = new List<SO_Item>();
+        [SerializeField] public List<SO_Item> Data = new List<SO_Item>();
 
         private void OnValidate()
         {
@@ -16,13 +16,13 @@ namespace Gameplay.Items
 
         private void ResetIdItemData()
         {
-            for (int i = 0; i < _data.Count; i++)
+            for (int i = 0; i < Data.Count; i++)
             {
-                _data[i].SetID(i);
+                Data[i].SetID(i);
             }
         }
 
-        public int  Count => _data.Count;
-        public SO_Item GetItemData(int index) => _data[index];
+        public int  Count => Data.Count;
+        public SO_Item GetItemData(int index) => Data[index];
     }
 }

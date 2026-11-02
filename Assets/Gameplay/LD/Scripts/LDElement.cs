@@ -25,7 +25,13 @@ namespace Gameplay.LD
             _context = new LDElementContext(this);
             _modules = GetComponentsInChildren<LDElementModule>(true);
             foreach (var module in _modules)
-                module.Initialize(_context);
+            {
+                try { module.Initialize(_context); }
+                catch (System.Exception e)
+                {
+                    Debug.LogException(e, module);
+                }
+            }
 
             if (IsServer)
             {

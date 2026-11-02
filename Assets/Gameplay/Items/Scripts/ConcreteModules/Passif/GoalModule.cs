@@ -16,7 +16,8 @@ namespace Gameplay.Items
         {
             Context.SendToServer(this, new OnModuleDoAction_EVENT
             {
-                ValueB = true
+                ValueB = true,
+                ValueS = Context.Inventory.Controller.PlayerName
             });
         }
 
@@ -32,8 +33,8 @@ namespace Gameplay.Items
         {
             if (data.ValueB)
             {
+                LockDownManager.instance.StartLockDown(data.ValueS, true);
                 Context.Inventory.InvokeEvent(new OnGrabGoal_EVENT());
-                Context.Inventory.InvokeEvent(new OnLockDownStart_EVENT());
             }
             else
             {

@@ -2,8 +2,10 @@
     using System.Collections;
     using Bus;
     using Gameplay.LD.Scripts;
+    using MyPrint;
     using Unity.Netcode;
     using UnityEngine;
+    using UnityEngine.UIElements;
     using Random = UnityEngine.Random;
 
     namespace Gameplay.PlayerData
@@ -32,6 +34,8 @@
             public int MaxHp => MaxHpValue;
             public bool IsDowned => _playerDown.Value;
             public bool IsInvincible => _playerInvincible.Value;
+
+            private bool _canTakeDamage = true;
 
             public event Action<int, int> OnChangeHp;
             public event Action<bool> OnChangedInvincibility;
@@ -65,16 +69,26 @@
             public void ApplyDamage(float damage)
             {
                 if (!IsServer || damage <= 0 || _playerDown.Value || _playerInvincible.Value) return;
+                if (!_canTakeDamage) return;
 
                 _playerHp.Value = Mathf.Max(0, _playerHp.Value - (int)damage);
                 PlayHurtRpc();
                 HitMarkClientRpc();
+
+                StartCoroutine(BuggerTakeDamage());
                 
                 if (_playerHp.Value <= 0)
                 {
                     _playerDown.Value = true;
                     PlayDeathRpc();
                 }
+            }
+
+            private IEnumerator BuggerTakeDamage()
+            {
+                _canTakeDamage = false;
+                yield return new WaitForSeconds(0.5f);
+                _canTakeDamage = true;
             }
             
             public void Heal(float amount)

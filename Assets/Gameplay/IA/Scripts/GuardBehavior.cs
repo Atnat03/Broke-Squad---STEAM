@@ -5,6 +5,7 @@ using Unity.Netcode;
 using Gameplay.Controller;
 using Gameplay.Controller.Gameplay.Controller;
 using Gameplay.IA.Scripts;
+using JetBrains.Annotations;
 using MyPrint;
 using UnityEngine;
 using UnityEngine.AI;
@@ -166,17 +167,39 @@ namespace Gameplay.IA
                 
                 if(_lockDownAlertTimer.Value <= 0)
                 {
-                    InvokeEvent(new OnLockDownStart_EVENT());
+                    if(!GuardSight.Target.TryGetComponent<PlayerController>(out var controller)) return;
+
+                    TriggerLockDownClientRpc(controller.PlayerName);
                 }
             }
         }
 
+        [Rpc(SendTo.Everyone)]
+        private void TriggerLockDownClientRpc(string playerName)
+        {
+            InvokeEvent(new OnLockDownStart_EVENT
+            {
+                PlayerTriggerName = playerName
+            });
+        }
+        
         private void LateUpdate()
         {
             if (IsServer) _stateMachine.LateUpdate();
         }
-        
-        public void SetColor(Color color) => _meshRenderer.material.color = color;
+
+        public void SetColor(Color color)
+        {
+            if (!IsServer) return;
+            
+            ReplicateColorRpc(color.r, color.g, color.b);
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void ReplicateColorRpc(float r, float g, float b)
+        {
+            _meshRenderer.material.color = new Color(r, g, b);   
+        }
 
         private Color _previousColor;
         

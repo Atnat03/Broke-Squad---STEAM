@@ -6,9 +6,10 @@ namespace Gameplay.Items
 {
     public class PlayerInteract : NetworkBusListener
     {
-        [SerializeField] private PlayerCamera _playerCamera;
         [Header("References")]
+        [SerializeField] private PlayerCamera _playerCamera;
         [SerializeField] private PlayerInput _playerInput;
+        [SerializeField] private PlayerController _playerController;
         
         [Header("World Settings")]
         [SerializeField] private Camera _camera;
@@ -87,7 +88,7 @@ namespace Gameplay.Items
                 _playerCamera.ReleaseOverride();
                 return;
             }
-
+            
             IInteractable target = _currentHoverInteractable ?? GetAimingInteractable();
             if (target == null) return;
 

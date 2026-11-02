@@ -7,6 +7,8 @@ namespace Gameplay.Controller
 {
     public class PlayerInput : MonoBehaviour
     {
+        private PlayerController _controller;
+        
         private Player _playerInputs;
         
         public Action OnStartLeftInput;
@@ -45,6 +47,7 @@ namespace Gameplay.Controller
         private void Awake()
         {
             _playerInputs = new Player();
+            _controller = GetComponent<PlayerController>();
         }
 
         private void OnEnable()
@@ -126,21 +129,29 @@ namespace Gameplay.Controller
 
         private void PerformLeftClick(InputAction.CallbackContext context)
         {
+            if (_controller.IsDown) return;
+            
             OnStartLeftInput?.Invoke();
         }
 
         private void PerformRightClick(InputAction.CallbackContext context)
         {
+            if (_controller.IsDown) return;
+            
             OnStartRightInput?.Invoke();
         }
 
         private void PerformLeftRelease(InputAction.CallbackContext context)
         {
+            if (_controller.IsDown) return;
+            
             OnEndLeftInput?.Invoke();
         }
 
         private void PerformRightRelease(InputAction.CallbackContext context)
         {
+            if (_controller.IsDown) return;
+            
             OnEndRightInput?.Invoke();
         }
 
@@ -183,6 +194,8 @@ namespace Gameplay.Controller
 
         private void PerformInteract(InputAction.CallbackContext context)
         {
+            if (_controller.IsDown) return;
+            
             OnInteractInput?.Invoke();
         }
 
