@@ -281,6 +281,16 @@ namespace Gameplay.Items
 
             PickUpRpc(data.ItemPickUpRef);
         }
+
+        public void TryAddItem(ItemInstance instance)
+        {
+            int slot = FindFreeSlot();
+            if (slot == -1) return;
+            
+            SetSlot(slot, instance);
+
+            SelectSlot(slot);
+        }
         
         [Rpc(SendTo.Server)]
         private void PickUpRpc(NetworkObjectReference pickupRef)
@@ -327,7 +337,6 @@ namespace Gameplay.Items
         }
         
         public bool HasItemInHand() => _heldItemId.Value != -1;
-        
         
         [Rpc(SendTo.Server)]
         private void DropItemRpc(Vector3 pos)
