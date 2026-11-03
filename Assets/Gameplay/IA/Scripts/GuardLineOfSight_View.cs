@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using Gameplay.IA.Refacto;
 using Gameplay.IA.Scripts;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace Gameplay.IA
 {
     public class GuardLineOfSight_View : MonoBehaviour
     {
-        [SerializeField] private GuardLineOfSight _lineOfSight;
+        [SerializeField] private GuardLineSight _lineOfSight;
 
         [Header("Visual Sight")]
         [SerializeField] private Transform[] _eyesPosition;
@@ -50,8 +51,8 @@ namespace Gameplay.IA
             Vector3 originLeft = leftEye.position;
             Vector3 originRight = rightEye.position;
 
-            Vector3 left = originLeft + Quaternion.AngleAxis(_lineOfSight.Angle * 0.5f, Vector3.up) * leftEye.forward * _lineOfSight.Radius;
-            Vector3 right = originRight + Quaternion.AngleAxis(-_lineOfSight.Angle * 0.5f, Vector3.up) * rightEye.forward * _lineOfSight.Radius;
+            Vector3 left = originLeft + Quaternion.AngleAxis(_lineOfSight.Brain.CurrentSetting.Angle * 0.5f, Vector3.up) * leftEye.forward * _lineOfSight.Brain.CurrentSetting.Radius;
+            Vector3 right = originRight + Quaternion.AngleAxis(-_lineOfSight.Brain.CurrentSetting.Angle * 0.5f, Vector3.up) * rightEye.forward * _lineOfSight.Brain.CurrentSetting.Radius;
 
             Vector3 yo = Vector3.up * (_originYSize * 0.5f);
             Vector3 yf = Vector3.up * (_farYSize * 0.5f);
@@ -111,14 +112,14 @@ namespace Gameplay.IA
         {
             Transform eye = _eyesPosition[0];
 
-            return eye.position + Quaternion.AngleAxis(-_lineOfSight.Angle * 0.5f, Vector3.up) * eye.forward * _lineOfSight.Radius;
+            return eye.position + Quaternion.AngleAxis(-_lineOfSight.Brain.CurrentSetting.Angle * 0.5f, Vector3.up) * eye.forward * _lineOfSight.Brain.CurrentSetting.Radius;
         }
 
         private Vector3 GetFarRight()
         {
             Transform eye = _eyesPosition[1];
 
-            return eye.position + Quaternion.AngleAxis(_lineOfSight.Angle * 0.5f, Vector3.up) * eye.forward * _lineOfSight.Radius;
+            return eye.position + Quaternion.AngleAxis(_lineOfSight.Brain.CurrentSetting.Angle * 0.5f, Vector3.up) * eye.forward * _lineOfSight.Brain.CurrentSetting.Radius;
         }
 
     }

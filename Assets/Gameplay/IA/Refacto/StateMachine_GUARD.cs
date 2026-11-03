@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Bus;
 using Gameplay.IA.Refacto.States;
 
@@ -6,21 +7,24 @@ namespace Gameplay.IA.Refacto
 {
     public class StateMachine_GUARD : NetworkBusListener
     {
-        private BaseState_GUARD _currentState;
+        private readonly Dictionary<Type, IState_GUARD> _states = new();
+        private IState_GUARD _current;
+
+        public IState_GUARD Current => _current;
         
-        private PatrolState_GUARD _patrolState;
-        private PursuitState_GUARD _pursuitState;
-
-        private void Start()
+        public void Register(IState_GUARD state) => _states[state.GetType()] = state;
+        
+        public TState Change<TState, TParams>(TParams p) where TState : BaseState_GUARD<TParams>
         {
-            _currentState = _patrolState;
-            
-            _currentState.EnterState(this);
-        }
+            _current?.ExitState();
 
-        private void Update()
-        {
-            _currentState.UpdateState(this);
+            var next = (TState)_states[typeof(TState)];
+
+            _current = next;
+
+            next.EnterState(p);
+
+            return next;
         }
     }
 }

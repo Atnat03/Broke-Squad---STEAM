@@ -1,9 +1,20 @@
-﻿namespace Gameplay.IA.Refacto.States
+﻿using UnityEngine;
+
+namespace Gameplay.IA.Refacto.States
 {
-    public abstract class BaseState_GUARD
+    public abstract class BaseState_GUARD<TParams> : IState_GUARD
     {
-        public abstract void EnterState(StateMachine_GUARD machine);
-        public abstract void UpdateState(StateMachine_GUARD machine);
-        public abstract void ExitState(StateMachine_GUARD machine);
+        protected GuardBrain Brain;
+        protected Transform _transform;
+        
+        public void Initialise(GuardBrain brain)
+        {
+            Brain = brain;
+            _transform = brain.transform;
+        }
+
+        public abstract void EnterState(TParams p);
+        public abstract void UpdateState();
+        public abstract void ExitState();
     }
 }
