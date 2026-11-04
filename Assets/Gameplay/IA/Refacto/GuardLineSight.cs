@@ -38,7 +38,7 @@ namespace Gameplay.IA.Refacto
         public void Initialise(GuardBrain brain) => Brain = brain;
         
         // Check if Player is in front of him
-        public Transform PerformFindingPlayer()
+        public Transform PerformFindingPlayer(Transform forcedTarget = null)
         {
             if (Time.time >= _nextCheck)
             {
@@ -46,10 +46,10 @@ namespace Gameplay.IA.Refacto
                 _visibleTargetPlayer = FindVisible(Brain.CurrentSetting.TargetPlayerMask, _bufferPlayer);
             }
             
-            return UpdatePlayerDetection();
+            return UpdatePlayerDetection(forcedTarget);
         }
 
-        private Transform UpdatePlayerDetection()
+        private Transform UpdatePlayerDetection(Transform forcedTarget)
         {
             if (_visibleTargetPlayer)
             {
@@ -72,6 +72,12 @@ namespace Gameplay.IA.Refacto
                     _finalTarget = _visibleTargetPlayer;
                 }
             }
+            else if (forcedTarget)
+            {
+                LastSeenPosition = forcedTarget.position;
+                _finalTarget = forcedTarget;
+                _detectionTimer.Value = Brain.CurrentSetting.DetectionLevel;
+            }         
             else
             {
                 _detectionTimer.Value = Mathf.Max(_detectionTimer.Value - Time.deltaTime * Brain.CurrentSetting.ForgettingSpeed, 0f);

@@ -31,8 +31,6 @@ namespace Gameplay.IA.Refacto.States
 
         public override void UpdateState()
         {
-            ABPrint.Print("Patrol State");
-
             if (_currentPatrolPoints == null || _currentPatrolPoints.Length == 0)
                 return;
             
@@ -88,6 +86,11 @@ namespace Gameplay.IA.Refacto.States
         {
             _currentPatrolNode = (_currentPatrolNode + 1) % _currentPatrolPoints.Length;
             Brain.Motor.SetTarget(_currentPatrolPoints[_currentPatrolNode].position);
+        }
+        
+        public void UpdateSetting()
+        {
+            Brain.Motor.SetSpeed(Brain.CurrentSetting.PatrolSpeed);
         }
     }
 }
