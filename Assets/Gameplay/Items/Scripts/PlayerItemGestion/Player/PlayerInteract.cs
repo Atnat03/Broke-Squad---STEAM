@@ -6,9 +6,10 @@ namespace Gameplay.Items
 {
     public class PlayerInteract : NetworkBusListener
     {
-        [SerializeField] private PlayerCamera _playerCamera;
         [Header("References")]
+        [SerializeField] private PlayerCamera _playerCamera;
         [SerializeField] private PlayerInput _playerInput;
+        [SerializeField] private PlayerController _playerController;
         
         [Header("World Settings")]
         [SerializeField] private Camera _camera;
@@ -16,7 +17,7 @@ namespace Gameplay.Items
         [SerializeField] private LayerMask _interactableMask;
         [SerializeField] private LayerMask _obstacleMask;
         private IInteractable _currentHoverInteractable = null;
-        
+        private IHoldInteractable _heldInteractable;
         #region Network Start
         
         public override void OnNetworkSpawn()
@@ -24,6 +25,7 @@ namespace Gameplay.Items
             if(IsOwner)
             {
                 _playerInput.OnInteractInput += TryToInteract;
+                _playerInput.OnInteractInputCanceled += ReleaseHold;
             }
         }
         
@@ -32,6 +34,8 @@ namespace Gameplay.Items
             if(IsOwner)
             {
                 _playerInput.OnInteractInput -= TryToInteract;
+                _playerInput.OnInteractInputCanceled -= ReleaseHold;
+                ReleaseHold();
             }
         }
         
@@ -43,6 +47,9 @@ namespace Gameplay.Items
             if (!IsOwner || _camera == null) return;
 
             IInteractable target = (_playerCamera != null && _playerCamera.HasOverride) ? null : GetAimingInteractable();
+            
+            if (_heldInteractable != null && !ReferenceEquals(target, _heldInteractable))
+                ReleaseHold();
             
             if (target == _currentHoverInteractable) return;
             
@@ -62,7 +69,7 @@ namespace Gameplay.Items
             int rayMask = _interactableMask | _obstacleMask;
 
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
-                    out RaycastHit hit, _maxDistanceToInteract, rayMask, QueryTriggerInteraction.Ignore))
+                    out RaycastHit hit, _maxDistanceToInteract, rayMask, QueryTriggerInteraction.Collide))
             {
                 if (hit.collider.TryGetComponent(out IInteractable interact))
                 {
@@ -82,19 +89,25 @@ namespace Gameplay.Items
                 return;
             }
             
-            if (_currentHoverInteractable != null)
+            IInteractable target = _currentHoverInteractable ?? GetAimingInteractable();
+            if (target == null) return;
+
+            if (target is IHoldInteractable hold)
             {
-                _currentHoverInteractable.Interact(OwnerClientId);
+                _heldInteractable = hold;
+                hold.HoldStart(OwnerClientId);
             }
             else
             {
-                IInteractable target = GetAimingInteractable();
-
-                if (target != null)
-                {
-                    target.Interact(OwnerClientId);
-                }
+                target.Interact(OwnerClientId);
             }
+        }
+
+        private void ReleaseHold()
+        {
+            if (_heldInteractable == null) return;
+            _heldInteractable.HoldEnd(OwnerClientId);
+            _heldInteractable = null;
         }
     }
 }

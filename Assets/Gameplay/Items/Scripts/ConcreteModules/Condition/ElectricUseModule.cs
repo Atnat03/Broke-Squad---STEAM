@@ -14,6 +14,8 @@ namespace Gameplay.Items
         private float _currentPercentValue;
         private FixedString32Bytes _keyEvent = "ELECTRIC_USE_MODULE";
         
+        private bool _isInHand;
+        
         protected override void SetModule() => _currentPercentValue = _startPercentValue;
         public bool CheckCondition() => _currentPercentValue-_electricNeededToUse >= 0;
 
@@ -37,26 +39,18 @@ namespace Gameplay.Items
 
         protected override void OnComeInHand()
         {
+            _isInHand = true;
             if (!Context.Inventory.IsServer) return;
-            
-            Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
-            {
-                ClientId = Context.Inventory.OwnerClientId,
-                KeyEvent = _keyEvent,
-                ValueB = true,
-                ValueF = _currentPercentValue,
-                ValueI = -1
-            });
+
+            SendUI(true, _currentPercentValue, -1);
         }
 
         public void DisableItemInHand()
         {
-            Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
-            {
-                ClientId = Context.Inventory.OwnerClientId,
-                KeyEvent = _keyEvent,
-                ValueB = false,
-            });
+            _isInHand = false;
+            if (!Context.Inventory.IsServer) return;
+
+            SendUI(false, 0f, 0);
         }
         
         public bool AddEnergy(float amount)
@@ -65,7 +59,23 @@ namespace Gameplay.Items
                 return false;
 
             _currentPercentValue = Mathf.Min(_currentPercentValue + amount, _maxPercentValue);
+
+            if (_isInHand)
+                SendUI(true, _currentPercentValue, 0);
+
             return true;
+        }
+        
+        private void SendUI(bool visible, float value, int snapFlag)
+        {
+            Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
+            {
+                ClientId = Context.Inventory.OwnerClientId,
+                KeyEvent = _keyEvent,
+                ValueB = visible,
+                ValueF = value,
+                ValueI = snapFlag
+            });
         }
 
         public void ServerExecute(OnModuleDoAction_EVENT data) => UseItem();

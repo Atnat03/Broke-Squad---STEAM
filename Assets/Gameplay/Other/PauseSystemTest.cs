@@ -19,12 +19,9 @@ namespace Gameplay.Other
         
         public override void OnNetworkSpawn()
         {
-            if (IsServer)
-            {
-                _playerInput.OnPause += UpdatePause;
+            _playerInput.OnPause += UpdatePause;
                 
-                _uiPause.gameObject.SetActive(false);
-            }
+            _uiPause.gameObject.SetActive(false);
         }
 
         private void UpdatePause()
@@ -35,6 +32,7 @@ namespace Gameplay.Other
             
             Cursor.visible = !_isPause;
             Cursor.lockState = !_isPause ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = _isPause;
 
             _playerController.SetInputEnabled(!_isPause);
         }

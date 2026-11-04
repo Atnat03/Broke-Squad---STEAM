@@ -16,10 +16,8 @@ namespace Gameplay.Items
         {
             if (_rb == null && !item.TryGetComponent(out _rb)) return;
 
-            float speed = collision.impulse.magnitude / _rb.mass;
+            float speed = collision.impulse.magnitude;
             
-            ABPrint.Print("Speed : " + speed);
-
             if (speed <= _minVelocity) return;
 
             if (collision.collider.TryGetComponent(out ActivatedByItem ld))

@@ -1,18 +1,15 @@
-﻿namespace Gameplay.LD
+﻿using UnityEngine;
+
+namespace Gameplay.LD
 {
     public class SetFlagEffect : LDEffectModule
     {
-        private LDFlag _flag;
-        private bool _value;
-        private bool _toggle;
-
-        protected override void OnInitialize(ModuleConfig config)
-        {
-            SetFlagEffectConfig c = (SetFlagEffectConfig)config;
-            _flag = c.Flag;
-            _value = c.Value;
-            _toggle = c.Toggle;
-        }
+        [Tooltip("Flag a modifié")]
+        [SerializeField] private LDFlag _flag = LDFlag.Armed;
+        [Tooltip("Valeur appliquée au flag, ignoré si toogle est coché")]
+        [SerializeField] private bool _value;
+        [Tooltip("Inverse le flag à chaque activation")]
+        [SerializeField] private bool _toggle;
 
         public override void Activate(LDActivation activation)
         {

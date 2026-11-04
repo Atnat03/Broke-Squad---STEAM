@@ -16,6 +16,8 @@ public class Door : OnlineInteractable
     [Header("Interactables Dependents")]
     [SerializeField] List<LeverDoor> RequiredLevers;
     [SerializeField] List<ButtonDoor> RequiredButtons;
+    [SerializeField] List<HoldButtonDoor> RequiredHeldButtons;
+    [SerializeField] List<Digicode> RequiredDigicodes;
     [SerializeField] bool canBeInteracted;
     [SerializeField] bool startLocked;
     
@@ -51,6 +53,8 @@ public class Door : OnlineInteractable
         _locked.Value = startLocked;
         foreach (var l in RequiredLevers) l.StateChanged += Evaluate;
         foreach (var b in RequiredButtons) b.StateChanged += Evaluate;
+        foreach (var b in RequiredHeldButtons) b.StateChanged += Evaluate;
+        foreach (var d in RequiredDigicodes) d.StateChanged += Evaluate;
     }
 
     public override void OnNetworkDespawn()
@@ -60,6 +64,8 @@ public class Door : OnlineInteractable
         if (!IsServer) return;
         foreach (var l in RequiredLevers) l.StateChanged -= Evaluate;
         foreach (var b in RequiredButtons) b.StateChanged -= Evaluate;
+        foreach (var b in RequiredHeldButtons) b.StateChanged -= Evaluate;
+        foreach (var d in RequiredDigicodes) d.StateChanged -= Evaluate;
     }
     
     void OnStateChanged(int previous, int current)
@@ -76,7 +82,9 @@ public class Door : OnlineInteractable
                 soundName = closeSound,
                 position = transform.position,
                 volume = 0.8f,
-                pitch = Random.Range(0.95f, 1.05f) 
+                pitch = Random.Range(0.95f, 1.05f),
+                is2D = false,
+                shared = false
             });
             return;
         }
@@ -86,7 +94,9 @@ public class Door : OnlineInteractable
             soundName = openSound,
             position = transform.position,
             volume = 0.8f,
-            pitch = Random.Range(0.95f, 1.05f) 
+            pitch = Random.Range(0.95f, 1.05f),
+            is2D = false,
+            shared = false
         });
         if (current > 0) onOpenFront?.Invoke();
         else onOpenBack?.Invoke();
@@ -99,9 +109,12 @@ public class Door : OnlineInteractable
         bool allActive = true;
         foreach (var l in RequiredLevers) allActive &= l.activated.Value;
         foreach (var b in RequiredButtons) allActive &= b.activated.Value;
+        foreach (var b in RequiredHeldButtons) allActive &= b.Activated.Value;
+        foreach (var d in RequiredDigicodes) allActive &= d.unlocked.Value;
 
         bool shouldBeLocked = !allActive;
-        if (_locked.Value == shouldBeLocked) return; 
+        
+        //if (_locked.Value == shouldBeLocked) return; 
 
         _locked.Value = shouldBeLocked;
         SetOpen(allActive); 
@@ -120,17 +133,10 @@ public class Door : OnlineInteractable
 
     protected override void OnInteract()
     {
-        ABPrint.Print("canBeInteracted");
-
         if(!canBeInteracted) return;
-        
-        ABPrint.Print("_locked");
-
         
         if (_locked.Value) return;
         
-        ABPrint.Print("OnInteract");
-
         SetOpen(_state.Value == 0);
     }
 

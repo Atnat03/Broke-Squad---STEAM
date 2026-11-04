@@ -10,6 +10,8 @@ namespace Gameplay.IA
             _behavior.SetColor(_color);
 
             _motor.StopAgent();
+            
+            _behavior.NetworkObject.Despawn();
         }
     }
 }

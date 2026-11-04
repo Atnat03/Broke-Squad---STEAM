@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
   m_Name: SO_IT_Dumbell
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
-  ID: 0
+  ID: 7
   ItemName: Dumbell
   VisualPrefab: {fileID: 5886142170574968492, guid: cea6dca334a14d549b4feb9088dd17b8, type: 3}
   PickupPrefab: {fileID: 6583028339843404574, guid: 0bc3766d156b7334cbf97d7f28b66975, type: 3}
   Icon: {fileID: 21300000, guid: 7464c0a64b8ffa848af50a4c1827275d, type: 3}
+  OffsetInHand: {x: 0, y: 0, z: 0}
   FirstActionList: []
   SecondActionList:
   - rid: 7202345609054912641
@@ -38,6 +39,8 @@ MonoBehaviour:
         _minTorqueForce: {x: 0, y: 0, z: 0}
         _maxTorqueForce: {x: 5, y: 0, z: 0}
         _spawnDistance: {x: 0.2, y: 0, z: 0.7}
+        _stringName: Joueur/Throw Item
+        _volume: 0.5
     - rid: 7202345609054912642
       type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -72,4 +75,3 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 3
         _canDamagePlayer: 1
-        _minVelocityForSound: 3

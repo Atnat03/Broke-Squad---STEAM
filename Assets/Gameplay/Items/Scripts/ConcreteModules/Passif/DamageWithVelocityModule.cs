@@ -1,7 +1,6 @@
 ﻿using System;
 using Gameplay.LD.Scripts;
 using MyPrint;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Gameplay.Items
@@ -17,7 +16,6 @@ namespace Gameplay.Items
         [SerializeField] private float _weightFactor = 1;
         [SerializeField] private float _mass = 1;
         [SerializeField] private bool _canDamagePlayer = false;
-        //[SerializeField] private float _minVelocityForSound = 3;
         
         private Rigidbody _rb;
         
@@ -26,11 +24,11 @@ namespace Gameplay.Items
             if (collision.collider == item.GetComponent<Collider>()) return;
             if (_rb == null && !item.TryGetComponent(out _rb)) return;
 
-            float speed = collision.impulse.magnitude / _rb.mass;
+            float speed = _rb.linearVelocity.magnitude * _mass;
             
             if (collision.gameObject.TryGetComponent<IDamageable>(out var damage))
             {
-                if (speed <= _minVelocityForDamage) return;
+               if (speed <= 0.5f) return;
 
                 float t = Mathf.InverseLerp(_minVelocityForDamage, _maxVelocity, speed);
                 float curved = _damageCurve.Evaluate(t);
@@ -40,8 +38,6 @@ namespace Gameplay.Items
 
                 if (collision.gameObject.TryGetComponent<PlayerData.PlayerHealth>(out var damageable))
                 {
-                    ABPrint.Print("Is a player", ABColor.Purple);
-                    
                     if (!_canDamagePlayer)
                         return;
                 }

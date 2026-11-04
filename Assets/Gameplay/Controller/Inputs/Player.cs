@@ -563,6 +563,16 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""CheatPannel"",
+                    ""type"": ""Button"",
+                    ""id"": ""1c97ae42-3abb-4c8e-a6a3-98231aec2b36"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -609,6 +619,17 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""action"": ""Revive"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""105d20d6-8a3a-4260-8ea3-f6628ec76ca2"",
+                    ""path"": ""<Keyboard>/0"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CheatPannel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -639,6 +660,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
         m_Cheats_Revive = m_Cheats.FindAction("Revive", throwIfNotFound: true);
         m_Cheats_Heal = m_Cheats.FindAction("Heal", throwIfNotFound: true);
         m_Cheats_TakeDamage = m_Cheats.FindAction("Take Damage", throwIfNotFound: true);
+        m_Cheats_CheatPannel = m_Cheats.FindAction("CheatPannel", throwIfNotFound: true);
     }
 
     ~@Player()
@@ -985,6 +1007,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Cheats_Revive;
     private readonly InputAction m_Cheats_Heal;
     private readonly InputAction m_Cheats_TakeDamage;
+    private readonly InputAction m_Cheats_CheatPannel;
     /// <summary>
     /// Provides access to input actions defined in input action map "Cheats".
     /// </summary>
@@ -1012,6 +1035,10 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Cheats/TakeDamage".
         /// </summary>
         public InputAction @TakeDamage => m_Wrapper.m_Cheats_TakeDamage;
+        /// <summary>
+        /// Provides access to the underlying input action "Cheats/CheatPannel".
+        /// </summary>
+        public InputAction @CheatPannel => m_Wrapper.m_Cheats_CheatPannel;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1050,6 +1077,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @TakeDamage.started += instance.OnTakeDamage;
             @TakeDamage.performed += instance.OnTakeDamage;
             @TakeDamage.canceled += instance.OnTakeDamage;
+            @CheatPannel.started += instance.OnCheatPannel;
+            @CheatPannel.performed += instance.OnCheatPannel;
+            @CheatPannel.canceled += instance.OnCheatPannel;
         }
 
         /// <summary>
@@ -1073,6 +1103,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @TakeDamage.started -= instance.OnTakeDamage;
             @TakeDamage.performed -= instance.OnTakeDamage;
             @TakeDamage.canceled -= instance.OnTakeDamage;
+            @CheatPannel.started -= instance.OnCheatPannel;
+            @CheatPannel.performed -= instance.OnCheatPannel;
+            @CheatPannel.canceled -= instance.OnCheatPannel;
         }
 
         /// <summary>
@@ -1261,5 +1294,12 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTakeDamage(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CheatPannel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCheatPannel(InputAction.CallbackContext context);
     }
 }

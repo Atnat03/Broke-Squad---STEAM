@@ -11,13 +11,15 @@ namespace Network.Connections
         public string PlayerName = "";
         public int PlayerColor = 0;
         
+        [SerializeField] private string[] _potentialPseudo;
+        
         void Awake()
         {
             if(instance == null)
             {
                 instance = this;
 
-                PlayerName = "Player :" + Random.Range(0, 10000);
+                PlayerName = _potentialPseudo[Random.Range(0, _potentialPseudo.Length)];
                 
                 DontDestroyOnLoad(gameObject);
             }

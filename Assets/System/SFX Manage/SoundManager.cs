@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using MyPrint;
 using UnityEngine;
 using SFX_Manage;
+using UnityEngine.Audio;
 
 namespace SFX_Manage
 {
@@ -11,12 +12,11 @@ namespace SFX_Manage
     {
         [SerializeField] private List<SoundsDataSO> soundsData = new();
         [SerializeField] private int poolSize = 10;
+        [SerializeField] private AudioMixerGroup sfxGroup;
 
         private readonly Dictionary<string, AudioClip> clips = new();
         private AudioSource[] pool;
         private int nextSource;
-        private float masterVolume = 1f;
-        private bool isMuted;
 
         private void Awake()
         {
@@ -24,7 +24,6 @@ namespace SFX_Manage
             BuildPool();
 
             ListenToEvent<PlaySoundEvent>(OnPlaySound);
-            ListenToEvent<SfxSettingsChangedEvent>(OnSettingsChanged);
         }
 
         private void BuildClipDictionary()
@@ -51,13 +50,13 @@ namespace SFX_Manage
                 src.transform.SetParent(transform);
                 src.playOnAwake = false;
                 src.spatialBlend = 1f; // 3D sound
+                src.outputAudioMixerGroup = sfxGroup;
                 pool[i] = src;
             }
         }
 
         private void OnPlaySound(PlaySoundEvent e)
         {
-            if (isMuted) return;
             
             if (!clips.TryGetValue(e.soundName, out AudioClip clip))
             {
@@ -70,16 +69,11 @@ namespace SFX_Manage
 
             src.transform.position = e.position;
             src.clip = clip;
-            src.volume = (e.volume <= 0f ? 1f : e.volume) * masterVolume;
+            src.volume = (e.volume <= 0f ? 1f : e.volume);
             src.pitch = e.pitch <= 0f ? 1f : e.pitch;
             src.spatialBlend = e.is2D ? 0f : 1f;
             src.Play();
         }
-
-        private void OnSettingsChanged(SfxSettingsChangedEvent e)
-        {
-            masterVolume = e.volume;
-            isMuted = e.muted;
-        }
+        
     }
 }

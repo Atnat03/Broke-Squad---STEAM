@@ -121,7 +121,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2867212068572513337}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
   m_Name: 
@@ -173,14 +173,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5893035075964983996}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0.0000020191073, y: -0.7071068, z: 0.7071068, w: 0.0000020191073}
   m_LocalPosition: {x: 18.772661, y: -0.155, z: -6.199}
   m_LocalScale: {x: 3.3, y: 0.5, z: 0.15}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3214503713441736198}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 180}
 --- !u!65 &8859401312546771377
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -200,7 +200,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 1.1, y: 1.2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &8352358356435335948
 Rigidbody:
@@ -316,4 +316,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ItemPickup
   ShowTopMostFoldoutHeaderGroup: 1
   _rackRatio: 0.5
-  _itemIndex: {fileID: 11400000, guid: 6d9fcf2e21e70f54a91d32a5bfb99797, type: 2}
+  _itemData: {fileID: 11400000, guid: 6d9fcf2e21e70f54a91d32a5bfb99797, type: 2}
+  _canBeVisibleByMiniMap: 0

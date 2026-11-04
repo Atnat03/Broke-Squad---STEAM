@@ -15,24 +15,21 @@ public class AlwaysInFrontOfCam : MonoBehaviour
 
 	#region Fonctions
 
-	public void Start()
-	{
-		cam = Camera.main;
-	}
-
 	private void LateUpdate()
 	{
-		if (cam != null)
+		if (!cam || !cam.isActiveAndEnabled)
+			cam = Camera.main;
+
+		if (!cam) return;
+
+		Vector3 directionToCamera = cam.transform.position - transform.position;
+		transform.rotation = Quaternion.LookRotation(-directionToCamera);
+
+		if (_scaleModifier)
 		{
-			Vector3 directionToCamera = cam.transform.position - transform.position;
-			transform.rotation = Quaternion.LookRotation(-directionToCamera);
-			
-			if (_scaleModifier)
-			{
-				float distance = Vector3.Distance(cam.transform.position, transform.position);
-				float normalizedDistance = Mathf.Clamp01(distance / _distanceMax);
-				transform.localScale = Vector3.one * Mathf.Lerp(_scaleMap.x, _scaleMap.y, normalizedDistance);
-			}		
+			float distance = directionToCamera.magnitude;
+			float normalizedDistance = Mathf.Clamp01(distance / _distanceMax);
+			transform.localScale = Vector3.one * Mathf.Lerp(_scaleMap.x, _scaleMap.y, normalizedDistance);
 		}
 	}
 

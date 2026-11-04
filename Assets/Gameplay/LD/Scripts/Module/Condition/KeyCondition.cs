@@ -8,17 +8,9 @@ namespace Gameplay.LD
 {
     public class KeyCondition : LDConditionModule
     {
-        private int _idKey;
+        [SerializeField] private int _idKey;
+        [SerializeField] private bool _canOpenWithoutKey;
         private bool _isAlreadyOpened;
-        private bool _canOpenWithoutKey;
-        
-        protected override void OnInitialize(ModuleConfig config)
-        {
-            var c = (KeyConditionConfig)config;
-            _idKey = c.IdKey;
-            _canOpenWithoutKey = c.CanOpenWithoutKey;
-        }
-
         
         public override bool CanActivate(LDActivation activation)
         {
