@@ -267,7 +267,7 @@ GameObject:
   - component: {fileID: 2796766331206680721}
   - component: {fileID: 9085920148904127616}
   m_Layer: 0
-  m_Name: Value
+  m_Name: ?_Value
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -325,81 +325,6 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 1
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!1 &3900368196162797239
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2141579233655498443}
-  - component: {fileID: 6472770794742189365}
-  - component: {fileID: 220882767640002787}
-  m_Layer: 0
-  m_Name: BG
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &2141579233655498443
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3900368196162797239}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 9043008185876689386}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 2.6999931}
-  m_SizeDelta: {x: 25, y: 40}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &6472770794742189365
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3900368196162797239}
-  m_CullTransparentMesh: 1
---- !u!114 &220882767640002787
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3900368196162797239}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.509434, g: 0.49741903, b: 0.49741903, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 27516f7d53def3b4e91e7e66f86f86d1, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
@@ -495,7 +420,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &9043008185876689386
 RectTransform:
   m_ObjectHideFlags: 0
@@ -508,7 +433,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2141579233655498443}
   - {fileID: 7440614063421484034}
   m_Father: {fileID: 5568024862009557984}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -529,7 +453,7 @@ GameObject:
   - component: {fileID: 5177210149410707786}
   - component: {fileID: 1968753012567195733}
   m_Layer: 0
-  m_Name: Image
+  m_Name: '!_Image'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1104,6 +1028,7 @@ MonoBehaviour:
   _gameObjectToDisableWhenDie:
   - {fileID: 7494600565116992450}
   - {fileID: 5647966420751996520}
+  _strengthToBeingAwake: 5
 --- !u!114 &19432188419709066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1145,6 +1070,7 @@ MonoBehaviour:
   _playerHasBeenSeenColor: {r: 1, g: 0, b: 0, a: 1}
   _hpBarImage: {fileID: 4886308648531983846}
   _deadMaterial: {fileID: 2100000, guid: 8a5858cba668a024ab1618c5ded6329d, type: 2}
+  _investigationImage: {fileID: 9085920148904127616}
   _meshRenderer: {fileID: 2460456585950056686}
   _alertedMaterial: {fileID: 2100000, guid: af5d4ed78663fd1429bcd1ec7c9146e1, type: 2}
   _lockDownTimerImage: {fileID: 5358130343869675796}
@@ -1324,8 +1250,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.5052106, y: 1.1767131, z: 0.7747212}
-  m_Center: {x: -0.035342146, y: -0.08835581, z: -0.11263989}
+  m_Size: {x: 0.5052106, y: 1.1767131, z: 1.2225398}
+  m_Center: {x: -0.035342146, y: -0.08835581, z: 0.111268766}
 --- !u!54 &1832420483947050260
 Rigidbody:
   m_ObjectHideFlags: 0
