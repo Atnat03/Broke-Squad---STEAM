@@ -280,12 +280,13 @@ namespace Gameplay.IA
         {
             if (f >= _strengthToBeingAwake)
             {
-                ABPrint.Print("Change to investigate state", ABColor.Yellow);
-
-                ChangeState<InvestigateState_GUARD, InvestigateParam>(new InvestigateParam
+                if(CurrentState is PatrolState_GUARD)
                 {
-                    TargetPosition = newTarget.position,
-                });
+                    ChangeState<InvestigateState_GUARD, InvestigateParam>(new InvestigateParam
+                    {
+                        TargetPosition = newTarget.position,
+                    });
+                }
             }
         }
     }
