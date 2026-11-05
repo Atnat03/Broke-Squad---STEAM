@@ -8,5 +8,6 @@ namespace Gameplay.Items
         
         public void StartFirstAction();
         public void StopFirstAction();
+        public void OnNotInHand();
     }
 }

@@ -77,7 +77,5 @@ namespace Gameplay.Controller
             
             if (newDelay >= 0f) _regenTimer = Mathf.Min(_regenTimer, newDelay);
         }
-
-       
     }
 }
