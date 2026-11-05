@@ -61,12 +61,23 @@ namespace Gameplay.Items
 
         public void OnNotInHand()
         {
+            if (_decayCoroutine != null)
+            {
+                Context.Inventory.StopCoroutine(_decayCoroutine);
+                _decayCoroutine = null;
+            }
+            
+            _currentFill = 0;
+            
             UpdateView(false);
         }
 
         private void HandleOpenItem()
         {
-            Context.SendToServer(this, new OnModuleDoAction_EVENT());
+            Context.SendToServer(this, new OnModuleDoAction_EVENT
+            {
+                Position = Context.Camera.transform.position + Context.Camera.transform.forward * 0.5f
+            });
             
             UpdateView(false);
             
@@ -75,7 +86,7 @@ namespace Gameplay.Items
         
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {
-            Context.SpawnGameObject(_spawnItem.gameObject, Context.Camera.transform.forward * 0.25f, Quaternion.identity);
+            Context.SpawnGameObject(_spawnItem.gameObject, data.Position, Quaternion.identity);
         }
 
         IEnumerator DecayCoroutine()
