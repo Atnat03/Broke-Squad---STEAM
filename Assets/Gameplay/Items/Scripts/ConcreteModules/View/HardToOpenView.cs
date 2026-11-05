@@ -15,6 +15,9 @@ namespace Gameplay.Items
         private void OnEnable()
         {
             ListenToEvent<OnModuleDoAction_EVENT>(UpdateFill);
+            
+            _fillImage.transform.parent.gameObject.SetActive(false);
+            _fillImage.fillAmount = 0;
         }
 
         private void UpdateFill(OnModuleDoAction_EVENT data)

@@ -32,13 +32,19 @@ namespace Gameplay.Items
         {
             if (!CanUse()) return;
             
+            if(Context.Inventory.Controller.Stamina.Current - _staminaCost <= 0)
+                return;
+            
             if (_decayCoroutine != null)
             {
                 Context.Inventory.StopCoroutine(_decayCoroutine);
                 _decayCoroutine = null;
             }
-
+            
+            Context.Inventory.Controller.Stamina.GainStamina(-_staminaCost);
+            
             _currentFill += _fillPerClick;
+            UpdateView(true);
 
             if (_currentFill >= _maxFilling)
             {
@@ -66,7 +72,8 @@ namespace Gameplay.Items
 
         private void HandleOpenItem()
         {
-            Context.SpawnGameObject(_spawnItem.gameObject, Context.Camera.transform.forward, Quaternion.identity);
+            Context.SpawnGameObject(_spawnItem.gameObject, Context.Camera.transform.forward * 0.25f, Quaternion.identity);
+            UpdateView(false);
             
             ConsumeCondition(new OnModuleDoAction_EVENT());
         }
@@ -75,7 +82,7 @@ namespace Gameplay.Items
         {
             yield return new WaitForSeconds(_decayDelay);
             
-            while (_currentFill <= 0)
+            while (_currentFill >= 0)
             {
                 _currentFill -= Time.deltaTime * _decayPerSecond;
 
