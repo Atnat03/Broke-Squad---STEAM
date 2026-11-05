@@ -130,7 +130,18 @@ namespace Gameplay.Items
                 passif.OnThrow(rb);
             }
         }
-        
+
+        public void OnNotInHand()
+        {
+            Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
+            {
+                ClientId = Context.Inventory.OwnerClientId,
+                KeyEvent = "UI_THROW_BAR",
+                ValueF = 0,
+                ValueB = false,
+            });
+        }
+
         // Faire spawn le nouvel item via la fonction de Context
         private ItemPickup ServerSpawnPickup(Vector3 pos, Quaternion rot)
         {

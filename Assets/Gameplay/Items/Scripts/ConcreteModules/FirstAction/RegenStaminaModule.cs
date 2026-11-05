@@ -20,6 +20,6 @@ namespace Gameplay.Items
             
         }
 
-        
+        public void OnNotInHand() { }
     }
 }

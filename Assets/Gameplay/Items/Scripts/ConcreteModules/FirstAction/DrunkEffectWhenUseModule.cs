@@ -27,6 +27,7 @@ namespace Gameplay.Items
         }
 
         public void StopFirstAction() { }
+        public void OnNotInHand(){ }
 
         private IEnumerator DrunkRoutine()
         {

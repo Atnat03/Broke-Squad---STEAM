@@ -26,6 +26,8 @@ namespace Gameplay.Items
             
         }
 
+        public void OnNotInHand() { }
+
         IEnumerator OverrideStaminaRegenTimer(float newRegen, float duration)
         {
             Context.Inventory.Controller.Stamina.OverrideStaminaRegenAndDelay(newRegen, regenDelay);

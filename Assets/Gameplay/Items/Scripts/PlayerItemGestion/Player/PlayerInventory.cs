@@ -151,7 +151,15 @@ namespace Gameplay.Items
             int newId = item != null ? item.Data.ID : -1;
             
             _replication.PublishHeldItem(item);
-            
+
+            if (item != null)
+            {
+                foreach (IFirstAction f in item.FirstActionList)
+                    f.OnNotInHand();
+                foreach (ISecondAction s in item.SecondActionList)
+                    s.OnNotInHand();
+            }
+
             if (_heldItemId.Value == newId && newId != -1)
                 OnHeldItemChanged(newId, newId);
 

@@ -55,6 +55,7 @@ namespace Gameplay.Items
         }
 
         public void StopFirstAction() { }
+        public void OnNotInHand() { }
 
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {
