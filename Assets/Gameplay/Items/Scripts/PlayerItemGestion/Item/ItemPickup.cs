@@ -28,12 +28,6 @@ namespace Gameplay.Items
         
         [SerializeField] private SO_Item _itemData;
         private Outline _outline;
-
-        [Header("Minimap")] 
-        [SerializeField] private bool _canBeVisibleByMiniMap = true;
-        private Vector3 _iconPos = Vector3.up * 1.5f;
-        private bool _alreadySeen = false;
-        GameObject _minimapIcon = null;
         
         public Outline outline => _outline;
         
@@ -125,59 +119,14 @@ namespace Gameplay.Items
 
         public void SetOutline(bool state)
         {
-            if (!_alreadySeen)
-            {
-                _alreadySeen = true;
-                CreateSprite();
-            }
             
             if(outline)
                 outline.enabled = state;
         }
 
-        private void CreateSprite()
-        {
-            if (!_canBeVisibleByMiniMap) return;
-
-            if (!IsServer)
-            {
-                CreateSpriteServerRpc();
-                return;
-            }
-            
-            if (_minimapIcon) return;
-
-            CreateSpriteClientRpc();
-        }
-
-        [Rpc(SendTo.Server)]
-        private void CreateSpriteServerRpc() => CreateSprite();
-
-        [Rpc(SendTo.Everyone)]
-        private void CreateSpriteClientRpc()
-        {
-            _minimapIcon = new GameObject("MinimapIcon")
-            {
-                transform =
-                {
-                    localPosition = _iconPos,
-                    localRotation = Quaternion.Euler(90, 0, 0)
-                }
-            };
-            
-            _minimapIcon.transform.localScale *= 0.6f;
-            _minimapIcon.layer = LayerMask.NameToLayer("TargetMiniMap");
-                
-            _minimapIcon.AddComponent<SpriteRenderer>().sprite = _itemData.Icon;
-
-            _minimapIcon.AddComponent<FreezeRotationMinimap>().SetTarget(transform);
-        }
-
         public void Interact(ulong clientId)
         {
             if (DetectNotGrabbable()) return;
-            
-            DestroyIconMapServerRpc();
             
             InvokeEvent(new OnPickupItem_EVENT
             {
@@ -185,12 +134,6 @@ namespace Gameplay.Items
                 ItemPickUpRef = NetworkObject
             });
         }
-
-        [Rpc(SendTo.Server)]
-        private void DestroyIconMapServerRpc() => DestroyIconMapClientRpc();
-        
-        [Rpc(SendTo.Everyone)]
-        private void DestroyIconMapClientRpc() =>  Destroy(_minimapIcon.gameObject);
         
         public void Setup(ItemInstance instance)
         {
@@ -198,9 +141,6 @@ namespace Gameplay.Items
             instance?.SetAnchor(transform, NetworkObjectId);
             
             GetComponent<BoxCollider>().isTrigger = true;
-            
-            _alreadySeen = true;
-            CreateSprite();
         }
         
         public void OnCollisionEnter(Collision collision)

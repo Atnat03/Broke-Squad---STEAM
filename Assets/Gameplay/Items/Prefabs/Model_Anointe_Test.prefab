@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 2585781847349389965}
   - component: {fileID: 1242056148672388476}
   - component: {fileID: 4302955916541039586}
-  - component: {fileID: 1634343430563564945}
   - component: {fileID: 6644974337136243561}
+  - component: {fileID: 3525255722208232889}
   m_Layer: 0
   m_Name: Model_Anointe_Test
   m_TagString: Untagged
@@ -92,20 +92,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1634343430563564945
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7009214621044475927}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c764393383d7431692b1d0a539b6278e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.NoisyView
-  _eventKey: NOISY_EVENT
-  _source: {fileID: 6644974337136243561}
 --- !u!82 &6644974337136243561
 AudioSource:
   m_ObjectHideFlags: 0
@@ -203,3 +189,16 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &3525255722208232889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7009214621044475927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e3d752270174bb2a233557e1a61acb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ExplosionModuleView
+  _eventKey: EXPLOSION_EVENT
