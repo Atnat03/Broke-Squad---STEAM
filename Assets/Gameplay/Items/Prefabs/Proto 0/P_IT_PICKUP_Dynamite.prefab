@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7212560895123068348}
   - component: {fileID: 6687118085410159041}
   - component: {fileID: 7588289302226300945}
+  - component: {fileID: 3118113829391904421}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -144,6 +145,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher
+--- !u!114 &3118113829391904421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4748589584584662534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e3d752270174bb2a233557e1a61acb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ExplosionModuleView
+  _eventKey: EXPLOSION_EVENT
+  _explosionVFX: {fileID: 2433282508537954060, guid: 3ef3ae421f71c5c4e97fe12dc2fc6312, type: 3}
+  _baseTick: 0.5
+  _maxTick: 0.1
+  _renderer: {fileID: 8549521326665538652}
+  _pshitMaterial: {fileID: 2100000, guid: 2638f0eba705d8f4f9e7281e6a914fe9, type: 2}
 --- !u!1 &5649482149248009159
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,14 +233,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3378528711
+  GlobalObjectIdHash: 219926788
   InScenePlacedSourceGlobalObjectIdHash: 3378528711
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 0
+  m_InScenePlaced: 1
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1

@@ -11,6 +11,8 @@ namespace Gameplay.Items
         public List<ISecondAction> SecondActionList { get; }
         public List<IPassif> Passifs { get; }
 
+        public Transform Anchor { get; private set; }
+        
         public ItemInstance(SO_Item data)
         {
             Data = data;
@@ -119,6 +121,8 @@ namespace Gameplay.Items
         
         public void SetAnchor(Transform anchor, ulong hostId)
         {
+            Anchor = anchor;
+            
             foreach (var m in AllModules())
                 if (m is IAnchorAware a) a.SetAnchor(anchor, hostId);
         }
