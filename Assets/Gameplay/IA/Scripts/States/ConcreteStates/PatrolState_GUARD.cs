@@ -63,8 +63,11 @@ namespace Gameplay.IA
                     Target = Target,
                 });
                 
-                Brain.StopCoroutine(_cantInvestigateCoroutine);
-                _cantInvestigateCoroutine = null;
+                if(_canInvestigate)
+                {
+                    Brain.StopCoroutine(_cantInvestigateCoroutine);
+                    _cantInvestigateCoroutine = null;
+                }
                 
                 return;
             }

@@ -22,7 +22,6 @@ namespace Gameplay.IA
 
                 if (door.IsOpen) return;
 
-                ABPrint.Print("Open a door");
                 door.TryOpenDoor();
                 
                 _doorList.Add(door);
@@ -34,12 +33,9 @@ namespace Gameplay.IA
             foreach (var door in _doorList.ToList())
             {
                 float distance = (transform.position - door.transform.position).sqrMagnitude;
-
-                ABPrint.Print("Distance: " + distance);
                 
                 if (distance > _distanceFromDoorToCloseIt)
                 {
-                    ABPrint.Print("Close a door");
                     door.TryCloseDoor();
                     _doorList.Remove(door);
                 }
