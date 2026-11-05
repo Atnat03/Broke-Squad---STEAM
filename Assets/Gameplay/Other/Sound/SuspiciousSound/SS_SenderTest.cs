@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using Bus;
-using Gameplay.IA.Scripts;
 using MyPrint;
 using Unity.Netcode;
 using UnityEngine;

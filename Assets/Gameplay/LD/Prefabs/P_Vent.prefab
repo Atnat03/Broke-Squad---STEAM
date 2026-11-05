@@ -295,7 +295,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 285837247
+  GlobalObjectIdHash: 1261741687
   InScenePlacedSourceGlobalObjectIdHash: 285837247
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -324,7 +324,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Proto1.Scripts.KeyCondition
   ShowTopMostFoldoutHeaderGroup: 1
   _keyId: 100
-  _canBeOpenWithoutKey: 1
+  _canBeOpenWithoutKey: 0
 --- !u!65 &2737635644360312739
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -392,6 +392,8 @@ MonoBehaviour:
         m_CallState: 2
   RequiredLevers: []
   RequiredButtons: []
+  RequiredHeldButtons: []
+  RequiredDigicodes: []
   canBeInteracted: 1
   startLocked: 1
   openSound: Enviro/Open Door

@@ -10,6 +10,9 @@ public class Door : OnlineInteractable
 {
     public enum FaceAxis { Forward, Right, Up }
     
+    public bool IsOpen => _state.Value != 0;
+    public bool IsLocked => _locked.Value;
+    
     [Header("Interactables Dependents")]
     [SerializeField] List<LeverDoor> RequiredLevers;
     [SerializeField] List<ButtonDoor> RequiredButtons;
@@ -69,7 +72,6 @@ public class Door : OnlineInteractable
     {
         Debug.Log($"OnStateChanged {previous} {current}");
         
-        
         if (current == 0)
         {
             if(previous == 1) onCloseFront?.Invoke();
@@ -125,6 +127,9 @@ public class Door : OnlineInteractable
 
         SetOpen(_state.Value == 0, GetSide(sender));
     }
+
+    public void TryOpenDoor() => SetOpen(_state.Value == 0);
+    public void TryCloseDoor() => SetOpen(_state.Value == 1);
 
     protected override void OnInteract()
     {
