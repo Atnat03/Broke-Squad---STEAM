@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_Wall_Test_Main
+  m_Name: M_Wall_Blue
   m_Shader: {fileID: -6465566751694194690, guid: 7a9eeb698d449ea48894586c4e1ae715, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -38,11 +38,23 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Main_Tex:
+        m_Texture: {fileID: 2800000, guid: 472e98fe4e3ea9942a3310b084b6beaf, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal_Tex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Pattern_Tex:
-        m_Texture: {fileID: 2800000, guid: e3ab81c832ed1904892c090940d00cf3, type: 3}
+        m_Texture: {fileID: 2800000, guid: 87252ee7afbb0534fae4daef6d300bdd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_4253f1f998db49f0804bd63ac5bfcf3f_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 4eb9f54b10addc949ab4734e7b267112, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_52576c596b7442248931c3da94d173c3_Texture_1_Texture2D:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_bd0ff144033a4ce48eeedd7a6404749f_Texture_1_Texture2D:
@@ -51,6 +63,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_ecdc9fa192164f03a156794eb5757302_Texture_1_Texture2D:
         m_Texture: {fileID: 2800000, guid: be32707f9cf0f1d44b5fb69e7cb7cba1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Triplanar_2ef124ff8fff4950baa59b800efc0346_Texture_1_Texture2D:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -67,20 +83,20 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Color_Contrest: 0.97
+    - _Color_Contrest: 0.5
     - _Color_Var_Intensity: 0.2
     - _Color_Var_Size: 0.493
-    - _Color_brightness: 0.03
+    - _Color_brightness: 0.5
     - _Gradient_Direction: 0
     - _Gradient_Height: 2.23
     - _Gradient_Smoothness: 0.14
-    - _Main_Tex_Tiling: 1
-    - _Main_Texture: 0
+    - _Main_Tex_Tiling: 0.6
+    - _Main_Texture: 1
     - _Metallic: 0
     - _Normal: 0
     - _Pattern_Rota: 0
     - _Pattern_Rotation: 0
-    - _Pattern_Tiling: 1.21
+    - _Pattern_Tiling: 0.6
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Smoothness: 0
@@ -91,12 +107,12 @@ Material:
     m_Colors:
     - _Back_Color: {r: 0, g: 0, b: 0, a: 1}
     - _Color_Var_Tiling: {r: 1, g: 1, b: 0, a: 0}
-    - _Gradient_Color: {r: 0.241, g: 0.150384, b: 0.23042811, a: 1}
+    - _Gradient_Color: {r: 0.14901961, g: 0.23921569, b: 0.181978, a: 1}
     - _Main_Color: {r: 0.438, g: 0.047235277, b: 0.047235277, a: 1}
-    - _Main_Color_Bright: {r: 0.8018868, g: 0.08699717, b: 0.08699717, a: 1}
-    - _Main_Color_Dark: {r: 0.16862746, g: 0.011298034, b: 0.025180057, a: 1}
+    - _Main_Color_Bright: {r: 0.10611766, g: 0.15837254, b: 0.48235294, a: 1}
+    - _Main_Color_Dark: {r: 0.011764701, g: 0.16862746, b: 0.1321306, a: 1}
     - _Patern_Color: {r: 0.3432563, g: 0.1874332, b: 0.490566, a: 1}
-    - _Pattern_Color: {r: 0.4899841, g: 0.26726404, b: 0.696, a: 1}
+    - _Pattern_Color: {r: 0.30569416, g: 0.8784314, b: 0.32369202, a: 1}
     - _Pattern_Tiling: {r: 1, g: 1, b: 0, a: 0}
     - _Scratch_Color: {r: 1, g: 0, b: 0, a: 1}
     - _Scratch_tiling: {r: 0.05, g: 1.52, b: 0, a: 0}
