@@ -20,6 +20,7 @@ MonoBehaviour:
   OffsetInHand: {x: 0, y: 0, z: 0}
   FirstActionList:
   - rid: 7832862682398589157
+  - rid: 7832862682398589471
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -84,3 +85,11 @@ MonoBehaviour:
         newRegenParSecond: 1000
         effectDuration: 10
         regenDelay: 0
+    - rid: 7832862682398589471
+      type: {class: DrunkEffectWhenUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _drunkDuration: 10
+        _sfxName: Joueur/Drink
+        _volume: 0.5

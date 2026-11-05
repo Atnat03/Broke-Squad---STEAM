@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
   m_Name: SO_IT_JarBattery
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
-  ID: 35
+  ID: 36
   ItemName: Jar
-  VisualPrefab: {fileID: 2897417623498628440, guid: 3817e6d66723b6d45bf33d0c4d3a59f4, type: 3}
-  PickupPrefab: {fileID: 2072030727398677114, guid: 6321da4dfc4acb74aa82b4e04e5fcf97, type: 3}
+  VisualPrefab: {fileID: 7162472321550446398, guid: b5140a9d6dfdd124098469e198c9b681, type: 3}
+  PickupPrefab: {fileID: 5317595364286155804, guid: 71358a40de23782489b548cb0727a1e5, type: 3}
   Icon: {fileID: 21300000, guid: 9900f86969a45934a8acfcc648268cbe, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
-  FirstActionList: []
+  FirstActionList:
+  - rid: 7832862682398589470
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -75,3 +76,20 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 0.5
         _canDamagePlayer: 1
+    - rid: 7832862682398589470
+      type: {class: HardToOpenModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: 7832862682398589473
+        _keyEvent: HARD_TO_OPEN_EVENT_KEY
+        _fillPerClick: 5
+        _maxFilling: 100
+        _staminaCost: 10
+        _decayDelay: 0.5
+        _decayPerSecond: 50
+        _spawnItem: {fileID: 653411630895317502, guid: d0436cfb9f696ab45b022632b1939e67, type: 3}
+    - rid: 7832862682398589473
+      type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _numberOfUse: 1
+        _destroyWhenEmpty: 0
