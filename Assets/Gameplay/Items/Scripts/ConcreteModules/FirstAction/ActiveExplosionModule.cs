@@ -1,13 +1,28 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using Gameplay.Controller;
+using Gameplay.LD;
+using Gameplay.LD.Scripts;
 using Gameplay.Other.SuspiciousSound;
+using MyPrint;
 using UnityEngine;
 
 namespace Gameplay.Items
 {
+    [Serializable]
     public class ActiveExplosionModule : ActionModule, IFirstAction, IServerAction, IAnchorAware
     {
         [SerializeField] private string _keyEvent = "EXPLOSION_EVENT";
+     
+        [Header("Explosion Settings")]
         [SerializeField] private float _timerToExplose = 5f;
+        [SerializeField] private float _explosionRadius = 3f;
+        [SerializeField] private float _explosionDamage = 45f;
+        [SerializeField] private float _explosionBreakForce = 100f;
+        
+        [Header("Camera shake")]
+        [SerializeField] private float _shakeDuration = 0.25f;
+        [SerializeField] private float _shakeMagnitude = 0.5f;
         
         [Header("Suspicious Sound Settings")]
         [SerializeField] private SO_SuspiciousSoundSettings _suspiciousSoundSettings;
@@ -57,10 +72,11 @@ namespace Gameplay.Items
         IEnumerator ExplosionRoutine(int id)
         {
             SendData(true);
-
-            float tick = 0f;
+            
             while (_active && id == _runId && _elapsed < _timerToExplose)
             {
+                _elapsed += Time.deltaTime;
+                
                 SendData(true);
                 
                 yield return null;
@@ -71,13 +87,38 @@ namespace Gameplay.Items
 
         private void PerformExplosion()
         {
-            SendData(false);
-        }
+            Collider[] buffer = new Collider[32];
+            var size = Physics.OverlapSphereNonAlloc(Context.Core.Instance.Anchor.position, _explosionRadius, buffer);
 
-        public void SetAnchor(Transform anchor)
-        {
-            _anchor = anchor;
-            if (_active) SendData(true);
+            for (int i = 0; i < size; i++)
+            {
+                if (buffer[i].TryGetComponent(out IDamageable damageable))
+                {
+                    damageable.ApplyDamage(_explosionDamage);
+                }
+                
+                if(buffer[i].TryGetComponent(out IBreakable breakable))
+                {
+                    breakable.Break(_explosionBreakForce);
+                }
+
+                /*if (buffer[i].TryGetComponent(out PlayerController player))
+                {
+                    Context.Inventory.InvokeEvent(new OnCameraShakeEvent
+                    {
+                        PlayerClientId = player.OwnerClientId,
+                        Duration = _shakeDuration,
+                        Magnitude = _shakeMagnitude,
+                    });
+                }*/
+            }
+
+            SendData(false);
+            
+            if (Context.Core.Instance == Context.Inventory.GetCurrentItemInHand())
+            {
+                Context.Inventory.ClearCurrentSlot();
+            }
         }
         
         public void SetAnchor(Transform anchor, ulong hostId)
@@ -91,7 +132,7 @@ namespace Gameplay.Items
         {
             KeyEvent = _keyEvent,
             ValueB = state,
-            ValueF = _elapsed,
+            ValueF = _elapsed / _timerToExplose,
             HostId = _hostId
         });
     }

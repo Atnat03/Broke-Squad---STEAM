@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Bus;
 using Gameplay.Controller.Minimap;
@@ -34,7 +35,8 @@ namespace Gameplay.Items
         private ItemInstance _instance;
         
         public ItemInstance Instance => _instance ??= new ItemInstance(_itemData);
-        
+
+        private bool _canCollide;
         
         public Action OnCollide;
         
@@ -71,10 +73,24 @@ namespace Gameplay.Items
         public override void OnNetworkSpawn()
         {
             _onRack.OnValueChanged += OnRackChanged;
+
+            if (IsServer)
+            {
+                StartCoroutine(BufferCollision());
+            }
             
             ApplyRack();
         }
-        
+
+        private IEnumerator BufferCollision()
+        {
+            _canCollide = false;
+
+            yield return new WaitForSeconds(0.2f);
+
+            _canCollide = true;
+        }
+
         private void OnRackChanged(bool previous, bool current) => ApplyRack();
 
         public void SetOnRack()
@@ -145,8 +161,8 @@ namespace Gameplay.Items
         
         public void OnCollisionEnter(Collision collision)
         {
-            if(_instance == null)
-                return;
+            if(_instance == null) return;
+            if(!_canCollide)return;
             
             OnCollide?.Invoke();
             
