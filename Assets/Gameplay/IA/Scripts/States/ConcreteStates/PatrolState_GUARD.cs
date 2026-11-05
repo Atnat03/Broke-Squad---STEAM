@@ -25,18 +25,19 @@ namespace Gameplay.IA
         
         public override void EnterState(PatrolParam data)
         {
-            ABPrint.PrintBool(data.IsAlerted, "Enter Patrol state : ");
+            _canInvestigate = !data.IsAlerted;
+            _cantInvestigateCoroutine = null;
 
             if (data.IsAlerted)
             {
                 Brain.ChangeSettingToAlerted();
-
                 _cantInvestigateCoroutine = Brain.StartCoroutine(CantInvestigateCoroutine());
             }
-            
+
             _currentPatrolPoints = data.IsAlerted ? _patrolPointsAlerted : _patrolPointsNormal;
+
             _currentPatrolNode = 0;
-            
+
             Brain.Motor.SetTarget(NearestPoint());
             Brain.Motor.SetSpeed(Brain.CurrentSetting.PatrolSpeed);
         }
@@ -58,17 +59,17 @@ namespace Gameplay.IA
 
             if (Target)
             {
-                Brain.ChangeState<AggroState_GUARD, AggroParam>(new AggroParam
-                {
-                    Target = Target,
-                });
-                
-                if(_canInvestigate)
+                if (_cantInvestigateCoroutine != null)
                 {
                     Brain.StopCoroutine(_cantInvestigateCoroutine);
                     _cantInvestigateCoroutine = null;
                 }
-                
+
+                Brain.ChangeState<AggroState_GUARD, AggroParam>(new AggroParam
+                {
+                    Target = Target,
+                });
+
                 return;
             }
             
@@ -96,7 +97,13 @@ namespace Gameplay.IA
         }
 
         public override void ExitState()
-        { }
+        {
+            if (_cantInvestigateCoroutine != null)
+            {
+                Brain.StopCoroutine(_cantInvestigateCoroutine);
+                _cantInvestigateCoroutine = null;
+            }
+        }
         
         private Vector3 NearestPoint()
         {

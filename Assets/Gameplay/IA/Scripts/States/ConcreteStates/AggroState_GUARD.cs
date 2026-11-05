@@ -45,19 +45,29 @@ namespace Gameplay.IA
         public override void UpdateState()
         {
             bool stimulated = IsTargetClose() || WasRecentlyHit();
- 
-            Transform target = Brain.LineSight.PerformFindingPlayer(stimulated ? _target : null);
- 
-            if (!target && _playerHealth.IsDowned)
-            { 
-                Brain.ChangeState<PatrolState_GUARD, PatrolParam>(new PatrolParam { IsAlerted = false });
+
+            Transform target = Brain.LineSight.PerformFindingPlayer(
+                stimulated ? _target : null
+            );
+
+            if (!target)
+            {
+                if (_playerHealth == null || _playerHealth.IsDowned)
+                {
+                    Brain.ChangeState<PatrolState_GUARD, PatrolParam>(new PatrolParam { IsAlerted = false });
+                    return;
+                }
+
+                Brain.Motor.SetTarget(Brain.LineSight.LastSeenPosition);
                 return;
             }
- 
+
             _target = target;
- 
-            Vector3 destination = Brain.LineSight.CanSeeTarget ? target.position : Brain.LineSight.LastSeenPosition;
- 
+
+            _playerHealth = _target.TryGetComponent(out PlayerHealth playerHealth) ? playerHealth : null;
+
+            Vector3 destination = Brain.LineSight.CanSeeTarget ? _target.position : Brain.LineSight.LastSeenPosition;
+
             Brain.Motor.SetTarget(destination - _transform.forward * (Brain.CurrentSetting.AttackRange * 0.5f));
 
             HandleAttack();
@@ -85,8 +95,10 @@ namespace Gameplay.IA
 
         private void HandleAttack()
         {
-            bool isInRangeToAttack = (_transform.position - _target.position).sqrMagnitude < Brain.CurrentSetting.AttackRange;
-            
+            if (!_target || !_playerHealth) return;
+
+            bool isInRangeToAttack = (_transform.position - _target.position).sqrMagnitude < Brain.CurrentSetting.AttackRange * Brain.CurrentSetting.AttackRange;
+
             if (isInRangeToAttack && _attackCoroutine == null && !IsAttacking && !Brain.Health.IsStun)
             {
                 _attackCoroutine = Brain.StartCoroutine(AttackRoutine());
@@ -110,6 +122,9 @@ namespace Gameplay.IA
 
         private void PerformAttack()
         {
+            if (!_target || !_playerHealth)
+                return;
+            
             Brain.ReplicateAttackClientRpc();
             _playerHealth.ApplyDamage(Brain.CurrentSetting.Damage);
         }

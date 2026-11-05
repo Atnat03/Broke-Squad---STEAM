@@ -129,10 +129,11 @@ namespace Gameplay.Items
             if (index != _selectedSlot.Value)
             {
                 ItemInstance previous = GetCurrentItemInHand();
+
+                NotifyNotInHand(previous);
                 
                 if (previous != null)
                 {
-                    NotifyNotInHand(previous);
                     UnableCondition(previous);
                 }
             }
