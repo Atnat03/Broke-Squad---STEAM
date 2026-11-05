@@ -19,7 +19,7 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: 681f65c0e39a04f4e91818c128df16a1, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
   FirstActionList:
-  - rid: 7693030093451427998
+  - rid: 7693030098167660699
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -82,14 +82,11 @@ MonoBehaviour:
       data:
         _minVelocityForDestroy: 5
         _force: 10
-    - rid: 7693030093451427998
-      type: {class: ActiveExplosionModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+    - rid: 7693030098167660699
+      type: {class: DrunkEffectWhenUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
           rid: -2
-        _keyEvent: EXPLOSION_EVENT
-        _timerToExplose: 5
-        _suspiciousSoundSettings: {fileID: 11400000, guid: 8029d65674b61e844acad36af99f168f, type: 2}
-        _sfxTrigger: Enviro/Break Window
-        _sfxExplosion: Enviro/Close Door
-        _volume: 0
+        _drunkDuration: 5
+        _sfxName: Joueur/Drink
+        _volume: 0.5
