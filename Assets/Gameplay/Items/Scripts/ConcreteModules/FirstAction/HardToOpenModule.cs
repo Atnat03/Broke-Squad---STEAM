@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Gameplay.Items
 {
     [Serializable]
-    public class HardToOpenModule : ActionModule, IFirstAction
+    public class HardToOpenModule : ActionModule, IFirstAction, IServerAction
     {
         [SerializeField] private string _keyEvent = "HARD_TO_OPEN_EVENT_KEY";
         
@@ -34,12 +34,6 @@ namespace Gameplay.Items
             
             if(Context.Inventory.Controller.Stamina.Current - _staminaCost <= 0)
                 return;
-            
-            if (_decayCoroutine != null)
-            {
-                Context.Inventory.StopCoroutine(_decayCoroutine);
-                _decayCoroutine = null;
-            }
             
             Context.Inventory.Controller.Stamina.GainStamina(-_staminaCost);
             
@@ -72,10 +66,16 @@ namespace Gameplay.Items
 
         private void HandleOpenItem()
         {
-            Context.SpawnGameObject(_spawnItem.gameObject, Context.Camera.transform.forward * 0.25f, Quaternion.identity);
+            Context.SendToServer(this, new OnModuleDoAction_EVENT());
+            
             UpdateView(false);
             
             ConsumeCondition(new OnModuleDoAction_EVENT());
+        }
+        
+        public void ServerExecute(OnModuleDoAction_EVENT data)
+        {
+            Context.SpawnGameObject(_spawnItem.gameObject, Context.Camera.transform.forward * 0.25f, Quaternion.identity);
         }
 
         IEnumerator DecayCoroutine()
