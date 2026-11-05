@@ -8,5 +8,6 @@ namespace Gameplay.Items
         
         public void StartSecondAction();
         public void StopSecondAction();
+        public void OnNotInHand();
     }
 }

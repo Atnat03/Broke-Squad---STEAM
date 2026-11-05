@@ -129,8 +129,12 @@ namespace Gameplay.Items
             if (index != _selectedSlot.Value)
             {
                 ItemInstance previous = GetCurrentItemInHand();
+                
                 if (previous != null)
+                {
+                    NotifyNotInHand(previous);
                     UnableCondition(previous);
+                }
             }
             
             _selectedSlot.Value = index;
@@ -371,6 +375,7 @@ namespace Gameplay.Items
             ItemInstance item = GetCurrentItemInHand();
             if (item == null) return;
             
+            NotifyNotInHand(item);
             UnableCondition(item);
 
             SetSlot(_selectedSlot.Value, null);
@@ -405,5 +410,16 @@ namespace Gameplay.Items
 
         [Rpc(SendTo.Server)]
         private void DestroyItemInHandRpc() => DestroyItemInHand();
+        
+        private void NotifyNotInHand(ItemInstance item)
+        {
+            if (item == null) return;
+
+            foreach (IFirstAction f in item.FirstActionList)
+                f?.OnNotInHand();
+
+            foreach (ISecondAction s in item.SecondActionList)
+                s?.OnNotInHand();
+        }
     }
 }

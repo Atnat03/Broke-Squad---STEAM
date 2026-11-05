@@ -310,6 +310,10 @@ namespace Gameplay.Controller
         {
             if (PlayerLocalData.instance == null) return;
             meshRenderer[0].material.color = PlayerLocalData.instance.PossibleColor[colorId];
+            meshRenderer[1].material.color = PlayerLocalData.instance.PossibleColor[colorId];
+            meshRenderer[2].material.color = PlayerLocalData.instance.PossibleColor[colorId];
+            meshRenderer[3].material.color = PlayerLocalData.instance.PossibleColor[colorId];
+            meshRenderer[4].material.color = PlayerLocalData.instance.PossibleColor[colorId];
             pseudoText.text = playerName;
             
             PlayerColorId = colorId;
