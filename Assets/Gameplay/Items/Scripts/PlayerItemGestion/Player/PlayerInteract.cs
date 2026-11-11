@@ -1,4 +1,5 @@
-﻿using Bus;
+﻿using System;
+using Bus;
 using Gameplay.Controller;
 using UnityEngine;
 
@@ -18,6 +19,9 @@ namespace Gameplay.Items
         [SerializeField] private LayerMask _obstacleMask;
         private IInteractable _currentHoverInteractable = null;
         private IHoldInteractable _heldInteractable;
+
+        public Action<bool, string> OnTooltipChange;
+        
         #region Network Start
         
         public override void OnNetworkSpawn()
@@ -54,14 +58,20 @@ namespace Gameplay.Items
             if (target == _currentHoverInteractable) return;
             
             if (target == null && _currentHoverInteractable != null)
+            {
                 _currentHoverInteractable.SetOutline(false);
+                OnTooltipChange?.Invoke(false, null);
+            }
 
             _currentHoverInteractable?.SetOutline(false);
             
             _currentHoverInteractable = target;
 
             if (_currentHoverInteractable != null)
+            {
                 _currentHoverInteractable.SetOutline(true);
+                OnTooltipChange?.Invoke(true, _currentHoverInteractable.TooltipInteractText);
+            }
         }
         
         private IInteractable GetAimingInteractable()
@@ -90,8 +100,9 @@ namespace Gameplay.Items
             }
             
             IInteractable target = _currentHoverInteractable ?? GetAimingInteractable();
-            if (target == null) return;
-
+            if (target == null)
+                return;
+            
             if (target is IHoldInteractable hold)
             {
                 _heldInteractable = hold;

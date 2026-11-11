@@ -18,7 +18,8 @@ namespace Gameplay.Equipment
         }
         
         [SerializeField] private Outline _outline;
-        
+
+        public string TooltipInteractText => "E to pickup backpack";
         public Outline outline => _outline;
         public void SetOutline(bool state)
         {

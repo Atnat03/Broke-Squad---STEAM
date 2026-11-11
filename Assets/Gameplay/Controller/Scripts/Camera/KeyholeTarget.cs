@@ -20,6 +20,10 @@ namespace Gameplay.Controller
 
         private KeyholeView _view;
 
+        [Header("Tooltip")]
+        [SerializeField] private string _tooltip = "E to look in keyhole";
+
+        public string TooltipInteractText => _tooltip;
         public Outline outline => _outline;
 
         public float BaseYaw => viewPoint.eulerAngles.y;

@@ -65,6 +65,7 @@ namespace Gameplay.Equipment
 
         //Outline 
         [SerializeField] private Outline _outline;
+        public string TooltipInteractText => "E to hang on the rack";
         public Outline outline => _outline;
 
         public void SetOutline(bool state)

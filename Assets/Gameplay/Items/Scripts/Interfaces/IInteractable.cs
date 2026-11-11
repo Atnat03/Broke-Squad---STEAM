@@ -2,6 +2,7 @@
 {
     public interface IInteractable
     {
+        public string TooltipInteractText { get; }
         public Outline outline { get; }
 
         public void SetOutline(bool state);

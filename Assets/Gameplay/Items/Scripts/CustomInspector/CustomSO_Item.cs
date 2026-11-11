@@ -13,6 +13,7 @@ namespace Gameplay.Items
         private SerializedProperty _pickUpPrefab;
         private SerializedProperty _icon;
         private SerializedProperty _offset;
+        private SerializedProperty _tooltip;
         private SerializedProperty _firstActions;
         private SerializedProperty _secondActions;
         private SerializedProperty _passif;
@@ -30,6 +31,7 @@ namespace Gameplay.Items
             _pickUpPrefab = serializedObject.FindProperty(nameof(SO_Item.PickupPrefab));
             _icon = serializedObject.FindProperty(nameof(SO_Item.Icon));
             _offset = serializedObject.FindProperty(nameof(SO_Item.OffsetInHand));
+            _tooltip = serializedObject.FindProperty(nameof(SO_Item.TooltipInHand));
             _firstActions = serializedObject.FindProperty(nameof(SO_Item.FirstActionList));
             _secondActions = serializedObject.FindProperty(nameof(SO_Item.SecondActionList));
             _passif = serializedObject.FindProperty(nameof(SO_Item.PassifList));
@@ -48,6 +50,7 @@ namespace Gameplay.Items
             
             EditorGUILayout.PropertyField(_itemName);
             EditorGUILayout.PropertyField(_icon);
+            EditorGUILayout.PropertyField(_tooltip);
             EndSection();
             
             //Visuels

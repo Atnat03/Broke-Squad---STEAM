@@ -7,7 +7,8 @@ namespace Gameplay.LD
     public class InteractTrigger : LDTriggerModule, IInteractable
     {
         [SerializeField] private float _range = 4f;
-
+        [SerializeField] private string _interactTooltip;
+        public string TooltipInteractText => _interactTooltip;
         public Outline outline { get; private set; }
 
         protected override void OnInitialize()

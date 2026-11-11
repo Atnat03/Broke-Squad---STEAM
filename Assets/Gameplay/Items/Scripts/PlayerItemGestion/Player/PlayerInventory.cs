@@ -66,6 +66,7 @@ namespace Gameplay.Items
         public Action OnDropItem;
         public Action<int, int> OnUpdateSlots;
         public Action<bool> OnSlotSelectedChanged;
+        public Action<bool, string> OnTooltipChange;
         
         public Action OnSlotsChanged;
         
@@ -262,7 +263,10 @@ namespace Gameplay.Items
             }
             
             if (IsOwner)
+            {
                 _currentItem.UnsubscribeFromInput(_playerInput);
+                OnTooltipChange?.Invoke(false, null);
+            }
 
             if (!IsServer)
                 _currentItem.Instance?.Cleanup();
@@ -282,7 +286,10 @@ namespace Gameplay.Items
             _currentItem = core;
             
             if (IsOwner)
+            {
                 _currentItem.SubscribeToInput(_playerInput);
+                OnTooltipChange?.Invoke(true, _currentItem.Instance.Data.TooltipInHand);
+            }
         }
         
         private void LateUpdate()

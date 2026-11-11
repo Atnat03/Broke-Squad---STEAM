@@ -8,6 +8,8 @@ using UnityEngine.Events;
 public abstract class OnlineInteractable : NetworkBusListener, IInteractable
 {
     [SerializeField] Outline Outline;
+    [SerializeField] private string _tooltip;
+    public string TooltipInteractText => _tooltip;
     public Outline outline => Outline;
 
     public UnityEvent onInteractableOpen;

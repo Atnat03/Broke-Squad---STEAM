@@ -28,8 +28,12 @@ namespace Gameplay.Items
         Vector3 _baseSize,_baseSizeRack, _baseScale;
         
         [SerializeField] private SO_Item _itemData;
-        private Outline _outline;
+
+        private string _tooltipItemBase = "E to pickup ";
         
+        private Outline _outline;
+
+        public string TooltipInteractText => _tooltipItemBase + _itemData.ItemName;
         public Outline outline => _outline;
         
         private ItemInstance _instance;

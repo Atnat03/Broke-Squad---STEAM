@@ -1,6 +1,9 @@
-﻿using Bus;
+﻿using System.Resources;
+using Bus;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Gameplay.Items
 {
@@ -16,6 +19,10 @@ namespace Gameplay.Items
         private ItemSlotUI[] _slotsUIList;
         private bool _uiDirty;
         
+        [Header("Tooltip")]
+        [SerializeField] private GameObject _tooltipParent;
+        [SerializeField] private TextMeshProUGUI _tooltipText;
+        
         [Header("SFX")]
         [SerializeField, SoundName] private string _pickUpSound;
         [SerializeField, SoundName] private string _dropSound;
@@ -27,6 +34,9 @@ namespace Gameplay.Items
             _inventory.OnUpdateSlots += UpdateSlots;
             _inventory.OnPickupItem += PickupItem;
             _inventory.OnDropItem += DropItem;
+            _inventory.OnTooltipChange += UpdateTooltip;
+            
+            _tooltipParent.SetActive(false);
         }
         
         void OnDisable()
@@ -36,6 +46,7 @@ namespace Gameplay.Items
             _inventory.OnUpdateSlots -= UpdateSlots;
             _inventory.OnPickupItem -= PickupItem;
             _inventory.OnDropItem -= DropItem;
+            _inventory.OnTooltipChange -= UpdateTooltip;
         }
 
         private void SelectedSlotChanged(bool enable)
@@ -82,5 +93,11 @@ namespace Gameplay.Items
         
         private void DropItem()
         { }
+        
+        private void UpdateTooltip(bool isVisible, string txt)
+        {
+            _tooltipParent.SetActive(isVisible);
+            _tooltipText.text = txt;
+        }
     }
 }
