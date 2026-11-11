@@ -1,13 +1,15 @@
-﻿using Gameplay.Controller;
+﻿using Bus;
+using Gameplay.Controller;
 using MyPrint;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 namespace Gameplay.Other
 {
-    public class PauseSystemTest : NetworkBehaviour
+    public class PauseSystemTest :  MonoBusListener
     {
         [SerializeField] private PlayerInput _playerInput;
         [SerializeField] private PlayerController _playerController;
@@ -17,7 +19,7 @@ namespace Gameplay.Other
 
         private bool _isPause;
         
-        public override void OnNetworkSpawn()
+        public  void Awake()
         {
             _playerInput.OnPause += UpdatePause;
                 
@@ -35,6 +37,12 @@ namespace Gameplay.Other
             Cursor.visible = _isPause;
 
             _playerController.SetInputEnabled(!_isPause);
+        }
+
+        public void ToggleFpsCounter(Toggle toggle)
+        {
+            Debug.Log("evt");
+            InvokeEvent(new FPSCounterChangeVisual_EVENT{show = toggle.isOn});    
         }
     }
 }
