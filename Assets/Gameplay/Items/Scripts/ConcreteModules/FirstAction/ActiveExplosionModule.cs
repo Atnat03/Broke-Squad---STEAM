@@ -39,6 +39,8 @@ namespace Gameplay.Items
         private Vector3 _lastPosition;
         
         private ulong _hostId;
+
+        private Coroutine _explosionCoroutine;
         
         public ICondition Condition => ConditionParent;
         public void StartFirstAction()
@@ -55,7 +57,19 @@ namespace Gameplay.Items
         }
 
         public void StopFirstAction() { }
-        public void OnNotInHand() { }
+
+        public void OnNotInHand()
+        {
+            if (_explosionCoroutine == null) return;
+            
+            Context.StopCoroutine(_explosionCoroutine);
+            _explosionCoroutine = null;
+
+            _active = false;
+            _elapsed = 0;
+            
+            SendData(true);
+        }
 
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {
@@ -67,7 +81,7 @@ namespace Gameplay.Items
         {
             _active = true;
             _elapsed = 0;
-            Context.StartCoroutine(ExplosionRoutine(++_runId));
+            _explosionCoroutine = Context.StartCoroutine(ExplosionRoutine(++_runId));
         }
 
         IEnumerator ExplosionRoutine(int id)

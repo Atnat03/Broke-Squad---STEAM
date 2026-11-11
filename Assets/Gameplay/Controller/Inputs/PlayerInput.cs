@@ -40,7 +40,8 @@ namespace Gameplay.Controller
 
         public Action OnPinging;
 
-        public Action OnTryDropEquipment;
+        public Action OnStartDropEquipment;
+        public Action OnEndDropEquipment;
         
         public Action OnPause;
 
@@ -87,7 +88,7 @@ namespace Gameplay.Controller
 
             _playerInputs.Gameplay.Ping.performed += PerformPing;
 
-            _playerInputs.Gameplay.EquimentDrop.performed += PerformDropEquipment;
+            _playerInputs.Gameplay.EquimentDrop.performed += PerformStartDropEquipment;
             
             _playerInputs.Gameplay.Pause.performed += PerformPause;
         }
@@ -120,7 +121,7 @@ namespace Gameplay.Controller
             
             _playerInputs.Gameplay.Ping.performed -= PerformPing;
             
-            _playerInputs.Gameplay.EquimentDrop.performed -= PerformDropEquipment;
+            _playerInputs.Gameplay.EquimentDrop.performed -= PerformStartDropEquipment;
 
             _playerInputs.Gameplay.Pause.performed -= PerformPause;
             
@@ -248,9 +249,9 @@ namespace Gameplay.Controller
             OnPinging?.Invoke();
         }
         
-        private void PerformDropEquipment(InputAction.CallbackContext obj)
+        private void PerformStartDropEquipment(InputAction.CallbackContext obj)
         {
-            OnTryDropEquipment?.Invoke();
+            OnStartDropEquipment?.Invoke();
         }
         
         private void PerformPause(InputAction.CallbackContext obj)

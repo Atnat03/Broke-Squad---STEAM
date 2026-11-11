@@ -23,7 +23,7 @@ namespace Gameplay.Equipment
             _hasBackPack.OnValueChanged += OnHasBackPackChanged;
 
             if (IsOwner)
-                _playerInputs.OnTryDropEquipment += TryDropBackPack;
+                _playerInputs.OnStartDropEquipment += TryDropBackPack;
 
             ListenToEvent<OnTryToPickUpBackPack_EVENT>(TryPickUp);
         }
@@ -33,7 +33,7 @@ namespace Gameplay.Equipment
             _hasBackPack.OnValueChanged -= OnHasBackPackChanged;
 
             if (IsOwner)
-                _playerInputs.OnTryDropEquipment -= TryDropBackPack;
+                _playerInputs.OnStartDropEquipment -= TryDropBackPack;
         }
 
         private bool ResolveBackPack()

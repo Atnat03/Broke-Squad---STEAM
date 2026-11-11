@@ -70,8 +70,6 @@ public class Door : OnlineInteractable
     
     void OnStateChanged(int previous, int current)
     {
-        Debug.Log($"OnStateChanged {previous} {current}");
-        
         if (current == 0)
         {
             if(previous == 1) onCloseFront?.Invoke();

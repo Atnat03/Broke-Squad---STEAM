@@ -4,6 +4,7 @@ using Bus;
 using Gameplay.Controller;
 using MyPrint;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
@@ -40,6 +41,14 @@ namespace Gameplay.Items
         [SerializeField, SoundName] private string _sfxDrop;
         [SerializeField, Range(0, 1)] private float _volume = 0.5f;
         
+        [Header("Dropping")]
+        [SerializeField] private Material _previewMaterial;
+        private bool _isPreviewDrop = false;
+        private Vector3 _dropPos;
+        private Quaternion _dropRot;
+        private float _dropAngle = 0f;
+        private GameObject _previewVisual;
+        private float _previewBottomOffset;
         
         private PlayerInventoryReplication _replication;
         private readonly NetworkVariable<int> _heldItemId = new(-1);
@@ -89,7 +98,8 @@ namespace Gameplay.Items
             if (IsOwner)
             {
                 ListenToEvent<OnPickupItem_EVENT>(TryPickupItem);
-                _playerInput.OnDropInput += OnDrop;
+                _playerInput.OnDropInput += OnDropPreviewStart;
+                _playerInput.OnDropInputCanceled += OnPerformDrop;
             }
             
             _playerInput.OnMouseRoll += OnSelectedItemChange;
@@ -113,10 +123,17 @@ namespace Gameplay.Items
         public void OnSelectedItemChange(int ratio)
         {
             if (!IsOwner) return;
-            
-            AskForChangeSelectedItemRpc(ratio);
+
+            if (!_isPreviewDrop)
+            {
+                AskForChangeSelectedItemRpc(ratio);
+            }
+            else
+            {
+                UpdateDropRotate();
+            }
         }
-        
+
         [Rpc(SendTo.Server)]
         private void AskForChangeSelectedItemRpc(int ratio)
         {
@@ -278,8 +295,13 @@ namespace Gameplay.Items
             int id = _heldItemId.Value;
             
             OnUpdateSlots?.Invoke(selected, id);
+
+            if (_isPreviewDrop)
+            {
+                UpdatePreviewDrop();
+            }
         }
-        
+
         private void TryPickupItem(OnPickupItem_EVENT data)
         {
             if (OwnerClientId != data.ClientId) return;
@@ -332,42 +354,82 @@ namespace Gameplay.Items
 
             return -1;
         }
-        
-        private void OnDrop()
+
+        private void OnDropPreviewStart()
         {
-            Vector3 pos = transform.position + transform.forward;
-            
+            ItemInstance item = GetCurrentItemInHand();
+            if (item == null) return;
+
+            _isPreviewDrop = true;
+            _dropPos = transform.position;
+
+            _previewVisual = Instantiate(item.Data.VisualPrefab);
+            foreach (var r in _previewVisual.GetComponentsInChildren<Renderer>())
+                r.sharedMaterial = _previewMaterial;
+
+            _previewBottomOffset = GetBottomOffset(_previewVisual);
+        }
+        
+        private void UpdatePreviewDrop()
+        {
+            if (_previewVisual == null) return;
+
+            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
+                    out RaycastHit hit, _dropRange, ~0, QueryTriggerInteraction.Ignore))
+            {
+                _dropPos = hit.point;
+            }
+
+            _previewVisual.transform.SetPositionAndRotation(_dropPos + Vector3.up * (_previewBottomOffset + 0.01f), _dropRot);
+        }
+        
+        private void UpdateDropRotate()
+        {
+            _dropAngle = (_dropAngle + 90f) % 360f;
+            _dropRot = Quaternion.Euler(0f, _dropAngle, 0f);
+        }
+        
+        private void OnPerformDrop()
+        {
+            _isPreviewDrop = false;
+
+            if (_previewVisual != null)
+            {
+                Destroy(_previewVisual);
+                _previewVisual = null;
+            }
+
             if (HasItemInHand())
-                DropItemRpc(pos);
+                DropItemRpc(_dropPos, _dropRot);
         }
         
         public bool HasItemInHand() => _heldItemId.Value != -1;
         
         [Rpc(SendTo.Server)]
-        private void DropItemRpc(Vector3 pos)
+        private void DropItemRpc(Vector3 groundPoint, Quaternion rot)
         {
             ItemInstance item = GetCurrentItemInHand();
             if (item == null) return;
-            
-            Vector3 prefabSize = Vector3.up * (item.Data.PickupPrefab.transform.position.y / 2);
-                        
-            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out var hit, _dropRange, ~0, QueryTriggerInteraction.Ignore))
-            {
-                pos = hit.point + prefabSize;
-            }
-            
-            ItemPickup pickup = Instantiate(item.Data.PickupPrefab, pos+prefabSize, transform.rotation);
+
+            float maxDist = _dropRange + 2f;
+            if ((groundPoint - transform.position).sqrMagnitude > maxDist * maxDist) return;
+
+            ItemPickup pickup = Instantiate(item.Data.PickupPrefab, groundPoint, rot);
+            Physics.SyncTransforms();
+
+            float offset = GetBottomOffset(pickup.gameObject);
+            pickup.transform.position = groundPoint + Vector3.up * (offset + 0.01f);
+
             pickup.GetComponent<NetworkObject>().Spawn();
             pickup.Setup(item);
-            
-            //SFX
+
             InvokeEvent(new PlaySoundEvent
             {
                 position = transform.position,
                 volume = _volume,
                 soundName = _sfxDrop
             });
-                
+
             ClearCurrentSlot();
         }
         
@@ -421,6 +483,42 @@ namespace Gameplay.Items
 
             foreach (ISecondAction s in item.SecondActionList)
                 s?.OnNotInHand();
+        }
+        
+        private float GetBottomOffset(GameObject go)
+        {
+            Bounds bounds = default;
+            bool has = false;
+
+            foreach (Collider c in go.GetComponentsInChildren<Collider>())
+            {
+                if (c.isTrigger) 
+                    continue;
+                
+                if (!has)
+                {
+                    bounds = c.bounds;
+                    has = true;
+                }
+                else 
+                    bounds.Encapsulate(c.bounds);
+            }
+
+            if (!has)
+            {
+                foreach (Renderer r in go.GetComponentsInChildren<Renderer>())
+                {
+                    if (!has)
+                    {
+                        bounds = r.bounds; 
+                        has = true;
+                    }
+                    else 
+                        bounds.Encapsulate(r.bounds);
+                }
+            }
+
+            return has ? go.transform.position.y - bounds.min.y : 0f;
         }
     }
 }

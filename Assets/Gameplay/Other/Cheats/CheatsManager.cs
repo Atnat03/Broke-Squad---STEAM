@@ -38,11 +38,8 @@ namespace Gameplay.Controller
 
             _itemGiveUI.SetActive(false);
             
-            ABPrint.Print("Create new Item : " +_database.Data.Count);
-            
             foreach (SO_Item item in _database.Data)
             {
-                ABPrint.Print("Create new Item");
                 CheatGiveItemElement elem = Instantiate(_prefabCheatItemGive, _parentGiveItemSpawn);
                 elem.Initialise(item, () => _inventory.TryAddItem(new ItemInstance(item)));
             }
