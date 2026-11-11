@@ -67,7 +67,7 @@ namespace Gameplay.Items
         #region Instantiate
         
         public GameObject InstantiateGameObject(GameObject prefab, Vector3 position, Quaternion rotation) => Instantiate(prefab, position, rotation);
-
+        
         public NetworkObject SpawnGameObject(GameObject prefab, Vector3 position, Quaternion rotation)
         {
             NetworkObject net = Instantiate(prefab, position, rotation).GetComponent<NetworkObject>();
