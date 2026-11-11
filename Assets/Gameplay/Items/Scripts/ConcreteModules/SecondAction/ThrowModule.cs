@@ -65,14 +65,18 @@ namespace Gameplay.Items
             Vector3 forward = Context.Camera.transform.forward;
 
             Vector3 finalPos = GetThrowStartPos(pos, forward);
-
+            
+            foreach (IFirstAction firstAction in held.FirstActionList)
+            {
+                firstAction.OnThrow();
+            }
+            
             Context.SendToServer(this, new OnModuleDoAction_EVENT
             {
                 ValueF = _charge,
                 Rotation = Context.Camera.transform.rotation,
                 Position = finalPos,
             });
-
             ConsumeCondition(new OnModuleDoAction_EVENT());
         }
 

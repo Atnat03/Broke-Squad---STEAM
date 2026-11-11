@@ -45,15 +45,7 @@ namespace Gameplay.Items
         public ICondition Condition => ConditionParent;
         public void StartFirstAction()
         {
-            Context.SendToServer(this, new OnModuleDoAction_EVENT());
-            
-            //SFX
-            Context.Inventory.InvokeEvent(new PlaySoundEvent
-            {
-                position = Context.Core.transform.position,
-                volume = _volume,
-                soundName = _sfxTrigger
-            });
+            TryTriggerExplosion();
         }
 
         public void StopFirstAction() { }
@@ -71,10 +63,28 @@ namespace Gameplay.Items
             SendData(true);
         }
 
+        public void OnThrow()
+        {
+            TryTriggerExplosion();
+        }
+        
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {
             if (!_active)
                 StartExplosion();
+        }
+
+        private void TryTriggerExplosion()
+        {
+            Context.SendToServer(this, new OnModuleDoAction_EVENT());
+            
+            //SFX
+            Context.Inventory.InvokeEvent(new PlaySoundEvent
+            {
+                position = Context.Core.transform.position,
+                volume = _volume,
+                soundName = _sfxTrigger
+            });
         }
 
         private void StartExplosion()

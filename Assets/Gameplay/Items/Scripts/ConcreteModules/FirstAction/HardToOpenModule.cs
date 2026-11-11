@@ -73,6 +73,11 @@ namespace Gameplay.Items
             UpdateView(false);
         }
 
+        public void OnThrow()
+        {
+            
+        }
+
         private void HandleOpenItem()
         {
             Context.SendToServer(this, new OnModuleDoAction_EVENT

@@ -73,6 +73,8 @@ namespace Gameplay.Items
         public static event Action<PlayerInventory> OnInventorySpawned;
         public static event Action<PlayerInventory> OnInventoryDespawned;
         
+        #region Net Spawn/Despawn
+        
         public override void OnNetworkSpawn()
         {
             _replication = GetComponent<PlayerInventoryReplication>();
@@ -87,7 +89,6 @@ namespace Gameplay.Items
             }
             
             _slotIds.OnListChanged += OnSlotIdsChanged;
-            
             OnSetupInventory?.Invoke(_slots.Length);
             
             _heldItemId.OnValueChanged += OnHeldItemChanged;
@@ -114,6 +115,21 @@ namespace Gameplay.Items
             
             _slotIds.OnListChanged -= OnSlotIdsChanged;
             OnInventoryDespawned?.Invoke(this);
+        }
+        
+        #endregion
+        
+        #region Change Current Item Slot
+        
+        private void SetCurrentItemInHand(ItemCore core)
+        {
+            _currentItem = core;
+            
+            if (IsOwner)
+            {
+                _currentItem.SubscribeToInput(_playerInput);
+                OnTooltipChange?.Invoke(true, _currentItem.Instance.Data.TooltipInHand);
+            }
         }
         
         private void OnSlotIdsChanged(NetworkListEvent<int> changeEvent)
@@ -204,6 +220,52 @@ namespace Gameplay.Items
             UpdateHandWhenPickup(newId);
         }
 
+        #endregion
+        
+        #region Pickup Item
+
+        private void TryPickupItem(OnPickupItem_EVENT data)
+        {
+            if (OwnerClientId != data.ClientId) return;
+
+            PickUpRpc(data.ItemPickUpRef);
+        }
+
+        public void TryAddItem(ItemInstance instance)
+        {
+            int slot = FindFreeSlot();
+            if (slot == -1) return;
+            
+            SetSlot(slot, instance);
+
+            SelectSlot(slot);
+        }
+        
+        [Rpc(SendTo.Server)]
+        private void PickUpRpc(NetworkObjectReference pickupRef)
+        {
+            if (!pickupRef.TryGet(out NetworkObject netObj)) return;
+            if (!netObj.TryGetComponent(out ItemPickup pickup)) return;
+            
+            if (pickup.Instance == null) return;
+            
+            //SFX
+            InvokeEvent(new PlaySoundEvent
+            {
+                position = transform.position,
+                volume = _volume,
+                soundName = _sfxPickUp
+            });
+            
+            int slot = FindFreeSlot();
+            if (slot == -1) return;
+            
+            SetSlot(slot, pickup.Instance);
+            netObj.Despawn();
+
+            SelectSlot(slot);
+        }
+        
         private void UpdateHandWhenPickup(int id)
         {
             OnPickupItem?.Invoke();
@@ -252,104 +314,6 @@ namespace Gameplay.Items
             
             SetCurrentItemInHand(core);
         }
-
-        private void UpdateHandWhenDrop()
-        {
-            OnDropItem?.Invoke();
-            
-            foreach (IPassif passif in _currentItem.Instance.Passifs)
-            {
-                passif?.OnStopHolding();
-            }
-            
-            if (IsOwner)
-            {
-                _currentItem.UnsubscribeFromInput(_playerInput);
-                OnTooltipChange?.Invoke(false, null);
-            }
-
-            if (!IsServer)
-                _currentItem.Instance?.Cleanup();
-                
-            Destroy(_currentItem.gameObject);
-            _currentItem = null;
-        }
-
-        public void ApplyReplicatedStates()
-        {
-            if (IsServer || _currentItem == null) return;
-            _replication.ApplyTo(_currentItem.Instance);
-        }
-        
-        public void SetCurrentItemInHand(ItemCore core)
-        {
-            _currentItem = core;
-            
-            if (IsOwner)
-            {
-                _currentItem.SubscribeToInput(_playerInput);
-                OnTooltipChange?.Invoke(true, _currentItem.Instance.Data.TooltipInHand);
-            }
-        }
-        
-        private void LateUpdate()
-        {
-            if (!IsOwner) return;
-            
-            OnSlotSelectedChanged?.Invoke(false);
-
-            int selected = _selectedSlot.Value;
-            int id = _heldItemId.Value;
-            
-            OnUpdateSlots?.Invoke(selected, id);
-
-            if (_isPreviewDrop)
-            {
-                UpdatePreviewDrop();
-            }
-        }
-
-        private void TryPickupItem(OnPickupItem_EVENT data)
-        {
-            if (OwnerClientId != data.ClientId) return;
-
-            PickUpRpc(data.ItemPickUpRef);
-        }
-
-        public void TryAddItem(ItemInstance instance)
-        {
-            int slot = FindFreeSlot();
-            if (slot == -1) return;
-            
-            SetSlot(slot, instance);
-
-            SelectSlot(slot);
-        }
-        
-        [Rpc(SendTo.Server)]
-        private void PickUpRpc(NetworkObjectReference pickupRef)
-        {
-            if (!pickupRef.TryGet(out NetworkObject netObj)) return;
-            if (!netObj.TryGetComponent(out ItemPickup pickup)) return;
-            
-            if (pickup.Instance == null) return;
-            
-            //SFX
-            InvokeEvent(new PlaySoundEvent
-            {
-                position = transform.position,
-                volume = _volume,
-                soundName = _sfxPickUp
-            });
-            
-            int slot = FindFreeSlot();
-            if (slot == -1) return;
-            
-            SetSlot(slot, pickup.Instance);
-            netObj.Despawn();
-
-            SelectSlot(slot);
-        }
         
         private int FindFreeSlot()
         {
@@ -361,7 +325,11 @@ namespace Gameplay.Items
 
             return -1;
         }
+        
+        #endregion
 
+        #region  Drop Item
+        
         private void OnDropPreviewStart()
         {
             ItemInstance item = GetCurrentItemInHand();
@@ -410,8 +378,6 @@ namespace Gameplay.Items
                 DropItemRpc(_dropPos, _dropRot);
         }
         
-        public bool HasItemInHand() => _heldItemId.Value != -1;
-        
         [Rpc(SendTo.Server)]
         private void DropItemRpc(Vector3 groundPoint, Quaternion rot)
         {
@@ -440,12 +406,73 @@ namespace Gameplay.Items
             ClearCurrentSlot();
         }
         
+        private void UpdateHandWhenDrop()
+        {
+            OnDropItem?.Invoke();
+            
+            foreach (IPassif passif in _currentItem.Instance.Passifs)
+            {
+                passif?.OnStopHolding();
+            }
+            
+            if (IsOwner)
+            {
+                _currentItem.UnsubscribeFromInput(_playerInput);
+                OnTooltipChange?.Invoke(false, null);
+            }
+
+            if (!IsServer)
+                _currentItem.Instance?.Cleanup();
+                
+            Destroy(_currentItem.gameObject);
+            _currentItem = null;
+        }
+        
+        private float GetBottomOffset(GameObject go)
+        {
+            Bounds bounds = default;
+            bool has = false;
+
+            foreach (Collider c in go.GetComponentsInChildren<Collider>())
+            {
+                if (c.isTrigger) 
+                    continue;
+                
+                if (!has)
+                {
+                    bounds = c.bounds;
+                    has = true;
+                }
+                else 
+                    bounds.Encapsulate(c.bounds);
+            }
+
+            if (!has)
+            {
+                foreach (Renderer r in go.GetComponentsInChildren<Renderer>())
+                {
+                    if (!has)
+                    {
+                        bounds = r.bounds; 
+                        has = true;
+                    }
+                    else 
+                        bounds.Encapsulate(r.bounds);
+                }
+            }
+
+            return has ? go.transform.position.y - bounds.min.y : 0f;
+        }
+        
+        #endregion
+
+        #region Clear Slot
+        
         public void ClearCurrentSlot()
         {
             ItemInstance item = GetCurrentItemInHand();
             if (item == null) return;
             
-            NotifyNotInHand(item);
             UnableCondition(item);
 
             SetSlot(_selectedSlot.Value, null);
@@ -492,40 +519,31 @@ namespace Gameplay.Items
                 s?.OnNotInHand();
         }
         
-        private float GetBottomOffset(GameObject go)
+        #endregion
+        
+        private bool HasItemInHand() => _heldItemId.Value != -1;
+        
+        public void ApplyReplicatedStates()
         {
-            Bounds bounds = default;
-            bool has = false;
+            if (IsServer || _currentItem == null) return;
+            _replication.ApplyTo(_currentItem.Instance);
+        }
+        
+        private void LateUpdate()
+        {
+            if (!IsOwner) return;
+            
+            OnSlotSelectedChanged?.Invoke(false);
 
-            foreach (Collider c in go.GetComponentsInChildren<Collider>())
+            int selected = _selectedSlot.Value;
+            int id = _heldItemId.Value;
+            
+            OnUpdateSlots?.Invoke(selected, id);
+
+            if (_isPreviewDrop)
             {
-                if (c.isTrigger) 
-                    continue;
-                
-                if (!has)
-                {
-                    bounds = c.bounds;
-                    has = true;
-                }
-                else 
-                    bounds.Encapsulate(c.bounds);
+                UpdatePreviewDrop();
             }
-
-            if (!has)
-            {
-                foreach (Renderer r in go.GetComponentsInChildren<Renderer>())
-                {
-                    if (!has)
-                    {
-                        bounds = r.bounds; 
-                        has = true;
-                    }
-                    else 
-                        bounds.Encapsulate(r.bounds);
-                }
-            }
-
-            return has ? go.transform.position.y - bounds.min.y : 0f;
         }
     }
 }
