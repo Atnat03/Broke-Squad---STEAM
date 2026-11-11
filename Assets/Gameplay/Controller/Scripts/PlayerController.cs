@@ -351,10 +351,11 @@ namespace Gameplay.Controller
             SetYaw(yawDegrees);
         }
 
-        [ClientRpc]
+        [Rpc(SendTo.Owner)]
         public void TeleportClientRpc(Vector3 position, Quaternion rotation)
         {
-            if (!IsOwner) return;
+            if(!IsOwner) return;
+            _rb.linearVelocity = Vector3.zero;
             _rb.position = position;
             _rb.rotation = rotation;
         }
