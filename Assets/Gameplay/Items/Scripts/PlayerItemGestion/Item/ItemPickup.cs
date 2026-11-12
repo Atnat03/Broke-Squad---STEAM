@@ -141,16 +141,24 @@ namespace Gameplay.Items
                 outline.enabled = state;
         }
 
+
         public void Interact(ulong clientId)
         {
-            if (DetectNotGrabbable()) return;
-            
+            if (DetectNotGrabbable())
+                return;
+
+            if (NetworkObject == null || !NetworkObject.IsSpawned)
+            {
+                return;
+            }
+
             InvokeEvent(new OnPickupItem_EVENT
             {
                 ClientId = clientId,
-                ItemPickUpRef = NetworkObject
+                ItemPickUpRef = new NetworkObjectReference(NetworkObject)
             });
         }
+
         
         public void Setup(ItemInstance instance)
         {

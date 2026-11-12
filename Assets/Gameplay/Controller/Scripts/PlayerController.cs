@@ -14,8 +14,6 @@ using Random = UnityEngine.Random;
 
 namespace Gameplay.Controller
 {
-    [RequireComponent(typeof(Rigidbody))]
-    [RequireComponent(typeof(CapsuleCollider))]
     public class PlayerController : NetworkBusListener
     {
         #region Variables
@@ -31,10 +29,8 @@ namespace Gameplay.Controller
 
         [Header("To Assign")]
         public PlayerCamera playerCamera;
-        public GameObject UI;
         [SerializeField] private PlayerHealth health;
         public MeshRenderer[] meshRenderer;
-        public TextMeshProUGUI pseudoText;
 
         [Header("Tied Up")]
         [SerializeField] private float tiedUpSpeed = 1f;
@@ -118,6 +114,7 @@ namespace Gameplay.Controller
         
         public Action OnPersonalisationChanged;
         public event Action JumpPressed;
+        public Action<string> OnPseudoIsSetUp;
         
         #endregion
 
@@ -138,13 +135,11 @@ namespace Gameplay.Controller
             if (!IsOwner)
             {
                 playerCamera.gameObject.SetActive(false);
-                UI.SetActive(false);
                 RequestPersonalisationRpc();
                 return;
             }
 
             foreach (var mesh in meshRenderer) mesh.gameObject.layer = LayerMask.NameToLayer("HideToOwner");
-            pseudoText.gameObject.SetActive(false);
 
             SendPersonalisation();
             SetUpModules();
@@ -185,7 +180,7 @@ namespace Gameplay.Controller
 
         private void SetUpModules()
         {
-            _playerInput = TryGetComponent(out PlayerInput existing) ? existing : gameObject.AddComponent<PlayerInput>();
+            _playerInput = GetComponent<PlayerInput>();
             _input = new PlayerInputReader(_playerInput);
 
             _stamina = new PlayerStamina(profile, (current, max) =>
@@ -316,7 +311,7 @@ namespace Gameplay.Controller
             meshRenderer[2].material.color = PlayerLocalData.instance.PossibleColor[colorId];
             meshRenderer[3].material.color = PlayerLocalData.instance.PossibleColor[colorId];
             meshRenderer[4].material.color = PlayerLocalData.instance.PossibleColor[colorId];
-            pseudoText.text = playerName;
+            OnPseudoIsSetUp?.Invoke(playerName);
             
             PlayerColorId = colorId;
             PlayerName = playerName;

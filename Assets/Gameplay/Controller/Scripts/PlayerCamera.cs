@@ -111,7 +111,7 @@ namespace Gameplay.Controller
             ListenToEvent<SensitivityChange_EVENT>(_ => ReloadSensitivity());
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             playerInput.OnMouseMovement -= OnMouseMove;
             playerInput.OnLeanInput -= EnterLeanMode;

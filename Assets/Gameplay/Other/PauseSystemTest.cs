@@ -11,17 +11,16 @@ namespace Gameplay.Other
 {
     public class PauseSystemTest :  MonoBusListener
     {
-        [SerializeField] private PlayerInput _playerInput;
-        [SerializeField] private PlayerController _playerController;
+        [SerializeField] private PlayerSetUpBridge _bridge;
         
         [Header("UI")]
         [SerializeField] private GameObject _uiPause;
 
         private bool _isPause;
         
-        public  void Awake()
+        public void Start()
         {
-            _playerInput.OnPause += UpdatePause;
+            _bridge.PlayerInput.OnPause += UpdatePause;
                 
             _uiPause.gameObject.SetActive(false);
         }
@@ -36,7 +35,7 @@ namespace Gameplay.Other
             Cursor.lockState = !_isPause ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = _isPause;
 
-            _playerController.SetInputEnabled(!_isPause);
+            _bridge.PlayerController.SetInputEnabled(!_isPause);
         }
 
         public void ToggleFpsCounter(Toggle toggle)

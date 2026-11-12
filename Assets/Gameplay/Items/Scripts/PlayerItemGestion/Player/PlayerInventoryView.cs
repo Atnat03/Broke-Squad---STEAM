@@ -10,7 +10,7 @@ namespace Gameplay.Items
     public class PlayerInventoryView : MonoBusListener
     {
         [Header("References")]
-        [SerializeField] private PlayerInventory _inventory;
+        [SerializeField] private PlayerSetUpBridge _bridge;
         
         [Header("UI")]
         [SerializeField] private ItemSlotUI _slotPrefabUI;
@@ -27,26 +27,32 @@ namespace Gameplay.Items
         [SerializeField, SoundName] private string _pickUpSound;
         [SerializeField, SoundName] private string _dropSound;
 
-        void OnEnable()
+        void Start()
         {
-            _inventory.OnSetupInventory += SetUpInventory;
-            _inventory.OnSlotSelectedChanged += SelectedSlotChanged;
-            _inventory.OnUpdateSlots += UpdateSlots;
-            _inventory.OnPickupItem += PickupItem;
-            _inventory.OnDropItem += DropItem;
-            _inventory.OnTooltipChange += UpdateTooltip;
+            if(_bridge)
+            {
+                _bridge.PlayerInventory.OnSlotSelectedChanged += SelectedSlotChanged;
+                _bridge.PlayerInventory.OnUpdateSlots += UpdateSlots;
+                _bridge.PlayerInventory.OnPickupItem += PickupItem;
+                _bridge.PlayerInventory.OnDropItem += DropItem;
+                _bridge.PlayerInventory.OnTooltipChange += UpdateTooltip;
+                
+                SetUpInventory();
+            }
             
             _tooltipParent.SetActive(false);
         }
         
         void OnDisable()
         {
-            _inventory.OnSetupInventory -= SetUpInventory;
-            _inventory.OnSlotSelectedChanged -= SelectedSlotChanged;
-            _inventory.OnUpdateSlots -= UpdateSlots;
-            _inventory.OnPickupItem -= PickupItem;
-            _inventory.OnDropItem -= DropItem;
-            _inventory.OnTooltipChange -= UpdateTooltip;
+            if (_bridge)
+            {
+                _bridge.PlayerInventory.OnSlotSelectedChanged -= SelectedSlotChanged;
+                _bridge.PlayerInventory.OnUpdateSlots -= UpdateSlots;
+                _bridge.PlayerInventory.OnPickupItem -= PickupItem;
+                _bridge.PlayerInventory.OnDropItem -= DropItem;
+                _bridge.PlayerInventory.OnTooltipChange -= UpdateTooltip;
+            }
         }
 
         private void SelectedSlotChanged(bool enable)
@@ -54,9 +60,9 @@ namespace Gameplay.Items
             _uiDirty = enable;
         }
 
-        private void SetUpInventory(int numberSlots)
+        private void SetUpInventory()
         {
-            _slotsUIList = new ItemSlotUI[numberSlots];
+            _slotsUIList = new ItemSlotUI[_bridge.PlayerInventory.ItemCount];
             
             for (int i = 0; i < _slotsUIList.Length; i++)
             {
@@ -78,11 +84,9 @@ namespace Gameplay.Items
 
             if (id != -1)
             {
-                SO_Item data = _inventory.DataBase.GetItemData(id);
-                if (data != null && data.Icon != null)
+                SO_Item data = _bridge.PlayerInventory.DataBase.GetItemData(id);
+                if (data && data.Icon)
                     icon = data.Icon;
-                else
-                    Debug.LogWarning($"L'item {id} n'a pas d'icône assignée.", this);
             }
             
             _slotsUIList[selected].SetIcon(icon);
