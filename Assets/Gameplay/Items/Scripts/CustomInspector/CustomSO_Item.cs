@@ -24,6 +24,8 @@ namespace Gameplay.Items
         private readonly Color _secondActionColor = new Color(0.3f, 0.15f, 0.15f); 
         private readonly Color _passifColor = new Color(0.25f, 0.1f, 0.2f);
         
+        private Sprite _lastIcon;
+        
         private void OnEnable()
         {
             _itemName = serializedObject.FindProperty(nameof(SO_Item.ItemName));
@@ -36,7 +38,7 @@ namespace Gameplay.Items
             _secondActions = serializedObject.FindProperty(nameof(SO_Item.SecondActionList));
             _passif = serializedObject.FindProperty(nameof(SO_Item.PassifList));
             
-            UpdateAssetIcon();
+            UpdateAssetIcon(true);
         }
 
         public override void OnInspectorGUI()
@@ -82,9 +84,10 @@ namespace Gameplay.Items
             SerializeReferenceListDrawer.Draw(_passif, typeof(IPassif), "Passif");
             EndSection();
             
-            serializedObject.ApplyModifiedProperties();
-            
-            UpdateAssetIcon();
+            bool changed = serializedObject.ApplyModifiedProperties();
+
+            if (changed)
+                UpdateAssetIcon();
         }
 
         private void BeginSection(Color color)
@@ -110,23 +113,19 @@ namespace Gameplay.Items
             EditorGUILayout.Space(4);
         }
         
-        private void UpdateAssetIcon()
+        private void UpdateAssetIcon(bool force = false)
         {
             if (_icon == null)
                 return;
 
             Sprite sprite = _icon.objectReferenceValue as Sprite;
 
-            if (sprite == null)
-            {
-                EditorGUIUtility.SetIconForObject(target, null);
+            if (!force && sprite == _lastIcon)
                 return;
-            }
 
-            Texture2D texture = sprite.texture;
+            _lastIcon = sprite;
 
-            if (texture == null)
-                return;
+            Texture2D texture = sprite != null ? sprite.texture : null;
 
             EditorGUIUtility.SetIconForObject(target, texture);
 
