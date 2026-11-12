@@ -24,14 +24,14 @@ namespace Gameplay.UI.Scripts
         
 
         
-        private void OnHpChanged(int hp, int maxHp)
+        private void OnHpChanged(float hp, float maxHp)
         {
             if (pvSlider != null)
             {
                 pvSlider.maxValue = maxHp;
                 pvSlider.value = hp;
             }
-            if (playerHpText != null) playerHpText.text = hp.ToString();
+            if (playerHpText != null) playerHpText.text = ((int)hp).ToString();
         }
 
         private void OnInvincibilityChanged(bool invincible)
