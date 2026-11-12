@@ -17,6 +17,7 @@ namespace Gameplay.Items
     {
         public SO_ItemDataBase DataBase => _database;
         public PlayerController Controller => _playerController;
+        public int ItemCount => _itemCount;
         
         [Header("References")]
         [SerializeField] private PlayerController _playerController;
@@ -61,7 +62,6 @@ namespace Gameplay.Items
         public int GetSlotItemId(int index) => index >= 0 && index < _slotIds.Count ? _slotIds[index] : -1;
         
         //Actions
-        public Action<int> OnSetupInventory;
         public Action OnPickupItem;
         public Action OnDropItem;
         public Action<int, int> OnUpdateSlots;
@@ -89,7 +89,6 @@ namespace Gameplay.Items
             }
             
             _slotIds.OnListChanged += OnSlotIdsChanged;
-            OnSetupInventory?.Invoke(_slots.Length);
             
             _heldItemId.OnValueChanged += OnHeldItemChanged;
             _selectedSlot.OnValueChanged += OnSelectedSlotChanged;

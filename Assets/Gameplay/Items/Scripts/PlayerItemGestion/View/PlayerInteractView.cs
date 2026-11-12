@@ -6,22 +6,24 @@ namespace Gameplay.Items
 {
     public class PlayerInteractView : MonoBusListener
     {
-        [SerializeField] private PlayerInteract _playerInteract;
+        [SerializeField] private PlayerSetUpBridge _bridge;
 
         [Header("UI")]
         [SerializeField] private GameObject _tooltipParent;
         [SerializeField] private TextMeshProUGUI _tooltipText;
         
-        void OnEnable()
+        void Start()
         {
-            _playerInteract.OnTooltipChange += UpdateTooltip;
+            if(_bridge)
+                _bridge.PlayerInteract.OnTooltipChange += UpdateTooltip;
             
             _tooltipParent.SetActive(false);
         }
         
         void OnDisable()
         {
-            _playerInteract.OnTooltipChange -= UpdateTooltip;
+            if(_bridge)
+                _bridge.PlayerInteract.OnTooltipChange -= UpdateTooltip;
         }
 
         private void UpdateTooltip(bool isVisible, string txt)

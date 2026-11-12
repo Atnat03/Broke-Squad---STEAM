@@ -12,7 +12,7 @@
     {
         public class PlayerHealth : NetworkBusListener, IDamageable
         {
-            [SerializeField] private const int MaxHpValue = 100;
+            [SerializeField] private const float MaxHpValue = 100;
             
             private int _previousTakeDamageSoundPlayed = -1;
             [Header("SFX")]
@@ -21,7 +21,7 @@
             [SerializeField, SoundName] private string _rezSound;
             [SerializeField] private MeshRenderer _bodyMesh;
 
-            private readonly NetworkVariable<int> _playerHp = new NetworkVariable<int>(MaxHpValue,
+            private readonly NetworkVariable<float> _playerHp = new NetworkVariable<float>(MaxHpValue,
                     NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
             private readonly NetworkVariable<bool> _playerDown = new NetworkVariable<bool>(false,
@@ -30,14 +30,14 @@
             private readonly NetworkVariable<bool> _playerInvincible = new NetworkVariable<bool>(false, 
                      NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
             
-            public int CurrentHp => _playerHp.Value;
-            public int MaxHp => MaxHpValue;
+            public float CurrentHp => _playerHp.Value;
+            public float MaxHp => MaxHpValue;
             public bool IsDowned => _playerDown.Value;
             public bool IsInvincible => _playerInvincible.Value;
 
             private bool _canTakeDamage = true;
 
-            public event Action<int, int> OnChangeHp;
+            public event Action<float, float> OnChangeHp;
             public event Action<bool> OnChangedInvincibility;
             public event Action<bool> OnChangedDown;
 
@@ -115,12 +115,12 @@
             
             #region Replication callbacks (every client)
 
-            private void OnHpChanged(int previous, int current)
+            private void OnHpChanged(float previous, float current)
             {
-                OnChangeHp?.Invoke(previous, current);
+                OnChangeHp?.Invoke(current, MaxHp);
                 if(IsOwner) InvokeEvent(new PlayerHealthChanged_EVENT
                 {
-                    CurrentHp = CurrentHp,
+                    CurrentHp = current,
                     MaxHp = MaxHp,
                     Invincible =  IsInvincible
                 });
