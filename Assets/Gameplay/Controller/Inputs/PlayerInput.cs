@@ -43,6 +43,10 @@ namespace Gameplay.Controller
         public Action OnStartDropEquipment;
         public Action OnEndDropEquipment;
         
+        
+        public Action OnStartShowOtherPlayer;
+        public Action OnEndShowOtherPlayer;
+        
         public Action OnPause;
 
         private void Awake()
@@ -89,6 +93,9 @@ namespace Gameplay.Controller
             _playerInputs.Gameplay.Ping.performed += PerformPing;
 
             _playerInputs.Gameplay.EquimentDrop.performed += PerformStartDropEquipment;
+
+            _playerInputs.Gameplay.ShowOtherPlayer.performed += PerformShowOtherPlayer;
+            _playerInputs.Gameplay.ShowOtherPlayer.canceled += CancelShowOtherPlayer;
             
             _playerInputs.Gameplay.Pause.performed += PerformPause;
         }
@@ -123,6 +130,9 @@ namespace Gameplay.Controller
             
             _playerInputs.Gameplay.EquimentDrop.performed -= PerformStartDropEquipment;
 
+            _playerInputs.Gameplay.ShowOtherPlayer.performed -= PerformShowOtherPlayer;
+            _playerInputs.Gameplay.ShowOtherPlayer.canceled -= CancelShowOtherPlayer;
+            
             _playerInputs.Gameplay.Pause.performed -= PerformPause;
             
             _playerInputs.Disable();
@@ -257,6 +267,16 @@ namespace Gameplay.Controller
         private void PerformPause(InputAction.CallbackContext obj)
         {
             OnPause?.Invoke();
+        }
+        
+        private void PerformShowOtherPlayer(InputAction.CallbackContext obj)
+        {
+            OnStartShowOtherPlayer?.Invoke();
+        }
+        
+        private void CancelShowOtherPlayer(InputAction.CallbackContext obj)
+        {
+            OnEndShowOtherPlayer?.Invoke();
         }
         
         private void OnDestroy() => _playerInputs.Dispose();
