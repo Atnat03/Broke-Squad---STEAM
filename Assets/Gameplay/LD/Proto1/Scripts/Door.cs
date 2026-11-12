@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Gameplay.LD.Proto1;
 using Gameplay.LD.Proto1.Scripts;
@@ -33,6 +34,17 @@ public class Door : OnlineInteractable
     public UnityEvent onCloseFront; 
     public UnityEvent onCloseBack;
     
+    [Header("Remote")]
+    [SerializeField] string remoteId;           
+    private float remoteActiveDuration = 0;
+    readonly HashSet<ulong> _remoteHolders = new();
+    Coroutine _remoteRoutine;
+    bool _remoteTimed;
+
+    bool UsesRemote => !string.IsNullOrEmpty(remoteId);
+    bool RemoteActive => _remoteTimed || _remoteHolders.Count > 0;
+    
+    
     Transform Ref => transform;
     
     readonly NetworkVariable<bool> _locked = new(false);
@@ -55,6 +67,12 @@ public class Door : OnlineInteractable
         foreach (var b in RequiredButtons) b.StateChanged += Evaluate;
         foreach (var b in RequiredHeldButtons) b.StateChanged += Evaluate;
         foreach (var d in RequiredDigicodes) d.StateChanged += Evaluate;
+        
+        if (UsesRemote)
+        {
+            ListenToEvent<OnRemoteAction_EVENT>(OnRemote);
+            NetworkManager.OnClientDisconnectCallback += OnRemoteClientDisconnected;
+        }
     }
 
     public override void OnNetworkDespawn()
@@ -66,6 +84,13 @@ public class Door : OnlineInteractable
         foreach (var b in RequiredButtons) b.StateChanged -= Evaluate;
         foreach (var b in RequiredHeldButtons) b.StateChanged -= Evaluate;
         foreach (var d in RequiredDigicodes) d.StateChanged -= Evaluate;
+        
+        if (UsesRemote)
+        {
+            if (NetworkManager != null)
+                NetworkManager.OnClientDisconnectCallback -= OnRemoteClientDisconnected;
+        }
+        if (_remoteRoutine != null) StopCoroutine(_remoteRoutine);
     }
     
     void OnStateChanged(int previous, int current)
@@ -109,6 +134,7 @@ public class Door : OnlineInteractable
         foreach (var b in RequiredButtons) allActive &= b.activated.Value;
         foreach (var b in RequiredHeldButtons) allActive &= b.Activated.Value;
         foreach (var d in RequiredDigicodes) allActive &= d.unlocked.Value;
+        if (UsesRemote) allActive &= RemoteActive;
 
         bool shouldBeLocked = !allActive;
         
@@ -181,4 +207,51 @@ public class Door : OnlineInteractable
         FaceAxis.Up => Ref.up,
         _ => Ref.forward
     };
+    
+    void OnRemote(OnRemoteAction_EVENT e)
+    {
+        if (e.RemoteId != remoteId) return;
+
+        switch (e.Phase)
+        {
+            case RemoteButtonPhase.Press:
+                if (_remoteRoutine != null)
+                {
+                    StopCoroutine(_remoteRoutine);
+                    _remoteRoutine = null;
+                }
+
+                if (e.ActiveDuration <= 0f)
+                {
+                    _remoteTimed = !_remoteTimed;
+                }
+                else
+                {
+                    _remoteTimed = true;
+                    _remoteRoutine = StartCoroutine(RemoteTimer(e.ActiveDuration));
+                }
+                break;
+            case RemoteButtonPhase.HoldStart:
+                _remoteHolders.Add(e.ClientId);
+                break;
+            case RemoteButtonPhase.HoldEnd:
+                _remoteHolders.Remove(e.ClientId);
+                break;
+        }
+
+        Evaluate();
+    }
+
+    IEnumerator RemoteTimer(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        _remoteTimed = false;
+        _remoteRoutine = null;
+        Evaluate();
+    }
+
+    void OnRemoteClientDisconnected(ulong clientId)
+    {
+        if (_remoteHolders.Remove(clientId)) Evaluate();
+    }
 }
