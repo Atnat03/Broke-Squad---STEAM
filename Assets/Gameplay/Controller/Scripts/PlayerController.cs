@@ -82,6 +82,8 @@ namespace Gameplay.Controller
         public PlayerBody Body => body;
         public PlayerStamina Stamina => _stamina;
         public LadderChecker LadderChecker => ladderChecker;
+
+        public PlayerHealth PlayerHealth => health;
         public float TiedUpSpeed => tiedUpSpeed;
 
         private bool WantsCrouch() => _input.CrouchHeld || (IsCrouching && !body.CanStandUp());
