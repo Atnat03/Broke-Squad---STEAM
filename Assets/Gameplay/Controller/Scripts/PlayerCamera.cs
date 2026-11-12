@@ -133,8 +133,6 @@ namespace Gameplay.Controller
 
             if (!player.InputEnabled) return;
             if (_override != null && player.IsDown) _override.Release();
-
-            Debug.Log("SensMultiplier : " + _sensMultiplier);
             
             
             if (_leanMode && _override == null) 

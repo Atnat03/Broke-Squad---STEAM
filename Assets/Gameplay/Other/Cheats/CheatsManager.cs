@@ -1,13 +1,16 @@
 using System;
+using System.Collections.Generic;
 using Bus;
 using Gameplay.Items;
 using Gameplay.Other.Cheat;
 using Gameplay.PlayerData;
 using MyPrint;
+using Network.Connections.SceneLoading;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace Gameplay.Controller
 {
@@ -16,6 +19,7 @@ namespace Gameplay.Controller
         [Header("References")] 
         public PlayerHealth  playerHealth; 
         public PlayerRevive playerRevive;
+        public PlayerController playerController;
         
         private Player _playerInputs;
             
@@ -27,6 +31,10 @@ namespace Gameplay.Controller
         [SerializeField] private SO_ItemDataBase _database;
         private bool _isOpen = false;
         
+        [Header("Teleport")]
+        [SerializeField] private List<Button> _playerTeleportsButton;
+        [SerializeField] private Button _spawnTeleportButton;
+        
         public Action OnInvincibility;
         public Action OnRevive;
         public Action OnDamage;
@@ -36,6 +44,9 @@ namespace Gameplay.Controller
         {
             _playerInputs = new Player();
 
+            
+            
+            
             _itemGiveUI.SetActive(false);
             
             foreach (SO_Item item in _database.Data)
@@ -50,6 +61,11 @@ namespace Gameplay.Controller
             base.OnNetworkSpawn();
             if (!IsOwner) return;
 
+            _spawnTeleportButton.onClick.AddListener(() =>
+            {
+                playerController.TeleportClientRpc(SpawnPointManager.instance.GetPlayerSpawnPoint(0).position, SpawnPointManager.instance.GetPlayerSpawnPoint(0).transform.rotation);
+            });
+            
             _playerInputs.Enable();
             _playerInputs.Cheats.Invicibility.performed += Invicibility;
             _playerInputs.Cheats.Heal.performed += Heal;
@@ -115,15 +131,56 @@ namespace Gameplay.Controller
         private void UpdatePannelItemGive(InputAction.CallbackContext context)
         {
             _isOpen = !_isOpen;
-            
             _itemGiveUI.SetActive(_isOpen);
-            
-            Cursor.visible = !_isOpen;
-            Cursor.lockState = !_isOpen ? CursorLockMode.Locked : CursorLockMode.None;
+
+            if (_isOpen) RequestPlayersServerRpc();
+
+            Cursor.lockState = _isOpen ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible = _isOpen;
         }
         
         #endregion
         
+        [Rpc(SendTo.Server)]
+        private void RequestPlayersServerRpc()
+        {
+            var ids = new List<ulong>();
+            foreach (ulong id in NetworkManager.Singleton.ConnectedClientsIds)
+            {
+                if (id == OwnerClientId) continue; 
+                ids.Add(id);
+            }
+            SendPlayersOwnerRpc(ids.ToArray());
+        }
+        
+        [Rpc(SendTo.Owner)]
+        private void SendPlayersOwnerRpc(ulong[] ids)
+        {
+            for (int i = 0; i < _playerTeleportsButton.Count; i++)
+            {
+                Button btn = _playerTeleportsButton[i];
+                btn.onClick.RemoveAllListeners();
+
+                bool present = i < ids.Length;
+                btn.gameObject.SetActive(present);
+                if (!present) continue;
+
+                ulong targetId = ids[i];
+
+                var label = btn.GetComponentInChildren<TMPro.TMP_Text>();
+                if (label) label.text = $"Player {targetId + 1}";
+
+                btn.onClick.AddListener(() => TeleportToPlayerServerRpc(targetId));
+            }
+        }
+        
+        [Rpc(SendTo.Server)]
+        private void TeleportToPlayerServerRpc(ulong targetId)
+        {
+            var target = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(targetId);
+            if (target == null) return;
+
+            playerController.TeleportClientRpc(target.transform.position, target.transform.rotation);
+        }
     }
 }
