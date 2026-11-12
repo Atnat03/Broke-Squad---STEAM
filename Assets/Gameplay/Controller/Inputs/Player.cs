@@ -251,6 +251,16 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""ShowOtherPlayer"",
+                    ""type"": ""Button"",
+                    ""id"": ""e8da6f1d-af9d-48d0-a9dd-e1e02dce3913"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -517,6 +527,17 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8c4c0ae7-d24e-40b5-b83c-db2bc98d90bf"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShowOtherPlayer"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -654,6 +675,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
         m_Gameplay_Ping = m_Gameplay.FindAction("Ping", throwIfNotFound: true);
         m_Gameplay_EquimentDrop = m_Gameplay.FindAction("EquimentDrop", throwIfNotFound: true);
         m_Gameplay_Pause = m_Gameplay.FindAction("Pause", throwIfNotFound: true);
+        m_Gameplay_ShowOtherPlayer = m_Gameplay.FindAction("ShowOtherPlayer", throwIfNotFound: true);
         // Cheats
         m_Cheats = asset.FindActionMap("Cheats", throwIfNotFound: true);
         m_Cheats_Invicibility = m_Cheats.FindAction("Invicibility", throwIfNotFound: true);
@@ -758,6 +780,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Ping;
     private readonly InputAction m_Gameplay_EquimentDrop;
     private readonly InputAction m_Gameplay_Pause;
+    private readonly InputAction m_Gameplay_ShowOtherPlayer;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -834,6 +857,10 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Pause => m_Wrapper.m_Gameplay_Pause;
         /// <summary>
+        /// Provides access to the underlying input action "Gameplay/ShowOtherPlayer".
+        /// </summary>
+        public InputAction @ShowOtherPlayer => m_Wrapper.m_Gameplay_ShowOtherPlayer;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
@@ -907,6 +934,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
+            @ShowOtherPlayer.started += instance.OnShowOtherPlayer;
+            @ShowOtherPlayer.performed += instance.OnShowOtherPlayer;
+            @ShowOtherPlayer.canceled += instance.OnShowOtherPlayer;
         }
 
         /// <summary>
@@ -966,6 +996,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
+            @ShowOtherPlayer.started -= instance.OnShowOtherPlayer;
+            @ShowOtherPlayer.performed -= instance.OnShowOtherPlayer;
+            @ShowOtherPlayer.canceled -= instance.OnShowOtherPlayer;
         }
 
         /// <summary>
@@ -1258,6 +1291,13 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPause(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ShowOtherPlayer" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnShowOtherPlayer(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Cheats" which allows adding and removing callbacks.
