@@ -124,7 +124,7 @@ namespace Gameplay.LD.Proto1
             proj.Init(dir);
         }
 
-        // ---------------- Visuals (every client) ----------------
+        
         private bool TryGetTarget(out NetworkObject target)
         {
             target = null;
@@ -205,6 +205,7 @@ namespace Gameplay.LD.Proto1
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, detectionRange);
+            Gizmos.DrawLine(muzzle.position, muzzle.position);
         }
     }
 }

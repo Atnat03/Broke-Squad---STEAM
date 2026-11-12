@@ -1,6 +1,7 @@
 ﻿using Bus;
 using Gameplay.Controller;
 using Gameplay.IA;
+using MyPrint;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -10,18 +11,15 @@ namespace Gameplay.LD
     {
         public void OnTriggerEnter(Collider other)
         {
-            if(!IsServer) return;
+            if (!IsServer) return;
 
-            ThrowEventClientRpc(other.transform.GetComponent<PlayerController>().OwnerClientId);
-        }
-
-        [Rpc(SendTo.Everyone)]
-        private void ThrowEventClientRpc(ulong clientID)
-        {
-            InvokeEvent(new OnLockDownStart_EVENT
+            if (!other.TryGetComponent(out PlayerController p))
             {
-                ClientID = clientID
-            });
+                ABPrint.Print("Pas de controller", ABColor.Red);
+                return;
+            }
+
+            LockDownManager.instance.StartLockDown(p.PlayerName);
         }
     }
 }

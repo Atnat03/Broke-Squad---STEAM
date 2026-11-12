@@ -14,8 +14,6 @@ using Random = UnityEngine.Random;
 
 namespace Gameplay.Controller
 {
-    [RequireComponent(typeof(Rigidbody))]
-    [RequireComponent(typeof(CapsuleCollider))]
     public class PlayerController : NetworkBusListener
     {
         #region Variables
@@ -31,10 +29,8 @@ namespace Gameplay.Controller
 
         [Header("To Assign")]
         public PlayerCamera playerCamera;
-        public GameObject UI;
         [SerializeField] private PlayerHealth health;
         public MeshRenderer[] meshRenderer;
-        public TextMeshProUGUI pseudoText;
 
         [Header("Tied Up")]
         [SerializeField] private float tiedUpSpeed = 1f;
@@ -82,6 +78,8 @@ namespace Gameplay.Controller
         public PlayerBody Body => body;
         public PlayerStamina Stamina => _stamina;
         public LadderChecker LadderChecker => ladderChecker;
+
+        public PlayerHealth PlayerHealth => health;
         public float TiedUpSpeed => tiedUpSpeed;
 
         private bool WantsCrouch() => _input.CrouchHeld || (IsCrouching && !body.CanStandUp());
@@ -96,14 +94,27 @@ namespace Gameplay.Controller
 
         public void StartLadderCooldown() => _ladderCooldown = Profile.ladderRegrabCooldown;
         
-        private bool WantsClimb() => _ladderCooldown <= 0f && ladderChecker.Touching && MoveInput.y > 0.1f;
+        private bool WantsClimb() => _ladderCooldown <= 0f && ladderChecker.Touching;
+
+        public float ClimbInput => ladderChecker.GetClimbInput(_motor.DesiredDirection);
+
+        private bool KeepClimbing() =>
+            (ladderChecker.Touching || ladderChecker.HeadTouching)
+            && !(IsGrounded && ClimbInput < 0f)
+            && !_ladderJumpRequested;
         
-        private bool KeepClimbing() => ladderChecker.Touching && !(IsGrounded && MoveInput.y < -0.1f);
+        private bool _ladderJumpRequested;
+        public bool LadderJumpRequested => _ladderJumpRequested;
+        public void RequestLadderJump() => _ladderJumpRequested = true;
+        public void ClearLadderJump() => _ladderJumpRequested = false;
+        
 
         public string PlayerName { get; private set; }
         public int PlayerColorId { get; private set; }
         
         public Action OnPersonalisationChanged;
+        public event Action JumpPressed;
+        public Action<string> OnPseudoIsSetUp;
         
         #endregion
 
@@ -124,13 +135,11 @@ namespace Gameplay.Controller
             if (!IsOwner)
             {
                 playerCamera.gameObject.SetActive(false);
-                UI.SetActive(false);
                 RequestPersonalisationRpc();
                 return;
             }
 
             foreach (var mesh in meshRenderer) mesh.gameObject.layer = LayerMask.NameToLayer("HideToOwner");
-            pseudoText.gameObject.SetActive(false);
 
             SendPersonalisation();
             SetUpModules();
@@ -148,9 +157,10 @@ namespace Gameplay.Controller
 
         private void SetUpComponents()
         {
+            
             _rb = GetComponent<Rigidbody>();
             _capsule = GetComponent<CapsuleCollider>();
-
+            if(!IsOwner)_rb.isKinematic = true;
             _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             _rb.interpolation = RigidbodyInterpolation.Interpolate;
             _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
@@ -170,7 +180,7 @@ namespace Gameplay.Controller
 
         private void SetUpModules()
         {
-            _playerInput = TryGetComponent(out PlayerInput existing) ? existing : gameObject.AddComponent<PlayerInput>();
+            _playerInput = GetComponent<PlayerInput>();
             _input = new PlayerInputReader(_playerInput);
 
             _stamina = new PlayerStamina(profile, (current, max) =>
@@ -178,6 +188,7 @@ namespace Gameplay.Controller
 
             _motor = new PlayerMotor(_rb, transform, profile, ground, _input, body);
             _motor.OnJump += () => PlaySound(_jumpSound, 0.5f);
+            _input.OnJumpPressed += () => JumpPressed?.Invoke();
             _input.OnJumpPressed += _motor.BufferJump;
 
             footsteps.Init(PlaySound, this);
@@ -239,7 +250,8 @@ namespace Gameplay.Controller
 
             float dt = Time.fixedDeltaTime;
             ground.Check(body, _rb, transform);
-            ladderChecker.Check(body, transform);
+            Vector3 probeDir = _stateMachine.CurrentState is ClimbState ? -ladderChecker.LadderNormal : _motor.DesiredDirection;
+            ladderChecker.Check(body, probeDir);
             _ladderCooldown -= dt;
             _stateMachine.FixedUpdate();
             body.Tick(dt);
@@ -295,7 +307,11 @@ namespace Gameplay.Controller
         {
             if (PlayerLocalData.instance == null) return;
             meshRenderer[0].material.color = PlayerLocalData.instance.PossibleColor[colorId];
-            pseudoText.text = playerName;
+            meshRenderer[1].material.color = PlayerLocalData.instance.PossibleColor[colorId];
+            meshRenderer[2].material.color = PlayerLocalData.instance.PossibleColor[colorId];
+            meshRenderer[3].material.color = PlayerLocalData.instance.PossibleColor[colorId];
+            meshRenderer[4].material.color = PlayerLocalData.instance.PossibleColor[colorId];
+            OnPseudoIsSetUp?.Invoke(playerName);
             
             PlayerColorId = colorId;
             PlayerName = playerName;
@@ -332,10 +348,11 @@ namespace Gameplay.Controller
             SetYaw(yawDegrees);
         }
 
-        [ClientRpc]
+        [Rpc(SendTo.Owner)]
         public void TeleportClientRpc(Vector3 position, Quaternion rotation)
         {
-            if (!IsOwner) return;
+            if(!IsOwner) return;
+            _rb.linearVelocity = Vector3.zero;
             _rb.position = position;
             _rb.rotation = rotation;
         }

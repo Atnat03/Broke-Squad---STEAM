@@ -1,7 +1,6 @@
 ﻿using System;
 using Gameplay.LD.Scripts;
 using MyPrint;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Gameplay.Items
@@ -25,12 +24,11 @@ namespace Gameplay.Items
             if (collision.collider == item.GetComponent<Collider>()) return;
             if (_rb == null && !item.TryGetComponent(out _rb)) return;
 
-            float speed = _rb.linearVelocity.magnitude;
-
-            IDamageable child = collision.gameObject.GetComponentInChildren<IDamageable>();
-            if (collision.gameObject.TryGetComponent<IDamageable>(out var damage) || child != null)
+            float speed = _rb.linearVelocity.magnitude * _mass;
+            
+            if (collision.gameObject.TryGetComponent<IDamageable>(out var damage))
             {
-                if (speed <= _minVelocityForDamage) return;
+               if (speed <= 0.5f) return;
 
                 float t = Mathf.InverseLerp(_minVelocityForDamage, _maxVelocity, speed);
                 float curved = _damageCurve.Evaluate(t);
@@ -43,8 +41,8 @@ namespace Gameplay.Items
                     if (!_canDamagePlayer)
                         return;
                 }
-
-                (child ?? damage).ApplyDamage(dmg);
+                
+                damage.ApplyDamage(dmg);
             }
         }
 

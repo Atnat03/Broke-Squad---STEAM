@@ -7,6 +7,10 @@ namespace Gameplay.Controller
 {
     public class PlayerInput : MonoBehaviour
     {
+        [SerializeField] private PlayerController _controller;
+        
+        private bool Blocked => _controller != null && _controller.IsDown;
+        
         private Player _playerInputs;
         
         public Action OnStartLeftInput;
@@ -38,17 +42,27 @@ namespace Gameplay.Controller
 
         public Action OnPinging;
 
-        public Action OnTryDropEquipment;
+        public Action OnStartDropEquipment;
+        public Action OnEndDropEquipment;
+        
+        
+        public Action OnStartShowOtherPlayer;
+        public Action OnEndShowOtherPlayer;
         
         public Action OnPause;
-
+        
         private void Awake()
         {
-            _playerInputs = new Player();
+            if (_controller == null) _controller = GetComponentInParent<PlayerController>();
+            if (_controller == null)
+                Debug.LogError($"PlayerInput on '{name}' has no PlayerController", this);
         }
-
+        
         private void OnEnable()
         {
+            if (_playerInputs == null)
+                _playerInputs = new Player();
+
             _playerInputs.Enable();
             
             _playerInputs.Gameplay.LeftClick.performed += PerformLeftClick;
@@ -84,7 +98,10 @@ namespace Gameplay.Controller
 
             _playerInputs.Gameplay.Ping.performed += PerformPing;
 
-            _playerInputs.Gameplay.EquimentDrop.performed += PerformDropEquipment;
+            _playerInputs.Gameplay.EquimentDrop.performed += PerformStartDropEquipment;
+
+            _playerInputs.Gameplay.ShowOtherPlayer.performed += PerformShowOtherPlayer;
+            _playerInputs.Gameplay.ShowOtherPlayer.canceled += CancelShowOtherPlayer;
             
             _playerInputs.Gameplay.Pause.performed += PerformPause;
         }
@@ -117,8 +134,11 @@ namespace Gameplay.Controller
             
             _playerInputs.Gameplay.Ping.performed -= PerformPing;
             
-            _playerInputs.Gameplay.EquimentDrop.performed -= PerformDropEquipment;
+            _playerInputs.Gameplay.EquimentDrop.performed -= PerformStartDropEquipment;
 
+            _playerInputs.Gameplay.ShowOtherPlayer.performed -= PerformShowOtherPlayer;
+            _playerInputs.Gameplay.ShowOtherPlayer.canceled -= CancelShowOtherPlayer;
+            
             _playerInputs.Gameplay.Pause.performed -= PerformPause;
             
             _playerInputs.Disable();
@@ -126,21 +146,29 @@ namespace Gameplay.Controller
 
         private void PerformLeftClick(InputAction.CallbackContext context)
         {
+            if (Blocked) return;
+            
             OnStartLeftInput?.Invoke();
         }
 
         private void PerformRightClick(InputAction.CallbackContext context)
         {
+            if (Blocked) return;
+            
             OnStartRightInput?.Invoke();
         }
 
         private void PerformLeftRelease(InputAction.CallbackContext context)
         {
+            if (Blocked) return;
+            
             OnEndLeftInput?.Invoke();
         }
 
         private void PerformRightRelease(InputAction.CallbackContext context)
         {
+            if (Blocked) return;
+            
             OnEndRightInput?.Invoke();
         }
 
@@ -183,6 +211,8 @@ namespace Gameplay.Controller
 
         private void PerformInteract(InputAction.CallbackContext context)
         {
+            if (Blocked) return;
+            
             OnInteractInput?.Invoke();
         }
 
@@ -235,14 +265,24 @@ namespace Gameplay.Controller
             OnPinging?.Invoke();
         }
         
-        private void PerformDropEquipment(InputAction.CallbackContext obj)
+        private void PerformStartDropEquipment(InputAction.CallbackContext obj)
         {
-            OnTryDropEquipment?.Invoke();
+            OnStartDropEquipment?.Invoke();
         }
         
         private void PerformPause(InputAction.CallbackContext obj)
         {
             OnPause?.Invoke();
+        }
+        
+        private void PerformShowOtherPlayer(InputAction.CallbackContext obj)
+        {
+            OnStartShowOtherPlayer?.Invoke();
+        }
+        
+        private void CancelShowOtherPlayer(InputAction.CallbackContext obj)
+        {
+            OnEndShowOtherPlayer?.Invoke();
         }
         
         private void OnDestroy() => _playerInputs.Dispose();

@@ -12,14 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
   m_Name: SO_IT_AntoineTest
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
-  ID: 28
+  ID: 0
   ItemName: Wooden Plank
   VisualPrefab: {fileID: 7009214621044475927, guid: f9b67a90d25e21f4e9c84f62beb58105, type: 3}
   PickupPrefab: {fileID: 3661796626285246577, guid: d1b270449931b29408f8111711b5ae77, type: 3}
-  Icon: {fileID: 21300000, guid: 54f27fe4c3cd82b4184d233cd7434215, type: 3}
+  Icon: {fileID: 21300000, guid: 681f65c0e39a04f4e91818c128df16a1, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
+  TooltipInHand:
+    DefaultText: 
+    IsItem: 0
+    TooltipInHand: 
+    _requiresItemModule: 0
+    _tooltipWithItem: 
+    _requiredModule:
+      rid: -2
   FirstActionList:
-  - rid: 7203101205303918821
+  - rid: 7693030098167660704
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -46,7 +54,7 @@ MonoBehaviour:
     - rid: 7202345609054912642
       type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
-        _minVelocityForDamage: 2
+        _minVelocityForDamage: 5
         _maxVelocity: 10
         _minDamage: 1
         _maxDamage: 5
@@ -74,26 +82,28 @@ MonoBehaviour:
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
-        _weightFactor: 10
-        _mass: 1
+        _weightFactor: 100
+        _mass: 0.5
         _canDamagePlayer: 1
     - rid: 7203101205303918804
       type: {class: BreakWithVelocity, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _minVelocityForDestroy: 5
         _force: 10
-    - rid: 7203101205303918821
-      type: {class: OpenDoorModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+    - rid: 7693030098167660704
+      type: {class: HardToOpenModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: 7203101205303918822
-        _canOpenIndexRange: {x: 0, y: 2}
-        _canOpenAllDoors: 0
-        _stringNameGoodKey: 
-        _stringNameWringKey: 
-        _volume: 0.5
-    - rid: 7203101205303918822
+          rid: 7693030098167660705
+        _keyEvent: HARD_TO_OPEN_EVENT_KEY
+        _fillPerClick: 20
+        _maxFilling: 100
+        _staminaCost: 5
+        _decayDelay: 0.5
+        _decayPerSecond: 33
+        _spawnItem: {fileID: 47756118134500608, guid: 7c9d09d5a6d5a0940a52c913b501a13e, type: 3}
+    - rid: 7693030098167660705
       type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
-        _numberOfUse: 3
+        _numberOfUse: 1
         _destroyWhenEmpty: 0

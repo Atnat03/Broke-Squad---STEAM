@@ -1,4 +1,7 @@
+
+
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Gameplay.Controller
@@ -8,9 +11,14 @@ namespace Gameplay.Controller
         private readonly ControllerProfileSO _profile;
         private readonly Action<float, float> _onChangedStamina;
 
+        private float  _overrideStaminaRegen = -1;
+        private float _overrideStaminaDelay = -1;
         private float _regenTimer;
         private float _lastSent = -1f;
         private bool _drainedThisTick;
+        
+        private float EffectiveRegen => _overrideStaminaRegen >= 0f ? _overrideStaminaRegen : _profile.regenPerSecond;
+        private float EffectiveDelay => _overrideStaminaDelay >= 0f ? _overrideStaminaDelay : _profile.regenDelay;
 
         public float Current { get; private set; }
         public float Max => _profile.maxStamina;
@@ -28,7 +36,7 @@ namespace Gameplay.Controller
         public void Drain(float dt)
         {
             Current = Mathf.Max(0f, Current - _profile.drainPerSecond * dt);
-            _regenTimer = _profile.regenDelay;
+            _regenTimer = EffectiveDelay;
             _drainedThisTick = true;
             //if(Current <= 0f) Exhausted = true;
         }
@@ -38,7 +46,7 @@ namespace Gameplay.Controller
             if (!_drainedThisTick)
             {
                 if(_regenTimer > 0f) _regenTimer -= dt;
-                else Current = Mathf.Min(Max, Current + _profile.regenPerSecond * dt);
+                else Current = Mathf.Min(Max, Current + EffectiveRegen * dt);
             }
             _drainedThisTick = false; 
             
@@ -54,6 +62,20 @@ namespace Gameplay.Controller
 
             _lastSent = Current;
             _onChangedStamina?.Invoke(Current, Max);
+        }
+
+        public void GainStamina(float value)
+        {
+            Current = Mathf.Min(Max, Current + value);
+            Notify();
+        }
+
+        public void OverrideStaminaRegenAndDelay(float newRegen, float newDelay)
+        {
+            _overrideStaminaRegen = newRegen;
+            _overrideStaminaDelay = newDelay;
+            
+            if (newDelay >= 0f) _regenTimer = Mathf.Min(_regenTimer, newDelay);
         }
     }
 }

@@ -1,3 +1,4 @@
+using Gameplay.Items;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -20,6 +21,11 @@ namespace Gameplay.Controller
 
         private KeyholeView _view;
 
+        [Header("Tooltip")]
+        [SerializeField] TooltipConfig _tooltipConfig;
+        
+        public string GetTooltip(ItemModule[] playerModules) => _tooltipConfig.GetTooltip(playerModules);
+        
         public Outline outline => _outline;
 
         public float BaseYaw => viewPoint.eulerAngles.y;

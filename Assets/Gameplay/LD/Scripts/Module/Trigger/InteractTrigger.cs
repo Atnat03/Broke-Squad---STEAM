@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using Gameplay.Items;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Gameplay.LD
@@ -7,8 +8,14 @@ namespace Gameplay.LD
     public class InteractTrigger : LDTriggerModule, IInteractable
     {
         [SerializeField] private float _range = 4f;
-
         public Outline outline { get; private set; }
+        
+        [SerializeField] TooltipConfig _tooltipConfig;
+        
+        public string GetTooltip(ItemModule[] playerModules)
+        {
+            return _tooltipConfig.GetTooltip(playerModules);
+        }
 
         protected override void OnInitialize()
         {

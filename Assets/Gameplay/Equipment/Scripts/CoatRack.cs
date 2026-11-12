@@ -1,6 +1,7 @@
 using Bus;
 using Gameplay.Items;
 using Unity.Netcode;
+using UnityEditor;
 using UnityEngine;
 
 namespace Gameplay.Equipment
@@ -8,6 +9,24 @@ namespace Gameplay.Equipment
 
     public class CoatRack : NetworkBusListener, IInteractable
     {
+        [SerializeField] private Collider _collider;
+
+        private bool HasPickup => GetComponentInChildren<ItemPickup>() != null;
+
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+            RefreshCollider();
+        }
+        
+        private void OnTransformChildrenChanged() => RefreshCollider();
+
+        private void RefreshCollider()
+        {
+            if (_collider != null)
+                _collider.enabled = !HasPickup;
+        }
+        
         public void Interact(ulong clientId)
         {
             if (IsServer)
@@ -21,6 +40,8 @@ namespace Gameplay.Equipment
 
         private void HandleInteract(ulong clientId)
         {
+            if (HasPickup) return;
+            
             if (!NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client)) return;
 
             PlayerInventory playerSender = client.PlayerObject.GetComponentInChildren<PlayerInventory>();
@@ -45,11 +66,19 @@ namespace Gameplay.Equipment
 
         //Outline 
         [SerializeField] private Outline _outline;
+        [SerializeField] TooltipConfig _tooltipConfig;
+
         public Outline outline => _outline;
 
         public void SetOutline(bool state)
         {
             outline.enabled = state;
+        }
+        
+        
+        public string GetTooltip(ItemModule[] playerModules)
+        {
+            return _tooltipConfig.GetTooltip(playerModules);
         }
     }
 }

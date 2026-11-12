@@ -1,5 +1,6 @@
 using System;
 using Bus;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Gameplay.Controller
@@ -94,18 +95,23 @@ namespace Gameplay.Controller
         
         private ICameraOverride _override;
         private float _lastWeight;
+        private float _sensMultiplier = 1f;
         public float OverrideWeight => _override?.Weight ?? 0f;
 
+        
+        
         private void Awake()
         {
             _cam = GetComponent<Camera>();
+            _sensMultiplier = PlayerPrefs.GetFloat("MouseSensitivity", 1f);
             playerInput.OnMouseMovement += OnMouseMove;
             playerInput.OnLeanInput += EnterLeanMode;
             playerInput.OnLeanInputCanceled += ExitLeanMode;
             _bob = _walkBob;
+            ListenToEvent<SensitivityChange_EVENT>(_ => ReloadSensitivity());
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             playerInput.OnMouseMovement -= OnMouseMove;
             playerInput.OnLeanInput -= EnterLeanMode;
@@ -127,7 +133,8 @@ namespace Gameplay.Controller
 
             if (!player.InputEnabled) return;
             if (_override != null && player.IsDown) _override.Release();
-
+            
+            
             if (_leanMode && _override == null) 
             {
                 float dir = _invertLeanMode ? -1f : 1f;
@@ -135,8 +142,8 @@ namespace Gameplay.Controller
             }
             else
             {
-                _yRotation += _mouseMovement.x * sensX;
-                _xRotation -= _mouseMovement.y * sensY;
+                _yRotation += _mouseMovement.x * sensX * _sensMultiplier;
+                _xRotation -= _mouseMovement.y * sensY * _sensMultiplier;
                 _xRotation = Mathf.Clamp(_xRotation, _minLookAngle, _maxLookAngle);
                 _override?.ProcessLook(ref _yRotation, ref _xRotation);
             }
@@ -186,6 +193,7 @@ namespace Gameplay.Controller
             
         }
 
+        public void ReloadSensitivity() => _sensMultiplier = PlayerPrefs.GetFloat("MouseSensitivity", 1f);
         private void OnMouseMove(Vector2 value) => _mouseMovement = value;
         private void EnterLeanMode() => _leanMode = true;
 

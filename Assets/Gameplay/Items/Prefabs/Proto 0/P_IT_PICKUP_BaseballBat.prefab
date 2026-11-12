@@ -76,14 +76,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1933468832
+  GlobalObjectIdHash: 685555304
   InScenePlacedSourceGlobalObjectIdHash: 1933468832
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 0
+  m_InScenePlaced: 1
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -152,11 +152,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.2, y: 1.6, z: 0.2}
+  m_Size: {x: 0.2, y: 0.8, z: 0.2}
   m_Center: {x: 0, y: 0.3161565, z: -0.00000033527613}
 --- !u!114 &47756118134500608
 MonoBehaviour:
@@ -173,6 +173,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _rackRatio: 0.5
   _itemData: {fileID: 11400000, guid: 8bdf3e1037b01a34dafcbf4dc16e601a, type: 2}
+  _canBeVisibleByMiniMap: 1
 --- !u!1 &3272707195262305289
 GameObject:
   m_ObjectHideFlags: 0

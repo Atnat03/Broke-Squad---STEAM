@@ -1,7 +1,9 @@
-﻿using MyPrint;
+﻿using System;
+using MyPrint;
 
 namespace Gameplay.Items
 {
+    [Serializable]
     public abstract class ItemModule
     {
         protected ItemContext Context;

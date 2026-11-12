@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce54c5836fb74b0fa155ac707812bc17, type: 3}
+  m_Name: AlertedSettings
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.IA.Refacto.GuardSetting_SO
+  PatrolSpeed: 2
+  DistanceCloseToChangePoint: 2
+  Radius: 10
+  Angle: 90
+  EyeHeight: 1.6
+  CheckInterval: 0.2
+  ObstructionMask:
+    serializedVersion: 2
+    m_Bits: 1
+  DetectionLevel: 2
+  DetectionSpeed: 2
+  ForgettingSpeed: 1
+  TargetPlayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  DetectionSuspectLevel: 2
+  DetectionSuspectSpeed: 2
+  ForgettingSuspectSpeed: 1
+  TargetSuspectMask:
+    serializedVersion: 2
+    m_Bits: 2048
+  AggroSpeed: 3
+  AggroCloseRadius: 3
+  AggroDamageMemory: 4
+  TimeBeforeLockDownStart: 5
+  InvestigateSpeed: 1
+  MiniDistanceToStartInvestigate: 1
+  TimeBeforeInvestigateScan: 3
+  RadiusInvestigate: 2
+  AngleInvestigate: 90
+  Damage: 10
+  AttackCooldown: 1
+  AttackRange: 2

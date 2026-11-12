@@ -43,6 +43,12 @@ namespace Gameplay.Items
         public void StopFirstAction()
         { }
 
+        public void OnNotInHand() { }
+        public void OnThrow()
+        {
+            
+        }
+
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {
             // PlayerData => PlayerHealth.Heal()

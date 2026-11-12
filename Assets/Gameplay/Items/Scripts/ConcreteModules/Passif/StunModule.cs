@@ -1,5 +1,5 @@
 ﻿using System;
-using Gameplay.IA.Scripts;
+using Gameplay.IA;
 using UnityEngine;
 
 namespace Gameplay.Items

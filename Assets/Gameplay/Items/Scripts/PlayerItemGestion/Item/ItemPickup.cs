@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Bus;
 using Gameplay.Controller.Minimap;
@@ -13,7 +14,6 @@ using UnityEngine.Animations;
 
 namespace Gameplay.Items
 {
-    [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(BoxCollider))]
     [RequireComponent(typeof(NetworkTransform))]
     public class ItemPickup : NetworkBusListener, IInteractable
@@ -25,23 +25,19 @@ namespace Gameplay.Items
         private Rigidbody _rb;
         private BoxCollider _box;
         readonly NetworkVariable<bool> _onRack = new();
-        Vector3 _baseSize, _baseScale;
+        Vector3 _baseSize,_baseSizeRack, _baseScale;
         
         [SerializeField] private SO_Item _itemData;
+        
         private Outline _outline;
 
-        [Header("Minimap")] 
-        [SerializeField] private bool _canBeVisibleByMiniMap = true;
-        private Vector3 _iconPos = Vector3.up * 5;
-        private bool _alreadySeen = false;
-        
         public Outline outline => _outline;
         
         private ItemInstance _instance;
         
         public ItemInstance Instance => _instance ??= new ItemInstance(_itemData);
-        
-        GameObject _minimapIcon = null;
+
+        private bool _canCollide;
         
         public Action OnCollide;
         
@@ -62,7 +58,8 @@ namespace Gameplay.Items
             _nt.SyncScaleY = false;
             _nt.SyncScaleZ = false;
             
-            _baseSize = _box.size;
+            _baseSizeRack = new Vector3(_box.size.x, _box.size.y / 2, _box.size.z);
+            _baseSize = new Vector3(_box.size.x, _box.size.y, _box.size.z);
             _baseScale = transform.localScale;
 
             if (_collidersOffOnRack == null || _collidersOffOnRack.Length == 0)
@@ -77,10 +74,24 @@ namespace Gameplay.Items
         public override void OnNetworkSpawn()
         {
             _onRack.OnValueChanged += OnRackChanged;
+
+            if (IsServer)
+            {
+                StartCoroutine(BufferCollision());
+            }
             
             ApplyRack();
         }
-        
+
+        private IEnumerator BufferCollision()
+        {
+            _canCollide = false;
+
+            yield return new WaitForSeconds(0.2f);
+
+            _canCollide = true;
+        }
+
         private void OnRackChanged(bool previous, bool current) => ApplyRack();
 
         public void SetOnRack()
@@ -94,87 +105,60 @@ namespace Gameplay.Items
         {
             bool on = _onRack.Value;
 
-            _rb.isKinematic = on;
-            _rb.useGravity = !on;
+            if (on)
+            {
+                if (_rb != null)
+                {
+                    Destroy(_rb);
+                    _rb = null;
+                }
+            }
+            else
+            {
+                if (_rb == null)
+                    _rb = gameObject.AddComponent<Rigidbody>();
+
+                _rb.isKinematic = false;
+                _rb.useGravity = true;
+            }
+
             foreach (var c in _collidersOffOnRack)
             {
                 if (c != null)
                     c.enabled = !on;
             }
-            
-            _box.size = on ? _baseSize / _rackRatio : _baseSize;
+
+            _box.size = on ? new Vector3(_baseSizeRack.x / _rackRatio, 
+                (_baseSizeRack.y / _rackRatio) / 2,
+                _baseSizeRack.z / _rackRatio) : _baseSize;
             transform.localScale = on ? _baseScale * _rackRatio : _baseScale;
         }
 
         public void SetOutline(bool state)
         {
-            if (!_alreadySeen)
-            {
-                _alreadySeen = true;
-                CreateSprite();
-            }
             
             if(outline)
                 outline.enabled = state;
         }
 
-        private void CreateSprite()
-        {
-            if (!_canBeVisibleByMiniMap) return;
-
-            if (!IsServer)
-            {
-                CreateSpriteServerRpc();
-                return;
-            }
-            
-            if (_minimapIcon) return;
-
-            CreateSpriteClientRpc();
-        }
-
-        [Rpc(SendTo.Server)]
-        private void CreateSpriteServerRpc() => CreateSprite();
-
-        [Rpc(SendTo.Everyone)]
-        private void CreateSpriteClientRpc()
-        {
-            _minimapIcon = new GameObject("MinimapIcon")
-            {
-                transform =
-                {
-                    localPosition = _iconPos + Vector3.up,
-                    localRotation = Quaternion.Euler(90, 0, 0)
-                }
-            };
-            
-            _minimapIcon.transform.localScale *= 0.6f;
-            _minimapIcon.layer = LayerMask.NameToLayer("TargetMiniMap");
-                
-            _minimapIcon.AddComponent<SpriteRenderer>().sprite = _itemData.Icon;
-
-            _minimapIcon.AddComponent<FreezeRotationMinimap>().SetTarget(transform);
-        }
 
         public void Interact(ulong clientId)
         {
-            if (DetectNotGrabbable()) return;
-            
-            if (IsServer)
-                DestroyIconMapServerRpc();
-            
+            if (DetectNotGrabbable())
+                return;
+
+            if (NetworkObject == null || !NetworkObject.IsSpawned)
+            {
+                return;
+            }
+
             InvokeEvent(new OnPickupItem_EVENT
             {
                 ClientId = clientId,
-                ItemPickUpRef = NetworkObject
+                ItemPickUpRef = new NetworkObjectReference(NetworkObject)
             });
         }
 
-        [Rpc(SendTo.Server)]
-        private void DestroyIconMapServerRpc() => DestroyIconMapClientRpc();
-        
-        [Rpc(SendTo.Everyone)]
-        private void DestroyIconMapClientRpc() =>  Destroy(_minimapIcon.gameObject);
         
         public void Setup(ItemInstance instance)
         {
@@ -182,15 +166,12 @@ namespace Gameplay.Items
             instance?.SetAnchor(transform, NetworkObjectId);
             
             GetComponent<BoxCollider>().isTrigger = true;
-            
-            _alreadySeen = true;
-            CreateSprite();
         }
         
         public void OnCollisionEnter(Collision collision)
         {
-            if(_instance == null)
-                return;
+            if(_instance == null) return;
+            if(!_canCollide)return;
             
             OnCollide?.Invoke();
             
@@ -234,5 +215,16 @@ namespace Gameplay.Items
         
         [Rpc(SendTo.Server)]
         void CreateSuspiciousSoundRpc(ulong clientId, float force) => CreateSuspiciousSound(clientId, force);
+        
+        public string GetTooltip(ItemModule[] playerModules)
+        {
+            string message = Instance.Data.TooltipInHand.GetTooltip(playerModules);
+            if (message.Equals(string.Empty))
+            {
+                message = "E to pick " + Instance.Data.ItemName;
+            }
+            
+            return message;
+        }
     }
 }

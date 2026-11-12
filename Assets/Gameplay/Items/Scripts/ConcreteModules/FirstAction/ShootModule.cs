@@ -70,6 +70,12 @@ namespace Gameplay.Items
         public void StopFirstAction()
         { }
 
+        public void OnNotInHand() { }
+        public void OnThrow()
+        {
+            
+        }
+
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {
             Quaternion rotation = Quaternion.LookRotation(data.Direction);

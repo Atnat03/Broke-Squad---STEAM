@@ -8,12 +8,13 @@ namespace Gameplay.Items
     [Serializable]
     public class ElectricUseModule : ItemModule, ICondition, IServerAction, IReplicatedModule
     {
-        private float _maxPercentValue = 100;
+        private FixedString32Bytes _keyEventUse = "ELECTRIC_USE_MODULE";
+        private FixedString32Bytes _keyEventVFX = "ELECTRIC_ADD_VFX";
+        
         [SerializeField] private float _startPercentValue = 100;
         [SerializeField, Tooltip("En %")] private float _electricNeededToUse = 10;
+        private float _maxPercentValue = 100;
         private float _currentPercentValue;
-        private FixedString32Bytes _keyEvent = "ELECTRIC_USE_MODULE";
-        
         private bool _isInHand;
         
         protected override void SetModule() => _currentPercentValue = _startPercentValue;
@@ -28,7 +29,7 @@ namespace Gameplay.Items
             Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
             {
                 ClientId = Context.Inventory.OwnerClientId,
-                KeyEvent = _keyEvent,
+                KeyEvent = _keyEventUse,
                 ValueB = true,
                 ValueF = _currentPercentValue,
                 ValueI = 0
@@ -62,7 +63,13 @@ namespace Gameplay.Items
 
             if (_isInHand)
                 SendUI(true, _currentPercentValue, 0);
-
+            
+            Context.SendEventToEveryone(new OnModuleDoAction_EVENT
+            {
+                ClientId = Context.Inventory.OwnerClientId,
+                KeyEvent = _keyEventVFX
+            });
+            
             return true;
         }
         
@@ -71,7 +78,7 @@ namespace Gameplay.Items
             Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
             {
                 ClientId = Context.Inventory.OwnerClientId,
-                KeyEvent = _keyEvent,
+                KeyEvent = _keyEventUse,
                 ValueB = visible,
                 ValueF = value,
                 ValueI = snapFlag
