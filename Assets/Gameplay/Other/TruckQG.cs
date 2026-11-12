@@ -1,4 +1,5 @@
 ﻿using Bus;
+using Gameplay.Items;
 using UnityEngine;
 
 namespace Gameplay.Other
@@ -7,7 +8,13 @@ namespace Gameplay.Other
     {
         [SerializeField] private Outline _outline;
 
-        public string TooltipInteractText { get; }
+        [SerializeField] TooltipConfig _tooltipConfig;
+        
+        public string GetTooltip(ItemModule[] playerModules)
+        {
+            return _tooltipConfig.GetTooltip(playerModules);
+        }
+
         public Outline outline => _outline;
         public void SetOutline(bool state)
         {

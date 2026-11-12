@@ -1,6 +1,7 @@
 using System;
 using Bus;
 using Gameplay;
+using Gameplay.Items;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
@@ -8,8 +9,9 @@ using UnityEngine.Events;
 public abstract class OnlineInteractable : NetworkBusListener, IInteractable
 {
     [SerializeField] Outline Outline;
-    [SerializeField] private string _tooltip;
-    public string TooltipInteractText => _tooltip;
+
+    [SerializeField] TooltipConfig _tooltipConfig;
+    
     public Outline outline => Outline;
 
     public UnityEvent onInteractableOpen;
@@ -44,4 +46,9 @@ public abstract class OnlineInteractable : NetworkBusListener, IInteractable
 
     [Rpc(SendTo.Everyone)]
     protected void CloseEventsRpc() => onInteractableClose?.Invoke();
+    
+    public string GetTooltip(ItemModule[] playerModules)
+    {
+        return _tooltipConfig.GetTooltip(playerModules);
+    }
 }

@@ -28,12 +28,9 @@ namespace Gameplay.Items
         Vector3 _baseSize,_baseSizeRack, _baseScale;
         
         [SerializeField] private SO_Item _itemData;
-
-        private string _tooltipItemBase = "E to pickup ";
         
         private Outline _outline;
 
-        public string TooltipInteractText => _tooltipItemBase + _itemData.ItemName;
         public Outline outline => _outline;
         
         private ItemInstance _instance;
@@ -210,5 +207,16 @@ namespace Gameplay.Items
         
         [Rpc(SendTo.Server)]
         void CreateSuspiciousSoundRpc(ulong clientId, float force) => CreateSuspiciousSound(clientId, force);
+        
+        public string GetTooltip(ItemModule[] playerModules)
+        {
+            string message = Instance.Data.TooltipInHand.GetTooltip(playerModules);
+            if (message.Equals(string.Empty))
+            {
+                message = "E to pick " + Instance.Data.ItemName;
+            }
+            
+            return message;
+        }
     }
 }

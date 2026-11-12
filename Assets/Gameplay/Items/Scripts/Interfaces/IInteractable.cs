@@ -1,8 +1,10 @@
-﻿namespace Gameplay
+﻿using Gameplay.Items;
+
+namespace Gameplay
 {
     public interface IInteractable
     {
-        public string TooltipInteractText { get; }
+        string GetTooltip(ItemModule[] playerModules);
         public Outline outline { get; }
 
         public void SetOutline(bool state);

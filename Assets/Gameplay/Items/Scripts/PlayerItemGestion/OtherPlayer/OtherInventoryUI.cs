@@ -22,7 +22,7 @@ namespace Gameplay.Items
         private PlayerInventory _inventory;
         private readonly List<Image> _icons = new();
 
-        private PlayerController _controller; 
+        private PlayerController _controller;
         
         public void Initialize(PlayerInventory inventory, PlayerController controller)
         {

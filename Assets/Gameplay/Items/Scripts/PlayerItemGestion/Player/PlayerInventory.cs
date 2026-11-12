@@ -128,7 +128,10 @@ namespace Gameplay.Items
             if (IsOwner)
             {
                 _currentItem.SubscribeToInput(_playerInput);
-                OnTooltipChange?.Invoke(true, _currentItem.Instance.Data.TooltipInHand);
+
+                bool isItem = _currentItem.Instance.Data.TooltipInHand.IsItem;
+                
+                OnTooltipChange?.Invoke(isItem, _currentItem.Instance.Data.TooltipInHand.TooltipInHand);
             }
         }
         

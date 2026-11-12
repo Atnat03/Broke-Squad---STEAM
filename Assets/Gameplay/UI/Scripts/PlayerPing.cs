@@ -51,14 +51,28 @@ namespace Gameplay.UI.Scripts
             if (Physics.Raycast(_cam.transform.position, _cam.transform.forward, out RaycastHit hit, 10000, _layerMask ,QueryTriggerInteraction.Ignore))
             {
                 _elapsedTime = _timerBetweenPing;
+
+                NetworkObject n = hit.transform.GetComponent<NetworkObject>();
                 
-                (int, int) dataPing = GetPingPrefabFromEntity(hit.transform.GetComponent<NetworkObject>());
+                (int, int) dataPing = GetPingPrefabFromEntity(n);
+
+                Vector3 pos = hit.point + hit.normal * 0.1f;
+                
+                if (n != null)
+                {
+                    if (n.transform.TryGetComponent(out Collider col))
+                    {
+                        Bounds bounds = col.bounds;
+
+                        pos = new Vector3(bounds.center.x, bounds.max.y + 0.1f, bounds.center.z);
+                    }
+                }
                 
                 if (IsServer)
-                    AddPingObserverRpc(hit.point + hit.normal * 0.1f, dataPing.Item1, dataPing.Item2);
+                    AddPingObserverRpc(pos, dataPing.Item1, dataPing.Item2);
                 else
                 {
-                    AddPingServerRpc(hit.point + hit.normal * 0.1f, dataPing.Item1, dataPing.Item2);
+                    AddPingServerRpc(pos, dataPing.Item1, dataPing.Item2);
                 }
             }
         }

@@ -12,7 +12,7 @@ namespace Gameplay.Items
         [SerializeField] public ItemPickup PickupPrefab;
         [SerializeField] public Sprite Icon;
         [SerializeField] public Vector3 OffsetInHand = new Vector3(0, 0, 0);
-        [SerializeField] public string TooltipInHand = "Click droit pour lancer";
+        [SerializeField] public TooltipConfig TooltipInHand;
         [SerializeReference] public List<IFirstAction> FirstActionList;
         [SerializeReference] public List<ISecondAction> SecondActionList;
         [SerializeReference] public List<IPassif> PassifList;

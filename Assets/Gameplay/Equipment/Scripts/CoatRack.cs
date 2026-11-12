@@ -1,6 +1,7 @@
 using Bus;
 using Gameplay.Items;
 using Unity.Netcode;
+using UnityEditor;
 using UnityEngine;
 
 namespace Gameplay.Equipment
@@ -65,12 +66,19 @@ namespace Gameplay.Equipment
 
         //Outline 
         [SerializeField] private Outline _outline;
-        public string TooltipInteractText => "E to hang on the rack";
+        [SerializeField] TooltipConfig _tooltipConfig;
+
         public Outline outline => _outline;
 
         public void SetOutline(bool state)
         {
             outline.enabled = state;
+        }
+        
+        
+        public string GetTooltip(ItemModule[] playerModules)
+        {
+            return _tooltipConfig.GetTooltip(playerModules);
         }
     }
 }

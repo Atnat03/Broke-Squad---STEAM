@@ -1,4 +1,5 @@
 ﻿using Bus;
+using Gameplay.Items;
 using MyPrint;
 using UnityEngine;
 
@@ -18,12 +19,17 @@ namespace Gameplay.Equipment
         }
         
         [SerializeField] private Outline _outline;
-
-        public string TooltipInteractText => "E to pickup backpack";
+        [SerializeField] TooltipConfig _tooltipConfig;
+        
         public Outline outline => _outline;
         public void SetOutline(bool state)
         {
             _outline.enabled = state;
+        }
+        
+        public string GetTooltip(ItemModule[] playerModules)
+        {
+            return _tooltipConfig.GetTooltip(playerModules);
         }
     }
 }
