@@ -137,6 +137,8 @@ namespace Gameplay.Items
 
         public void OnNotInHand()
         {
+            Context.StopCoroutine(_chargeCoroutine);
+            
             Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
             {
                 ClientId = Context.Inventory.OwnerClientId,

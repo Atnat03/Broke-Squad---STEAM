@@ -17,14 +17,15 @@ namespace Gameplay.Controller
     public class CheatsManager : NetworkBusListener
     {
         [Header("References")] 
-        public PlayerHealth  playerHealth; 
-        public PlayerRevive playerRevive;
-        public PlayerController playerController;
+        [SerializeField] private PlayerSetUpBridge _bridge;
+        private PlayerHealth  _playerHealth; 
+        private PlayerRevive _playerRevive;
+        private PlayerController _playerController;
         
         private Player _playerInputs;
             
         [Header("Item Give")]
-        [SerializeField] private PlayerInventory _inventory;
+        private PlayerInventory _inventory;
         [SerializeField] private CheatGiveItemElement _prefabCheatItemGive;
         [SerializeField] private Transform _parentGiveItemSpawn;
         [SerializeField] private GameObject _itemGiveUI;
@@ -43,9 +44,6 @@ namespace Gameplay.Controller
         void Awake()
         {
             _playerInputs = new Player();
-
-            
-            
             
             _itemGiveUI.SetActive(false);
             
@@ -56,6 +54,14 @@ namespace Gameplay.Controller
             }
         }
 
+        private void Start()
+        {
+            _playerController = _bridge.PlayerController;
+            _playerHealth = _bridge.PlayerHealth;
+            _playerRevive = _bridge.PlayerHealth.PlayerRevive;
+            _inventory = _bridge.PlayerInventory;
+        }
+
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
@@ -63,7 +69,7 @@ namespace Gameplay.Controller
 
             _spawnTeleportButton.onClick.AddListener(() =>
             {
-                playerController.TeleportClientRpc(SpawnPointManager.instance.GetPlayerSpawnPoint(0).position, SpawnPointManager.instance.GetPlayerSpawnPoint(0).transform.rotation);
+                _playerController.TeleportClientRpc(SpawnPointManager.instance.GetPlayerSpawnPoint(0).position, SpawnPointManager.instance.GetPlayerSpawnPoint(0).transform.rotation);
             });
             
             _playerInputs.Enable();
@@ -98,7 +104,7 @@ namespace Gameplay.Controller
         [Rpc(SendTo.Server)]
         private void InvincibilityServerRpc()
         {
-            playerHealth.SetInvincible(!playerHealth.IsInvincible);
+            _playerHealth.SetInvincible(!_playerHealth.IsInvincible);
         }
 
         private void Damage(InputAction.CallbackContext context)
@@ -108,7 +114,7 @@ namespace Gameplay.Controller
         [Rpc(SendTo.Server)]
         private void DamageServerRpc()
         {
-            playerHealth.ApplyDamage(50);
+            _playerHealth.ApplyDamage(50);
         }
 
         private void Heal(InputAction.CallbackContext context)
@@ -118,13 +124,13 @@ namespace Gameplay.Controller
         [Rpc(SendTo.Server)]
         private void HealServerRpc()
         {
-            playerHealth.Heal(playerHealth.MaxHp);
+            _playerHealth.Heal(_playerHealth.MaxHp);
         }
 
         private void Revive(InputAction.CallbackContext context) => ReviveServerRpc();
 
         [Rpc(SendTo.Server)]
-        private void ReviveServerRpc() => playerHealth.ServerRevive();
+        private void ReviveServerRpc() => _playerHealth.ServerRevive();
         
         #region Give Item
 
@@ -180,7 +186,7 @@ namespace Gameplay.Controller
             var target = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(targetId);
             if (target == null) return;
 
-            playerController.TeleportClientRpc(target.transform.position, target.transform.rotation);
+            _playerController.TeleportClientRpc(target.transform.position, target.transform.rotation);
         }
     }
 }
