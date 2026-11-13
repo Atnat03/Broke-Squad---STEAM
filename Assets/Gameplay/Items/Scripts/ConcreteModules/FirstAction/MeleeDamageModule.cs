@@ -9,32 +9,16 @@ using UnityEngine;
 namespace Gameplay.Items
 {
     [Serializable]
-    public class MeleeHitModule : ActionModule, IServerAction, IFirstAction
+    public class MeleeDamageModule : ActionModule, IServerAction, IFirstAction
     {
         [SerializeField] private float _range = 3f;
-        [SerializeField, Tooltip("Damage to hp garde and other player")] private float _damage = 10f;
-        [SerializeField, Tooltip("Force apply on breakable LD elements")] private float _force = 5f;
+        [SerializeField] private float _damage = 10f;
         [SerializeField] private float _attackCooldown = 1f;
 
         private bool _isAttacking = false;
         private Coroutine _attackCoroutine;
         
         public ICondition Condition => ConditionParent;
-        
-        public void ServerExecute(OnModuleDoAction_EVENT data)
-        {
-            NetworkObject n = data.GetTarget();
-
-            if (n.TryGetComponent(out IDamageable damageable))
-            {
-                damageable.ApplyDamage(_damage);
-            }
-
-            if (n.TryGetComponent(out IBreakable breakable))
-            {
-                breakable.Break(_force);
-            }
-        }
 
         public void StartFirstAction()
         {
@@ -52,8 +36,6 @@ namespace Gameplay.Items
             {
                 if (hit.transform.TryGetComponent(out NetworkObject n))
                 {
-                    ABPrint.Print("Attack !");
-                    
                     Context.SendToServer(this, new OnModuleDoAction_EVENT
                     {
                         Target = n
@@ -72,7 +54,17 @@ namespace Gameplay.Items
         }
         
         public void StopFirstAction() { }
+                
+        public void ServerExecute(OnModuleDoAction_EVENT data)
+        {
+            NetworkObject n = data.GetTarget();
 
+            if (n.TryGetComponent(out IDamageable damageable))
+            {
+                damageable.ApplyDamage(_damage);
+            }
+        }
+        
         public void OnNotInHand()
         {
             ResetAttack();
