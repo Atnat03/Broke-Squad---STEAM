@@ -218,7 +218,11 @@ namespace Gameplay.Items
         
         public string GetTooltip(ItemModule[] playerModules)
         {
-            string message = Instance.Data.TooltipInHand.GetTooltip(playerModules);
+            string message = string.Empty;
+            
+            if(playerModules != null)
+                message = Instance.Data.TooltipInHand.GetTooltip(playerModules);
+            
             if (message.Equals(string.Empty))
             {
                 message = "E to pick " + Instance.Data.ItemName;

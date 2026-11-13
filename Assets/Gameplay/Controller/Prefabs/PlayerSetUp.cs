@@ -24,7 +24,7 @@ public class PlayerSetUp : NetworkBehaviour
     
     public override void OnNetworkSpawn()
     {
-        if (!IsOwner && _playerInput != null) 
+        if (!IsOwner && _playerInput != null)
             _playerInput.enabled = false;
         
         foreach (var s in _spawnableList)
