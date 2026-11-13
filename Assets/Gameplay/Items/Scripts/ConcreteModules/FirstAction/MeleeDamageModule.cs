@@ -59,10 +59,9 @@ namespace Gameplay.Items
         {
             NetworkObject n = data.GetTarget();
 
-            if (n.TryGetComponent(out IDamageable damageable))
-            {
-                damageable.ApplyDamage(_damage);
-            }
+            IDamageable d = n.GetComponentInChildren<IDamageable>();
+
+            d?.ApplyDamage(_damage);
         }
         
         public void OnNotInHand()

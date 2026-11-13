@@ -28,8 +28,8 @@ MonoBehaviour:
       rid: -2
   FirstActionList:
   - rid: 7202345609054912643
-  - rid: 7693030277138612448
   - rid: 7693030277138612449
+  - rid: 7693030277138612451
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -100,15 +100,6 @@ MonoBehaviour:
       data:
         _miniVelocityToDoSound: 1
         _suspiciousSoundSettings: {fileID: 11400000, guid: 8029d65674b61e844acad36af99f168f, type: 2}
-    - rid: 7693030277138612448
-      type: {class: MeleeHitModule, ns: Gameplay.Items, asm: Assembly-CSharp}
-      data:
-        _condition:
-          rid: -2
-        _range: 3
-        _damage: 10
-        _force: 5
-        _attackCooldown: 1
     - rid: 7693030277138612449
       type: {class: AnimationModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -118,3 +109,11 @@ MonoBehaviour:
         _animationName: Hit
         _boolAnimation: 1
         _floatAnimation: 0
+    - rid: 7693030277138612451
+      type: {class: MeleeDamageModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _range: 3
+        _damage: 10
+        _attackCooldown: 1

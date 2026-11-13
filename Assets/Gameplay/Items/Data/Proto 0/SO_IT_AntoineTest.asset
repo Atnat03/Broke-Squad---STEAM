@@ -27,7 +27,7 @@ MonoBehaviour:
     _requiredModule:
       rid: -2
   FirstActionList:
-  - rid: 7693030277138612447
+  - rid: 7693030277138612450
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -90,12 +90,11 @@ MonoBehaviour:
       data:
         _minVelocityForDestroy: 5
         _force: 10
-    - rid: 7693030277138612447
-      type: {class: MeleeHitModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+    - rid: 7693030277138612450
+      type: {class: MeleeDamageModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
           rid: -2
-        _range: 5
+        _range: 3
         _damage: 10
-        _force: 5
         _attackCooldown: 1
