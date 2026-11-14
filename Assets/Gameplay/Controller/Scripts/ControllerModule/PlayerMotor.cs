@@ -100,6 +100,7 @@ namespace Gameplay.Controller
 
         private void ApplyHorizontal(float dt)
         {
+            Debug.Log(MoveInput);
             float speed = TargetSpeed * (ForwardDot < -0.1f ? _profile.backwardSpeedMultiplier : 1f);
 
             Vector3 input = Vector3.ClampMagnitude(new Vector3(MoveInput.x, 0f, MoveInput.y), 1f);

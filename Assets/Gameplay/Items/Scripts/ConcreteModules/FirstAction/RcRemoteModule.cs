@@ -12,11 +12,21 @@ namespace Gameplay.Items
         [SerializeField] private int _carID = 0;
         private bool _isActivated = false;
         
+        [Header("Animation")]
+        [SerializeField] private string _animationName = "Active";
+        
         public ICondition Condition => ConditionParent;
         
         public void StartFirstAction()
         {
             _isActivated = !_isActivated;
+
+            Animator animator = Context.Core.GetComponentInChildren<Animator>();
+            animator?.SetBool(_animationName, _isActivated);
+            
+            if(_isActivated)Context.Inventory.Controller.PushLock();
+            else Context.Inventory.Controller.PopLock();
+            
             SendEvent(_isActivated);
         }
 
@@ -27,11 +37,13 @@ namespace Gameplay.Items
         public void OnNotInHand()
         {
             SendEvent(false);
+            Context.Inventory.Controller.PopLock();
         }
 
         public void OnThrow()
         {
             SendEvent(false);
+            Context.Inventory.Controller.PopLock();
         }
 
         private void SendEvent(bool state)
