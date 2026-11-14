@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Gameplay.LD
@@ -20,7 +21,7 @@ namespace Gameplay.LD
             _currentHealth = _health;
         }
 
-        public void ApplyDamage(float damage)
+        public void ApplyDamage(float damage, NetworkObject source = null)
         {
             if (!Context.IsServer) return;
             if (damage < _damageTreshold) return;

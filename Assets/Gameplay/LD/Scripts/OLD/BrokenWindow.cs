@@ -28,7 +28,7 @@ namespace Assets.Gameplay.LD.Scripts
             base.OnNetworkDespawn();
         }
 
-        public void ApplyDamage(float damage)
+        public void ApplyDamage(float damage, NetworkObject source = null)
         {
             if (!IsServer || isBroken.Value) {return;}
             

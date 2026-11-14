@@ -117,10 +117,8 @@ namespace Gameplay.Items
 
             for (int i = 0; i < size; i++)
             {
-                if (buffer[i].TryGetComponent(out IDamageable damageable))
-                {
-                    damageable.ApplyDamage(_explosionDamage);
-                }
+                IDamageable d = buffer[i].GetComponentInChildren<IDamageable>();
+                d?.ApplyDamage(_explosionDamage);
                 
                 if(buffer[i].TryGetComponent(out IBreakable breakable))
                 {
