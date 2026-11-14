@@ -31,7 +31,7 @@ public abstract class OnlineInteractable : NetworkBusListener, IInteractable
 
     public void SetOutline(bool state)
     {
-        if(outline) 
+        if(outline)
             outline.enabled = state;
     }
     
