@@ -39,8 +39,6 @@ namespace Gameplay.LD
                 gameObject.AddComponent<Rigidbody>().isKinematic = true;
         }
 
-
-
         private void OnTriggerEnter(Collider other)
         {
             if (Context == null || !Context.IsServer) return;
