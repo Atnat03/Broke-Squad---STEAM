@@ -14,9 +14,11 @@ namespace Gameplay.Items
         [SerializeField] private float _range = 3f;
         [SerializeField] private float _damage = 10f;
         [SerializeField] private float _attackCooldown = 1f;
+        [SerializeField] private float _offsetTimerTrigger = 0.5f;
 
         private bool _isAttacking = false;
         private Coroutine _attackCoroutine;
+        private Coroutine _offsetTriggerCoroutine;
         
         public ICondition Condition => ConditionParent;
 
@@ -32,7 +34,7 @@ namespace Gameplay.Items
             
             Transform cam = Context.Camera.transform;
 
-            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, 2f))
+            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, 2f, ~LayerMask.NameToLayer("Ignore Raycast"), QueryTriggerInteraction.Ignore))
             {
                 if (hit.transform.TryGetComponent(out NetworkObject n))
                 {
@@ -61,7 +63,19 @@ namespace Gameplay.Items
 
             IDamageable d = n.GetComponentInChildren<IDamageable>();
 
-            d?.ApplyDamage(_damage);
+            if(d != null && _offsetTriggerCoroutine == null)
+            {
+                _offsetTriggerCoroutine = Context.StartCoroutine(PerformAttackOffset(d));
+            }
+        }
+
+        private IEnumerator PerformAttackOffset(IDamageable d)
+        {
+            yield return new WaitForSeconds(_offsetTimerTrigger);
+            
+            d?.ApplyDamage(_damage, Context.Inventory.NetworkObject);
+
+            _offsetTriggerCoroutine = null;
         }
         
         public void OnNotInHand()
@@ -78,6 +92,10 @@ namespace Gameplay.Items
         {
             Context.StopCoroutine(_attackCoroutine);
             _attackCoroutine = null;
+
+            Context.StopCoroutine(_offsetTriggerCoroutine);
+            _offsetTriggerCoroutine = null;
+            
             _isAttacking = false;
         }
     }

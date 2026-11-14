@@ -43,8 +43,6 @@ namespace Gameplay.Controller
         
         void Awake()
         {
-            _playerInputs = new Player();
-            
             _itemGiveUI.SetActive(false);
             
             foreach (SO_Item item in _database.Data)
@@ -60,6 +58,8 @@ namespace Gameplay.Controller
             _playerHealth = _bridge.PlayerHealth;
             _playerRevive = _bridge.PlayerHealth.PlayerRevive;
             _inventory = _bridge.PlayerInventory;
+            
+            _playerInputs = new Player();
         }
 
         public override void OnNetworkSpawn()
