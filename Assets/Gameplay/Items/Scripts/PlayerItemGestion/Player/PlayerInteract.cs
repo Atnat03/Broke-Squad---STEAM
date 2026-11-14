@@ -61,7 +61,7 @@
                 
                 if (target == null && _currentHoverInteractable != null)
                 {
-                    _currentHoverInteractable.SetOutline(false);
+                    _currentHoverInteractable?.SetOutline(false);
                     OnTooltipChange?.Invoke(false, null);
                 }
 
