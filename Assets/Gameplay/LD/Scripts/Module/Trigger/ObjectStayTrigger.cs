@@ -78,6 +78,8 @@ namespace Gameplay.LD
             if (pressed == wasPressed) return;
             Context.SetFlag(_flag, pressed);
             if (pressed) Raise(new LDActivation(null, transform.position));
+
+            Debug.Log($"[LD] Plaque : {(pressed ? "pressée" : "relâchée")} (poids {CheckWeight()})");
         }
 
         private float CheckWeight()
