@@ -47,7 +47,7 @@ namespace Gameplay.IA
             _isDead.OnValueChanged -= OnDie;
         }
 
-        public void ApplyDamage(float damage)
+        public void ApplyDamage(float damage, NetworkObject source = null)
         {
             if (!IsServer) return;
             
