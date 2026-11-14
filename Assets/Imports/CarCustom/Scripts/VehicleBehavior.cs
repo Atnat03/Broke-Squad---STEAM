@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Vector2 = UnityEngine.Vector2;
@@ -12,7 +13,7 @@ namespace Vehicle
     {Propulsion, Traction, _4x4}
     
     [RequireComponent(typeof(Rigidbody))]
-    public class VehicleBehavior : MonoBehaviour
+    public class VehicleBehavior : NetworkBehaviour
     {
         #region Properties
 
@@ -76,7 +77,12 @@ namespace Vehicle
 
         private void Update()
         {
+            if (IsOwner)
+            {
+            }
+            
             GetInputs();
+            
             ApplyVisualWheels();
         }
 
@@ -138,17 +144,20 @@ namespace Vehicle
         private void Suspension(WheelBehavior wheel)
         {
             Vector3 springDir = wheel.wheelTransform.up;
-            Vector3 tireWorldVel = _rigidbody.GetPointVelocity(wheel.wheelTransform.position);
 
-            float offset = wheel.suspensionRestDist - wheel.tireRaycast.distance;
-            
-            float vel = Vector3.Dot(springDir, tireWorldVel);
-            
-            float force = (offset * wheel.springStrength) - (vel * wheel.springDamper);
-            
+            Vector3 tireWorldVel = _rigidbody.GetPointVelocity(wheel.tireRaycast.point);
+
+            float compression = Mathf.Clamp(wheel.suspensionRestDist - wheel.tireRaycast.distance, 0f, wheel.maxSuspensionCompression);
+
+            float velocity = Vector3.Dot(springDir, tireWorldVel);
+
+            float force = compression * wheel.springStrength - velocity * wheel.springDamper;
+
+            force = Mathf.Max(0f, force);
+
             _rigidbody.AddForceAtPosition(springDir * force, wheel.tireRaycast.point);
         }
-
+        
         private void Steering(WheelBehavior wheel)
         {
             Vector3 steeringDir = wheel.wheelTransform.right;
@@ -168,7 +177,7 @@ namespace Vehicle
         {
             if (!wheel.isMotorWheel) return;
             
-            Vector3 accelDir = wheel.wheelTransform.forward;
+            Vector3 accelDir = transform.forward;
 
             //Acceleration en fonction de l'input
             if (Mathf.Abs(_accelInput) > 0.1f)

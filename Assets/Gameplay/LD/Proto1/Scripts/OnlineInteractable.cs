@@ -28,8 +28,12 @@ public abstract class OnlineInteractable : NetworkBusListener, IInteractable
             }
         }
     }
-    
-    public void SetOutline(bool state) => outline.enabled = state;
+
+    public void SetOutline(bool state)
+    {
+        if(outline) 
+            outline.enabled = state;
+    }
     
     public void Interact(ulong clientId)
     {

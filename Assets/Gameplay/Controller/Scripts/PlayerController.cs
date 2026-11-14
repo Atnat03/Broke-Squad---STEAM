@@ -28,7 +28,7 @@ namespace Gameplay.Controller
         [SerializeField] private LadderChecker ladderChecker;
 
         [Header("To Assign")]
-        public PlayerCamera playerCamera;
+        public PlayerCamera PlayerCamera;
         [SerializeField] private PlayerHealth health;
         public MeshRenderer[] meshRenderer;
 
@@ -58,6 +58,9 @@ namespace Gameplay.Controller
         private readonly NetworkVariable<bool> _netCrouching = new(false,
             NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
+        private int _lockCount;
+        public bool IsLocked => _lockCount > 0;
+        
         private float _ladderCooldown;
         public PlayerHealth Health => health;
         public bool IsGrounded => ground.IsGrounded;
@@ -88,9 +91,13 @@ namespace Gameplay.Controller
         public void PlayCrouchSound() => PlaySound(_crouchSound, 0.5f);
 
         public void SetYaw(float yawDegrees) => _rb.MoveRotation(Quaternion.Euler(0f, yawDegrees, 0f));
+        
+        public void PushLock() => _lockCount++;
+        public void PopLock() => _lockCount = Mathf.Max(0, _lockCount - 1);
 
-        private bool CanAct => !playerCamera.LocksController && !IsStunned;
+        private bool CanAct => !PlayerCamera.LocksController && !IsStunned && !IsLocked;
         public Vector2 MoveInput => _input != null && CanAct ? _input.Move : Vector2.zero;
+        
 
         public void StartLadderCooldown() => _ladderCooldown = Profile.ladderRegrabCooldown;
         
@@ -134,7 +141,7 @@ namespace Gameplay.Controller
 
             if (!IsOwner)
             {
-                playerCamera.gameObject.SetActive(false);
+                PlayerCamera.gameObject.SetActive(false);
                 RequestPersonalisationRpc();
                 return;
             }
@@ -239,7 +246,7 @@ namespace Gameplay.Controller
             }
 
             _stunTimer -= Time.deltaTime;
-            _motor.CanMove = !playerCamera.LocksController && !IsStunned;
+            _motor.CanMove = !PlayerCamera.LocksController && !IsStunned && CanAct;
             _stateMachine.Update();
             body.UpdateEye(Time.deltaTime);
         }

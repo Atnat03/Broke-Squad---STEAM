@@ -15,6 +15,7 @@ namespace Vehicle
         public float suspensionRestDist = 0.5f;
         public float springStrength = 5000f;
         public float springDamper = 800f;
+        public float maxSuspensionCompression = 0.02f;
 
         //Adhérence (grip)
         public float tireGripFactor = 0.8f;
