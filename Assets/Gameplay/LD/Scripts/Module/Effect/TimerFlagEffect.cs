@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -25,6 +26,8 @@ namespace Gameplay.LD
             Context.SetFlag(_flag, true);
             if (_couroutine != null) StopCoroutine(_couroutine);
             _couroutine = StartCoroutine(ActiveDuration());
+
+            Debug.Log("[LD] Activation Timer lunch " + "flag " + Context.HasFlag(_flag));
         }
 
         private IEnumerator ActiveDuration()
@@ -32,6 +35,7 @@ namespace Gameplay.LD
             yield return new WaitForSeconds(_timerDuration);
 
             Context.SetFlag(_flag, false);
+            Debug.Log("[LD] Activation Timer finish " + "flag : " + Context.HasFlag(_flag));
             _couroutine = null;
         }
     }
