@@ -27,6 +27,10 @@ namespace Gameplay.Items
         }
 
         public void OnNotInHand() { }
+        public void OnThrow()
+        {
+            
+        }
 
         IEnumerator OverrideStaminaRegenTimer(float newRegen, float duration)
         {

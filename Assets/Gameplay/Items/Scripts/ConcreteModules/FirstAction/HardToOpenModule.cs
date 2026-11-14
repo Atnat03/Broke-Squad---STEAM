@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using MyPrint;
 using UnityEngine;
 
 namespace Gameplay.Items
@@ -56,7 +57,7 @@ namespace Gameplay.Items
                 _decayCoroutine = null;
             }
 
-            _decayCoroutine = Context.StartCoroutine(DecayCoroutine());
+            _decayCoroutine = Context.Inventory.StartCoroutine(DecayCoroutine());
         }
 
         public void OnNotInHand()
@@ -70,6 +71,11 @@ namespace Gameplay.Items
             _currentFill = 0;
             
             UpdateView(false);
+        }
+
+        public void OnThrow()
+        {
+            
         }
 
         private void HandleOpenItem()

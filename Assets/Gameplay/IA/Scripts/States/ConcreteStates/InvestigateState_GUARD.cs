@@ -58,15 +58,11 @@ namespace Gameplay.IA
         IEnumerator StartInvestigation()
         {
             Brain.Motor.StopAgent(true);
-
-            ABPrint.Print("Start Investigation");
-
+            
             yield return new WaitForSeconds(Brain.CurrentSetting.TimeBeforeInvestigateScan);
 
             Brain.Motor.StopAgent(false);
-
-            ABPrint.Print("Finish Investigation");
-
+            
             Transform findSomeSuspectObject = ScanInvestigation();
             
             _investigateCoroutine = null;

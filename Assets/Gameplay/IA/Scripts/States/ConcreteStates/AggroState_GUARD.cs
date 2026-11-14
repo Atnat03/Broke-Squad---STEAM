@@ -24,8 +24,8 @@ namespace Gameplay.IA
         public override void EnterState(AggroParam data)
         {
             _target = data.Target;
-            
-            _playerHealth = _target.TryGetComponent(out PlayerHealth playerHealth) ? playerHealth : null;
+
+            _playerHealth = GetPlayerHealth(_target);
             
             Brain.Motor.SetSpeed(Brain.CurrentSetting.AggroSpeed);
             Brain.Motor.SetTarget(_target.position);
@@ -64,7 +64,7 @@ namespace Gameplay.IA
 
             _target = target;
 
-            _playerHealth = _target.TryGetComponent(out PlayerHealth playerHealth) ? playerHealth : null;
+            _playerHealth = GetPlayerHealth(_target);
 
             Vector3 destination = Brain.LineSight.CanSeeTarget ? _target.position : Brain.LineSight.LastSeenPosition;
 
@@ -129,6 +129,21 @@ namespace Gameplay.IA
             _playerHealth.ApplyDamage(Brain.CurrentSetting.Damage);
         }
 
+        private PlayerHealth GetPlayerHealth(Transform target)
+        {
+            PlayerHealth pH = null;
+            
+            foreach (Transform t in _target)
+            {
+                if (t.TryGetComponent(out PlayerHealth health))
+                {
+                    pH = health;
+                }
+            }
+
+            return pH;
+        }
+        
         #endregion
     }
 }

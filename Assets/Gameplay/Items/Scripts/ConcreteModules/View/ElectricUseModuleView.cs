@@ -17,7 +17,7 @@ namespace Gameplay.Items
         
         [Header("UI Settings")]
         [SerializeField] private float _speedFill = 2f;
-
+        
         private float _targetFill;
         private float _visualFill = 100f;
         

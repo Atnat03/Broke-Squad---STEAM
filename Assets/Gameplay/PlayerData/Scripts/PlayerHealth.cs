@@ -1,6 +1,7 @@
     using System;
     using System.Collections;
     using Bus;
+    using Gameplay.Controller;
     using Gameplay.LD.Scripts;
     using MyPrint;
     using Unity.Netcode;
@@ -12,17 +13,19 @@
     {
         public class PlayerHealth : NetworkBusListener, IDamageable
         {
-            [SerializeField] private const int MaxHpValue = 100;
-            
+            [SerializeField] private float MaxHpValue = 100;
             private int _previousTakeDamageSoundPlayed = -1;
+            
+            [Header("References")]
+            [SerializeField] private PlayerRevive _playerRevive;
+            
             [Header("SFX")]
             [SerializeField, SoundName] private string[] _takeDamageSound;
             [SerializeField, SoundName] private string _deathSound;
             [SerializeField, SoundName] private string _rezSound;
             [SerializeField] private MeshRenderer _bodyMesh;
 
-            private readonly NetworkVariable<int> _playerHp = new NetworkVariable<int>(MaxHpValue,
-                    NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+            private readonly NetworkVariable<float> _playerHp = new ();
 
             private readonly NetworkVariable<bool> _playerDown = new NetworkVariable<bool>(false,
                     NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -30,14 +33,15 @@
             private readonly NetworkVariable<bool> _playerInvincible = new NetworkVariable<bool>(false, 
                      NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
             
-            public int CurrentHp => _playerHp.Value;
-            public int MaxHp => MaxHpValue;
+            public float CurrentHp => _playerHp.Value;
+            public float MaxHp => MaxHpValue;
             public bool IsDowned => _playerDown.Value;
             public bool IsInvincible => _playerInvincible.Value;
+            public PlayerRevive PlayerRevive => _playerRevive;
 
             private bool _canTakeDamage = true;
 
-            public event Action<int, int> OnChangeHp;
+            public event Action<float, float> OnChangeHp;
             public event Action<bool> OnChangedInvincibility;
             public event Action<bool> OnChangedDown;
 
@@ -46,9 +50,11 @@
             {
                 base.OnNetworkSpawn();
 
-                if (IsServer) _playerHp.Value = MaxHpValue;
-
                 _playerHp.OnValueChanged += OnHpChanged;
+                
+                if (IsServer)
+                    _playerHp.Value = MaxHpValue;
+
                 _playerInvincible.OnValueChanged += OnInvincibleChanged;
                 _playerDown.OnValueChanged += OnDownedChanged;
             }
@@ -66,7 +72,7 @@
 
             #region Servers Functions
 
-            public void ApplyDamage(float damage)
+            public void ApplyDamage(float damage, NetworkObject source = null)
             {
                 if (!IsServer || damage <= 0 || _playerDown.Value || _playerInvincible.Value) return;
                 if (!_canTakeDamage) return;
@@ -115,12 +121,12 @@
             
             #region Replication callbacks (every client)
 
-            private void OnHpChanged(int previous, int current)
+            private void OnHpChanged(float previous, float current)
             {
-                OnChangeHp?.Invoke(previous, current);
+                OnChangeHp?.Invoke(current, MaxHp);
                 if(IsOwner) InvokeEvent(new PlayerHealthChanged_EVENT
                 {
-                    CurrentHp = CurrentHp,
+                    CurrentHp = current,
                     MaxHp = MaxHp,
                     Invincible =  IsInvincible
                 });

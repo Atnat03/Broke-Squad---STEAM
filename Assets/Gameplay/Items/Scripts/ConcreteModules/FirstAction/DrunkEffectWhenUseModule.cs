@@ -28,6 +28,10 @@ namespace Gameplay.Items
 
         public void StopFirstAction() { }
         public void OnNotInHand(){ }
+        public void OnThrow()
+        {
+            
+        }
 
         private IEnumerator DrunkRoutine()
         {

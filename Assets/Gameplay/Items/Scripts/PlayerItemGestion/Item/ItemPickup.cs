@@ -28,8 +28,9 @@ namespace Gameplay.Items
         Vector3 _baseSize,_baseSizeRack, _baseScale;
         
         [SerializeField] private SO_Item _itemData;
-        private Outline _outline;
         
+        private Outline _outline;
+
         public Outline outline => _outline;
         
         private ItemInstance _instance;
@@ -140,16 +141,24 @@ namespace Gameplay.Items
                 outline.enabled = state;
         }
 
+
         public void Interact(ulong clientId)
         {
-            if (DetectNotGrabbable()) return;
-            
+            if (DetectNotGrabbable())
+                return;
+
+            if (NetworkObject == null || !NetworkObject.IsSpawned)
+            {
+                return;
+            }
+
             InvokeEvent(new OnPickupItem_EVENT
             {
                 ClientId = clientId,
-                ItemPickUpRef = NetworkObject
+                ItemPickUpRef = new NetworkObjectReference(NetworkObject)
             });
         }
+
         
         public void Setup(ItemInstance instance)
         {
@@ -206,5 +215,20 @@ namespace Gameplay.Items
         
         [Rpc(SendTo.Server)]
         void CreateSuspiciousSoundRpc(ulong clientId, float force) => CreateSuspiciousSound(clientId, force);
+        
+        public string GetTooltip(ItemModule[] playerModules)
+        {
+            string message = string.Empty;
+            
+            if(playerModules != null)
+                message = Instance.Data.TooltipInHand.GetTooltip(playerModules);
+            
+            if (message.Equals(string.Empty))
+            {
+                message = "E to pick " + Instance.Data.ItemName;
+            }
+            
+            return message;
+        }
     }
 }

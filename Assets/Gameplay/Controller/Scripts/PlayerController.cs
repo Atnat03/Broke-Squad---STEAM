@@ -14,8 +14,6 @@ using Random = UnityEngine.Random;
 
 namespace Gameplay.Controller
 {
-    [RequireComponent(typeof(Rigidbody))]
-    [RequireComponent(typeof(CapsuleCollider))]
     public class PlayerController : NetworkBusListener
     {
         #region Variables
@@ -31,10 +29,8 @@ namespace Gameplay.Controller
 
         [Header("To Assign")]
         public PlayerCamera playerCamera;
-        public GameObject UI;
         [SerializeField] private PlayerHealth health;
         public MeshRenderer[] meshRenderer;
-        public TextMeshProUGUI pseudoText;
 
         [Header("Tied Up")]
         [SerializeField] private float tiedUpSpeed = 1f;
@@ -82,6 +78,8 @@ namespace Gameplay.Controller
         public PlayerBody Body => body;
         public PlayerStamina Stamina => _stamina;
         public LadderChecker LadderChecker => ladderChecker;
+
+        public PlayerHealth PlayerHealth => health;
         public float TiedUpSpeed => tiedUpSpeed;
 
         private bool WantsCrouch() => _input.CrouchHeld || (IsCrouching && !body.CanStandUp());
@@ -116,6 +114,7 @@ namespace Gameplay.Controller
         
         public Action OnPersonalisationChanged;
         public event Action JumpPressed;
+        public Action<string> OnPseudoIsSetUp;
         
         #endregion
 
@@ -136,13 +135,11 @@ namespace Gameplay.Controller
             if (!IsOwner)
             {
                 playerCamera.gameObject.SetActive(false);
-                UI.SetActive(false);
                 RequestPersonalisationRpc();
                 return;
             }
 
             foreach (var mesh in meshRenderer) mesh.gameObject.layer = LayerMask.NameToLayer("HideToOwner");
-            pseudoText.gameObject.SetActive(false);
 
             SendPersonalisation();
             SetUpModules();
@@ -183,7 +180,7 @@ namespace Gameplay.Controller
 
         private void SetUpModules()
         {
-            _playerInput = TryGetComponent(out PlayerInput existing) ? existing : gameObject.AddComponent<PlayerInput>();
+            _playerInput = GetComponent<PlayerInput>();
             _input = new PlayerInputReader(_playerInput);
 
             _stamina = new PlayerStamina(profile, (current, max) =>
@@ -314,7 +311,7 @@ namespace Gameplay.Controller
             meshRenderer[2].material.color = PlayerLocalData.instance.PossibleColor[colorId];
             meshRenderer[3].material.color = PlayerLocalData.instance.PossibleColor[colorId];
             meshRenderer[4].material.color = PlayerLocalData.instance.PossibleColor[colorId];
-            pseudoText.text = playerName;
+            OnPseudoIsSetUp?.Invoke(playerName);
             
             PlayerColorId = colorId;
             PlayerName = playerName;
@@ -351,10 +348,11 @@ namespace Gameplay.Controller
             SetYaw(yawDegrees);
         }
 
-        [ClientRpc]
+        [Rpc(SendTo.Owner)]
         public void TeleportClientRpc(Vector3 position, Quaternion rotation)
         {
-            if (!IsOwner) return;
+            if(!IsOwner) return;
+            _rb.linearVelocity = Vector3.zero;
             _rb.position = position;
             _rb.rotation = rotation;
         }

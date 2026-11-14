@@ -39,9 +39,42 @@ namespace Gameplay.Items
         private Vector3 _lastPosition;
         
         private ulong _hostId;
+
+        private Coroutine _explosionCoroutine;
         
         public ICondition Condition => ConditionParent;
         public void StartFirstAction()
+        {
+            TryTriggerExplosion();
+        }
+
+        public void StopFirstAction() { }
+
+        public void OnNotInHand()
+        {
+            if (_explosionCoroutine == null) return;
+            
+            Context.StopCoroutine(_explosionCoroutine);
+            _explosionCoroutine = null;
+
+            _active = false;
+            _elapsed = 0;
+            
+            SendData(true);
+        }
+
+        public void OnThrow()
+        {
+            TryTriggerExplosion();
+        }
+        
+        public void ServerExecute(OnModuleDoAction_EVENT data)
+        {
+            if (!_active)
+                StartExplosion();
+        }
+
+        private void TryTriggerExplosion()
         {
             Context.SendToServer(this, new OnModuleDoAction_EVENT());
             
@@ -54,20 +87,11 @@ namespace Gameplay.Items
             });
         }
 
-        public void StopFirstAction() { }
-        public void OnNotInHand() { }
-
-        public void ServerExecute(OnModuleDoAction_EVENT data)
-        {
-            if (!_active)
-                StartExplosion();
-        }
-
         private void StartExplosion()
         {
             _active = true;
             _elapsed = 0;
-            Context.StartCoroutine(ExplosionRoutine(++_runId));
+            _explosionCoroutine = Context.StartCoroutine(ExplosionRoutine(++_runId));
         }
 
         IEnumerator ExplosionRoutine(int id)
@@ -93,10 +117,8 @@ namespace Gameplay.Items
 
             for (int i = 0; i < size; i++)
             {
-                if (buffer[i].TryGetComponent(out IDamageable damageable))
-                {
-                    damageable.ApplyDamage(_explosionDamage);
-                }
+                IDamageable d = buffer[i].GetComponentInChildren<IDamageable>();
+                d?.ApplyDamage(_explosionDamage);
                 
                 if(buffer[i].TryGetComponent(out IBreakable breakable))
                 {

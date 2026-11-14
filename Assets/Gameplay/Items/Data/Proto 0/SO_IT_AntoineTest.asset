@@ -18,8 +18,16 @@ MonoBehaviour:
   PickupPrefab: {fileID: 3661796626285246577, guid: d1b270449931b29408f8111711b5ae77, type: 3}
   Icon: {fileID: 21300000, guid: 681f65c0e39a04f4e91818c128df16a1, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
+  TooltipInHand:
+    DefaultText: 
+    IsItem: 0
+    TooltipInHand: 
+    _requiresItemModule: 0
+    _tooltipWithItem: 
+    _requiredModule:
+      rid: -2
   FirstActionList:
-  - rid: 7693030098167660704
+  - rid: 7693030277138612450
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -82,20 +90,11 @@ MonoBehaviour:
       data:
         _minVelocityForDestroy: 5
         _force: 10
-    - rid: 7693030098167660704
-      type: {class: HardToOpenModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+    - rid: 7693030277138612450
+      type: {class: MeleeDamageModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: 7693030098167660705
-        _keyEvent: HARD_TO_OPEN_EVENT_KEY
-        _fillPerClick: 20
-        _maxFilling: 100
-        _staminaCost: 5
-        _decayDelay: 0.5
-        _decayPerSecond: 33
-        _spawnItem: {fileID: 47756118134500608, guid: 7c9d09d5a6d5a0940a52c913b501a13e, type: 3}
-    - rid: 7693030098167660705
-      type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
-      data:
-        _numberOfUse: 1
-        _destroyWhenEmpty: 0
+          rid: -2
+        _range: 3
+        _damage: 10
+        _attackCooldown: 1

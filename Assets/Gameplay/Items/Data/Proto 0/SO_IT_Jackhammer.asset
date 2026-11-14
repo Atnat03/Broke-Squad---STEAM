@@ -18,6 +18,14 @@ MonoBehaviour:
   PickupPrefab: {fileID: 8302772345514676335, guid: 6500fa7ae29c6dd4c90828e7a7d5c938, type: 3}
   Icon: {fileID: 21300000, guid: 15a952fa7df21904d84702ba0b162e85, type: 3}
   OffsetInHand: {x: 0, y: 0, z: -0.4}
+  TooltipInHand:
+    DefaultText: 
+    IsItem: 1
+    TooltipInHand: left click to destroy
+    _requiresItemModule: 1
+    _tooltipWithItem: E to charge
+    _requiredModule:
+      rid: 7693030253545914594
   FirstActionList:
   - rid: 7202345609054912652
   SecondActionList:
@@ -89,3 +97,12 @@ MonoBehaviour:
       data:
         _startPercentValue: 0
         _electricNeededToUse: 50
+    - rid: 7693030253545914594
+      type: {class: ChargeItemModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _percentGain: 10
+        _range: 2
+        _stringName: 
+        _volume: 0.5

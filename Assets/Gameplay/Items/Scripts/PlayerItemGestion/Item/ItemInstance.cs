@@ -85,6 +85,18 @@ namespace Gameplay.Items
             return null;
         }
 
+        public ItemModule[] GetAllModules()
+        {
+            List<ItemModule> list = new();
+
+            foreach (var m in AllModules())
+            {
+                list.Add(m as ItemModule);
+            }
+            
+            return list.ToArray();
+        }
+
         public IEnumerable<IItemModule> AllModules()
         {
             foreach (var m in FirstActionList)
