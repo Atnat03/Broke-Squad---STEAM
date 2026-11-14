@@ -72,7 +72,7 @@
 
             #region Servers Functions
 
-            public void ApplyDamage(float damage)
+            public void ApplyDamage(float damage, NetworkObject source = null)
             {
                 if (!IsServer || damage <= 0 || _playerDown.Value || _playerInvincible.Value) return;
                 if (!_canTakeDamage) return;
