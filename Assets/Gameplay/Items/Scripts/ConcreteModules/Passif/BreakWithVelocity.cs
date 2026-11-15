@@ -8,6 +8,9 @@ namespace Gameplay.Items
     [Serializable]
     public class BreakWithVelocity : ItemModule, IPassif
     {
+        public override string Emoji => "💥";
+
+        
         [SerializeField] private float _minVelocityForDestroy = 1;
         [SerializeField] private float _force = 10;
 

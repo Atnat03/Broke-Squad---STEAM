@@ -11,6 +11,8 @@ namespace Gameplay.Items
     [Serializable]
     public class ThrowModule : ActionModule, ISecondAction, IServerAction
     {
+        public override string Emoji => "🤾";
+        
         [Header("Settings")]
         [SerializeField] private float _durationToFullFill = 0.5f;
         

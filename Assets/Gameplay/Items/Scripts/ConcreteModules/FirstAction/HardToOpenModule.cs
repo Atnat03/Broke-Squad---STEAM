@@ -8,6 +8,9 @@ namespace Gameplay.Items
     [Serializable]
     public class HardToOpenModule : ActionModule, IFirstAction, IServerAction
     {
+        public override string Emoji => "💪";
+
+        
         [SerializeField] private string _keyEvent = "HARD_TO_OPEN_EVENT_KEY";
         
         [Header("Filling")]

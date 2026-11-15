@@ -8,6 +8,9 @@ namespace Gameplay.Items
     [Serializable]
     public class GoalModule : ItemModule, IPassif, IServerAction
     {
+        public override string Emoji => "🎯";
+
+        
         public void OnCollide(Collision collision, ItemPickup item) { }
 
         public void OnThrow(Rigidbody rb) { }

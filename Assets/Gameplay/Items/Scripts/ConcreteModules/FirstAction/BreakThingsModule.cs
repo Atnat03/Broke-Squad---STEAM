@@ -7,6 +7,8 @@ namespace Gameplay.Items
     [Serializable]
     public class BreakThingsModule : ActionModule, IFirstAction
     {
+        public override string Emoji => "💥";
+        
         [SerializeField] private float _force = 5;
 
         [Header("SFX")] 
