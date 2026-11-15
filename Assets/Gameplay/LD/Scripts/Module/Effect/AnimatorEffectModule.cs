@@ -31,8 +31,8 @@ namespace Gameplay.LD
             _clearedHash = Animator.StringToHash(_triggerClose);
 
             _state = Context.HasFlag(_flag);
-            Apply(_state);
-            Context.OnFlagChanged += OnFlagsChanged;
+			if (_state) Apply(true);
+			Context.OnFlagChanged += OnFlagsChanged;
         }
 
         private void OnFlagsChanged(LDFlag flags)
