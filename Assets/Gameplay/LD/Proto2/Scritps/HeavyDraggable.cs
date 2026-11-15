@@ -28,6 +28,9 @@ namespace Gameplay.Items
         [SerializeField] private float inputTimeout = 0.3f;
         [SerializeField] private float inputSendRate = 20f;
         
+        private readonly NetworkVariable<float> _netOffset = new NetworkVariable<float>(
+            0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        
         private NetworkList<ulong> _holders;
         private Rigidbody _rb;
         private Vector3 _origin;
@@ -38,6 +41,9 @@ namespace Gameplay.Items
         private float _offset;
         private float _velocity;
         
+        private float _displayOffset;
+
+        
         private PlayerController _localPlayer;
         private int _localIndex = -1;
         private float _sendTimer;
@@ -46,6 +52,7 @@ namespace Gameplay.Items
         {
             _rb = GetComponent<Rigidbody>();
             _rb.isKinematic = true;
+            _rb.interpolation = RigidbodyInterpolation.Interpolate;
             _holders = new NetworkList<ulong>();
             for (int i = 0; i < handles.Length; i++) handles[i].Init(this, i);
         }
@@ -54,6 +61,12 @@ namespace Gameplay.Items
         {
             _origin = _rb.position;
             _worldAxis = transform.TransformDirection(localAxis).normalized;
+
+            if (!IsServer)
+            {
+                _displayOffset = _netOffset.Value;
+                _rb.position = _origin + _worldAxis * _displayOffset;
+            }
 
             if (IsServer)
             {
@@ -70,7 +83,8 @@ namespace Gameplay.Items
         public override void OnNetworkDespawn()
         {
             _holders.OnListChanged -= OnHoldersChanged;
-            if (IsServer && NetworkManager != null) NetworkManager.OnClientDisconnectCallback -= OnClientDisconnected;
+            if (IsServer && NetworkManager != null)
+                NetworkManager.OnClientDisconnectCallback -= OnClientDisconnected;
             if (_localIndex >= 0) EndLocalHold();
         }
 
@@ -96,8 +110,8 @@ namespace Gameplay.Items
             ulong sender = rpcParams.Receive.SenderClientId;
             if (index < 0 || index >= _holders.Count || _holders[index] != NoHolder) return;
             
-            foreach (var holder in _holders)
-                if (holder == sender) return;
+            for (int i = 0; i < _holders.Count; i++)
+                if (_holders[i] == sender) return;
 
             _holders[index] = sender;
             _inputs[index] = 0f;
@@ -137,7 +151,8 @@ namespace Gameplay.Items
         {
             float target = 0f;
 
-            if (TryGetDragDirection(out float dir, out float strength)) target = dir * maxSpeed * strength;
+            if (TryGetDragDirection(out float dir, out float strength))
+                target = dir * maxSpeed * strength;
 
             _velocity = Mathf.MoveTowards(_velocity, target, acceleration * dt);
             float newOffset = Mathf.Clamp(_offset + _velocity * dt, minOffset, maxOffset);
@@ -145,9 +160,9 @@ namespace Gameplay.Items
             _offset = newOffset;
 
             _rb.MovePosition(_origin + _worldAxis * _offset);
+            _netOffset.Value = _offset;
         }
-
-       
+        
         private bool TryGetDragDirection(out float dir, out float strength)
         {
             dir = 0f;
@@ -218,10 +233,7 @@ namespace Gameplay.Items
                 RequestRelease(_localIndex);
                 return;
             }
-
-            Vector3 pos = handles[_localIndex].SnapPoint.position;
-            pos = new Vector3(pos.x, _localPlayer.transform.position.y, pos.z);
-            _localPlayer.HoldAt(pos);
+            _localPlayer.HoldAt(handles[_localIndex].SnapPoint.position);
 
             _sendTimer -= dt;
             if (_sendTimer <= 0f)
@@ -233,16 +245,14 @@ namespace Gameplay.Items
         }
 
         #endregion
-
-        private void FixedUpdate()
+        
+        private void ClientFollow(float dt)
         {
-            if (!IsSpawned) return;
-            float dt = Time.fixedDeltaTime;
-            if (IsServer) ServerTick(dt);
-            LocalTick(dt);
+            _displayOffset = Mathf.Lerp(_displayOffset, _netOffset.Value, 1f - Mathf.Exp(-20f * dt));
+            _rb.MovePosition(_origin + _worldAxis * _displayOffset);
         }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
             Vector3 axis = transform.TransformDirection(localAxis).normalized;
@@ -250,7 +260,7 @@ namespace Gameplay.Items
 
             bool playing = Application.isPlaying && IsSpawned;
             Vector3 origin = playing ? _origin : transform.position;
-            float current = playing ? _offset : 0f;
+            float current = playing ? (IsServer ? _offset : _displayOffset) : 0f;
 
             Vector3 minPos = origin + axis * minOffset;
             Vector3 maxPos = origin + axis * maxOffset;
@@ -280,6 +290,7 @@ namespace Gameplay.Items
             Gizmos.color = Color.cyan;
             DrawArrow(curPos, axis * 0.8f);
             DrawArrow(curPos, -axis * 0.8f);
+            
         }
 
         private Bounds GetLocalBounds(out Vector3 centerOffset)
@@ -311,5 +322,14 @@ namespace Gameplay.Items
             Gizmos.DrawLine(to, to + back - side);
         }
 #endif
+
+        private void FixedUpdate()
+        {
+            if (!IsSpawned) return;
+            float dt = Time.fixedDeltaTime;
+            if (IsServer) ServerTick(dt);
+            else ClientFollow(dt);
+            LocalTick(dt);
+        }
     }
 }

@@ -110,7 +110,8 @@ namespace Gameplay.Controller
 
         public void HoldAt(Vector3 pos)
         {
-            _rb.position = pos;
+            Vector3 newPos = new Vector3(pos.x, transform.position.y, pos.z);
+            _rb.position = newPos;
             _rb.linearVelocity = Vector3.zero;
         }
         
