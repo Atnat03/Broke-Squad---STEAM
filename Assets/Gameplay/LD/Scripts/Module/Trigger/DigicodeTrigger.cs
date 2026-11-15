@@ -9,7 +9,6 @@ namespace Gameplay.LD
 {
 	public enum DigicodeDisplayState : byte { Normal, Wrong, Success }
 
-	[RequireComponent(typeof(Collider))]
     public class DigicodeTrigger : LDTriggerModule
     {
         public const int ClearKey = 10;
