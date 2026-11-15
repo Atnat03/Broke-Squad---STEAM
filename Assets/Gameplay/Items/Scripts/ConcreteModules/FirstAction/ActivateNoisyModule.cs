@@ -9,6 +9,8 @@ namespace Gameplay.Items
     [Serializable]
     public class ActivateNoisyModule : ActionModule, IFirstAction, IServerAction, IAnchorAware
     {
+        public override string Emoji => "🔊";
+        
         [SerializeField] private string _keyEvent = "NOISY_EVENT";
         [SerializeField] private float _maxDuration = 5f;
 

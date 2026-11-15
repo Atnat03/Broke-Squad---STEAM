@@ -11,6 +11,8 @@ namespace Gameplay.Items
     [Serializable]
     public class MeleeDamageModule : ActionModule, IServerAction, IFirstAction
     {
+        public override string Emoji => "⚔️";
+        
         [SerializeField] private float _range = 3f;
         [SerializeField] private float _damage = 10f;
         [SerializeField] private float _attackCooldown = 1f;

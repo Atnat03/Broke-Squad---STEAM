@@ -12,6 +12,8 @@ namespace Gameplay.Items
     [Serializable]
     public class ActiveExplosionModule : ActionModule, IFirstAction, IServerAction, IAnchorAware
     {
+        public override string Emoji => "💣";
+        
         [SerializeField] private string _keyEvent = "EXPLOSION_EVENT";
      
         [Header("Explosion Settings")]

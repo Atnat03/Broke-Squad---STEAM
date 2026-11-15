@@ -8,6 +8,8 @@ namespace Gameplay.Items
     [Serializable]
     public class ElectricUseModule : ItemModule, ICondition, IServerAction, IReplicatedModule
     {
+        public override string Emoji => "⚡";
+        
         private FixedString32Bytes _keyEventUse = "ELECTRIC_USE_MODULE";
         private FixedString32Bytes _keyEventVFX = "ELECTRIC_ADD_VFX";
         
@@ -16,7 +18,6 @@ namespace Gameplay.Items
         private float _maxPercentValue = 100;
         private float _currentPercentValue;
         private bool _isInHand;
-        
         protected override void SetModule() => _currentPercentValue = _startPercentValue;
         public bool CheckCondition() => _currentPercentValue-_electricNeededToUse >= 0;
 

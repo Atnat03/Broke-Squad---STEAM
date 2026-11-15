@@ -8,6 +8,9 @@ namespace Gameplay.Items
     [Serializable]
     public class DrunkEffectWhenUseModule : ActionModule, IFirstAction
     {
+        public override string Emoji => "🍺";
+
+        
         [SerializeField] private float _drunkDuration = 5f;
         private int _rendererIndex = 1;
         
