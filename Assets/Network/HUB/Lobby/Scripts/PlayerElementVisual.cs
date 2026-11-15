@@ -9,7 +9,7 @@ namespace Network.HUB
     public class PlayerElementVisual : MonoBusListener
     {
         [SerializeField] private TextMeshProUGUI _namePlayerText;
-        [SerializeField] private MeshRenderer _meshRendererPlayer;
+        [SerializeField] private MeshRenderer[] _meshRendererPlayer;
         [SerializeField] private TextMeshProUGUI _readyText;
 
         void Start()
@@ -20,8 +20,11 @@ namespace Network.HUB
         public void SetData(PlayerDataLobby data)
         {
             _namePlayerText.text = data.Name;
-            
-            _meshRendererPlayer.material.color = PlayerLocalData.instance.PossibleColor[data.ColorID];
+
+            foreach (var m in  _meshRendererPlayer)
+            {
+                m.material.color = PlayerLocalData.instance.PossibleColor[data.ColorID];
+            }
 
             _readyText.gameObject.SetActive(data.IsReady);
         }
