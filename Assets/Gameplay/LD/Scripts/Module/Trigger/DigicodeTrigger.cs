@@ -2,6 +2,7 @@
 using System.Collections;
 using TMPro;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -105,6 +106,7 @@ namespace Gameplay.LD
 		{
 			if (_display == null) return;
 			_display.text = _buffer.Value.ToString();
+			Debug.Log($"[LD] buffer : {_display.text}");
 			_display.color = _displayState.Value switch
 			{
 				DigicodeDisplayState.Wrong => _wrongColor,
