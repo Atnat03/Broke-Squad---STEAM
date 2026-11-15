@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Bus;
 using Gameplay;
 using Gameplay.Items;
@@ -8,7 +9,7 @@ using UnityEngine.Events;
 
 public abstract class OnlineInteractable : NetworkBusListener, IInteractable
 {
-    [SerializeField] Outline Outline;
+    Outline Outline;
 
     [SerializeField] TooltipConfig _tooltipConfig;
     
@@ -16,8 +17,23 @@ public abstract class OnlineInteractable : NetworkBusListener, IInteractable
 
     public UnityEvent onInteractableOpen;
     public UnityEvent onInteractableClose;
-    
-    public void SetOutline(bool state) => outline.enabled = state;
+
+    void Awake()
+    {
+        foreach (Transform t in transform)
+        {
+            if (t.TryGetComponent(out Outline o))
+            {
+                Outline = o;
+            }
+        }
+    }
+
+    public void SetOutline(bool state)
+    {
+        if(outline)
+            outline.enabled = state;
+    }
     
     public void Interact(ulong clientId)
     {

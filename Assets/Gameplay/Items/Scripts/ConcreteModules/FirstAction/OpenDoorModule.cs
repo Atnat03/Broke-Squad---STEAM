@@ -7,6 +7,8 @@ namespace Gameplay.Items
     [Serializable]
     public class OpenDoorModule : ActionModule, IFirstAction, IServerAction
     {
+        public override string Emoji => "🔑";
+        
         public Vector2Int Range => _canOpenAllDoors ? new Vector2Int(-1, -1) : _canOpenIndexRange;
         
         [SerializeField] private Vector2Int _canOpenIndexRange = new Vector2Int(0, 2);

@@ -30,6 +30,24 @@ public sealed class CustomDraw : Editor
         GUI.DrawTexture(new Rect(rect.xMax - thickness, rect.y, thickness, rect.height), Texture2D.whiteTexture);
         GUI.color = old;
     }
+    
+    public static void DrawEnumDropdown(SerializedProperty enumProperty, string label = null)
+    {
+        if (enumProperty == null || enumProperty.propertyType != SerializedPropertyType.Enum)
+        {
+            Debug.LogWarning("DrawEnumDropdown: la propriété n'est pas un enum.");
+            return;
+        }
+
+        GUIContent content = label != null ? new GUIContent(label) : new GUIContent(enumProperty.displayName);
+
+        int selectedIndex = EditorGUILayout.Popup(content, enumProperty.enumValueIndex, enumProperty.enumDisplayNames);
+
+        if (selectedIndex != enumProperty.enumValueIndex)
+        {
+            enumProperty.enumValueIndex = selectedIndex;
+        }
+    }
 }
 
 #endif

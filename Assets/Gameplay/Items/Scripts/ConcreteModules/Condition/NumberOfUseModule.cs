@@ -10,6 +10,8 @@ namespace Gameplay.Items
     [Serializable]
     public class NumberOfUseModule : ItemModule, ICondition, IServerAction, IReplicatedModule
     {
+        public override string Emoji => "🔢";
+        
         [SerializeField] private int _numberOfUse = 3;
         [SerializeField] private ConsequenceOfNoUse _destroyWhenEmpty = ConsequenceOfNoUse.DestroyObject;
         private bool _canUse = true;

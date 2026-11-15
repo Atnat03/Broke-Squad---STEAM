@@ -62,7 +62,7 @@ namespace Gameplay.Controller
             {
                 if (standPoint != null) player.SnapTo(standPoint.position, BaseYaw);
             });
-            player.playerCamera.SetOverride(_view);
+            player.PlayerCamera.SetOverride(_view);
         }
     }
 }

@@ -71,6 +71,7 @@ namespace Gameplay.Controller
         
         public bool HasOverride => _override != null && _override.LocksController;
         public void ReleaseOverride() => _override?.Release();
+        public bool CamIsLock { get; set; }
 
         private float _leanModeValue;
         [SerializeField] private LayerMask leanObstacleMask; 
@@ -153,6 +154,8 @@ namespace Gameplay.Controller
 
         private void LateUpdate()
         {
+            if (CamIsLock) return;
+            
             float dt = Time.deltaTime;
 
             UpdateFov(dt);

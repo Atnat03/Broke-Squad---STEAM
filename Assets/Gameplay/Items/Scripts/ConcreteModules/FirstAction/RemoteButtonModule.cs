@@ -14,6 +14,9 @@ namespace Gameplay.Items
 {
     public class RemoteButtonModule : ActionModule, IFirstAction, IServerAction
     {
+        public override string Emoji => "🎛️";
+
+        
         [SerializeField] string remoteId;
         [SerializeField] bool holdMode = false;
         [SerializeField] float activeDuration = 5f;

@@ -6,6 +6,8 @@ namespace Gameplay.Items
     [Serializable]
     public class RegenStaminaModule : ActionModule, IFirstAction
     {
+        public override string Emoji => "🚴";
+        
         [SerializeField] public float staminaGainAmount;
         public ICondition Condition => ConditionParent;
         public void StartFirstAction()

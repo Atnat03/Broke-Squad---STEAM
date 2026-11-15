@@ -6,6 +6,9 @@ namespace Gameplay.Items
 {
     public class AnimationModule : ActionModule, IFirstAction
     {
+        public override string Emoji => "🎞️";
+
+        
         enum AnimationType { Trigger, Bool, Float }
         
         [Header("Aniation Type")]
