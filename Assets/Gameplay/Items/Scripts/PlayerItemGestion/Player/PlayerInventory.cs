@@ -344,6 +344,8 @@ namespace Gameplay.Items
             foreach (var r in _previewVisual.GetComponentsInChildren<Renderer>())
                 r.sharedMaterial = _previewMaterial;
 
+            _dropRot = Quaternion.Euler(item.Data.OffsetRotationDrop);
+            
             _previewBottomOffset = GetBottomOffset(_previewVisual);
         }
         
@@ -362,8 +364,14 @@ namespace Gameplay.Items
         
         private void UpdateDropRotate()
         {
-            _dropAngle = (_dropAngle + 90f) % 360f;
-            _dropRot = Quaternion.Euler(0f, _dropAngle, 0f);
+            if (_isPreviewDrop)
+            {
+                ItemInstance item = GetCurrentItemInHand();
+                if (item == null) return;
+                            
+                _dropAngle = (_dropAngle + 90f) % 360f;
+                _dropRot = Quaternion.Euler(0f, _dropAngle, 0f) * Quaternion.Euler(item.Data.OffsetRotationDrop);
+            }
         }
         
         private void OnPerformDrop()

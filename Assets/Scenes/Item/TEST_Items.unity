@@ -3502,12 +3502,10 @@ MonoBehaviour:
     rayCount: 5
     castRadius: 0.12
     minFacing: 0.2
-  playerCamera: {fileID: 1197007964}
-  UI: {fileID: 0}
+  PlayerCamera: {fileID: 0}
   health: {fileID: 0}
   meshRenderer:
   - {fileID: 0}
-  pseudoText: {fileID: 0}
   tiedUpSpeed: 1
   _jumpSound: 
   _crouchSound: 
@@ -3550,6 +3548,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fa741f7a755e8048b6bb4b9b47e4382, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.PlayerInput
+  _controller: {fileID: 0}
 --- !u!136 &244986483
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -11794,7 +11793,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3801472622845352308, guid: 5a6c215c708779e4d97feb847180b76e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -11.25
+      value: -12.88
       objectReference: {fileID: 0}
     - target: {fileID: 3801472622845352308, guid: 5a6c215c708779e4d97feb847180b76e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -11802,7 +11801,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3801472622845352308, guid: 5a6c215c708779e4d97feb847180b76e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 8.05
+      value: 5.68
       objectReference: {fileID: 0}
     - target: {fileID: 3801472622845352308, guid: 5a6c215c708779e4d97feb847180b76e, type: 3}
       propertyPath: m_LocalRotation.w
@@ -21240,6 +21239,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Equipment.BackPack
   ShowTopMostFoldoutHeaderGroup: 1
   _outline: {fileID: 907169510}
+  _tooltipConfig:
+    DefaultText: 
+    IsItem: 0
+    TooltipInHand: 
+    _requiresItemModule: 0
+    _tooltipWithItem: 
+    _requiredModule:
+      rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!114 &919132149482100246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22882,15 +22894,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2831565628736609696, guid: a4cf3847a36a2c645917f38341ca47b7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 18.772661
+      value: 2.24
       objectReference: {fileID: 0}
     - target: {fileID: 2831565628736609696, guid: a4cf3847a36a2c645917f38341ca47b7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.155
+      value: -0.16
       objectReference: {fileID: 0}
     - target: {fileID: 2831565628736609696, guid: a4cf3847a36a2c645917f38341ca47b7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -6.199
+      value: 3.56
       objectReference: {fileID: 0}
     - target: {fileID: 2831565628736609696, guid: a4cf3847a36a2c645917f38341ca47b7, type: 3}
       propertyPath: m_LocalRotation.w
