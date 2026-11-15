@@ -7,6 +7,8 @@ namespace Gameplay.Items
     [Serializable]
     public class NewStaminaModule : ActionModule, IFirstAction
     {
+        public override string Emoji => "🏃‍♀️";
+        
         [SerializeField] float newRegenParSecond;
         [SerializeField] float effectDuration;
         [SerializeField] float regenDelay;

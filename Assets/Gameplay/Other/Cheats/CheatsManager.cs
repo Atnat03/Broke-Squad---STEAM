@@ -17,15 +17,14 @@ namespace Gameplay.Controller
     public class CheatsManager : NetworkBusListener
     {
         [Header("References")] 
-        [SerializeField] private PlayerSetUpBridge _bridge;
-        private PlayerHealth  _playerHealth; 
-        private PlayerRevive _playerRevive;
-        private PlayerController _playerController;
+        [SerializeField] private PlayerHealth  _playerHealth; 
+        [SerializeField] private PlayerRevive _playerRevive;
+        [SerializeField] private PlayerController _playerController;
         
         private Player _playerInputs;
             
         [Header("Item Give")]
-        private PlayerInventory _inventory;
+        [SerializeField]private PlayerInventory _inventory;
         [SerializeField] private CheatGiveItemElement _prefabCheatItemGive;
         [SerializeField] private Transform _parentGiveItemSpawn;
         [SerializeField] private GameObject _itemGiveUI;
@@ -51,17 +50,7 @@ namespace Gameplay.Controller
                 elem.Initialise(item, () => _inventory.TryAddItem(new ItemInstance(item)));
             }
         }
-
-        private void Start()
-        {
-            _playerController = _bridge.PlayerController;
-            _playerHealth = _bridge.PlayerHealth;
-            _playerRevive = _bridge.PlayerHealth.PlayerRevive;
-            _inventory = _bridge.PlayerInventory;
-            
-            _playerInputs = new Player();
-        }
-
+        
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
@@ -71,6 +60,8 @@ namespace Gameplay.Controller
             {
                 _playerController.TeleportClientRpc(SpawnPointManager.instance.GetPlayerSpawnPoint(0).position, SpawnPointManager.instance.GetPlayerSpawnPoint(0).transform.rotation);
             });
+            
+            _playerInputs = new Player();
             
             _playerInputs.Enable();
             _playerInputs.Cheats.Invicibility.performed += Invicibility;

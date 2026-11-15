@@ -8,6 +8,8 @@ namespace Gameplay.Items
     [Serializable]
     public class DamageWithVelocityModule : ItemModule, IPassif
     {
+        public override string Emoji => "🤕";
+        
         [SerializeField] private float _minVelocityForDamage = 1;
         [SerializeField] private float _maxVelocity = 15f;
         [SerializeField] private float _minDamage = 1f;

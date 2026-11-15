@@ -1,9 +1,14 @@
+using System;
 using UnityEngine;
 
 namespace Gameplay.Items
 {
+    [Serializable]
     public class PlugDamageModule : ActionModule, IFirstAction, IServerAction
     {
+        public override string Emoji => "💀";
+
+        
         [SerializeField] private float damage;
         public ICondition Condition { get; }
         public void StartFirstAction()

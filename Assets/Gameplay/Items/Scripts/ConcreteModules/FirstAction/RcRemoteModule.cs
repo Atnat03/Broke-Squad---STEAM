@@ -7,6 +7,9 @@ namespace Gameplay.Items
     [Serializable]
     public class RcRemoteModule : ActionModule, IFirstAction, IServerAction
     {
+        public override string Emoji => "🕹️";
+
+        
         private FixedString32Bytes _keyEvent = "RC_CAR_EVENT";
         
         [SerializeField] private int _carID = 0;

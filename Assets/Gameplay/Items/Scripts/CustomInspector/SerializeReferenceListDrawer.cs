@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -156,7 +157,25 @@ namespace Gameplay.Items
                 foreach (Type type in types)
                 {
                     Type captured = type;
-                    menu.AddItem(new GUIContent(type.Name), false, () =>
+                    
+                    string name = captured.Name;
+                    
+                    try
+                    {
+                        ItemModule item = (ItemModule)Activator.CreateInstance(captured);
+                        if (item != null)
+                        {
+                            name  = item.Emoji + " " + type.Name;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"Erreur avec {captured.Name} : {e}");
+                    }
+                    
+                    var content = new GUIContent(name);
+
+                    menu.AddItem(content, false, () =>
                     {
                         so.Update();
                         SerializedProperty prop = so.FindProperty(path);
@@ -176,12 +195,14 @@ namespace Gameplay.Items
 
         private static string GetTypeDisplayName(SerializedProperty element)
         {
+            ItemModule itemModule = element.managedReferenceValue as ItemModule;
+            
             string full = element.managedReferenceFullTypename;
             if (string.IsNullOrEmpty(full))
                 return "Vide (null)";
 
             string typeName = full.Substring(full.LastIndexOf(' ') + 1);
-            return ObjectNames.NicifyVariableName(typeName.Substring(typeName.LastIndexOf('.') + 1));
+            return ObjectNames.NicifyVariableName(itemModule?.Emoji + typeName.Substring(typeName.LastIndexOf('.') + 1));
         }
     }
 }

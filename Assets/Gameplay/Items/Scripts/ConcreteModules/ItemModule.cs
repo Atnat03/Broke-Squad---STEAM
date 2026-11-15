@@ -1,11 +1,14 @@
 ﻿using System;
 using MyPrint;
+using UnityEngine;
 
 namespace Gameplay.Items
 {
     [Serializable]
     public abstract class ItemModule
     {
+        [HideInInspector] public abstract string Emoji { get; }
+
         protected ItemContext Context;
 
         public virtual void ResetState() => SetModule();

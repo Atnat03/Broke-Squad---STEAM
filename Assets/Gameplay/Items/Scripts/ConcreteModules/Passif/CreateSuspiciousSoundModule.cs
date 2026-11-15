@@ -8,6 +8,8 @@ namespace Gameplay.Items
     [Serializable]
     public class CreateSuspiciousSoundModule : ItemModule, IPassif
     {
+        public override string Emoji => "🔊";
+        
         [SerializeField] private float _miniVelocityToDoSound = 1;
         [SerializeField] private SO_SuspiciousSoundSettings _suspiciousSoundSettings;
         
