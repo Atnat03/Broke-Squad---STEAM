@@ -99,6 +99,22 @@ namespace Gameplay.Controller
         public Vector2 MoveInput => _input != null && CanAct ? _input.Move : Vector2.zero;
         
 
+        public Vector3 RawDesiredDirection
+        {
+            get
+            {
+                Vector2 m = _input != null ? _input.Move : Vector2.zero;
+                return transform.TransformDirection(Vector3.ClampMagnitude(new Vector3(m.x, 0f, m.y), 1f));
+            }
+        }
+
+        public void HoldAt(Vector3 pos)
+        {
+            Vector3 newPos = new Vector3(pos.x, transform.position.y, pos.z);
+            _rb.position = newPos;
+            _rb.linearVelocity = Vector3.zero;
+        }
+        
         public void StartLadderCooldown() => _ladderCooldown = Profile.ladderRegrabCooldown;
         
         private bool WantsClimb() => _ladderCooldown <= 0f && ladderChecker.Touching;
