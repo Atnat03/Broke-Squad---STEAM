@@ -14,6 +14,7 @@ namespace Gameplay.IA
         [SerializeField, Range(0f, 360f)] public float Angle = 90f;
         [SerializeField] public float EyeHeight = 1.6f;
         [SerializeField] public float CheckInterval = 0.2f;
+        [SerializeField] public float MaxYDistanceToSee = 2;
         [SerializeField] public LayerMask ObstructionMask;
         
         [Header("Detection Player")]

@@ -803,7 +803,6 @@ GameObject:
   - component: {fileID: 7436390564940824296}
   - component: {fileID: 4441043788119090118}
   - component: {fileID: 6010966415632953568}
-  - component: {fileID: 19432188419709066}
   - component: {fileID: 3914641663297459753}
   m_Layer: 0
   m_Name: P_GuardRefacto
@@ -888,7 +887,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3007203923
+  GlobalObjectIdHash: 1064852431
   InScenePlacedSourceGlobalObjectIdHash: 3007203923
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -1009,8 +1008,6 @@ MonoBehaviour:
     _patrolPointsNormal:
     - {fileID: 0}
     - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
     _patrolPointsAlerted:
     - {fileID: 0}
     - {fileID: 0}
@@ -1030,26 +1027,6 @@ MonoBehaviour:
   - {fileID: 5647966420751996520}
   _strengthToBeingAwake: 5
   _alertedStateDuration: 10
---- !u!114 &19432188419709066
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7099428640912767841}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55a0b65c469141c78bdad34716445b58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.IA.GuardLineOfSight_View
-  _lineOfSight: {fileID: 4441043788119090118}
-  _eyesPosition:
-  - {fileID: 4505819285948256646}
-  - {fileID: 3341372323443872960}
-  _parentSightModel: {fileID: 4983006259884902410}
-  _sightMeshMaterial: {fileID: 2100000, guid: 4b1480cb54e94744e9f98c995270ee51, type: 2}
-  _originYSize: 0.5
-  _farYSize: 0.5
 --- !u!114 &3914641663297459753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1196,7 +1173,7 @@ GameObject:
   - component: {fileID: 1681100073734437304}
   - component: {fileID: 7380856513162803733}
   - component: {fileID: 1832420483947050260}
-  m_Layer: 13
+  m_Layer: 2
   m_Name: DoorOpenner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1462,6 +1439,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7222227250864517451, guid: b289f6f46f2b52441bb5b479485f2c3f, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 2638f0eba705d8f4f9e7281e6a914fe9, type: 2}
     - target: {fileID: 919132149155446097, guid: b289f6f46f2b52441bb5b479485f2c3f, type: 3}
       propertyPath: m_Name
       value: Model

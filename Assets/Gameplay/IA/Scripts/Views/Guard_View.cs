@@ -104,6 +104,7 @@ namespace Gameplay.IA
         
         private void PerformAttacking()
         {
+            ABPrint.Print("Attack ?", ABColor.Orange);
             _animator.SetTrigger("Attacking");
         }
         

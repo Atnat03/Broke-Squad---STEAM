@@ -15,7 +15,7 @@ namespace Gameplay.IA
     public class AggroState_GUARD : BaseState_GUARD<AggroParam>
     {
         private Transform _target;
-        private PlayerHealth _playerHealth;
+        public PlayerHealth PlayerHealth;
         
         //Attack
         private Coroutine _attackCoroutine;
@@ -25,7 +25,7 @@ namespace Gameplay.IA
         {
             _target = data.Target;
 
-            _playerHealth = GetPlayerHealth(_target);
+            PlayerHealth = GetPlayerHealth(_target);
             
             Brain.Motor.SetSpeed(Brain.CurrentSetting.AggroSpeed);
             Brain.Motor.SetTarget(_target.position);
@@ -44,27 +44,27 @@ namespace Gameplay.IA
 
         public override void UpdateState()
         {
-            bool stimulated = IsTargetClose() || WasRecentlyHit();
-
-            Transform target = Brain.LineSight.PerformFindingPlayer(
-                stimulated ? _target : null
-            );
-
+            bool stimulated = IsTargetClose() && WasRecentlyHit();
+            
+            Transform target = Brain.LineSight.PerformFindingPlayer(stimulated ? _target : null);
+            
             if (!target)
             {
-                if (_playerHealth == null || _playerHealth.IsDowned)
+                if (PlayerHealth == null || PlayerHealth.IsDowned)
                 {
                     Brain.ChangeState<PatrolState_GUARD, PatrolParam>(new PatrolParam { IsAlerted = false });
                     return;
                 }
 
+                PlayerHealth = null;
+
                 Brain.Motor.SetTarget(Brain.LineSight.LastSeenPosition);
                 return;
             }
-
+            
             _target = target;
 
-            _playerHealth = GetPlayerHealth(_target);
+            PlayerHealth = GetPlayerHealth(_target);
 
             Vector3 destination = Brain.LineSight.CanSeeTarget ? _target.position : Brain.LineSight.LastSeenPosition;
 
@@ -95,7 +95,7 @@ namespace Gameplay.IA
 
         private void HandleAttack()
         {
-            if (!_target || !_playerHealth) return;
+            if (!_target || !PlayerHealth) return;
 
             bool isInRangeToAttack = (_transform.position - _target.position).sqrMagnitude < Brain.CurrentSetting.AttackRange * Brain.CurrentSetting.AttackRange;
 
@@ -122,11 +122,11 @@ namespace Gameplay.IA
 
         private void PerformAttack()
         {
-            if (!_target || !_playerHealth)
+            if (!_target || !PlayerHealth)
                 return;
             
             Brain.ReplicateAttackClientRpc();
-            _playerHealth.ApplyDamage(Brain.CurrentSetting.Damage);
+            PlayerHealth.ApplyDamage(Brain.CurrentSetting.Damage);
         }
 
         private PlayerHealth GetPlayerHealth(Transform target)

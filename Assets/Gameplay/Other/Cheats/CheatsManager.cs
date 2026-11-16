@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
 using Bus;
+using Gameplay.IA;
 using Gameplay.Items;
 using Gameplay.Other.Cheat;
 using Gameplay.PlayerData;
-using MyPrint;
 using Network.Connections.SceneLoading;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Gameplay.Controller
@@ -30,6 +29,9 @@ namespace Gameplay.Controller
         [SerializeField] private GameObject _itemGiveUI;
         [SerializeField] private SO_ItemDataBase _database;
         private bool _isOpen = false;
+
+        [Header("Lock Down")]
+        [SerializeField] private Button _stopAggroButton;
         
         [Header("Teleport")]
         [SerializeField] private List<Button> _playerTeleportsButton;
@@ -54,7 +56,8 @@ namespace Gameplay.Controller
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
-            if (!IsOwner) return;
+            if (!IsOwner) 
+                return;
 
             _spawnTeleportButton.onClick.AddListener(() =>
             {
@@ -70,6 +73,9 @@ namespace Gameplay.Controller
             _playerInputs.Cheats.TakeDamage.performed += Damage;
             
             _playerInputs.Cheats.CheatPannel.performed += UpdatePannelItemGive;
+            
+            if(!IsServer)
+                _stopAggroButton.gameObject.SetActive(false);
         }
 
         public override void OnNetworkDespawn()
@@ -178,6 +184,25 @@ namespace Gameplay.Controller
             if (target == null) return;
 
             _playerController.TeleportClientRpc(target.transform.position, target.transform.rotation);
+        }
+
+        public void DesactivateAllGuardAggro()
+        {
+            if (!IsServer) return;
+
+            LockDownManager lockDownManager = LockDownManager.instance;
+            if (lockDownManager)
+            {
+                lockDownManager.StopAllGuardsAggro();
+            }
+            
+            DesactivateAllGuardAggroClientRpc();
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void DesactivateAllGuardAggroClientRpc()
+        {
+            InvokeEvent(new OnLockDownEnd_EVENT());
         }
     }
 }
