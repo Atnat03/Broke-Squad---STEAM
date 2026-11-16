@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -6,7 +7,8 @@ namespace Gameplay.Controller
 {
     public class ReviveWorldUI : MonoBehaviour
     {
-        [SerializeField] private PlayerRevive revive;
+        [SerializeField] private PlayerSetUpBridge setup;
+        private PlayerRevive revive;
         [SerializeField] private GameObject root;  
         [SerializeField] private Image fillImage;   
         [SerializeField] private float smoothSpeed = 10f;
@@ -17,17 +19,21 @@ namespace Gameplay.Controller
         private float _displayed;
         private Camera _cam;
 
+        private void Start()
+        {
+            revive = setup.PlayerHealth.PlayerRevive;
+        }
         private void LateUpdate()
         {
             bool visible = revive.IsSpawned && !revive.IsOwner && revive.Health != null && revive.Health.IsDowned;
-
+            
             if (root.activeSelf != visible) root.SetActive(visible);
             if (!visible)
             {
                 _displayed = 0f;
                 return;
             }
-
+            
             _displayed = Mathf.Lerp(_displayed, revive.ReviveProgress,
                 1f - Mathf.Exp(-smoothSpeed * Time.deltaTime));
             fillImage.fillAmount = _displayed;

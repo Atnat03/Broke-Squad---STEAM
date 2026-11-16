@@ -1095,7 +1095,7 @@ MonoBehaviour:
     visual: {fileID: 4500784853519451236}
     tiedVisual: {fileID: 1389905725531348193}
     tiedUpHeight: 1.5
-    eyeHeightOffset: -0.2
+    eyeHeightOffset: -0.05
   footsteps:
     walkStepInterval: 0.5
     sprintStepInterval: 0.35
@@ -1393,6 +1393,7 @@ MonoBehaviour:
   _sfxDrop: Joueur/Throw Item
   _volume: 0.5
   _previewMaterial: {fileID: 2100000, guid: 23deef7b701217a41b1ed2ed69c52af8, type: 2}
+  _baseDropPosition: {x: 0, y: 0.2, z: 1}
 --- !u!114 &7520677197054471513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2481,7 +2482,6 @@ GameObject:
   - component: {fileID: 2768083272804090170}
   - component: {fileID: 5092067612077265200}
   - component: {fileID: 3829407431041333052}
-  - component: {fileID: 1211386880482150980}
   m_Layer: 7
   m_Name: HP
   m_TagString: Untagged
@@ -2518,7 +2518,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.PlayerData.PlayerData
   ShowTopMostFoldoutHeaderGroup: 1
   MaxHpValue: 100
-  _playerRevive: {fileID: 0}
+  _playerRevive: {fileID: 3829407431041333052}
   _takeDamageSound:
   - Joueur/Take Damage 1
   - Joueur/Take Damage 2
@@ -2544,23 +2544,6 @@ MonoBehaviour:
   progressDecayPerSecond: 0.5
   heartbeatInterval: 0.1
   heartbeatTimeout: 0.15
---- !u!114 &1211386880482150980
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5567793349798264000}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5215ba40fc2649d1b84b35b49476d5ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.UI.ReviveWorldUI
-  revive: {fileID: 0}
-  root: {fileID: 0}
-  fillImage: {fileID: 0}
-  smoothSpeed: 10
-  worldOffset: {x: 0, y: 0.55, z: 0}
 --- !u!1 &5605156750683152477
 GameObject:
   m_ObjectHideFlags: 0

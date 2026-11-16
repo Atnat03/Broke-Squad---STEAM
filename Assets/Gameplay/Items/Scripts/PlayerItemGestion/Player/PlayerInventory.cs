@@ -45,6 +45,7 @@ namespace Gameplay.Items
         
         [Header("Dropping")]
         [SerializeField] private Material _previewMaterial;
+        [SerializeField] private Vector3 _baseDropPosition;
         private bool _isPreviewDrop = false;
         private Vector3 _dropPos;
         private Quaternion _dropRot;
@@ -344,16 +345,12 @@ namespace Gameplay.Items
         
         private void OnDropPreviewStart()
         {
-            ABPrint.Print("On Drop PreviewStart");
-            
             ItemInstance item = GetLocalInstance();
             if (item == null) return;
             
-            ABPrint.Print("Item Trouvé");
-
             _isPreviewDrop = true;
-            _dropPos = transform.position;
-
+            _dropPos = transform.position + transform.forward * (_baseDropPosition.z) + Vector3.up * (_baseDropPosition.y);
+            
             _previewVisual = Instantiate(item.Data.VisualPrefab);
             foreach (var r in _previewVisual.GetComponentsInChildren<Renderer>())
                 r.sharedMaterial = _previewMaterial;
