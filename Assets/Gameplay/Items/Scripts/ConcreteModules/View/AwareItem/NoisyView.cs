@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gameplay.Items
 {
-    public class NoisyView : MonoBusListener
+    public class NoisyView : AwareItemView
     {
         [SerializeField] private string _eventKey = "NOISY_EVENT";
 
@@ -31,17 +31,6 @@ namespace Gameplay.Items
             {
                 _source.Stop();
             }
-        }
-
-        private ulong GetHostId()
-        {
-            ItemPickup pickup = GetComponentInParent<ItemPickup>();
-            
-            if (pickup != null) 
-                return pickup.NetworkObjectId;
-
-            ItemCore core = GetComponentInParent<ItemCore>();
-            return core != null ? core.HostId : ulong.MaxValue;
         }
     }
 }
