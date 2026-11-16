@@ -8,6 +8,8 @@ namespace Gameplay.Items
     [Serializable]
     public class ChargeItemModule : ActionModule, IFirstAction, IServerAction
     {
+        public override string Emoji => "🔋";
+        
         [SerializeField] public int _percentGain = 10;
         [SerializeField] private float _range = 2f;
 
@@ -43,6 +45,11 @@ namespace Gameplay.Items
         }
 
         public void StopFirstAction() { }
+        public void OnNotInHand() { }
+        public void OnThrow()
+        {
+            
+        }
 
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {

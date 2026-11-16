@@ -28,7 +28,7 @@ namespace VFX_Manage
         {
             BuildPrefabDictionry();
 
-            ListenToEvent<playVFXEvent>(OnPlayVFX);
+            ListenToEvent<PlayVFX_EVENT>(OnPlayVFX);
         }
 
         private void BuildPrefabDictionry()
@@ -51,7 +51,7 @@ namespace VFX_Manage
             }
         }
 
-        private void OnPlayVFX(playVFXEvent e)
+        private void OnPlayVFX(PlayVFX_EVENT e)
         {
             if(!prefabs.TryGetValue(e.vfxName, out GameObject prefab))
             {
@@ -96,7 +96,7 @@ namespace VFX_Manage
         [ContextMenu("Test Event Bus VFX")]
         private void TestViaEvent()
         {
-            Bus.EventBus.InvokeEvent(new playVFXEvent
+            Bus.EventBus.InvokeEvent(new PlayVFX_EVENT
             {
                 vfxName = nameVFX,
                 position = position,
@@ -107,7 +107,7 @@ namespace VFX_Manage
         [ContextMenu("Test Event Direct VFX")]
         private void TestSansEvent()
         {
-            OnPlayVFX(new playVFXEvent
+            OnPlayVFX(new PlayVFX_EVENT
             {
                 vfxName = nameVFX,
                 position = position,
@@ -121,7 +121,7 @@ namespace VFX_Manage
             for (int i = 0; i < spamCount; i++)
             {
                 Vector3 offset = UnityEngine.Random.insideUnitSphere * 2f;
-                Bus.EventBus.InvokeEvent(new playVFXEvent
+                Bus.EventBus.InvokeEvent(new PlayVFX_EVENT
                 {
                     vfxName = nameVFX,
                     position = position,

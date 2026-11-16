@@ -43,5 +43,7 @@ namespace Gameplay.Controller
         public float ladderTopPushSpeed = 2f;   
         public float ladderTopLift = 0.1f;     
         public float ladderRegrabCooldown = 0.4f;
+        public float ladderJumpOffLift = 0.6f;
+        public float ladderJumpOffSpeed = 3f;
     }
 }

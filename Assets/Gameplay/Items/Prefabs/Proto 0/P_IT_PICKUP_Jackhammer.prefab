@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4004226584657750514}
   - component: {fileID: 8239713531217342169}
   - component: {fileID: 7561758854945729608}
+  - component: {fileID: 3350977431667398856}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -144,6 +145,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher
+--- !u!114 &3350977431667398856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1742878393320349445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f79107c2ecd94c5a95fb32fee1214231, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ModuleFeedbackView
+  _keyEvent: ELECTRIC_ADD_VFX
+  _vfxFeedback: {fileID: 763799897560185588, guid: 798157bad7358b04499c9d71cd3c0d9b, type: 3}
+  _positionOffset: {x: 0, y: 0.15, z: 0}
 --- !u!1 &3014254146047721310
 GameObject:
   m_ObjectHideFlags: 0
@@ -220,14 +236,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2334515818
+  GlobalObjectIdHash: 3752589516
   InScenePlacedSourceGlobalObjectIdHash: 2334515818
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 0
+  m_InScenePlaced: 1
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1

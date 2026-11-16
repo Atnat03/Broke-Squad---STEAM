@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Gameplay.Controller;
+using Gameplay.PlayerData;
 using MyPrint;
 using TMPro;
 using UnityEngine;
@@ -19,10 +20,14 @@ namespace Gameplay.Items
         [SerializeField] private Sprite[] _playerIconList;
         [SerializeField] private Sprite _playerKOIconList;
         
+        [Header("HP")]
+        [SerializeField] private Image _hpBar;
+        
         private PlayerInventory _inventory;
         private readonly List<Image> _icons = new();
 
-        private PlayerController _controller; 
+        private PlayerController _controller;
+        private PlayerHealth _health;
         
         public void Initialize(PlayerInventory inventory, PlayerController controller)
         {
@@ -33,6 +38,7 @@ namespace Gameplay.Items
     
             _controller.OnPersonalisationChanged += RefreshIdentity;
             _controller.Health.OnChangedDown += UpdateIcon;
+            _controller.Health.OnChangeHp += UpdateHp;
             _inventory.OnSlotsChanged += UpdateUI;
 
             RefreshIdentity();
@@ -90,6 +96,11 @@ namespace Gameplay.Items
         {
             _inventory.OnSlotsChanged -= UpdateUI;
             _controller.OnPersonalisationChanged -= SetName;
+        }
+        
+        private void UpdateHp(float hp, float max)
+        {
+            _hpBar.fillAmount = hp / max;
         }
     }
 }

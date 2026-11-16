@@ -100,6 +100,7 @@ namespace Gameplay.Controller
 
         private void ApplyHorizontal(float dt)
         {
+            Debug.Log(MoveInput);
             float speed = TargetSpeed * (ForwardDot < -0.1f ? _profile.backwardSpeedMultiplier : 1f);
 
             Vector3 input = Vector3.ClampMagnitude(new Vector3(MoveInput.x, 0f, MoveInput.y), 1f);
@@ -163,6 +164,19 @@ namespace Gameplay.Controller
 
             if (_ground.Gap > 0.001f)
                 _rb.position -= Vector3.up * _ground.Gap;
+        }
+        
+        public void LaunchOffLadder(Vector3 awayFromLadder)
+        {
+            awayFromLadder.y = 0f;
+            awayFromLadder.Normalize();
+
+            float g = Mathf.Abs(Physics.gravity.y) * _profile.gravityMultiplier;
+            float liftVel = Mathf.Sqrt(2f * g * _profile.ladderJumpOffLift);
+            Vector3 push = awayFromLadder * _profile.ladderJumpOffSpeed;
+
+            _rb.linearVelocity = new Vector3(push.x, liftVel, push.z);
+            _ground.ForceAirborne();
         }
         
     }

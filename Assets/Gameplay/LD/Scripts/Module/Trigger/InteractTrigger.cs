@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using Gameplay.Items;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Gameplay.LD
@@ -7,8 +8,14 @@ namespace Gameplay.LD
     public class InteractTrigger : LDTriggerModule, IInteractable
     {
         [SerializeField] private float _range = 4f;
-
         public Outline outline { get; private set; }
+        
+        [SerializeField] TooltipConfig _tooltipConfig;
+        
+        public string GetTooltip(ItemModule[] playerModules)
+        {
+            return _tooltipConfig.GetTooltip(playerModules);
+        }
 
         protected override void OnInitialize()
         {
@@ -29,6 +36,7 @@ namespace Gameplay.LD
         {
             if (!Context.IsServer) return;
             if (Vector3.Distance(player.transform.position, transform.position) > _range) return;
+            Debug.Log("[LD] interact");
             Raise(new LDActivation(player, player.transform.position));
         }
     }

@@ -10,6 +10,7 @@ namespace Gameplay.Items
 
         public ICondition ConditionParent => _condition;
 
+        public override string Emoji => "";
         protected override void OnCloned() => _condition = _condition?.Clone() as ICondition;
 
         protected bool CanUse() => _condition == null || _condition.CheckCondition();

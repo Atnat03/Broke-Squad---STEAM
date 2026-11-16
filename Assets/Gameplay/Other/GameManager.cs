@@ -110,6 +110,7 @@ namespace Gameplay.Other
             if (_hasGoal)
             {
                 ABPrint.Print("WIN !!", ABColor.Green);
+                _win.Value = true;
             }
             else
             {

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace VFX_Manage
 {
-    public struct playVFXEvent
+    public struct PlayVFX_EVENT
     {
         public string vfxName;
         public Vector3 position;

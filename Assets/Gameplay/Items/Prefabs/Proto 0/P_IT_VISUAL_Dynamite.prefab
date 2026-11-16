@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1612189423583086712}
   - component: {fileID: 7319549261707194574}
   - component: {fileID: 4007804263895111229}
+  - component: {fileID: 6802587100750430829}
   m_Layer: 0
   m_Name: P_IT_VISUAL_Dynamite
   m_TagString: Untagged
@@ -90,3 +91,21 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6802587100750430829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3508101574440629740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e3d752270174bb2a233557e1a61acb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ExplosionModuleView
+  _eventKey: EXPLOSION_EVENT
+  _explosionVFX: {fileID: 2433282508537954060, guid: 3ef3ae421f71c5c4e97fe12dc2fc6312, type: 3}
+  _baseTick: 0.5
+  _maxTick: 0.1
+  _renderer: {fileID: 4007804263895111229}
+  _pshitMaterial: {fileID: 2100000, guid: 2638f0eba705d8f4f9e7281e6a914fe9, type: 2}

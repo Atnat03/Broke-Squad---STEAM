@@ -11,6 +11,8 @@ namespace Gameplay.Items
     [Serializable]
     public class ThrowModule : ActionModule, ISecondAction, IServerAction
     {
+        public override string Emoji => "🤾";
+        
         [Header("Settings")]
         [SerializeField] private float _durationToFullFill = 0.5f;
         
@@ -65,14 +67,18 @@ namespace Gameplay.Items
             Vector3 forward = Context.Camera.transform.forward;
 
             Vector3 finalPos = GetThrowStartPos(pos, forward);
-
+            
+            foreach (IFirstAction firstAction in held.FirstActionList)
+            {
+                firstAction.OnThrow();
+            }
+            
             Context.SendToServer(this, new OnModuleDoAction_EVENT
             {
                 ValueF = _charge,
                 Rotation = Context.Camera.transform.rotation,
                 Position = finalPos,
             });
-
             ConsumeCondition(new OnModuleDoAction_EVENT());
         }
 
@@ -130,7 +136,20 @@ namespace Gameplay.Items
                 passif.OnThrow(rb);
             }
         }
-        
+
+        public void OnNotInHand()
+        {
+            Context.StopCoroutine(_chargeCoroutine);
+            
+            Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
+            {
+                ClientId = Context.Inventory.OwnerClientId,
+                KeyEvent = "UI_THROW_BAR",
+                ValueF = 0,
+                ValueB = false,
+            });
+        }
+
         // Faire spawn le nouvel item via la fonction de Context
         private ItemPickup ServerSpawnPickup(Vector3 pos, Quaternion rot)
         {

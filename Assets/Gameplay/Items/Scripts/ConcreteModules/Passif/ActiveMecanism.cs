@@ -8,6 +8,8 @@ namespace Gameplay.Items
     [Serializable]
     public class ActiveMecanism : ItemModule, IPassif
     {
+        public override string Emoji => "✅";
+        
         [SerializeField] private float _minVelocity = 1;
         
         private Rigidbody _rb;

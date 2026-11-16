@@ -1,5 +1,5 @@
 ﻿using System;
-using Gameplay.IA.Scripts;
+using Gameplay.IA;
 using UnityEngine;
 
 namespace Gameplay.Items
@@ -7,6 +7,9 @@ namespace Gameplay.Items
     [Serializable]
     public class StunModule : ItemModule, IPassif
     {
+        public override string Emoji => "🧊";
+
+        
         [SerializeField] private float _minVelocityForStun = 2;
         [SerializeField] private float _stunDuration = 1f;
         

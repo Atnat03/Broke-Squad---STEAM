@@ -24,7 +24,7 @@ namespace Gameplay.IA
         private readonly NetworkVariable<float> _currentDuration = new NetworkVariable<float>();
         private readonly NetworkVariable<bool> _isLockDown = new NetworkVariable<bool>();
 
-        private List<GuardBehavior> _guardList = new List<GuardBehavior>();
+        private List<GuardBrain> _guardList = new List<GuardBrain>();
 
         public Action<string> OnLockDownStart;
         
@@ -154,14 +154,14 @@ namespace Gameplay.IA
         
         #region Guard List
         
-        public void SubscribeGuard(GuardBehavior guard) => _guardList.Add(guard);
-        public void UnSubscribeGuard(GuardBehavior guard) => _guardList.Remove(guard);
+        public void SubscribeGuard(GuardBrain guard) => _guardList.Add(guard);
+        public void UnSubscribeGuard(GuardBrain guard) => _guardList.Remove(guard);
 
         bool CanStartCooldownToStop()
         {
-            foreach (GuardBehavior g in _guardList)
+            foreach (GuardBrain g in _guardList)
             {
-                if (g.CurrentState is G_PursuitState)
+                if (g.CurrentState is AggroState_GUARD)
                     return false;
             }
             

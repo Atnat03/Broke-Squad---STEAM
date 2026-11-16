@@ -8,6 +8,8 @@ namespace Gameplay.Items
     [Serializable]
     public class ShootModule : ActionModule, IFirstAction, IServerAction
     {
+        public override string Emoji => "🔫";
+        
         [SerializeField] private SO_Item _ammoPrefab;
         [SerializeField] private Vector3 _shootPos_SECURITY;
         [SerializeField] private float _shootForce;
@@ -69,6 +71,12 @@ namespace Gameplay.Items
 
         public void StopFirstAction()
         { }
+
+        public void OnNotInHand() { }
+        public void OnThrow()
+        {
+            
+        }
 
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {

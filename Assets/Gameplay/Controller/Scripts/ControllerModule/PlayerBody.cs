@@ -11,6 +11,7 @@ namespace Gameplay.Controller
         [SerializeField] private Transform visual;
         [SerializeField] private GameObject tiedVisual;
         [SerializeField] private float tiedUpHeight = 0.8f;
+        [SerializeField] private float eyeHeightOffset = -0.2f;
 
         private Transform _root;
         private CapsuleCollider _capsule;
@@ -54,7 +55,7 @@ namespace Gameplay.Controller
             capsule.height = _targetHeight;
             Recenter();
             
-            if (eyeTarget != null) _eyeStandLocalY = eyeTarget.localPosition.y;
+            if (eyeTarget != null) _eyeStandLocalY = eyeTarget.localPosition.y + eyeHeightOffset;
             else Debug.LogWarning("PlayerBody: eyeTarget is not assigned, the camera won't lower when crouching.");
             
             SetTied(false);

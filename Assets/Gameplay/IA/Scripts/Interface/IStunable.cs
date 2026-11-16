@@ -1,4 +1,4 @@
-﻿namespace Gameplay.IA.Scripts
+﻿namespace Gameplay.IA
 {
     public interface IStunnable
     {

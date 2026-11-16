@@ -1,6 +1,5 @@
 ﻿using Bus;
 using Gameplay.IA;
-using Gameplay.IA.Scripts;
 using UnityEngine;
 
 namespace Gameplay.Other.SuspiciousSound
@@ -56,7 +55,7 @@ namespace Gameplay.Other.SuspiciousSound
                         f = attenuation.GetAttenuationForce(f);
                     }
                     
-                    if (hit.transform.TryGetComponent(out GuardBehavior guard))
+                    if (hit.transform.TryGetComponent(out GuardBrain guard))
                     {
                         f = Mathf.Lerp(0, f, 1 - hit.distance / d);
 

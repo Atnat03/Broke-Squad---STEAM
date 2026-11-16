@@ -7,6 +7,9 @@ namespace Gameplay.Items
     [Serializable]
     public class HealOtherModule : ActionModule, IFirstAction, IServerAction
     {
+        public override string Emoji => "🟢";
+
+        
         [SerializeField] private float _healAmount = 10;
         
         [Header("SFX")] 
@@ -42,6 +45,12 @@ namespace Gameplay.Items
 
         public void StopFirstAction()
         { }
+
+        public void OnNotInHand() { }
+        public void OnThrow()
+        {
+            
+        }
 
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {

@@ -45,7 +45,7 @@ namespace Gameplay.PlayerData
 
             if (playerHealth != null)
             {
-                SetHp(playerHealth.CurrentHp);
+                SetHp(playerHealth.CurrentHp, playerHealth.MaxHp);
                 SetInvincible(playerHealth.IsInvincible); 
                 playerHealth.OnChangeHp += OnHpChanged;
                 playerHealth.OnChangedInvincibility += SetInvincible;
@@ -63,14 +63,14 @@ namespace Gameplay.PlayerData
             base.OnNetworkDespawn();
         }
 
-        private void OnHpChanged(int previous, int current) => SetHp(current);
+        private void OnHpChanged(float current, float max) => SetHp(current, max);
 
-        private void SetHp(int hp)
+        private void SetHp(float hp, float max)
         {
             if (pvSlider == null || playerHpText == null) return;
-            pvSlider.maxValue = playerHealth.MaxHp;
+            pvSlider.maxValue = max;
             pvSlider.value = hp;
-            playerHpText.text = hp.ToString();
+            playerHpText.text = ((int)hp).ToString();
         }
 
         private void SetInvincible(bool invincible)
@@ -78,15 +78,13 @@ namespace Gameplay.PlayerData
             if (sliderColor != null) sliderColor.color = invincible ? invincibleColor : pvColor;
         }
 
-        
-
         private void UpdateUI(PlayerHealthChanged_EVENT e)
         {
             if (pvSlider == null || playerHpText == null) return;
 
             pvSlider.maxValue = e.MaxHp;
             pvSlider.value = e.CurrentHp;
-            playerHpText.text = e.CurrentHp.ToString();
+            playerHpText.text = ((int)e.CurrentHp).ToString();
         }
         
         

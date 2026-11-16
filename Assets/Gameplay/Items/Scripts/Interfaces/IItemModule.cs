@@ -1,4 +1,7 @@
-﻿namespace Gameplay.Items
+﻿using Unity.VisualScripting;
+using UnityEngine;
+
+namespace Gameplay.Items
 {
     public interface IItemModule
     {
