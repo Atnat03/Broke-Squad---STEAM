@@ -84,6 +84,8 @@ namespace Gameplay.Items
         private void HandleOpenItem()
         {
             UpdateView(false);
+
+            _currentFill = -1;
             
             Context.SendToServer(this, new OnModuleDoAction_EVENT
             {
