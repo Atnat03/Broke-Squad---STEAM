@@ -6,6 +6,7 @@ using MyPrint;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Search;
 using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
@@ -99,9 +100,10 @@ namespace Gameplay.Items
             if (IsOwner)
             {
                 ListenToEvent<OnPickupItem_EVENT>(TryPickupItem);
-                _playerInput.OnDropInput += OnDropPreviewStart;
-                _playerInput.OnDropInputCanceled += OnPerformDrop;
             }
+            
+            _playerInput.OnDropInput += OnDropPreviewStart;
+            _playerInput.OnDropInputCanceled += OnPerformDrop;
             
             _playerInput.OnMouseRoll += OnSelectedItemChange;
             
@@ -200,6 +202,7 @@ namespace Gameplay.Items
         }
         
         public ItemInstance GetCurrentItemInHand() => _slots[_selectedSlot.Value];
+        public ItemInstance GetLocalInstance() => _currentItem.Instance;
         
         private void OnSelectedSlotChanged(int previousValue, int newValue)
         {
@@ -288,12 +291,7 @@ namespace Gameplay.Items
 
             if (IsOwner)
             {
-                visual.gameObject.layer = LayerMask.NameToLayer("ItemInHand");
-                
-                foreach (Transform child in visual.transform)
-                {
-                    child.gameObject.layer = LayerMask.NameToLayer("ItemInHand");
-                }
+                SetLayerRecursively(visual.gameObject, LayerMask.NameToLayer("ItemInHand"));
             }
             
             ItemInstance instance;
@@ -316,6 +314,18 @@ namespace Gameplay.Items
             
             SetCurrentItemInHand(core);
         }
+
+        private void SetLayerRecursively(GameObject g, int layer)
+        {
+            if (!IsOwner) return;
+
+            g.layer = layer;
+
+            foreach (Transform child in g.transform)
+            {
+                SetLayerRecursively(child.gameObject, layer);
+            }
+        }
         
         private int FindFreeSlot()
         {
@@ -334,8 +344,12 @@ namespace Gameplay.Items
         
         private void OnDropPreviewStart()
         {
-            ItemInstance item = GetCurrentItemInHand();
+            ABPrint.Print("On Drop PreviewStart");
+            
+            ItemInstance item = GetLocalInstance();
             if (item == null) return;
+            
+            ABPrint.Print("Item Trouvé");
 
             _isPreviewDrop = true;
             _dropPos = transform.position;
