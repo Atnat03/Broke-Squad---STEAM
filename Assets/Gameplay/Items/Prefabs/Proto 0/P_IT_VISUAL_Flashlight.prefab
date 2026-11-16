@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6127333605430927569}
+  - component: {fileID: 2503235360488979525}
   m_Layer: 0
   m_Name: P_IT_VISUAL_Flashlight
   m_TagString: Untagged
@@ -33,6 +34,20 @@ Transform:
   - {fileID: 5428907795849798576}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &2503235360488979525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2786654479230565728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3775f3f1b8fb4150ad7d10b47a2095c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ActiveSomethingItemView
+  _keyEvent: FLASHLIGHT_ACTIVE_EVENT
+  _activableObject: {fileID: 3647553724387179435}
 --- !u!1 &3647553724387179435
 GameObject:
   m_ObjectHideFlags: 0
@@ -50,7 +65,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5428907795849798576
 Transform:
   m_ObjectHideFlags: 0
