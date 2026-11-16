@@ -94,6 +94,15 @@ namespace Gameplay.Controller
             base.OnNetworkDespawn();
         }
 
+        public void UnlockController()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                //Loop just in case they are many lock active
+                _playerController.PopLock();
+            }
+            
+        }
         private void Invicibility(InputAction.CallbackContext context)
         {
             InvincibilityServerRpc();
