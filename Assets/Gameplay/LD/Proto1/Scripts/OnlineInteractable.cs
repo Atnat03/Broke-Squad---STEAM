@@ -18,7 +18,7 @@ public abstract class OnlineInteractable : NetworkBusListener, IInteractable
     public UnityEvent onInteractableOpen;
     public UnityEvent onInteractableClose;
 
-    void Awake()
+    public override void OnNetworkSpawn()
     {
         if (transform.TryGetComponent(out Outline o))
         {
