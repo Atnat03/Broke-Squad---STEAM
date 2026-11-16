@@ -1,16 +1,18 @@
 using Gameplay.Items;
 using UnityEngine;
 
-namespace Gameplay.LD.Proto2
+namespace Gameplay.Items
 {
     public class DragHandle : MonoBehaviour, IHoldInteractable
     {
         [SerializeField] private Outline _outline;
         [SerializeField] private Transform snapPoint; 
+        [SerializeField, Min(0)] private int axis; 
 
         private HeavyDraggable _owner;
         private int _index;
 
+        public int Axis => axis;
         public Transform SnapPoint => snapPoint != null ? snapPoint : transform;
         public Outline outline => _outline;
 
