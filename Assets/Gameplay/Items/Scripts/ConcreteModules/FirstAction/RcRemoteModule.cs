@@ -8,7 +8,6 @@ namespace Gameplay.Items
     public class RcRemoteModule : ActionModule, IFirstAction, IServerAction
     {
         public override string Emoji => "🕹️";
-
         
         private FixedString32Bytes _keyEvent = "RC_CAR_EVENT";
         
