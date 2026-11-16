@@ -78,17 +78,17 @@ namespace Gameplay.Items
 
         public void OnThrow()
         {
-            
+            UpdateView(false);
         }
 
         private void HandleOpenItem()
         {
+            UpdateView(false);
+            
             Context.SendToServer(this, new OnModuleDoAction_EVENT
             {
                 Position = Context.Camera.transform.position + Context.Camera.transform.forward * 0.5f
             });
-            
-            UpdateView(false);
             
             ConsumeCondition(new OnModuleDoAction_EVENT());
         }
