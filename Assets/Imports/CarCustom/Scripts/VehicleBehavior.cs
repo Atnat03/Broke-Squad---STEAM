@@ -13,7 +13,6 @@ namespace Vehicle
     public enum CarType
     {Propulsion, Traction, _4x4}
     
-    [RequireComponent(typeof(Rigidbody))]
     public class VehicleBehavior : NetworkBehaviour
     {
         #region Properties
