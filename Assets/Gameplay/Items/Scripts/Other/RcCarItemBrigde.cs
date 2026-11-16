@@ -14,7 +14,7 @@ namespace Gameplay.Item
         
         VehicleBehavior _vehicleBehavior;
 
-        private void Awake()
+        private void OnEnable()
         {
             _vehicleBehavior = GetComponent<VehicleBehavior>();
             _vehicleBehavior.enabled = false;

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Bus;
+using Gameplay.Controller;
 using Gameplay.IA;
 using MyPrint;
 using Unity.Netcode;
@@ -228,7 +229,11 @@ namespace Gameplay.IA
 
                 if (_currentTimerLockDown.Value <= 0)
                 {
-                    InvokeEvent(new OnLockDownStart_EVENT());
+                    InvokeEvent(new OnLockDownStart_EVENT
+                    {
+                        isGoal = false,
+                        PlayerTriggerName = _aggroState.PlayerHealth != null ? _aggroState.PlayerHealth.GetComponentInParent<PlayerController>().PlayerName : ""
+                    });
                 }
             }
         }
