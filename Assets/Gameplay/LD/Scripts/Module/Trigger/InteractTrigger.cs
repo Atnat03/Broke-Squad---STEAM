@@ -35,8 +35,7 @@ namespace Gameplay.LD
         public void ServerInteract(NetworkObject player)
         {
             if (!Context.IsServer) return;
-            if (Vector3.Distance(player.transform.position, transform.position) > _range) return;
-            Debug.Log("[LD] interact");
+            if (Vector3.Distance(player.transform.position, transform.position) > _range) return;;
             Raise(new LDActivation(player, player.transform.position));
         }
     }
