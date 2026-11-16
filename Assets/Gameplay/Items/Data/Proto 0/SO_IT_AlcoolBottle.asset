@@ -91,7 +91,7 @@ MonoBehaviour:
       type: {class: NewStaminaModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: -2
+          rid: 7832862932930920862
         newRegenParSecond: 1000
         effectDuration: 10
         regenDelay: 0
@@ -103,3 +103,8 @@ MonoBehaviour:
         _drunkDuration: 10
         _sfxName: Joueur/Drink
         _volume: 0.5
+    - rid: 7832862932930920862
+      type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _numberOfUse: 1
+        _destroyWhenEmpty: 0
