@@ -181,6 +181,8 @@ namespace Gameplay.IA
 
                 if (Physics.Linecast(EyePosition, targetPoint, Brain.CurrentSetting.ObstructionMask, QueryTriggerInteraction.Ignore)) continue;
 
+                if(Mathf.Abs(target.position.y - transform.position.y) >= Brain.CurrentSetting.MaxYDistanceToSee) continue;
+                
                 return target;
             }
 

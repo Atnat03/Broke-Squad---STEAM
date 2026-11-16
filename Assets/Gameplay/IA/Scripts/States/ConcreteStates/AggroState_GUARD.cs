@@ -44,12 +44,10 @@ namespace Gameplay.IA
 
         public override void UpdateState()
         {
-            bool stimulated = IsTargetClose() || WasRecentlyHit();
-
-            Transform target = Brain.LineSight.PerformFindingPlayer(
-                stimulated ? _target : null
-            );
-
+            bool stimulated = IsTargetClose() && WasRecentlyHit();
+            
+            Transform target = Brain.LineSight.PerformFindingPlayer(stimulated ? _target : null);
+            
             if (!target)
             {
                 if (_playerHealth == null || _playerHealth.IsDowned)
@@ -58,10 +56,12 @@ namespace Gameplay.IA
                     return;
                 }
 
+                _playerHealth = null;
+
                 Brain.Motor.SetTarget(Brain.LineSight.LastSeenPosition);
                 return;
             }
-
+            
             _target = target;
 
             _playerHealth = GetPlayerHealth(_target);

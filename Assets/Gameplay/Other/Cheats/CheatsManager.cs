@@ -4,12 +4,10 @@ using Bus;
 using Gameplay.Items;
 using Gameplay.Other.Cheat;
 using Gameplay.PlayerData;
-using MyPrint;
 using Network.Connections.SceneLoading;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Gameplay.Controller
