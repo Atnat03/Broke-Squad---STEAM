@@ -68,23 +68,7 @@ namespace Gameplay.IA
 
         [Rpc(SendTo.Server)]
         private void StartLockDownServerRpc(FixedString32Bytes triggerPlayerName, bool isGoal) => StartLockDown(triggerPlayerName, isGoal);
-
-        void StartLockDown()
-        {
-            if (!IsServer)
-            {
-                StartLockDownServerRpc();
-                return;
-            }
-
-            _isGoal.Value = false;
-            _isLockDown.Value = true;
-            _currentDuration.Value = _lockDownDuration;
-        }
-
-        [Rpc(SendTo.Server)]
-        private void StartLockDownServerRpc() => StartLockDown();
-
+        
         #endregion
         
         #region End Lock Down
@@ -135,7 +119,7 @@ namespace Gameplay.IA
         {
             if (!IsServer) return;
 
-            if (IsLockDown)
+            if (IsLockDown && !_isGoal.Value)
             {
                 if (!CanStartCooldownToStop())
                 {
@@ -167,7 +151,14 @@ namespace Gameplay.IA
             
             return true;
         }
-        
+
+        public void StopAllGuardsAggro()
+        {
+            foreach (GuardBrain g in _guardList)
+            {
+                g.ChangeState<PatrolState_GUARD, PatrolParam>(new PatrolParam { IsAlerted = false });
+            }
+        }
         
         #endregion
     }
