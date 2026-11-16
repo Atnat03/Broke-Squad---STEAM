@@ -26,8 +26,10 @@ MonoBehaviour:
     _tooltipWithItem: 
     _requiredModule:
       rid: -2
+  Weight: 1
   FirstActionList:
   - rid: 7693030277138612450
+  - rid: 7493938474522247169
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -90,6 +92,15 @@ MonoBehaviour:
       data:
         _minVelocityForDestroy: 5
         _force: 10
+    - rid: 7493938474522247169
+      type: {class: AnimationModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _animationType: 0
+        _animationName: Attack
+        _boolAnimation: 1
+        _floatAnimation: 0
     - rid: 7693030277138612450
       type: {class: MeleeDamageModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -98,3 +109,4 @@ MonoBehaviour:
         _range: 3
         _damage: 10
         _attackCooldown: 1
+        _offsetTimerTrigger: 0.5

@@ -18,9 +18,18 @@ MonoBehaviour:
   PickupPrefab: {fileID: 6329304084567899564, guid: 09cd63e0b111f844abcebb34a051d7a0, type: 3}
   Icon: {fileID: 21300000, guid: 22284e4b1624b7743af9e4198cff8a6a, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
-  TooltipInHand: Left click to tirgger
+  TooltipInHand:
+    DefaultText: 
+    IsItem: 1
+    TooltipInHand: 'Left Click : Light Fuse'
+    _requiresItemModule: 0
+    _tooltipWithItem: 
+    _requiredModule:
+      rid: -2
+  Weight: 1
   FirstActionList:
   - rid: 7693030093451428206
+  - rid: 7493938474522247170
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -77,6 +86,15 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 0.5
         _canDamagePlayer: 1
+    - rid: 7493938474522247170
+      type: {class: AnimationModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _animationType: 0
+        _animationName: LightFuse
+        _boolAnimation: 0
+        _floatAnimation: 0
     - rid: 7693030093451428206
       type: {class: ActiveExplosionModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:

@@ -20,8 +20,8 @@ MonoBehaviour:
   OffsetInHand: {x: 0, y: 0, z: 0}
   TooltipInHand:
     DefaultText: 
-    IsItem: 0
-    TooltipInHand: 
+    IsItem: 1
+    TooltipInHand: 'Left Click : Drink'
     _requiresItemModule: 0
     _tooltipWithItem: 
     _requiredModule:
@@ -30,6 +30,7 @@ MonoBehaviour:
   FirstActionList:
   - rid: 7832862682398589157
   - rid: 7832862682398589471
+  - rid: 7493938474522247168
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -86,6 +87,15 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 0.5
         _canDamagePlayer: 1
+    - rid: 7493938474522247168
+      type: {class: AnimationModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _animationType: 0
+        _animationName: Drink
+        _boolAnimation: 0
+        _floatAnimation: 0
     - rid: 7832862682398589157
       type: {class: NewStaminaModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
