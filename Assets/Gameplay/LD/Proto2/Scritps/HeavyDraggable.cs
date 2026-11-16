@@ -1,6 +1,3 @@
-using System;
-using Gameplay.Controller;
-
 using Gameplay.Controller;
 using Gameplay.LD.Proto2;
 using Unity.Netcode;
@@ -8,45 +5,74 @@ using UnityEngine;
 
 namespace Gameplay.Items
 {
+    [System.Serializable]
+    public class DragAxis
+    {
+        public string name = "Axis";
+        public Vector3 localAxis = Vector3.forward;
+        public float minOffset = 0f;
+        public float maxOffset = 5f;
+        public float maxSpeed = 1.5f;
+        public float acceleration = 3f;
+        [Min(1)]public int playersRequired = 2;
+        
+    }
+
     [RequireComponent(typeof(Rigidbody))]
     public class HeavyDraggable : NetworkBehaviour
     {
         private const ulong NoHolder = ulong.MaxValue;
-
-        [Header("Handles")]
+        private const int MaxAxes = 3; 
+        
+        
+        
         [SerializeField] private DragHandle[] handles;
-
-        [Header("Movement")]
-        [SerializeField] private Vector3 localAxis = Vector3.forward;
-        [SerializeField] private float minOffset = 0f;
-        [SerializeField] private float maxOffset = 5f;
-        [SerializeField] private float maxSpeed = 1.5f;
-        [SerializeField] private float acceleration = 3f;
+        
+        [SerializeField] private DragAxis[] axes =
+        {
+            new DragAxis { name = "X", localAxis = Vector3.right },
+            new DragAxis { name = "Z", localAxis = Vector3.forward },
+        };
 
         [Header("Input")]
         [SerializeField, Range(0.05f, 0.9f)] private float inputDeadzone = 0.3f;
         [SerializeField] private float inputTimeout = 0.3f;
         [SerializeField] private float inputSendRate = 20f;
+
         
-        private readonly NetworkVariable<float> _netOffset = new NetworkVariable<float>(
-            0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        
+        private readonly NetworkVariable<Vector3> _netOffsets = new NetworkVariable<Vector3>(
+            Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+       
         private NetworkList<ulong> _holders;
+
         private Rigidbody _rb;
         private Vector3 _origin;
-        private Vector3 _worldAxis;
+        private Vector3[] _worldAxes;
+
         
         private float[] _inputs;
         private float[] _inputTimes;
-        private float _offset;
-        private float _velocity;
+        private float[] _offsets;
+        private float[] _velocities;
+
         
-        private float _displayOffset;
+        private float[] _displayOffsets;
 
         
         private PlayerController _localPlayer;
         private int _localIndex = -1;
         private float _sendTimer;
+
+        private static readonly Color[] AxisColors =
+        {
+            new Color(1f, 0.35f, 0.35f), new Color(0.35f, 0.6f, 1f), new Color(0.4f, 1f, 0.4f)
+        };
+
+        private void OnValidate()
+        {
+            if (axes != null && axes.Length > MaxAxes) System.Array.Resize(ref axes, MaxAxes);
+        }
 
         private void Awake()
         {
@@ -54,18 +80,31 @@ namespace Gameplay.Items
             _rb.isKinematic = true;
             _rb.interpolation = RigidbodyInterpolation.Interpolate;
             _holders = new NetworkList<ulong>();
-            for (int i = 0; i < handles.Length; i++) handles[i].Init(this, i);
+
+            int n = axes.Length;
+            _offsets = new float[n];
+            _velocities = new float[n];
+            _displayOffsets = new float[n];
+
+            for (int i = 0; i < handles.Length; i++)
+            {
+                handles[i].Init(this, i);
+                if (handles[i].Axis < 0 || handles[i].Axis >= n)
+                    Debug.LogError($"{name}: handle {i} has an invalid axis index.", handles[i]);
+            }
         }
 
         public override void OnNetworkSpawn()
         {
             _origin = _rb.position;
-            _worldAxis = transform.TransformDirection(localAxis).normalized;
+            _worldAxes = new Vector3[axes.Length];
+            for (int a = 0; a < axes.Length; a++)
+                _worldAxes[a] = transform.TransformDirection(axes[a].localAxis).normalized;
 
             if (!IsServer)
             {
-                _displayOffset = _netOffset.Value;
-                _rb.position = _origin + _worldAxis * _displayOffset;
+                for (int a = 0; a < axes.Length; a++) _displayOffsets[a] = Comp(_netOffsets.Value, a);
+                _rb.position = PositionFor(_displayOffsets);
             }
 
             if (IsServer)
@@ -90,6 +129,22 @@ namespace Gameplay.Items
 
         public bool IsHandleFree(int index) => index < _holders.Count && _holders[index] == NoHolder;
 
+        private Vector3 PositionFor(float[] offsets)
+        {
+            Vector3 p = _origin;
+            for (int a = 0; a < axes.Length; a++) p += _worldAxes[a] * offsets[a];
+            return p;
+        }
+
+        private static float Comp(Vector3 v, int i) => i == 0 ? v.x : i == 1 ? v.y : v.z;
+
+        private static void SetComp(ref Vector3 v, int i, float f)
+        {
+            if (i == 0) v.x = f;
+            else if (i == 1) v.y = f;
+            else v.z = f;
+        }
+
         #region Requests (called by DragHandle on the local client)
 
         public void RequestHold(int index)
@@ -109,7 +164,8 @@ namespace Gameplay.Items
         {
             ulong sender = rpcParams.Receive.SenderClientId;
             if (index < 0 || index >= _holders.Count || _holders[index] != NoHolder) return;
-            
+
+            // one handle per player
             for (int i = 0; i < _holders.Count; i++)
                 if (_holders[i] == sender) return;
 
@@ -149,40 +205,67 @@ namespace Gameplay.Items
 
         private void ServerTick(float dt)
         {
-            float target = 0f;
+            Vector3 net = Vector3.zero;
 
-            if (TryGetDragDirection(out float dir, out float strength))
-                target = dir * maxSpeed * strength;
+            for (int a = 0; a < axes.Length; a++)
+            {
+                DragAxis ax = axes[a];
 
-            _velocity = Mathf.MoveTowards(_velocity, target, acceleration * dt);
-            float newOffset = Mathf.Clamp(_offset + _velocity * dt, minOffset, maxOffset);
-            if (Mathf.Approximately(newOffset, _offset)) _velocity = 0f;
-            _offset = newOffset;
+                float target = 0f;
+                if (TryGetDragDirection(a, out float dir, out float strength))
+                    target = dir * ax.maxSpeed * strength;
 
-            _rb.MovePosition(_origin + _worldAxis * _offset);
-            _netOffset.Value = _offset;
+                _velocities[a] = Mathf.MoveTowards(_velocities[a], target, ax.acceleration * dt);
+                float newOffset = Mathf.Clamp(_offsets[a] + _velocities[a] * dt, ax.minOffset, ax.maxOffset);
+                if (Mathf.Approximately(newOffset, _offsets[a])) _velocities[a] = 0f;
+                _offsets[a] = newOffset;
+
+                SetComp(ref net, a, newOffset);
+            }
+
+            _rb.MovePosition(PositionFor(_offsets));
+            _netOffsets.Value = net;
         }
+
         
-        private bool TryGetDragDirection(out float dir, out float strength)
+        private bool TryGetDragDirection(int axis, out float dir, out float strength)
         {
             dir = 0f;
             strength = 1f;
-            if (handles.Length == 0) return false;
+            int total = 0, active = 0;
 
-            for (int i = 0; i < _holders.Count; i++)
+            for (int i = 0; i < handles.Length; i++)
             {
-                if (_holders[i] == NoHolder) return false;
-                if (Time.time - _inputTimes[i] > inputTimeout) return false;
+                if (handles[i].Axis != axis) continue;
+                total++;
+
+                if (_holders[i] == NoHolder) continue;                       
+                if (Time.time - _inputTimes[i] > inputTimeout) continue;     
 
                 float v = _inputs[i];
-                if (Mathf.Abs(v) < inputDeadzone) return false;
+                if (Mathf.Abs(v) < inputDeadzone) continue;                  
 
                 float s = Mathf.Sign(v);
                 if (dir == 0f) dir = s;
-                else if (!Mathf.Approximately(dir, s)) return false;
+                else if (!Mathf.Approximately(dir, s))                        
+                {
+                    dir = 0f;
+                    return false;
+                }
 
-                strength = Mathf.Min(strength, Mathf.Abs(v)); 
+                active++;
+                strength = Mathf.Min(strength, Mathf.Abs(v));                 
             }
+
+            if (total == 0) return false;                                     
+
+            int required = Mathf.Min(Mathf.Max(1, axes[axis].playersRequired), total);
+            if (active < required)
+            {
+                dir = 0f;
+                return false;
+            }
+
             return true;
         }
 
@@ -233,42 +316,78 @@ namespace Gameplay.Items
                 RequestRelease(_localIndex);
                 return;
             }
+
+          
             _localPlayer.HoldAt(handles[_localIndex].SnapPoint.position);
 
             _sendTimer -= dt;
             if (_sendTimer <= 0f)
             {
                 _sendTimer = 1f / inputSendRate;
-                float v = Vector3.Dot(_localPlayer.RawDesiredDirection, _worldAxis);
-                SubmitInputRpc(_localIndex, v);
+                Vector3 axis = _worldAxes[handles[_localIndex].Axis];
+                SubmitInputRpc(_localIndex, Vector3.Dot(_localPlayer.RawDesiredDirection, axis));
             }
         }
 
         #endregion
+
         
         private void ClientFollow(float dt)
         {
-            _displayOffset = Mathf.Lerp(_displayOffset, _netOffset.Value, 1f - Mathf.Exp(-20f * dt));
-            _rb.MovePosition(_origin + _worldAxis * _displayOffset);
+            float k = 1f - Mathf.Exp(-20f * dt);
+            for (int a = 0; a < axes.Length; a++)
+                _displayOffsets[a] = Mathf.Lerp(_displayOffsets[a], Comp(_netOffsets.Value, a), k);
+
+            _rb.MovePosition(PositionFor(_displayOffsets));
         }
 
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            Vector3 axis = transform.TransformDirection(localAxis).normalized;
-            if (axis == Vector3.zero) return;
+            if (axes == null || axes.Length == 0) return;
 
             bool playing = Application.isPlaying && IsSpawned;
             Vector3 origin = playing ? _origin : transform.position;
-            float current = playing ? (IsServer ? _offset : _displayOffset) : 0f;
 
-            Vector3 minPos = origin + axis * minOffset;
-            Vector3 maxPos = origin + axis * maxOffset;
-            Vector3 curPos = origin + axis * current;
+            Vector3 minPos = origin, maxPos = origin, curPos = origin;
+            Vector3[] dirs = new Vector3[axes.Length];
+
+            for (int a = 0; a < axes.Length; a++)
+            {
+                Vector3 axis = transform.TransformDirection(axes[a].localAxis).normalized;
+                dirs[a] = axis;
+                if (axis == Vector3.zero) continue;
+
+                float cur = playing ? (IsServer ? _offsets[a] : _displayOffsets[a]) : 0f;
+                minPos += axis * axes[a].minOffset;
+                maxPos += axis * axes[a].maxOffset;
+                curPos += axis * cur;
+
+                Color c = AxisColors[a % AxisColors.Length];
+                Gizmos.color = c;
+                Vector3 a0 = origin + axis * axes[a].minOffset;
+                Vector3 a1 = origin + axis * axes[a].maxOffset;
+                Gizmos.DrawLine(a0, a1);
+                Gizmos.DrawWireSphere(a0, 0.08f);
+                Gizmos.DrawWireSphere(a1, 0.08f);
+                DrawArrow(curPos, axis * 0.7f);
+                DrawArrow(curPos, -axis * 0.7f);
+            }
             
-            Gizmos.color = Color.white;
-            Gizmos.DrawLine(minPos, maxPos);
-            
+            if (axes.Length >= 2)
+            {
+                Vector3 p00 = origin + dirs[0] * axes[0].minOffset + dirs[1] * axes[1].minOffset;
+                Vector3 p10 = origin + dirs[0] * axes[0].maxOffset + dirs[1] * axes[1].minOffset;
+                Vector3 p11 = origin + dirs[0] * axes[0].maxOffset + dirs[1] * axes[1].maxOffset;
+                Vector3 p01 = origin + dirs[0] * axes[0].minOffset + dirs[1] * axes[1].maxOffset;
+                Gizmos.color = new Color(1f, 1f, 1f, 0.5f);
+                Gizmos.DrawLine(p00, p10);
+                Gizmos.DrawLine(p10, p11);
+                Gizmos.DrawLine(p11, p01);
+                Gizmos.DrawLine(p01, p00);
+            }
+
+           
             Bounds b = GetLocalBounds(out Vector3 centerOffset);
             Gizmos.color = new Color(1f, 0.3f, 0.3f, 0.9f);
             Gizmos.DrawWireCube(minPos + centerOffset, b.size);
@@ -279,18 +398,17 @@ namespace Gameplay.Items
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawWireCube(curPos + centerOffset, b.size);
             }
-            
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(minPos, 0.1f);
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(maxPos, 0.1f);
             Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(curPos, 0.08f);
+            Gizmos.DrawSphere(curPos, 0.06f);
             
-            Gizmos.color = Color.cyan;
-            DrawArrow(curPos, axis * 0.8f);
-            DrawArrow(curPos, -axis * 0.8f);
-            
+            if (handles == null) return;
+            foreach (var h in handles)
+            {
+                if (h == null) continue;
+                Gizmos.color = AxisColors[Mathf.Abs(h.Axis) % AxisColors.Length];
+                Gizmos.DrawWireSphere(h.SnapPoint.position, 0.15f);
+                Gizmos.DrawLine(h.SnapPoint.position, h.SnapPoint.position + h.SnapPoint.forward * 0.4f);
+            }
         }
 
         private Bounds GetLocalBounds(out Vector3 centerOffset)
