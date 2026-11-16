@@ -50,7 +50,9 @@ namespace Gameplay.Items
 			PlayerHealth player = data.GetTarget().GetComponentInChildren<PlayerHealth>();
 
 			if(player)
+			{ 
 				player.Heal(data.ValueF);
+			}
 		}
 	}
 }

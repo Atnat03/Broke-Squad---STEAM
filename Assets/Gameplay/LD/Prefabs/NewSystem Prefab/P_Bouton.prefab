@@ -97,6 +97,74 @@ MonoBehaviour:
   _flag: 2
   _timerDuration: 5
   _restartOnPress: 1
+--- !u!1 &5337443921739209041
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5302411972933161953}
+  - component: {fileID: 8752401789151941971}
+  - component: {fileID: 1673587947149253313}
+  m_Layer: 0
+  m_Name: Addtrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5302411972933161953
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5337443921739209041}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9134969666760801486}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8752401789151941971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5337443921739209041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cf48787a0143424c9a4e45300c69ed1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.ItemEnterTrigger
+  ShowTopMostFoldoutHeaderGroup: 1
+  _thresholdVelocity: 0
+--- !u!65 &1673587947149253313
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5337443921739209041}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5735348267343592621
 GameObject:
   m_ObjectHideFlags: 0
@@ -127,7 +195,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5302411972933161953}
   m_Father: {fileID: 7793630619660345937}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &5354751752790860905
@@ -192,6 +261,7 @@ GameObject:
   - component: {fileID: 8764795259536575632}
   - component: {fileID: 2775578908398227052}
   - component: {fileID: 3359479265848364504}
+  - component: {fileID: 4897595401691375513}
   m_Layer: 0
   m_Name: P_Bouton
   m_TagString: Untagged
@@ -306,7 +376,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 872971717
+  GlobalObjectIdHash: 1658123977
   InScenePlacedSourceGlobalObjectIdHash: 872971717
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -337,6 +407,8 @@ MonoBehaviour:
   _initialFlags: 0
   _bindings:
   - Trigger: {fileID: 7214667317739122034}
+    AdditionnalTriggers:
+    - {fileID: 8752401789151941971}
     Action: 0
     Delay: 0
     CancelsPendingDelays: 0
@@ -344,6 +416,28 @@ MonoBehaviour:
     Effects:
     - {fileID: 2812980055332299893}
     - {fileID: 6855091667069458451}
+--- !u!95 &4897595401691375513
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6795462994949507947}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7187099365015246969
 GameObject:
   m_ObjectHideFlags: 0

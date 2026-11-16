@@ -16,6 +16,8 @@ namespace Gameplay.LD
     {
         [Tooltip("Qu'est ce qui déclenche")]
         public LDTriggerModule Trigger;
+        [Tooltip("autres triggers qui lance le meme binding")]
+        public LDTriggerModule[] AdditionnalTriggers;
         [Tooltip("Start : lance les effets / stop : les arrêtes")]
         public BindingAction Action = BindingAction.Start;
         [Min(0f)] public float Delay;
