@@ -99,14 +99,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2777225266
+  GlobalObjectIdHash: 2101070382
   InScenePlacedSourceGlobalObjectIdHash: 2777225266
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 0
+  m_InScenePlaced: 1
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -209,7 +209,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9095402283309895276
 Transform:
   m_ObjectHideFlags: 0
@@ -345,7 +345,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7b29035fa20b8b24b8b974867f9b3413, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.0961
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7b29035fa20b8b24b8b974867f9b3413, type: 3}
       propertyPath: m_LocalPosition.z
@@ -404,6 +404,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7b29035fa20b8b24b8b974867f9b3413, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3371443421321211508}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7b29035fa20b8b24b8b974867f9b3413, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8862109321649824667}
   m_SourcePrefab: {fileID: 100100000, guid: 7b29035fa20b8b24b8b974867f9b3413, type: 3}
 --- !u!4 &4009245491560621698 stripped
 Transform:
@@ -466,3 +469,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher
+--- !u!114 &8862109321649824667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4388866846489508920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3775f3f1b8fb4150ad7d10b47a2095c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ActiveSomethingItemView
+  _keyEvent: FLASHLIGHT_ACTIVE_EVENT
+  _activableObject: {fileID: 4119255137942969805}

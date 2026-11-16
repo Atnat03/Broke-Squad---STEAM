@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using MyPrint;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -37,6 +38,7 @@ namespace Vehicle
         InputAction _moveAction;
         float _accelInput;
         float _steerInput;
+        float _velocity;
         
         #endregion
 
@@ -47,6 +49,8 @@ namespace Vehicle
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
+
+            _velocity = 0;
             
             _inputs = new Player();
             _inputs.Enable();
@@ -77,10 +81,6 @@ namespace Vehicle
 
         private void Update()
         {
-            if (IsOwner)
-            {
-            }
-            
             GetInputs();
             
             ApplyVisualWheels();
@@ -148,13 +148,13 @@ namespace Vehicle
             Vector3 tireWorldVel = _rigidbody.GetPointVelocity(wheel.tireRaycast.point);
 
             float compression = Mathf.Clamp(wheel.suspensionRestDist - wheel.tireRaycast.distance, 0f, wheel.maxSuspensionCompression);
+            
+            _velocity = Vector3.Dot(springDir, tireWorldVel);
 
-            float velocity = Vector3.Dot(springDir, tireWorldVel);
-
-            float force = compression * wheel.springStrength - velocity * wheel.springDamper;
+            float force = compression * wheel.springStrength - _velocity * wheel.springDamper;
 
             force = Mathf.Max(0f, force);
-
+            
             _rigidbody.AddForceAtPosition(springDir * force, wheel.tireRaycast.point);
         }
         
