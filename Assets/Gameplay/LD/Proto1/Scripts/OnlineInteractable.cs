@@ -20,12 +20,13 @@ public abstract class OnlineInteractable : NetworkBusListener, IInteractable
 
     void Awake()
     {
-        foreach (Transform t in transform)
+        if (transform.TryGetComponent(out Outline o))
         {
-            if (t.TryGetComponent(out Outline o))
-            {
-                Outline = o;
-            }
+            Outline = o;
+        }
+        else
+        {
+            Outline = transform.GetComponentInChildren<Outline>();
         }
     }
 
