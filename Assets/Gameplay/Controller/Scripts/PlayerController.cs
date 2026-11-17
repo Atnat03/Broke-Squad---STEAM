@@ -26,11 +26,12 @@ namespace Gameplay.Controller
         [SerializeField] private PlayerBody body;
         [SerializeField] private PlayerFootsteps footsteps;
         [SerializeField] private LadderChecker ladderChecker;
+        [SerializeField] private PlayerAnimator playerAnimator;
 
         [Header("To Assign")]
         public PlayerCamera PlayerCamera;
         [SerializeField] private PlayerHealth health;
-        public MeshRenderer[] meshRenderer;
+        public Renderer[] meshRenderer;
 
         [Header("Tied Up")]
         [SerializeField] private float tiedUpSpeed = 1f;
@@ -81,6 +82,7 @@ namespace Gameplay.Controller
         public PlayerBody Body => body;
         public PlayerStamina Stamina => _stamina;
         public LadderChecker LadderChecker => ladderChecker;
+        public PlayerAnimator PlayerAnimator => playerAnimator;
 
         public PlayerHealth PlayerHealth => health;
         public float TiedUpSpeed => tiedUpSpeed;
@@ -211,6 +213,7 @@ namespace Gameplay.Controller
 
             _motor = new PlayerMotor(_rb, transform, profile, ground, _input, body);
             _motor.OnJump += () => PlaySound(_jumpSound, 0.5f);
+            _motor.OnJump += () => PlayerAnimator.SetAnimTrigger("Jump");
             _input.OnJumpPressed += () => JumpPressed?.Invoke();
             _input.OnJumpPressed += _motor.BufferJump;
 
@@ -265,6 +268,12 @@ namespace Gameplay.Controller
             _motor.CanMove = !PlayerCamera.LocksController && !IsStunned && CanAct;
             _stateMachine.Update();
             body.UpdateEye(Time.deltaTime);
+            playerAnimator.UpdateState(
+                crouched: IsCrouching,
+                moving: HorizontalVelocity.sqrMagnitude > 0.1f,
+                sprinting: IsSprinting,
+                downed: IsDown,
+                grounded: IsGrounded);
         }
 
         private void FixedUpdate()
