@@ -11,12 +11,13 @@ namespace Gameplay.Items
     public class NumberOfUseModule : ItemModule, ICondition, IServerAction, IReplicatedModule
     {
         public override string Emoji => "🔢";
+        private FixedString32Bytes _keyEvent = "USE_MODULE";
         
         [SerializeField] private int _numberOfUse = 3;
         [SerializeField] private ConsequenceOfNoUse _destroyWhenEmpty = ConsequenceOfNoUse.DestroyObject;
-        private bool _canUse = true;
+        [SerializeField] private string _keyEventCantUse = "CANT_USE_NUMBER";
         
-        private FixedString32Bytes _keyEvent = "USE_MODULE";
+        private bool _canUse = true;
 
         private int _currentUse;
 
@@ -39,7 +40,20 @@ namespace Gameplay.Items
             });
         }
 
-        public bool CheckCondition() => _currentUse > 0 && _canUse;
+        public bool CheckCondition()
+        {
+            bool r = _currentUse > 0 && _canUse;
+            
+            if (!r)
+            {
+                Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
+                {
+                    KeyEvent = _keyEventCantUse,
+                });
+            }
+
+            return r;
+        }
 
         public void ServerExecute(OnModuleDoAction_EVENT data) => UseItem();
 

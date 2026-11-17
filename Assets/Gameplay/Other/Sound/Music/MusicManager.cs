@@ -27,7 +27,6 @@ namespace Gameplay.Other.Sound.Music
                 _audioSource.outputAudioMixerGroup = _musicGroup;
 
             ListenToEvent<OnGrabGoal_EVENT>(ChangeMusicToDangerous);
-            ListenToEvent<OnDropGoal_EVENT>(_ => ChangeMusicToNormal());
             ListenToEvent<OnLockDownStart_EVENT>(ChangeMusicToLockDown);
             ListenToEvent<OnLockDownEnd_EVENT>(_ => ChangeMusicToNormal());
 
@@ -55,6 +54,7 @@ namespace Gameplay.Other.Sound.Music
         private void ChangeMusicToLockDown(OnLockDownStart_EVENT data)
         {
             if (!_canChangeMusic) return;
+            if (data.isGoal) return;
             
             PlayTheMusicClientRpc(2);
 
