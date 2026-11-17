@@ -3,6 +3,7 @@ using Gameplay.Controller;
 using Gameplay.IA;
 using Gameplay.Items;
 using MyPrint;
+using Network.Communication.Pings;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -54,19 +55,26 @@ namespace Gameplay.UI.Scripts
 
                 NetworkObject n = hit.transform.GetComponent<NetworkObject>();
                 
-                (int, int) dataPing = GetPingPrefabFromEntity(n);
-
                 Vector3 pos = hit.point + hit.normal * 0.1f;
-                
-                if (n != null)
-                {
-                    if (n.transform.TryGetComponent(out Collider col))
-                    {
-                        Bounds bounds = col.bounds;
 
-                        pos = new Vector3(bounds.center.x, bounds.max.y + 0.1f, bounds.center.z);
-                    }
+                if (n == null) return;
+                
+                if (n.transform.TryGetComponent(out Collider col))
+                {
+                    Bounds bounds = col.bounds;
+
+                    pos = new Vector3(bounds.center.x, bounds.max.y + 0.1f, bounds.center.z);
                 }
+                
+                //Special ping => override pinging
+                if (n.TryGetComponent(out SpecialPing specialPing))
+                {
+                    specialPing.AddSpecialPing(pos, _playerController.PlayerColorId, _cooldownLifePing);
+                    return;
+                }
+
+                //Normal ping system
+                (int, int) dataPing = GetPingPrefabFromEntity(n);
                 
                 if (IsServer)
                     AddPingObserverRpc(pos, dataPing.Item1, dataPing.Item2);
