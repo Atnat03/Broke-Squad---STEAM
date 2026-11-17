@@ -17,28 +17,45 @@ namespace Gameplay.Animation
 	{
 		[SerializeField] private List<HandBind> _bindList = new();
 		[SerializeField] private Animator _animator;
-		[SerializeField] private Transform rightHand;
+		[SerializeField] private HandSide _hiddenHand = HandSide.Right;
 
-		void OnEnable()
-		{
-			if (_animator == null) return;
+		private PlayerHands _hands;
 
-			rightHand.GetComponent<GameObject>().SetActive(false);
+        private void OnEnable()
+        {
+            Sync();
 
-			foreach (var item in _bindList)
-			{
-				if (!string.IsNullOrEmpty(item.nameParam))
-				{
-					_animator.SetFloat(item.nameParam, item.blend);
-				}
-			}
+            if (_animator == null) return;
 
-			_animator.Update(0f);
-		}
+            foreach (HandBind item in _bindList)
+                if (!string.IsNullOrEmpty(item.nameParam))
+                    _animator.SetFloat(item.nameParam, item.blend);
 
-		private void OnDisable()
-		{
-			rightHand.GetComponent<GameObject>().SetActive(true);
-		}
-	}
+            _animator.Update(0f);
+        }
+
+        private void OnTransformParentChanged()
+        {
+            if (isActiveAndEnabled) Sync();
+        }
+
+        private void OnDisable() => Release();
+
+        private void Sync()
+        {
+            PlayerHands owner = GetComponentInParent<PlayerHands>();
+            if (owner == _hands) return;
+
+            Release();
+            _hands = owner;
+            if (_hands != null) _hands.Hide(_hiddenHand);
+        }
+
+        private void Release()
+        {
+            if (_hands == null) return;
+            _hands.Show(_hiddenHand);
+            _hands = null;
+        }
+    }
 }
