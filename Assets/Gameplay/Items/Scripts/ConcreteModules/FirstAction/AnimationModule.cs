@@ -4,12 +4,15 @@ using UnityEngine;
 
 namespace Gameplay.Items
 {
+    public enum AnimationType { Trigger, Bool, Float }
+    
+    [Serializable]
     public class AnimationModule : ActionModule, IFirstAction
     {
         public override string Emoji => "🎞️";
 
+        private string _keyEvent = "ANIMATION_ITEM_EVENT";
         
-        enum AnimationType { Trigger, Bool, Float }
         
         [Header("Aniation Type")]
         [SerializeField] private AnimationType _animationType = AnimationType.Trigger;
@@ -24,25 +27,34 @@ namespace Gameplay.Items
         {
             if (!CanUse()) return;
             
-            Animator animator = Context.Core.GetComponentInChildren<Animator>();
-            
-            if (animator)
+            OnModuleDoAction_EVENT e = new OnModuleDoAction_EVENT
             {
-                switch (_animationType)
-                {
-                    case AnimationType.Trigger:
-                        animator.SetTrigger(_animationName);
-                        break;
-                    case AnimationType.Bool:
-                        animator.SetBool(_animationName, _boolAnimation);
-                        break;
-                    case AnimationType.Float:
-                        animator.SetFloat(_animationName, _floatAnimation);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                KeyEvent = _keyEvent,
+                ValueS = _animationName,
+                ValueI = -1
+            };
+
+            switch (_animationType)
+            {
+                case AnimationType.Trigger:
+                    e.ValueI = (int)AnimationType.Trigger;
+                    break;
+                case AnimationType.Bool:
+                    e.ValueI = (int)AnimationType.Bool;
+                    e.ValueB = _boolAnimation;
+                    break;
+                case AnimationType.Float:
+                    e.ValueI = (int)AnimationType.Float;
+                    e.ValueF = _floatAnimation;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
+            
+            ABPrint.Print("I : " + e.ValueI);
+            
+            if(e.ValueI != -1)
+                Context.SendEventToEveryone(e);
             
             ConsumeCondition(new OnModuleDoAction_EVENT());
         }
