@@ -17,10 +17,13 @@ namespace Gameplay.Animation
 	{
 		[SerializeField] private List<HandBind> _bindList = new();
 		[SerializeField] private Animator _animator;
+		[SerializeField] private Transform rightHand;
 
 		void OnEnable()
 		{
 			if (_animator == null) return;
+
+			rightHand.GetComponent<GameObject>().SetActive(false);
 
 			foreach (var item in _bindList)
 			{
@@ -31,6 +34,11 @@ namespace Gameplay.Animation
 			}
 
 			_animator.Update(0f);
+		}
+
+		private void OnDisable()
+		{
+			rightHand.GetComponent<GameObject>().SetActive(true);
 		}
 	}
 }
