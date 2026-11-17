@@ -72,6 +72,7 @@ namespace Gameplay.LD
 			if (held == Context.HasFlag(_flag)) return;
 
 			Context.SetFlag(_flag, held);
+			Debug.Log("[LD] flag bouton" + _flag);
 			if (held)
 				Raise(new LDActivation(player, player != null ? player.transform.position : transform.position));
 
