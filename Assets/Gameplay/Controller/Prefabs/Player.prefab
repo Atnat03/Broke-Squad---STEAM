@@ -1140,7 +1140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3743338691
+  GlobalObjectIdHash: 861962280
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -5717,6 +5717,7 @@ GameObject:
   - component: {fileID: 6525180056855478565}
   - component: {fileID: 4683472546542563549}
   - component: {fileID: 3524719151948849220}
+  - component: {fileID: 2754648076603717250}
   m_Layer: 7
   m_Name: BodyVisual
   m_TagString: Untagged
@@ -11201,6 +11202,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.PlayerAnimator
   ShowTopMostFoldoutHeaderGroup: 1
   animator: {fileID: 4300667047736175999}
+--- !u!114 &2754648076603717250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9034689254952957922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e0c5080baaf47539ec9c62f30568f95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.UI.Scripts.HeadLookAtCamera
+  ShowTopMostFoldoutHeaderGroup: 1
+  playerCamera: {fileID: 8757740270961154763}
+  body: {fileID: 7714979113676767855}
+  neckBone: {fileID: 3960863552246823318}
+  headBone: {fileID: 4430854115991884012}
+  minPitch: -60
+  maxPitch: 60
+  neckShare: 0.4
+  remoteSmooth: 15
+  spineBones:
+  - {fileID: 2533758281072447848}
+  - {fileID: 8949791316344735104}
+  - {fileID: 7606385971555349995}
+  visualLeanAngle: 30
+  leanRemoteSmooth: 15
 --- !u!1001 &5415293990745328043
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11440,6 +11468,16 @@ SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 8322568155590898218, guid: c35743872fe6d1d43a7c06481d0e4c9d, type: 3}
   m_PrefabInstance: {fileID: 8029052421853018607}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &2533758281072447848 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5495899079945676935, guid: c35743872fe6d1d43a7c06481d0e4c9d, type: 3}
+  m_PrefabInstance: {fileID: 8029052421853018607}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3960863552246823318 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6456821324835668089, guid: c35743872fe6d1d43a7c06481d0e4c9d, type: 3}
+  m_PrefabInstance: {fileID: 8029052421853018607}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4430854115991884012 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5913616588188150019, guid: c35743872fe6d1d43a7c06481d0e4c9d, type: 3}
@@ -11507,6 +11545,11 @@ SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 547463852320448048, guid: c35743872fe6d1d43a7c06481d0e4c9d, type: 3}
   m_PrefabInstance: {fileID: 8029052421853018607}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &7606385971555349995 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 496419737154866180, guid: c35743872fe6d1d43a7c06481d0e4c9d, type: 3}
+  m_PrefabInstance: {fileID: 8029052421853018607}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7714979113676767855 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 323678646596991872, guid: c35743872fe6d1d43a7c06481d0e4c9d, type: 3}
@@ -11520,5 +11563,10 @@ Transform:
 --- !u!137 &8858575147179892241 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 1550108578491869182, guid: c35743872fe6d1d43a7c06481d0e4c9d, type: 3}
+  m_PrefabInstance: {fileID: 8029052421853018607}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8949791316344735104 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1394118533819104367, guid: c35743872fe6d1d43a7c06481d0e4c9d, type: 3}
   m_PrefabInstance: {fileID: 8029052421853018607}
   m_PrefabAsset: {fileID: 0}
