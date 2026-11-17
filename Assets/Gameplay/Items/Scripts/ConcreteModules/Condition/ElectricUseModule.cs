@@ -28,8 +28,6 @@ namespace Gameplay.Items
             
             if (!r)
             {
-                ABPrint.Print("Electric use condition : " + _keyEventCantUse);
-                
                 Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
                 {
                     KeyEvent = _keyEventCantUse,

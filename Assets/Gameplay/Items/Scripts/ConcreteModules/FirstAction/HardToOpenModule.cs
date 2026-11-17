@@ -9,9 +9,9 @@ namespace Gameplay.Items
     public class HardToOpenModule : ActionModule, IFirstAction, IServerAction
     {
         public override string Emoji => "💪";
-
         
         [SerializeField] private string _keyEvent = "HARD_TO_OPEN_EVENT_KEY";
+        [SerializeField] private string _keyEventNoStamina = "CANT_USE_NO_STAMINA";
         
         [Header("Filling")]
         [SerializeField] private float _fillPerClick = 10f;
@@ -37,7 +37,14 @@ namespace Gameplay.Items
             if (!CanUse()) return;
             
             if(Context.Inventory.Controller.Stamina.Current - _staminaCost <= 0)
+            {
+                Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
+                {
+                    KeyEvent = _keyEventNoStamina,
+                });
+                
                 return;
+            }
             
             Context.Inventory.Controller.Stamina.GainStamina(-_staminaCost);
             
@@ -78,6 +85,8 @@ namespace Gameplay.Items
 
         public void OnThrow()
         {
+            _currentFill = 0;
+            
             UpdateView(false);
         }
 

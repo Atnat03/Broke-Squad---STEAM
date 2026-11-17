@@ -54,6 +54,9 @@ namespace Gameplay.IA
             if (_isLockDown.Value)
                 return;
 
+            if (_isGoal.Value)
+                return;
+
             if (!IsServer)
             {
                 StartLockDownServerRpc(triggerPlayerName, isGoal);
