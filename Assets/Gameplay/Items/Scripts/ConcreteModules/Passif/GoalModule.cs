@@ -25,12 +25,7 @@ namespace Gameplay.Items
         }
 
         public void OnStopHolding()
-        {
-            Context.SendToServer(this, new OnModuleDoAction_EVENT
-            {
-                ValueB = false
-            });
-        }
+        { }
         
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {
@@ -38,10 +33,6 @@ namespace Gameplay.Items
             {
                 LockDownManager.instance.StartLockDown(data.ValueS, true);
                 Context.Inventory.InvokeEvent(new OnGrabGoal_EVENT());
-            }
-            else
-            {
-                Context.Inventory.InvokeEvent(new OnDropGoal_EVENT());
             }
         }
     }

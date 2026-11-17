@@ -4,8 +4,10 @@ using Bus;
 using Gameplay.Controller;
 using MyPrint;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Search;
 using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
@@ -44,6 +46,7 @@ namespace Gameplay.Items
         
         [Header("Dropping")]
         [SerializeField] private Material _previewMaterial;
+        [SerializeField] private Vector3 _baseDropPosition;
         private bool _isPreviewDrop = false;
         private Vector3 _dropPos;
         private Quaternion _dropRot;
@@ -99,9 +102,10 @@ namespace Gameplay.Items
             if (IsOwner)
             {
                 ListenToEvent<OnPickupItem_EVENT>(TryPickupItem);
-                _playerInput.OnDropInput += OnDropPreviewStart;
-                _playerInput.OnDropInputCanceled += OnPerformDrop;
             }
+            
+            _playerInput.OnDropInput += OnDropPreviewStart;
+            _playerInput.OnDropInputCanceled += OnPerformDrop;
             
             _playerInput.OnMouseRoll += OnSelectedItemChange;
             
@@ -200,6 +204,7 @@ namespace Gameplay.Items
         }
         
         public ItemInstance GetCurrentItemInHand() => _slots[_selectedSlot.Value];
+        public ItemInstance GetLocalInstance() => _currentItem.Instance;
         
         private void OnSelectedSlotChanged(int previousValue, int newValue)
         {
@@ -288,12 +293,7 @@ namespace Gameplay.Items
 
             if (IsOwner)
             {
-                visual.gameObject.layer = LayerMask.NameToLayer("ItemInHand");
-                
-                foreach (Transform child in visual.transform)
-                {
-                    child.gameObject.layer = LayerMask.NameToLayer("ItemInHand");
-                }
+                SetLayerRecursively(visual.gameObject, LayerMask.NameToLayer("ItemInHand"));
             }
             
             ItemInstance instance;
@@ -316,6 +316,18 @@ namespace Gameplay.Items
             
             SetCurrentItemInHand(core);
         }
+
+        private void SetLayerRecursively(GameObject g, int layer)
+        {
+            if (!IsOwner) return;
+
+            g.layer = layer;
+
+            foreach (Transform child in g.transform)
+            {
+                SetLayerRecursively(child.gameObject, layer);
+            }
+        }
         
         private int FindFreeSlot()
         {
@@ -334,15 +346,38 @@ namespace Gameplay.Items
         
         private void OnDropPreviewStart()
         {
-            ItemInstance item = GetCurrentItemInHand();
+            ItemInstance item = GetLocalInstance();
             if (item == null) return;
-
+            
             _isPreviewDrop = true;
-            _dropPos = transform.position;
+            _dropPos = transform.position + transform.forward * (_baseDropPosition.z) + Vector3.up * (_baseDropPosition.y);
+            
+            _previewVisual = Instantiate(item.Data.PickupPrefab.gameObject);
 
-            _previewVisual = Instantiate(item.Data.VisualPrefab);
+            Destroy(_previewVisual.GetComponent<ItemPickup>());
+            
+            foreach (var comp in _previewVisual.GetComponents<Component>())
+            {
+                if (!(comp is Transform))
+                {
+                    Destroy(comp);
+                }
+            }
+
+            foreach (var child in _previewVisual.GetComponentsInChildren<Transform>())
+            {
+                foreach (var comp in child.GetComponents<Component>())
+                {
+                    if (!(comp is Transform) && !(comp is MeshFilter) && !(comp is MeshRenderer))
+                    {
+                        Destroy(comp);
+                    }        
+                }
+            }
+           
+
             foreach (var r in _previewVisual.GetComponentsInChildren<Renderer>())
-                r.sharedMaterial = _previewMaterial;
+                r.material = _previewMaterial;
 
             _previewBottomOffset = GetBottomOffset(_previewVisual);
         }

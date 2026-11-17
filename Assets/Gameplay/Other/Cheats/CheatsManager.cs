@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Bus;
+using Gameplay.IA;
 using Gameplay.Items;
 using Gameplay.Other.Cheat;
 using Gameplay.PlayerData;
@@ -28,6 +29,9 @@ namespace Gameplay.Controller
         [SerializeField] private GameObject _itemGiveUI;
         [SerializeField] private SO_ItemDataBase _database;
         private bool _isOpen = false;
+
+        [Header("Lock Down")]
+        [SerializeField] private Button _stopAggroButton;
         
         [Header("Teleport")]
         [SerializeField] private List<Button> _playerTeleportsButton;
@@ -52,7 +56,8 @@ namespace Gameplay.Controller
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
-            if (!IsOwner) return;
+            if (!IsOwner) 
+                return;
 
             _spawnTeleportButton.onClick.AddListener(() =>
             {
@@ -66,8 +71,12 @@ namespace Gameplay.Controller
             _playerInputs.Cheats.Heal.performed += Heal;
             _playerInputs.Cheats.Revive.performed += Revive;
             _playerInputs.Cheats.TakeDamage.performed += Damage;
+            _playerInputs.Gameplay.Pause.performed += LeavePanel;
             
             _playerInputs.Cheats.CheatPannel.performed += UpdatePannelItemGive;
+            
+            if(!IsServer)
+                _stopAggroButton.gameObject.SetActive(false);
         }
 
         public override void OnNetworkDespawn()
@@ -78,13 +87,22 @@ namespace Gameplay.Controller
                 _playerInputs.Cheats.Heal.performed -= Heal;
                 _playerInputs.Cheats.Revive.performed -= Revive;
                 _playerInputs.Cheats.TakeDamage.performed -= Damage;
-                
+                _playerInputs.Gameplay.Pause.performed -= LeavePanel;
                 _playerInputs.Cheats.CheatPannel.performed -= UpdatePannelItemGive;
                 _playerInputs.Disable();
             }
             base.OnNetworkDespawn();
         }
 
+        public void UnlockController()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                //Loop just in case they are many lock active
+                _playerController.PopLock();
+            }
+            
+        }
         private void Invicibility(InputAction.CallbackContext context)
         {
             InvincibilityServerRpc();
@@ -125,6 +143,7 @@ namespace Gameplay.Controller
 
         private void UpdatePannelItemGive(InputAction.CallbackContext context)
         {
+            _playerController.SetInputEnabled(_isOpen);
             _isOpen = !_isOpen;
             _itemGiveUI.SetActive(_isOpen);
 
@@ -135,7 +154,11 @@ namespace Gameplay.Controller
         }
         
         #endregion
-        
+
+        private void LeavePanel(InputAction.CallbackContext context)
+        {
+            if (_isOpen) UpdatePannelItemGive(context);
+        }
         [Rpc(SendTo.Server)]
         private void RequestPlayersServerRpc()
         {
@@ -176,6 +199,25 @@ namespace Gameplay.Controller
             if (target == null) return;
 
             _playerController.TeleportClientRpc(target.transform.position, target.transform.rotation);
+        }
+
+        public void DesactivateAllGuardAggro()
+        {
+            if (!IsServer) return;
+
+            LockDownManager lockDownManager = LockDownManager.instance;
+            if (lockDownManager)
+            {
+                lockDownManager.StopAllGuardsAggro();
+            }
+            
+            DesactivateAllGuardAggroClientRpc();
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void DesactivateAllGuardAggroClientRpc()
+        {
+            InvokeEvent(new OnLockDownEnd_EVENT());
         }
     }
 }

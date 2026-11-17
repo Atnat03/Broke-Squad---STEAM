@@ -37,6 +37,8 @@ namespace Gameplay.LD
         {
             foreach (var element in _required)
                 if (element != null) element.FlagsChanged -= OnRequirementChanged;
+
+            base.OnDestroy();
         }
 
         private void OnRequirementChanged(LDFlag flag)
