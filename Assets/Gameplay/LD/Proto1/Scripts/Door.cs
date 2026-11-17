@@ -59,6 +59,8 @@ public class Door : OnlineInteractable
 
     public override void OnNetworkSpawn()
     {
+        base.OnNetworkSpawn();
+        
         _state.OnValueChanged += OnStateChanged;
 
         if (!IsServer) return;

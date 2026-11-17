@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Gameplay.Items
 {
-    public class ExplosionModuleView : MonoBusListener
+    public class ExplosionModuleView : AwareItemView
     {
         [SerializeField] private string _eventKey = "EXPLOSION_EVENT";
         
@@ -89,17 +89,6 @@ namespace Gameplay.Items
             }
             
             Destroy(gameObject.transform.parent.gameObject);
-        }
-        
-        private ulong GetHostId()
-        {
-            ItemPickup pickup = GetComponentInParent<ItemPickup>();
-            
-            if (pickup != null) 
-                return pickup.NetworkObjectId;
-
-            ItemCore core = GetComponentInParent<ItemCore>();
-            return core != null ? core.HostId : ulong.MaxValue;
         }
     }
 }

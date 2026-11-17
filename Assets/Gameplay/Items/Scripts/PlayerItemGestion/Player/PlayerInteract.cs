@@ -52,10 +52,9 @@
             {
                 if (!IsOwner || _camera == null) return;
 
+                if (_heldInteractable != null) return;
+
                 IInteractable target = (_playerCamera != null && _playerCamera.HasOverride) ? null : GetAimingInteractable();
-                
-                if (_heldInteractable != null && !ReferenceEquals(target, _heldInteractable))
-                    ReleaseHold();
                 
                 if (target == _currentHoverInteractable) return;
                 
