@@ -43,7 +43,7 @@ namespace Gameplay.LD
 		public void HoldEnd(ulong clientId) => RequestHoldInteractServerRpc(false);
 
 		[Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
-		private void RequestHoldInteractServerRpc(bool pressed, ServerRpcParams rpcParams = default)
+		private void RequestHoldInteractServerRpc(bool pressed, RpcParams rpcParams = default)
 		{
 			ulong sender = rpcParams.Receive.SenderClientId;
 
