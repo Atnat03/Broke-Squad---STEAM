@@ -261,6 +261,16 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""EmoteWheel"",
+                    ""type"": ""Button"",
+                    ""id"": ""45193b40-05c2-4c07-8d7e-1cbb1d5f9b57"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -538,6 +548,17 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""action"": ""ShowOtherPlayer"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""65ded18f-111e-4b83-89a1-de57a22103d1"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EmoteWheel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -676,6 +697,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
         m_Gameplay_EquimentDrop = m_Gameplay.FindAction("EquimentDrop", throwIfNotFound: true);
         m_Gameplay_Pause = m_Gameplay.FindAction("Pause", throwIfNotFound: true);
         m_Gameplay_ShowOtherPlayer = m_Gameplay.FindAction("ShowOtherPlayer", throwIfNotFound: true);
+        m_Gameplay_EmoteWheel = m_Gameplay.FindAction("EmoteWheel", throwIfNotFound: true);
         // Cheats
         m_Cheats = asset.FindActionMap("Cheats", throwIfNotFound: true);
         m_Cheats_Invicibility = m_Cheats.FindAction("Invicibility", throwIfNotFound: true);
@@ -781,6 +803,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_EquimentDrop;
     private readonly InputAction m_Gameplay_Pause;
     private readonly InputAction m_Gameplay_ShowOtherPlayer;
+    private readonly InputAction m_Gameplay_EmoteWheel;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -861,6 +884,10 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @ShowOtherPlayer => m_Wrapper.m_Gameplay_ShowOtherPlayer;
         /// <summary>
+        /// Provides access to the underlying input action "Gameplay/EmoteWheel".
+        /// </summary>
+        public InputAction @EmoteWheel => m_Wrapper.m_Gameplay_EmoteWheel;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
@@ -937,6 +964,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @ShowOtherPlayer.started += instance.OnShowOtherPlayer;
             @ShowOtherPlayer.performed += instance.OnShowOtherPlayer;
             @ShowOtherPlayer.canceled += instance.OnShowOtherPlayer;
+            @EmoteWheel.started += instance.OnEmoteWheel;
+            @EmoteWheel.performed += instance.OnEmoteWheel;
+            @EmoteWheel.canceled += instance.OnEmoteWheel;
         }
 
         /// <summary>
@@ -999,6 +1029,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @ShowOtherPlayer.started -= instance.OnShowOtherPlayer;
             @ShowOtherPlayer.performed -= instance.OnShowOtherPlayer;
             @ShowOtherPlayer.canceled -= instance.OnShowOtherPlayer;
+            @EmoteWheel.started -= instance.OnEmoteWheel;
+            @EmoteWheel.performed -= instance.OnEmoteWheel;
+            @EmoteWheel.canceled -= instance.OnEmoteWheel;
         }
 
         /// <summary>
@@ -1298,6 +1331,13 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnShowOtherPlayer(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "EmoteWheel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEmoteWheel(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Cheats" which allows adding and removing callbacks.

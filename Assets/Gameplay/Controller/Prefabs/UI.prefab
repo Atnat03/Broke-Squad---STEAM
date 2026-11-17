@@ -4455,6 +4455,7 @@ RectTransform:
   - {fileID: 8805699931510668249}
   - {fileID: 5084547051805809138}
   - {fileID: 8708652323592216118}
+  - {fileID: 3303572740374801067}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -4921,6 +4922,81 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &4405629584514478312
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3303572740374801067}
+  - component: {fileID: 9012338741681196982}
+  m_Layer: 7
+  m_Name: EmoteWheel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3303572740374801067
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4405629584514478312}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2540696098385895439}
+  m_Father: {fileID: 4096912165336662146}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &9012338741681196982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4405629584514478312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54f0e3ad76d3401fbb4c71bb51872f2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.Other.PlayerEmoteView
+  _bridge: {fileID: 6123230354315169017}
+  _uiWheelEmote: {fileID: 8575291831128464900}
+  _emotesDataList:
+  - AnimTriggerName: Emote1
+    AnimationDuration: 3
+    Sprite: {fileID: 21300000, guid: 28916560e7d14ed4cab44c4e08c5e435, type: 3}
+  - AnimTriggerName: Emote2
+    AnimationDuration: 2
+    Sprite: {fileID: 21300000, guid: 4d022442594f4894fa3d587393a929a9, type: 3}
+  - AnimTriggerName: Emote3
+    AnimationDuration: 1.5
+    Sprite: {fileID: 21300000, guid: 993c7c74f36e8be47be28db65490639c, type: 3}
+  - AnimTriggerName: Emote4
+    AnimationDuration: 3
+    Sprite: {fileID: 21300000, guid: 4ede58773eb51a54aa4e78f5a7acb865, type: 3}
+  - AnimTriggerName: Emote5
+    AnimationDuration: 3
+    Sprite: {fileID: 21300000, guid: 18bba69acf5c1c84c8fb72c242ba42f5, type: 3}
+  - AnimTriggerName: Emote6
+    AnimationDuration: 2
+    Sprite: {fileID: 21300000, guid: 507032f7ebf23c8478a1c7f7ed79b5b3, type: 3}
+  - AnimTriggerName: Emote7
+    AnimationDuration: 2
+    Sprite: {fileID: 21300000, guid: b74d795281471aa4cba82965dbdc1485, type: 3}
+  _emoteElementPrefab: {fileID: 6058441232250792913, guid: f2c3be587c47ada4091786012b204bf5, type: 3}
+  _elementTransform: {fileID: 2540696098385895439}
 --- !u!1 &4409113779758544100
 GameObject:
   m_ObjectHideFlags: 0
@@ -8885,6 +8961,66 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &8575291831128464900
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2540696098385895439}
+  - component: {fileID: 2389873499958271463}
+  m_Layer: 7
+  m_Name: Wheel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2540696098385895439
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8575291831128464900}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3303572740374801067}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.0000038147, y: 0.000024796}
+  m_SizeDelta: {x: 433.5681, y: 368.119}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2389873499958271463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8575291831128464900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GridLayoutGroup
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 100, y: 100}
+  m_Spacing: {x: 10, y: 10}
+  m_Constraint: 0
+  m_ConstraintCount: 2
 --- !u!1 &8625915894497820218
 GameObject:
   m_ObjectHideFlags: 0
