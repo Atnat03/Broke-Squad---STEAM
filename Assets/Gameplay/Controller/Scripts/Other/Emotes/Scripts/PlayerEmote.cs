@@ -21,6 +21,7 @@ namespace Gameplay.Controller.Emote
         [SerializeField] private PlayerController _playerController;
         [SerializeField] private Animator _animator;
         [SerializeField] private Camera _emoteCamera;
+        private OnSetAnimationWillPlay_EVENT _emoteData = new OnSetAnimationWillPlay_EVENT{EmoteId = -1};
 
         public override void OnNetworkSpawn()
         {
@@ -31,7 +32,7 @@ namespace Gameplay.Controller.Emote
             
             if (IsOwner)
             {
-                ListenToEvent<OnPlayEmote_EVENT>(PlayEmote);
+                ListenToEvent<OnSetAnimationWillPlay_EVENT>(SetEmoteAnimation);
             }
         }
 
@@ -55,6 +56,16 @@ namespace Gameplay.Controller.Emote
         private void HideEmoteWheel()
         {
             if(!IsOwner) return;
+
+            if (_emoteData.EmoteId != -1)
+            {
+                TryPlayEmote("Emote" + _emoteData.EmoteId);
+                
+                _playerController.PushLock();
+                StartCoroutine(CooldownActivateController(_emoteData.EmoteDuration));
+                
+                return;
+            }
             
             _playerController.PopLock();
             Cursor.visible = false;
@@ -63,15 +74,11 @@ namespace Gameplay.Controller.Emote
             InvokeEvent(new OnEmoteWheelShow_EVENT{State = false});
         }
         
-        private void PlayEmote(OnPlayEmote_EVENT data)
+        private void SetEmoteAnimation(OnSetAnimationWillPlay_EVENT data)
         {
             if (!IsOwner) return;
             
-            _playerController.PushLock();
-
-            StartCoroutine(CooldownActivateController(data.AnimationDuration));
-            
-            TryPlayEmote(data.TriggerAnimationName);
+            _emoteData = data;
         }
 
         private IEnumerator CooldownActivateController(float dataAnimationDuration)

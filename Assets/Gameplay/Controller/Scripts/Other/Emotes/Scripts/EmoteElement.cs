@@ -1,36 +1,33 @@
-using System;
 using Bus;
 using MyPrint;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace Gameplay.Controller.Emote
 {
-    public struct OnPlayEmote_EVENT
+    public struct OnSetAnimationWillPlay_EVENT
     {
-        public string TriggerAnimationName;
-        public float AnimationDuration;
+        public int EmoteId;
+        public float EmoteDuration;
     }
-
-    public class EmoteElement : MonoBusListener
+    
+    public class EmoteElement : MonoBusListener, IPointerEnterHandler, IPointerExitHandler
     {
-        [SerializeField] private Button _button;
-        [SerializeField] private Image _bgImage;
-        [SerializeField] private Image _iconImage;
+        [SerializeField] private PlayerEmoteView _emoteView;
+        [SerializeField] private int _emoteId;
+        [SerializeField] private AnimationClip _animationClip;
         
-        public void SetUpElement(EmoteData emoteData, GameObject parent)
+        public void OnPointerEnter(PointerEventData eventData)
         {
-            _iconImage.sprite = emoteData.Sprite;
-            
-            _button.onClick.AddListener(() =>
-            {
-                InvokeEvent(new OnPlayEmote_EVENT
-                {
-                    TriggerAnimationName = emoteData.AnimTriggerName,
-                    AnimationDuration =  emoteData.AnimationDuration
-                });
-                parent.SetActive(false);
-            });
+            ABPrint.Print("OnPointerEnter", ABColor.Green);
+            InvokeEvent(new  OnSetAnimationWillPlay_EVENT { EmoteId = _emoteId,  EmoteDuration = _animationClip.length});
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            ABPrint.Print("OnPointerExit", ABColor.Red);
+            InvokeEvent(new  OnSetAnimationWillPlay_EVENT { EmoteId = -1, EmoteDuration = 0 });
+
         }
     }
 
