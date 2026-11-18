@@ -14,22 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
   ID: 11
   ItemName: Drill
-  VisualPrefabLocal: {fileID: 3178870226588323176, guid: f32bc54e738f2fc42bc383777b4ab97c, type: 3}
-  VisualPrefabRemote: {fileID: 0}
+  VisualPrefab: {fileID: 3178870226588323176, guid: f32bc54e738f2fc42bc383777b4ab97c, type: 3}
   PickupPrefab: {fileID: 5654455528838130014, guid: da06ecf2262754b4e974a601b470e299, type: 3}
   Icon: {fileID: 21300000, guid: 314bd173cfda62c468fe16637cbf37c4, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
   TooltipInHand:
     DefaultText: 
-    IsItem: 0
-    TooltipInHand: 
-    _requiresItemModule: 0
-    _tooltipWithItem: 
+    IsItem: 1
+    TooltipInHand: 'Left Click : Open Vent'
+    _requiresItemModule: 1
+    _tooltipWithItem: 'Left Click : Charge'
     _requiredModule:
-      rid: -2
+      rid: 7493938474522247171
   Weight: 1
   FirstActionList:
   - rid: 7202345609054912659
+  - rid: 7493938474522247340
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -101,4 +101,21 @@ MonoBehaviour:
       data:
         _startPercentValue: 100
         _electricNeededToUse: 50
-        _keyEventCantUse: CANT_USE_ELECTRIC
+    - rid: 7493938474522247171
+      type: {class: ChargeItemModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _percentGain: 10
+        _range: 2
+        _stringName: 
+        _volume: 0.5
+    - rid: 7493938474522247340
+      type: {class: AnimationModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _animationType: 0
+        _animationName: Shoot
+        _boolAnimation: 0
+        _floatAnimation: 0

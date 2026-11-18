@@ -14,15 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
   ID: 24
   ItemName: Yellow Key
-  VisualPrefabLocal: {fileID: 4151085900101867295, guid: 19327ab5d0d60e547a42dd870fdd88b5, type: 3}
-  VisualPrefabRemote: {fileID: 0}
+  VisualPrefab: {fileID: 4151085900101867295, guid: 19327ab5d0d60e547a42dd870fdd88b5, type: 3}
   PickupPrefab: {fileID: 8558208644492957827, guid: 02f55986761978b47911e35b9360a90b, type: 3}
   Icon: {fileID: 21300000, guid: beeeb040dda6c984386a8b2fba87eb9d, type: 3}
   OffsetInHand: {x: 0.05, y: 0.25, z: 0}
   TooltipInHand:
     DefaultText: 
-    IsItem: 0
-    TooltipInHand: 
+    IsItem: 1
+    TooltipInHand: 'Left Click : Open Yellow Door'
     _requiresItemModule: 0
     _tooltipWithItem: 
     _requiredModule:
@@ -101,4 +100,3 @@ MonoBehaviour:
       data:
         _numberOfUse: 1
         _destroyWhenEmpty: 0
-        _keyEventCantUse: CANT_USE_NUMBER

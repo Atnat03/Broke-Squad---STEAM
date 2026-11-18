@@ -14,23 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
   ID: 28
   ItemName: Red Key
-  VisualPrefabLocal: {fileID: 8184480648700579339, guid: f11cc7f8b8797ab4490ad7061f5b40cc, type: 3}
-  VisualPrefabRemote: {fileID: 0}
+  VisualPrefab: {fileID: 8184480648700579339, guid: f11cc7f8b8797ab4490ad7061f5b40cc, type: 3}
   PickupPrefab: {fileID: 2735473566228831085, guid: d51a15b1ec1f3cd468f68fbbed05da21, type: 3}
   Icon: {fileID: 21300000, guid: c5f79d22db7622045b32b5e3094acddd, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
   TooltipInHand:
     DefaultText: 
-    IsItem: 0
-    TooltipInHand: 
+    IsItem: 1
+    TooltipInHand: 'Left Click : Heal'
     _requiresItemModule: 0
     _tooltipWithItem: 
     _requiredModule:
       rid: -2
   Weight: 1
-  OffsetRotationDrop: {x: 0, y: 0, z: 0}
   FirstActionList:
-  - rid: 7832862977781924039
+  - rid: 7202345609054912656
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -87,15 +85,16 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 0.5
         _canDamagePlayer: 1
-    - rid: 7832862977781924039
-      type: {class: SelfHealModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+    - rid: 7202345609054912656
+      type: {class: HealOtherModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: 7832862977781924040
-        _amont: 30
-    - rid: 7832862977781924040
+          rid: 7202345609054912657
+        _healAmount: 50
+        _stringName: 
+        _volume: 0.5
+    - rid: 7202345609054912657
       type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _numberOfUse: 3
         _destroyWhenEmpty: 0
-        _keyEventCantUse: CANT_USE_NUMBER

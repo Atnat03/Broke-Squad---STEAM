@@ -20,14 +20,13 @@ MonoBehaviour:
   OffsetInHand: {x: 0, y: 0, z: 0}
   TooltipInHand:
     DefaultText: 
-    IsItem: 0
-    TooltipInHand: 
+    IsItem: 1
+    TooltipInHand: 'Left Click : Open Jar'
     _requiresItemModule: 0
     _tooltipWithItem: 
     _requiredModule:
       rid: -2
   Weight: 1
-  OffsetRotationDrop: {x: 0, y: 0, z: 0}
   FirstActionList:
   - rid: 7832862682398589470
   SecondActionList:
@@ -92,11 +91,11 @@ MonoBehaviour:
         _condition:
           rid: 7832862682398589473
         _keyEvent: HARD_TO_OPEN_EVENT_KEY
-        _fillPerClick: 8
+        _fillPerClick: 5
         _maxFilling: 100
-        _staminaCost: 16
-        _decayDelay: 0.08
-        _decayPerSecond: 70
+        _staminaCost: 10
+        _decayDelay: 0.5
+        _decayPerSecond: 50
         _spawnItem: {fileID: 653411630895317502, guid: d0436cfb9f696ab45b022632b1939e67, type: 3}
     - rid: 7832862682398589473
       type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}

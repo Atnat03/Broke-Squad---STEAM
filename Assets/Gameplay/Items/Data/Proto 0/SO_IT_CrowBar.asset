@@ -14,15 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
   ID: 10
   ItemName: CrowBar
-  VisualPrefabLocal: {fileID: 8591074632576193216, guid: 3d0d59bf43b3dd04e92e5fa75b54a2f0, type: 3}
-  VisualPrefabRemote: {fileID: 0}
+  VisualPrefab: {fileID: 8591074632576193216, guid: 3d0d59bf43b3dd04e92e5fa75b54a2f0, type: 3}
   PickupPrefab: {fileID: 1040478823868464577, guid: 821569a89cf532949ae9771ba0e79499, type: 3}
   Icon: {fileID: 21300000, guid: 7987f2946dd1a90459ee9c0166eb4bd6, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
   TooltipInHand:
     DefaultText: 
-    IsItem: 0
-    TooltipInHand: 
+    IsItem: 1
+    TooltipInHand: 'Left Click : Break Item/Open Door'
     _requiresItemModule: 0
     _tooltipWithItem: 
     _requiredModule:
@@ -31,6 +30,7 @@ MonoBehaviour:
   FirstActionList:
   - rid: 7202345609054912647
   - rid: 7202345609054912648
+  - rid: 7493938474522247174
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -110,4 +110,12 @@ MonoBehaviour:
       data:
         _numberOfUse: 1
         _destroyWhenEmpty: 0
-        _keyEventCantUse: CANT_USE_NUMBER
+    - rid: 7493938474522247174
+      type: {class: AnimationModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _animationType: 0
+        _animationName: Hit
+        _boolAnimation: 1
+        _floatAnimation: 0

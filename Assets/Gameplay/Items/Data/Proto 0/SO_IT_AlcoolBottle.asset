@@ -13,24 +13,24 @@ MonoBehaviour:
   m_Name: SO_IT_AlcoolBottle
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
   ID: 35
-  ItemName: Alcool
+  ItemName: Rc Car
   VisualPrefab: {fileID: 2897417623498628440, guid: 3817e6d66723b6d45bf33d0c4d3a59f4, type: 3}
   PickupPrefab: {fileID: 2072030727398677114, guid: 6321da4dfc4acb74aa82b4e04e5fcf97, type: 3}
   Icon: {fileID: 21300000, guid: 74bed9a5590361e4e9b122edaddda0fb, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
   TooltipInHand:
-    DefaultText: Left click for infinite Stamina
-    IsItem: 0
-    TooltipInHand: 
+    DefaultText: 
+    IsItem: 1
+    TooltipInHand: 'Left Click : Drink'
     _requiresItemModule: 0
     _tooltipWithItem: 
     _requiredModule:
       rid: -2
   Weight: 1
-  OffsetRotationDrop: {x: 0, y: 0, z: 0}
   FirstActionList:
   - rid: 7832862682398589157
   - rid: 7832862682398589471
+  - rid: 7493938474522247168
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -87,11 +87,20 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 0.5
         _canDamagePlayer: 1
+    - rid: 7493938474522247168
+      type: {class: AnimationModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _animationType: 0
+        _animationName: Drink
+        _boolAnimation: 0
+        _floatAnimation: 0
     - rid: 7832862682398589157
       type: {class: NewStaminaModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: 7832862932930920862
+          rid: -2
         newRegenParSecond: 1000
         effectDuration: 10
         regenDelay: 0
@@ -103,8 +112,3 @@ MonoBehaviour:
         _drunkDuration: 10
         _sfxName: Joueur/Drink
         _volume: 0.5
-    - rid: 7832862932930920862
-      type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
-      data:
-        _numberOfUse: 1
-        _destroyWhenEmpty: 0
