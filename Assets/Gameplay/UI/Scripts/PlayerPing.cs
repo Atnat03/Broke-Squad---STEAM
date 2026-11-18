@@ -56,21 +56,22 @@ namespace Gameplay.UI.Scripts
                 NetworkObject n = hit.transform.GetComponent<NetworkObject>();
                 
                 Vector3 pos = hit.point + hit.normal * 0.1f;
-
-                if (n == null) return;
                 
-                if (n.transform.TryGetComponent(out Collider col))
+                if(n)
                 {
-                    Bounds bounds = col.bounds;
+                    if (n.transform.TryGetComponent(out Collider col))
+                    {
+                        Bounds bounds = col.bounds;
 
-                    pos = new Vector3(bounds.center.x, bounds.max.y + 0.1f, bounds.center.z);
-                }
-                
-                //Special ping => override pinging
-                if (n.TryGetComponent(out SpecialPing specialPing))
-                {
-                    specialPing.AddSpecialPing(pos, _playerController.PlayerColorId, _cooldownLifePing);
-                    return;
+                        pos = new Vector3(bounds.center.x, bounds.max.y + 0.1f, bounds.center.z);
+                    }
+                    
+                    //Special ping => override pinging
+                    if (n.TryGetComponent(out SpecialPing specialPing))
+                    {
+                        specialPing.AddSpecialPing(pos, _playerController.PlayerColorId, _cooldownLifePing);
+                        return;
+                    }
                 }
 
                 //Normal ping system
