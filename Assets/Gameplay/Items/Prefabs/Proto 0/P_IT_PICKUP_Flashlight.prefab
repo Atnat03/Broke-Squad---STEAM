@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 1171968411556205002}
   - component: {fileID: 3518633190092886426}
   - component: {fileID: 7166375493009366575}
-  - component: {fileID: 2752630862123476082}
   m_Layer: 9
   m_Name: P_IT_PICKUP_Flashlight
   m_TagString: Untagged
@@ -99,14 +98,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2101070382
+  GlobalObjectIdHash: 2777225266
   InScenePlacedSourceGlobalObjectIdHash: 2777225266
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 1
+  m_InScenePlaced: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -175,23 +174,6 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _rackRatio: 0.5
   _itemData: {fileID: 11400000, guid: 880e2bacc6ffbc54c833ee6a8467c2d1, type: 2}
---- !u!114 &2752630862123476082
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 845715913715820800}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkRigidbody
-  ShowTopMostFoldoutHeaderGroup: 1
-  NetworkRigidbodyBaseExpanded: 0
-  UseRigidBodyForMotion: 0
-  AutoUpdateKinematicState: 1
-  AutoSetKinematicOnDespawn: 1
 --- !u!1 &4119255137942969805
 GameObject:
   m_ObjectHideFlags: 0

@@ -65,8 +65,11 @@ namespace Gameplay.Controller
         private bool _invertLeanMode = false;
         private bool _lockControllerOnLean = true;
         private bool _leanMode;
+        private float _leanEffective;
+        public float LeanValue => _leanEffective;
         
         public bool IsLeanMode => _leanMode;
+        public float Pitch => _xRotation;
         public bool LocksController => (_leanMode && _lockControllerOnLean) || (_override?.LocksController ?? false);
         
         public bool HasOverride => _override != null && _override.LocksController;
@@ -294,7 +297,11 @@ namespace Gameplay.Controller
             _leanAmount = Mathf.SmoothDamp(_leanAmount, target, ref _leanVel, _leanSmoothTime);
 
             roll = 0f;
-            if (Mathf.Abs(_leanAmount) < 0.001f) return Vector3.zero;
+            if (Mathf.Abs(_leanAmount) < 0.001f)
+            {
+                _leanEffective = 0f;    
+                return Vector3.zero;
+            }
 
             float side = Mathf.Sign(_leanAmount);
             float wanted = Mathf.Abs(_leanAmount) * _leanDistance;
@@ -308,6 +315,7 @@ namespace Gameplay.Controller
             }
             
             float effective = _leanDistance > 0f ? allowed / _leanDistance : 0f;
+            _leanEffective = side * effective;
 
             roll = -side * effective * _leanRollAngle;
             return new Vector3(side * allowed, -effective * _leanDip, 0f);

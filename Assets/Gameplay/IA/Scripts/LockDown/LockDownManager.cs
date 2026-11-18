@@ -28,6 +28,10 @@ namespace Gameplay.IA
 
         public Action<string> OnLockDownStart;
         
+        //Buffer check no LockDown
+        private float _bufferNoLockDown = 2f;
+        private float _elaspedTimerBufferNLD = 0f;
+        
         private void Awake()
         {
             instance = this;
@@ -52,6 +56,9 @@ namespace Gameplay.IA
         public void StartLockDown(FixedString32Bytes triggerPlayerName, bool isGoal = false)
         {
             if (_isLockDown.Value)
+                return;
+
+            if (_isGoal.Value)
                 return;
 
             if (!IsServer)
@@ -111,9 +118,7 @@ namespace Gameplay.IA
         }
         
         private void OnDurationChange(float previousValue, float newValue)
-        {
-            
-        }
+        { }
 
         private void Update()
         {
@@ -134,6 +139,25 @@ namespace Gameplay.IA
                     EndLockDown();
                 }
             }
+
+            if (_elaspedTimerBufferNLD < _bufferNoLockDown)
+            {
+                _elaspedTimerBufferNLD +=  Time.deltaTime;
+
+                if (_elaspedTimerBufferNLD >= _bufferNoLockDown)
+                {
+                    _elaspedTimerBufferNLD = 0;
+
+                    if (!_isLockDown.Value)
+                        SendCheckIfNotLockDownRpc();
+                }
+            }
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void SendCheckIfNotLockDownRpc()
+        {
+            TryEndLockDown(new OnLockDownEnd_EVENT());
         }
         
         #region Guard List

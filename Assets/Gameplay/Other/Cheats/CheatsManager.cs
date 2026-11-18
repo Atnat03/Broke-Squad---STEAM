@@ -71,6 +71,7 @@ namespace Gameplay.Controller
             _playerInputs.Cheats.Heal.performed += Heal;
             _playerInputs.Cheats.Revive.performed += Revive;
             _playerInputs.Cheats.TakeDamage.performed += Damage;
+            _playerInputs.Gameplay.Pause.performed += LeavePanel;
             
             _playerInputs.Cheats.CheatPannel.performed += UpdatePannelItemGive;
             
@@ -86,13 +87,22 @@ namespace Gameplay.Controller
                 _playerInputs.Cheats.Heal.performed -= Heal;
                 _playerInputs.Cheats.Revive.performed -= Revive;
                 _playerInputs.Cheats.TakeDamage.performed -= Damage;
-                
+                _playerInputs.Gameplay.Pause.performed -= LeavePanel;
                 _playerInputs.Cheats.CheatPannel.performed -= UpdatePannelItemGive;
                 _playerInputs.Disable();
             }
             base.OnNetworkDespawn();
         }
 
+        public void UnlockController()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                //Loop just in case they are many lock active
+                _playerController.PopLock();
+            }
+            
+        }
         private void Invicibility(InputAction.CallbackContext context)
         {
             InvincibilityServerRpc();
@@ -133,6 +143,7 @@ namespace Gameplay.Controller
 
         private void UpdatePannelItemGive(InputAction.CallbackContext context)
         {
+            _playerController.SetInputEnabled(_isOpen);
             _isOpen = !_isOpen;
             _itemGiveUI.SetActive(_isOpen);
 
@@ -143,7 +154,11 @@ namespace Gameplay.Controller
         }
         
         #endregion
-        
+
+        private void LeavePanel(InputAction.CallbackContext context)
+        {
+            if (_isOpen) UpdatePannelItemGive(context);
+        }
         [Rpc(SendTo.Server)]
         private void RequestPlayersServerRpc()
         {
