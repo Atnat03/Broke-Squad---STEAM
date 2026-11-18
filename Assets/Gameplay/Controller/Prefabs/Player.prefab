@@ -649,7 +649,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8820559294636122321}
   m_Layer: 7
-  m_Name: Gameplayer Positions
+  m_Name: Gameplay Positions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -669,7 +669,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1223830776044921750}
-  - {fileID: 6239929513650457466}
   - {fileID: 4606863278405769456}
   m_Father: {fileID: 7133925661517429810}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1290,8 +1289,8 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
+  SyncOwnerTransformWhenParented: 0
+  AllowOwnerToParent: 1
 --- !u!114 &1106711488819986003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1317,7 +1316,7 @@ MonoBehaviour:
   ScaleLerpSmoothing: 1
   ScaleMaxInterpolationTime: 0.1
   AuthorityMode: 1
-  TickSyncChildren: 0
+  TickSyncChildren: 1
   UseUnreliableDeltas: 0
   SyncPositionX: 1
   SyncPositionY: 1
@@ -1335,7 +1334,7 @@ MonoBehaviour:
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
   InLocalSpace: 0
-  SwitchTransformSpaceWhenParented: 0
+  SwitchTransformSpaceWhenParented: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &7696705341883764508
@@ -2671,12 +2670,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4763456765550172174}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.122999966, z: -0.46999997}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.009634528, y: -0.32986566, z: -0.005778948, w: 0.9439611}
+  m_LocalPosition: {x: 0.20461829, y: 0.2479533, z: -0.2481834}
+  m_LocalScale: {x: 0.69930077, y: 0.69930065, z: 0.69930077}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8820559294636122321}
+  m_Father: {fileID: 2533758281072447848}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5057783042720090688
 GameObject:
@@ -11732,6 +11731,9 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 5495899079945676935, guid: c35743872fe6d1d43a7c06481d0e4c9d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6239929513650457466}
     - targetCorrespondingSourceObject: {fileID: 5913616588188150019, guid: c35743872fe6d1d43a7c06481d0e4c9d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 670072991193463569}
