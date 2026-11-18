@@ -1,4 +1,5 @@
 ﻿using System;
+using Gameplay.LD;
 using MyPrint;
 using UnityEditor;
 using UnityEngine;
@@ -23,24 +24,20 @@ namespace Gameplay.Items
         
         public string GetTooltip(ItemModule[] playerModules)
         {
-            ABPrint.Print("Get tooltip");
-            
-            if (!_requiresItemModule)
-                return DefaultText;
-
-            if (_requiredModule == null)
-                return DefaultText;
-            
-            if(playerModules == null)
-                return DefaultText;
-            
-            foreach (ItemModule module in playerModules)
+            if (_requiresItemModule)
             {
-                if (module != null && module.GetType() == _requiredModule.GetType())
+                if (_requiredModule == null)
+                    return DefaultText;
+
+                if (playerModules == null)
+                    return DefaultText;
+
+                foreach (ItemModule module in playerModules)
                 {
-                    ABPrint.Print(module.GetType() + " / " + _requiredModule.GetType());
-                    
-                    return _tooltipWithItem;
+                    if (module != null && module.GetType() == _requiredModule.GetType())
+                    {
+                        return _tooltipWithItem;
+                    }
                 }
             }
 
