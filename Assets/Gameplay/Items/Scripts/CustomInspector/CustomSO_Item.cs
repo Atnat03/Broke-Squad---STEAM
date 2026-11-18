@@ -10,12 +10,14 @@ namespace Gameplay.Items
     {
         private SerializedProperty _id;
         private SerializedProperty _itemName;
-        private SerializedProperty _visualPrefab;
+        private SerializedProperty _visualPrefabLocal;
+        private SerializedProperty _visualPrefabRemote;
         private SerializedProperty _pickUpPrefab;
         private SerializedProperty _icon;
         private SerializedProperty _offset;
         private SerializedProperty _tooltip;
         private SerializedProperty _weight;
+        private SerializedProperty _offsetRotDrop;
         private SerializedProperty _firstActions;
         private SerializedProperty _secondActions;
         private SerializedProperty _passif;
@@ -31,12 +33,14 @@ namespace Gameplay.Items
         private void OnEnable()
         {
             _itemName = serializedObject.FindProperty(nameof(SO_Item.ItemName));
-            _visualPrefab = serializedObject.FindProperty(nameof(SO_Item.VisualPrefab));
+            _visualPrefabLocal = serializedObject.FindProperty(nameof(SO_Item.VisualPrefabLocal));
+            _visualPrefabRemote = serializedObject.FindProperty(nameof(SO_Item.VisualPrefabRemote));
             _pickUpPrefab = serializedObject.FindProperty(nameof(SO_Item.PickupPrefab));
             _icon = serializedObject.FindProperty(nameof(SO_Item.Icon));
             _offset = serializedObject.FindProperty(nameof(SO_Item.OffsetInHand));
             _tooltip = serializedObject.FindProperty(nameof(SO_Item.TooltipInHand));
             _weight = serializedObject.FindProperty(nameof(SO_Item.Weight));
+            _offsetRotDrop = serializedObject.FindProperty(nameof(SO_Item.OffsetRotationDrop));
             _firstActions = serializedObject.FindProperty(nameof(SO_Item.FirstActionList));
             _secondActions = serializedObject.FindProperty(nameof(SO_Item.SecondActionList));
             _passif = serializedObject.FindProperty(nameof(SO_Item.PassifList));
@@ -62,9 +66,11 @@ namespace Gameplay.Items
             //Visuels
             BeginSection(_visualColor);
             EditorGUILayout.LabelField("Visual", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(_visualPrefab);
+            EditorGUILayout.PropertyField(_visualPrefabLocal);
+            EditorGUILayout.PropertyField(_visualPrefabRemote);
             EditorGUILayout.PropertyField(_pickUpPrefab);
             EditorGUILayout.PropertyField(_offset);
+            EditorGUILayout.PropertyField(_offsetRotDrop);
             EndSection();
             
             EditorGUILayout.Space(4);

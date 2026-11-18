@@ -10,6 +10,7 @@ namespace Gameplay.Items
         public override string Emoji => "🕹️";
         
         private FixedString32Bytes _keyEvent = "RC_CAR_EVENT";
+        private FixedString32Bytes _keyEventAnim = "RC_CAR_ANIM_EVENT";
         
         [SerializeField] private int _carID = 0;
         private bool _isActivated = false;
@@ -22,9 +23,14 @@ namespace Gameplay.Items
         public void StartFirstAction()
         {
             _isActivated = !_isActivated;
-
-            Animator animator = Context.Core.GetComponentInChildren<Animator>();
-            animator?.SetBool(_animationName, _isActivated);
+            
+            Context.SendEventToEveryone(new OnModuleDoAction_EVENT
+            {
+                ClientId = Context.Inventory.OwnerClientId,
+                KeyEvent = _keyEventAnim,
+                ValueB = _isActivated,
+                ValueS = _animationName
+            });
             
             if(_isActivated)Context.Inventory.Controller.PushLock();
             else Context.Inventory.Controller.PopLock();
