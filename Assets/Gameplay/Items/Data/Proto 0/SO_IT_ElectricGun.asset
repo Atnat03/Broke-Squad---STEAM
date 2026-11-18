@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
   ID: 15
   ItemName: Electric Gun
-  VisualPrefab: {fileID: 1326538910869120881, guid: a2401a7c48e66454490f28fd1ac7a54d, type: 3}
+  VisualPrefabLocal: {fileID: 1326538910869120881, guid: a2401a7c48e66454490f28fd1ac7a54d, type: 3}
+  VisualPrefabRemote: {fileID: 1326538910869120881, guid: 0b65729db3ebc8946b928c22a8ce1946, type: 3}
   PickupPrefab: {fileID: 1846969914337166248, guid: 36dbf215eca667c47a3b312e27f5585a, type: 3}
   Icon: {fileID: 21300000, guid: 789b767b37c180742867d6e5dfdd8d33, type: 3}
   OffsetInHand: {x: 0.1, y: 0.1, z: 0}
@@ -27,6 +28,7 @@ MonoBehaviour:
     _requiredModule:
       rid: -2
   Weight: 1
+  OffsetRotationDrop: {x: 0, y: 0, z: 0}
   FirstActionList:
   - rid: 7202345749860581727
   - rid: 7493938474522247341
@@ -101,6 +103,7 @@ MonoBehaviour:
       data:
         _startPercentValue: 100
         _electricNeededToUse: 20
+        _keyEventCantUse: CANT_USE_ELECTRIC
     - rid: 7493938474522247341
       type: {class: AnimationModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:

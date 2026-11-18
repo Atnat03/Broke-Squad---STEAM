@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
   ID: 28
   ItemName: Red Key
-  VisualPrefab: {fileID: 8184480648700579339, guid: f11cc7f8b8797ab4490ad7061f5b40cc, type: 3}
+  VisualPrefabLocal: {fileID: 8184480648700579339, guid: f11cc7f8b8797ab4490ad7061f5b40cc, type: 3}
+  VisualPrefabRemote: {fileID: 8184480648700579339, guid: 271c9ecaac0fd22438d08d99f95b4b43, type: 3}
   PickupPrefab: {fileID: 2735473566228831085, guid: d51a15b1ec1f3cd468f68fbbed05da21, type: 3}
   Icon: {fileID: 21300000, guid: c5f79d22db7622045b32b5e3094acddd, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
@@ -27,6 +28,7 @@ MonoBehaviour:
     _requiredModule:
       rid: -2
   Weight: 1
+  OffsetRotationDrop: {x: 0, y: 0, z: 0}
   FirstActionList:
   - rid: 7202345609054912656
   SecondActionList:
@@ -98,3 +100,4 @@ MonoBehaviour:
       data:
         _numberOfUse: 3
         _destroyWhenEmpty: 0
+        _keyEventCantUse: CANT_USE_NUMBER
