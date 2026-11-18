@@ -7,7 +7,6 @@ using Unity.Netcode;
 using Unity.Netcode.Components;
 using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.Search;
 using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
@@ -380,6 +379,8 @@ namespace Gameplay.Items
             foreach (var r in _previewVisual.GetComponentsInChildren<Renderer>())
                 r.material = _previewMaterial;
 
+            _dropRot = Quaternion.Euler(item.Data.OffsetRotationDrop);
+            
             _previewBottomOffset = GetBottomOffset(_previewVisual);
         }
         
@@ -398,8 +399,14 @@ namespace Gameplay.Items
         
         private void UpdateDropRotate()
         {
-            _dropAngle = (_dropAngle + 90f) % 360f;
-            _dropRot = Quaternion.Euler(0f, _dropAngle, 0f);
+            if (_isPreviewDrop)
+            {
+                ItemInstance item = GetCurrentItemInHand();
+                if (item == null) return;
+                            
+                _dropAngle = (_dropAngle + 90f) % 360f;
+                _dropRot = Quaternion.Euler(0f, _dropAngle, 0f) * Quaternion.Euler(item.Data.OffsetRotationDrop);
+            }
         }
         
         private void OnPerformDrop()

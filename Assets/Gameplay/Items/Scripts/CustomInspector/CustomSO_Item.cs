@@ -17,6 +17,7 @@ namespace Gameplay.Items
         private SerializedProperty _offset;
         private SerializedProperty _tooltip;
         private SerializedProperty _weight;
+        private SerializedProperty _offsetRotDrop;
         private SerializedProperty _firstActions;
         private SerializedProperty _secondActions;
         private SerializedProperty _passif;
@@ -39,6 +40,7 @@ namespace Gameplay.Items
             _offset = serializedObject.FindProperty(nameof(SO_Item.OffsetInHand));
             _tooltip = serializedObject.FindProperty(nameof(SO_Item.TooltipInHand));
             _weight = serializedObject.FindProperty(nameof(SO_Item.Weight));
+            _offsetRotDrop = serializedObject.FindProperty(nameof(SO_Item.OffsetRotationDrop));
             _firstActions = serializedObject.FindProperty(nameof(SO_Item.FirstActionList));
             _secondActions = serializedObject.FindProperty(nameof(SO_Item.SecondActionList));
             _passif = serializedObject.FindProperty(nameof(SO_Item.PassifList));
@@ -68,6 +70,7 @@ namespace Gameplay.Items
             EditorGUILayout.PropertyField(_visualPrefabRemote);
             EditorGUILayout.PropertyField(_pickUpPrefab);
             EditorGUILayout.PropertyField(_offset);
+            EditorGUILayout.PropertyField(_offsetRotDrop);
             EndSection();
             
             EditorGUILayout.Space(4);

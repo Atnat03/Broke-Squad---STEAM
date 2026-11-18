@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
   ID: 36
   ItemName: Jar
-  VisualPrefabLocal: {fileID: 7162472321550446398, guid: b5140a9d6dfdd124098469e198c9b681, type: 3}
-  VisualPrefabRemote: {fileID: 0}
+  VisualPrefab: {fileID: 7162472321550446398, guid: b5140a9d6dfdd124098469e198c9b681, type: 3}
   PickupPrefab: {fileID: 5317595364286155804, guid: 71358a40de23782489b548cb0727a1e5, type: 3}
   Icon: {fileID: 21300000, guid: 9900f86969a45934a8acfcc648268cbe, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
@@ -28,6 +27,7 @@ MonoBehaviour:
     _requiredModule:
       rid: -2
   Weight: 1
+  OffsetRotationDrop: {x: 0, y: 0, z: 0}
   FirstActionList:
   - rid: 7832862682398589470
   SecondActionList:
@@ -92,16 +92,14 @@ MonoBehaviour:
         _condition:
           rid: 7832862682398589473
         _keyEvent: HARD_TO_OPEN_EVENT_KEY
-        _keyEventNoStamina: CANT_USE_NO_STAMINA
-        _fillPerClick: 5
+        _fillPerClick: 8
         _maxFilling: 100
-        _staminaCost: 10
-        _decayDelay: 0.5
-        _decayPerSecond: 50
+        _staminaCost: 16
+        _decayDelay: 0.08
+        _decayPerSecond: 70
         _spawnItem: {fileID: 653411630895317502, guid: d0436cfb9f696ab45b022632b1939e67, type: 3}
     - rid: 7832862682398589473
       type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _numberOfUse: 1
         _destroyWhenEmpty: 0
-        _keyEventCantUse: CANT_USE_NUMBER
