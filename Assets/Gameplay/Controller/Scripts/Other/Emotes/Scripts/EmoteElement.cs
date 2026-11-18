@@ -1,7 +1,9 @@
+using System;
 using Bus;
 using MyPrint;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Gameplay.Controller.Emote
 {
@@ -15,19 +17,17 @@ namespace Gameplay.Controller.Emote
     {
         [SerializeField] private PlayerEmoteView _emoteView;
         [SerializeField] private int _emoteId;
-        [SerializeField] private AnimationClip _animationClip;
-        
+        [SerializeField] private float _animationDuration;
+
         public void OnPointerEnter(PointerEventData eventData)
         {
-            ABPrint.Print("OnPointerEnter", ABColor.Green);
-            InvokeEvent(new  OnSetAnimationWillPlay_EVENT { EmoteId = _emoteId,  EmoteDuration = _animationClip.length});
+            if(_emoteId > 0)
+                InvokeEvent(new  OnSetAnimationWillPlay_EVENT { EmoteId = _emoteId,  EmoteDuration = _animationDuration});
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            ABPrint.Print("OnPointerExit", ABColor.Red);
-            InvokeEvent(new  OnSetAnimationWillPlay_EVENT { EmoteId = -1, EmoteDuration = 0 });
-
+            InvokeEvent(new  OnSetAnimationWillPlay_EVENT { EmoteId = 0, EmoteDuration = 0 });
         }
     }
 

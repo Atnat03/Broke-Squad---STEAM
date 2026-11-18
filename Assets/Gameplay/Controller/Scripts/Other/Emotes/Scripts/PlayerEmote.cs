@@ -22,11 +22,14 @@ namespace Gameplay.Controller.Emote
         [SerializeField] private Animator _animator;
         [SerializeField] private Camera _emoteCamera;
         private OnSetAnimationWillPlay_EVENT _emoteData = new OnSetAnimationWillPlay_EVENT{EmoteId = -1};
+        private bool _isEmoting;
 
         public override void OnNetworkSpawn()
         {
             _playerInput.OnStartShowEmoteWheel += ShowEmoteWheel;
             _playerInput.OnEndShowEmoteWheel += HideEmoteWheel;
+
+            _playerInput.OnMoveInput += CancelEmote;
 
             _emoteCamera.gameObject.SetActive(false);
             
@@ -40,6 +43,7 @@ namespace Gameplay.Controller.Emote
         {
             _playerInput.OnStartShowEmoteWheel -= ShowEmoteWheel;
             _playerInput.OnEndShowEmoteWheel -= HideEmoteWheel;
+            _playerInput.OnMoveInput -= CancelEmote;
         }
 
         private void ShowEmoteWheel()
@@ -57,19 +61,20 @@ namespace Gameplay.Controller.Emote
         {
             if(!IsOwner) return;
 
-            if (_emoteData.EmoteId != -1)
+            if (_emoteData.EmoteId > 0)
             {
+                ABPrint.Print("Emote : " + _emoteData.EmoteDuration, ABColor.White);
+                
                 TryPlayEmote("Emote" + _emoteData.EmoteId);
                 
-                _playerController.PushLock();
                 StartCoroutine(CooldownActivateController(_emoteData.EmoteDuration));
-                
-                return;
             }
-            
+
             _playerController.PopLock();
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
+
+            _emoteData = new OnSetAnimationWillPlay_EVENT { EmoteId = 0 };
             
             InvokeEvent(new OnEmoteWheelShow_EVENT{State = false});
         }
@@ -83,13 +88,12 @@ namespace Gameplay.Controller.Emote
 
         private IEnumerator CooldownActivateController(float dataAnimationDuration)
         {
+            _isEmoting = true;
             _emoteCamera.gameObject.SetActive(true);
             
             yield return new WaitForSeconds(dataAnimationDuration);
-            
-            _emoteCamera.gameObject.SetActive(false);
-            
-            _playerController.PopLock();
+
+            StopEmoting();
         }
 
         private void TryPlayEmote(string s)
@@ -110,6 +114,26 @@ namespace Gameplay.Controller.Emote
         private void PlayEmoteClientRpc(string s)
         {
             _animator.SetTrigger(s);
+        }
+
+        private void StopEmoting()
+        {
+            _isEmoting = false;
+            _emoteCamera.gameObject.SetActive(false);
+                    
+            TryPlayEmote("StopEmote");
+        }
+        
+        private void CancelEmote(Vector2 obj)
+        {
+            if (_isEmoting)
+            {
+                if (obj.magnitude > 0.1f)
+                {
+                    StopAllCoroutines();
+                    StopEmoting();
+                }
+            }
         }
     }
 }
