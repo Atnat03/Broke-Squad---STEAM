@@ -512,7 +512,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8820559294636122321}
   m_Layer: 7
-  m_Name: Gameplayer Positions
+  m_Name: Gameplay Positions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -532,7 +532,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1223830776044921750}
-  - {fileID: 6239929513650457466}
   - {fileID: 4606863278405769456}
   m_Father: {fileID: 7133925661517429810}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -701,9 +700,9 @@ RectTransform:
   m_Father: {fileID: 2603084985244388581}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -17, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &2544105862835606518
 CanvasRenderer:
@@ -1140,7 +1139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 861962280
+  GlobalObjectIdHash: 3743338691
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -2534,12 +2533,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4763456765550172174}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.122999966, z: -0.46999997}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.009634528, y: -0.32986566, z: -0.005778948, w: 0.9439611}
+  m_LocalPosition: {x: 0.20461829, y: 0.2479533, z: -0.2481834}
+  m_LocalScale: {x: 0.69930077, y: 0.69930065, z: 0.69930077}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8820559294636122321}
+  m_Father: {fileID: 2533758281072447848}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5057783042720090688
 GameObject:
@@ -2936,7 +2935,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 4766014780910734576}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99997413
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -11434,6 +11433,9 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 5495899079945676935, guid: c35743872fe6d1d43a7c06481d0e4c9d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6239929513650457466}
     - targetCorrespondingSourceObject: {fileID: 5913616588188150019, guid: c35743872fe6d1d43a7c06481d0e4c9d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 670072991193463569}
