@@ -28,8 +28,9 @@ MonoBehaviour:
     _requiredModule:
       rid: -2
   Weight: 1
+  OffsetRotationDrop: {x: 0, y: 0, z: 0}
   FirstActionList:
-  - rid: 7202345609054912656
+  - rid: 7832862977781924039
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -86,15 +87,13 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 0.5
         _canDamagePlayer: 1
-    - rid: 7202345609054912656
-      type: {class: HealOtherModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+    - rid: 7832862977781924039
+      type: {class: SelfHealModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: 7202345609054912657
-        _healAmount: 50
-        _stringName: 
-        _volume: 0.5
-    - rid: 7202345609054912657
+          rid: 7832862977781924040
+        _amont: 30
+    - rid: 7832862977781924040
       type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _numberOfUse: 3
