@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Gameplay.Other
 {
-    public class PauseSystemTest :  MonoBusListener
+    public class PlayerPauseSystem :  MonoBusListener
     {
         [SerializeField] private PlayerSetUpBridge _bridge;
         
