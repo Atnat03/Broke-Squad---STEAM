@@ -209,7 +209,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
   ShowTopMostFoldoutHeaderGroup: 1
-  Outline: {fileID: 7417369963822122304}
+  _tooltipConfig:
+    DefaultText: 
+    IsItem: 0
+    TooltipInHand: 
+    _requiresItemModule: 0
+    _tooltipWithItem: 
+    _requiredModule:
+      rid: -2
+  onInteractServer:
+    m_PersistentCalls:
+      m_Calls: []
   onInteractableOpen:
     m_PersistentCalls:
       m_Calls:
@@ -242,8 +252,32 @@ MonoBehaviour:
         m_CallState: 2
   RequiredLevers: []
   RequiredButtons: []
+  RequiredHeldButtons: []
+  RequiredDigicodes: []
   canBeInteracted: 1
   startLocked: 0
+  openSound: 
+  closeSound: 
+  faceAxis: 1
+  invertSide: 0
+  onOpenFront:
+    m_PersistentCalls:
+      m_Calls: []
+  onOpenBack:
+    m_PersistentCalls:
+      m_Calls: []
+  onCloseFront:
+    m_PersistentCalls:
+      m_Calls: []
+  onCloseBack:
+    m_PersistentCalls:
+      m_Calls: []
+  remoteId: 
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!114 &7417369963822122304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -293,7 +327,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.4953983, y: 0.057238407, z: -13.618451}
-  m_LocalScale: {x: 1.3, y: 0.8327507, z: 1.3}
+  m_LocalScale: {x: 1.1, y: 0.70463526, z: 1.1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4985800784479475695}
