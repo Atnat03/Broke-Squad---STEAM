@@ -21,13 +21,14 @@ MonoBehaviour:
   OffsetInHand: {x: 0, y: 0, z: 0}
   TooltipInHand:
     DefaultText: 
-    IsItem: 0
-    TooltipInHand: 
-    _requiresItemModule: 0
-    _tooltipWithItem: 
+    IsItem: 1
+    TooltipInHand: 'Left Click : Open Vent'
+    _requiresItemModule: 1
+    _tooltipWithItem: 'Left Click : Recharge'
     _requiredModule:
-      rid: -2
+      rid: 7493938523252981760
   Weight: 1
+  OffsetRotationDrop: {x: 0, y: 0, z: 0}
   FirstActionList:
   - rid: 7202345609054912659
   SecondActionList:
@@ -102,3 +103,12 @@ MonoBehaviour:
         _startPercentValue: 100
         _electricNeededToUse: 50
         _keyEventCantUse: CANT_USE_ELECTRIC
+    - rid: 7493938523252981760
+      type: {class: ChargeItemModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _percentGain: 10
+        _range: 2
+        _stringName: 
+        _volume: 0.5

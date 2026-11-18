@@ -21,15 +21,16 @@ MonoBehaviour:
   OffsetInHand: {x: 0, y: 0, z: 0}
   TooltipInHand:
     DefaultText: 
-    IsItem: 0
-    TooltipInHand: 
+    IsItem: 1
+    TooltipInHand: 'Left Click : Attack'
     _requiresItemModule: 0
     _tooltipWithItem: 
     _requiredModule:
       rid: -2
   Weight: 1
+  OffsetRotationDrop: {x: 0, y: 0, z: 0}
   FirstActionList:
-  - rid: 7202345609054912654
+  - rid: 7493938523252981761
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -86,19 +87,12 @@ MonoBehaviour:
         _weightFactor: 1
         _mass: 0.5
         _canDamagePlayer: 1
-    - rid: 7202345609054912654
-      type: {class: OpenDoorModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+    - rid: 7493938523252981761
+      type: {class: MeleeDamageModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: 7202345609054912655
-        _canOpenIndexRange: {x: 1, y: 1}
-        _canOpenAllDoors: 0
-        _stringNameGoodKey: 
-        _stringNameWringKey: 
-        _volume: 0.5
-    - rid: 7202345609054912655
-      type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
-      data:
-        _numberOfUse: 1
-        _destroyWhenEmpty: 0
-        _keyEventCantUse: CANT_USE_NUMBER
+          rid: -2
+        _range: 3
+        _damage: 10
+        _attackCooldown: 1
+        _offsetTimerTrigger: 0.5
