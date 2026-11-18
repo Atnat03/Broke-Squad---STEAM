@@ -103,6 +103,12 @@ namespace Gameplay.Controller
             }
             
         }
+
+        public void ToggleInfiniteStamina()
+        {
+            _playerController.Stamina.ToggleInfiniteStamina();
+        }
+        
         private void Invicibility(InputAction.CallbackContext context)
         {
             InvincibilityServerRpc();
@@ -127,6 +133,7 @@ namespace Gameplay.Controller
         private void Heal(InputAction.CallbackContext context)
         {
             HealServerRpc();
+            
         }
         [Rpc(SendTo.Server)]
         private void HealServerRpc()
