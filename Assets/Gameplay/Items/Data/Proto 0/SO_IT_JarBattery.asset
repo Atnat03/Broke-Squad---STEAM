@@ -14,10 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
   ID: 36
   ItemName: Jar
-  VisualPrefab: {fileID: 7162472321550446398, guid: b5140a9d6dfdd124098469e198c9b681, type: 3}
+  VisualPrefabLocal: {fileID: 7162472321550446398, guid: b5140a9d6dfdd124098469e198c9b681, type: 3}
+  VisualPrefabRemote: {fileID: 0}
   PickupPrefab: {fileID: 5317595364286155804, guid: 71358a40de23782489b548cb0727a1e5, type: 3}
   Icon: {fileID: 21300000, guid: 9900f86969a45934a8acfcc648268cbe, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
+  TooltipInHand:
+    DefaultText: 
+    IsItem: 0
+    TooltipInHand: 
+    _requiresItemModule: 0
+    _tooltipWithItem: 
+    _requiredModule:
+      rid: -2
+  Weight: 1
   FirstActionList:
   - rid: 7832862682398589470
   SecondActionList:
@@ -82,6 +92,7 @@ MonoBehaviour:
         _condition:
           rid: 7832862682398589473
         _keyEvent: HARD_TO_OPEN_EVENT_KEY
+        _keyEventNoStamina: CANT_USE_NO_STAMINA
         _fillPerClick: 5
         _maxFilling: 100
         _staminaCost: 10
@@ -93,3 +104,4 @@ MonoBehaviour:
       data:
         _numberOfUse: 1
         _destroyWhenEmpty: 0
+        _keyEventCantUse: CANT_USE_NUMBER

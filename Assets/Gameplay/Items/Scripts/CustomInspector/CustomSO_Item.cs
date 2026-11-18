@@ -10,7 +10,8 @@ namespace Gameplay.Items
     {
         private SerializedProperty _id;
         private SerializedProperty _itemName;
-        private SerializedProperty _visualPrefab;
+        private SerializedProperty _visualPrefabLocal;
+        private SerializedProperty _visualPrefabRemote;
         private SerializedProperty _pickUpPrefab;
         private SerializedProperty _icon;
         private SerializedProperty _offset;
@@ -31,7 +32,8 @@ namespace Gameplay.Items
         private void OnEnable()
         {
             _itemName = serializedObject.FindProperty(nameof(SO_Item.ItemName));
-            _visualPrefab = serializedObject.FindProperty(nameof(SO_Item.VisualPrefab));
+            _visualPrefabLocal = serializedObject.FindProperty(nameof(SO_Item.VisualPrefabLocal));
+            _visualPrefabRemote = serializedObject.FindProperty(nameof(SO_Item.VisualPrefabRemote));
             _pickUpPrefab = serializedObject.FindProperty(nameof(SO_Item.PickupPrefab));
             _icon = serializedObject.FindProperty(nameof(SO_Item.Icon));
             _offset = serializedObject.FindProperty(nameof(SO_Item.OffsetInHand));
@@ -62,7 +64,8 @@ namespace Gameplay.Items
             //Visuels
             BeginSection(_visualColor);
             EditorGUILayout.LabelField("Visual", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(_visualPrefab);
+            EditorGUILayout.PropertyField(_visualPrefabLocal);
+            EditorGUILayout.PropertyField(_visualPrefabRemote);
             EditorGUILayout.PropertyField(_pickUpPrefab);
             EditorGUILayout.PropertyField(_offset);
             EndSection();

@@ -280,6 +280,7 @@ namespace Gameplay.Items
             SO_Item data = _database.GetItemData(id);
 
             Transform parent = IsOwner ? _localHand : _remoteHand;
+            GameObject prefab = IsOwner ? data.VisualPrefabLocal : data.VisualPrefabRemote == null ? data.VisualPrefabLocal : data.VisualPrefabRemote;
 
             var go = new GameObject(data.ItemName);
             go.transform.SetParent(parent, false);
@@ -288,7 +289,7 @@ namespace Gameplay.Items
             go.transform.localScale = Vector3.one;
 
             ItemCore core = go.AddComponent<ItemCore>();
-            GameObject visual = Instantiate(data.VisualPrefab, core.transform);
+            GameObject visual = Instantiate(prefab, core.transform);
             visual.transform.localPosition = data.OffsetInHand;
 
             if (IsOwner)
