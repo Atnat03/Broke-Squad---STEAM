@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Bus;
 using Gameplay.Controller;
 using MyPrint;
@@ -17,7 +18,7 @@ namespace Gameplay.LD
         [SerializeField] private Transform _downPosition;
         [SerializeField] private Transform _upPosition;
         [SerializeField] private AnimationCurve _movingCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1));
-        [SerializeField] private float _movingSpeed = 2;
+        [SerializeField] private float _duration = 4;
         private Coroutine _movingCoroutine;
         
         [SerializeField] private bool _up;
@@ -44,25 +45,24 @@ namespace Gameplay.LD
 
         private IEnumerator MovingRoutine()
         {
-            Vector3 startPos = _up ? _downPosition.position : _upPosition.position;
-            Vector3 endPos = _up ? _upPosition.position : _downPosition.position;
-
-            float duration = Vector3.Distance(startPos, endPos) / _movingSpeed;
+            Transform startT = _up ? _downPosition : _upPosition;
+            Transform endT = _up ? _upPosition : _downPosition;
+            
             float e = 0;
 
-            while (e < duration)
+            while (e < _duration)
             {
                 e += Time.deltaTime;
 
-                float t = Mathf.Clamp01(e / duration);
+                float t = Mathf.Clamp01(e / _duration);
                 float curveValue = _movingCurve.Evaluate(t);
 
-                transform.position = Vector3.Lerp(startPos, endPos, curveValue);
-
+                transform.position = Vector3.Lerp(startT.position, endT.position, curveValue);
+                
                 yield return null;
             }
 
-            transform.position = endPos;
+            transform.position = endT.position;
 
             _movingCoroutine = null;
         }
