@@ -19,6 +19,8 @@ namespace Gameplay.Items
         public SO_ItemDataBase DataBase => _database;
         public PlayerController Controller => _playerController;
         public int ItemCount => _itemCount;
+
+        public ItemInstance[] ItemsInInventory => _slots;
         
         [Header("References")]
         [SerializeField] private PlayerController _playerController;
