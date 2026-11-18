@@ -10,6 +10,7 @@ namespace Gameplay.UI
     public class DownedUI : MonoBusListener
     {
         [SerializeField] private GameObject downedUI;
+        [SerializeField] private PlayerSetUpBridge bridge;
         public void Awake()
         {
             ListenToEvent<DownedChanged_EVENT>(ToggleDownedUI);
@@ -18,6 +19,7 @@ namespace Gameplay.UI
 
         public void ToggleDownedUI(DownedChanged_EVENT e)
         {
+            if (e.PlayerId != bridge.PlayerHealth.OwnerClientId) return;
             downedUI.SetActive(e.Downed);
         }
     }
