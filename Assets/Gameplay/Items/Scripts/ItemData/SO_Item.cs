@@ -8,12 +8,14 @@ namespace Gameplay.Items
     {
         [HideInInspector] public int ID;
         [SerializeField] public string ItemName;
-        [SerializeField] public GameObject VisualPrefab;
+        [SerializeField] public GameObject VisualPrefabLocal;
+        [SerializeField] public GameObject VisualPrefabRemote;
         [SerializeField] public ItemPickup PickupPrefab;
         [SerializeField] public Sprite Icon;
         [SerializeField] public Vector3 OffsetInHand = new Vector3(0, 0, 0);
         [SerializeField] public TooltipConfig TooltipInHand;
         [SerializeField] public float Weight = 1;
+        [SerializeField] public Vector3 OffsetRotationDrop;
         [SerializeReference] public List<IFirstAction> FirstActionList;
         [SerializeReference] public List<ISecondAction> SecondActionList;
         [SerializeReference] public List<IPassif> PassifList;

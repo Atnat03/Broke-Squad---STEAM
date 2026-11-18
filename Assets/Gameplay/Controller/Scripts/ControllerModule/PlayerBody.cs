@@ -65,7 +65,7 @@ namespace Gameplay.Controller
         
         public void SetTied(bool tied)
         {
-            if (tiedVisual != null) tiedVisual.SetActive(tied);
+            //if (tiedVisual != null) tiedVisual.SetActive(tied);
         }
 
         public void Tick(float dt)
@@ -73,7 +73,8 @@ namespace Gameplay.Controller
             _capsule.height = Mathf.MoveTowards(_capsule.height, _targetHeight, _profile.crouchTransitionSpeed * dt);
             Recenter();
 
-            if (visual == null) return;
+            return; //The bottom part was used to stretch the player visual
+            if (visual == null ) return;
             float ratio = _capsule.height / _initialHeight;
             visual.localScale = new Vector3(_visualBaseScale.x, _visualBaseScale.y * ratio, _visualBaseScale.z);
             Vector3 pos = visual.localPosition;

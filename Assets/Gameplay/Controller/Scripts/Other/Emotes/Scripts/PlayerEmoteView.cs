@@ -10,8 +10,7 @@ namespace Gameplay.Controller.Emote
     public struct EmoteData
     {
         public string AnimTriggerName;
-        public float AnimationDuration;
-        public Sprite Sprite;
+        public EmoteElement AnimationDuration;
     }
     
     public class PlayerEmoteView : MonoBusListener
@@ -20,11 +19,6 @@ namespace Gameplay.Controller.Emote
 
         [Header("UI")] 
         [SerializeField] private GameObject _uiWheelEmote;
-        
-        [Header("UI Elements")]
-        [SerializeField] private EmoteData[] _emotesDataList;
-        [SerializeField] private EmoteElement _emoteElementPrefab;
-        [SerializeField] private Transform _elementTransform;
         
         private void OnEnable()
         {
@@ -38,14 +32,6 @@ namespace Gameplay.Controller.Emote
 
         private void Start()
         {
-            int maxCount = _emotesDataList.Length;
-            
-            for (int i = 0; i < maxCount; i++)
-            {
-                EmoteElement e = Instantiate(_emoteElementPrefab, _elementTransform);
-                e.SetUpElement(_emotesDataList[i], _uiWheelEmote);
-            }
-            
             _uiWheelEmote.SetActive(false);
         }
     }
