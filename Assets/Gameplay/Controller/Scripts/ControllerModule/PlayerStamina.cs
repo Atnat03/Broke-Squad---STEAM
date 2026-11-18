@@ -17,6 +17,8 @@ namespace Gameplay.Controller
         private float _lastSent = -1f;
         private bool _drainedThisTick;
         
+        private bool _infiniteStamina;
+        
         private float EffectiveRegen => _overrideStaminaRegen >= 0f ? _overrideStaminaRegen : _profile.regenPerSecond;
         private float EffectiveDelay => _overrideStaminaDelay >= 0f ? _overrideStaminaDelay : _profile.regenDelay;
 
@@ -35,10 +37,10 @@ namespace Gameplay.Controller
         
         public void Drain(float dt)
         {
+            if(_infiniteStamina) return;
             Current = Mathf.Max(0f, Current - _profile.drainPerSecond * dt);
             _regenTimer = EffectiveDelay;
             _drainedThisTick = true;
-            //if(Current <= 0f) Exhausted = true;
         }
 
         public void Tick(float dt)
@@ -76,6 +78,16 @@ namespace Gameplay.Controller
             _overrideStaminaDelay = newDelay;
             
             if (newDelay >= 0f) _regenTimer = Mathf.Min(_regenTimer, newDelay);
+        }
+
+        public void ToggleInfiniteStamina()
+        {
+            _infiniteStamina = !_infiniteStamina;
+            if (_infiniteStamina)
+            {
+                Current = Max;
+                _onChangedStamina.Invoke(Current, Max);
+            }
         }
     }
 }
