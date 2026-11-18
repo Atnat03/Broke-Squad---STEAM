@@ -35,9 +35,10 @@ namespace Gameplay.Controller
             if (Vector3.Angle(lowHit.normal, Vector3.up) <= _ground.MaxSlopeAngle) return;
 
             Vector3 highOrigin = feet + Vector3.up * (maxH + 0.05f);
-            if (Physics.Raycast(highOrigin, dir, reach + 0.1f, mask, QueryTriggerInteraction.Ignore)) return;
+            float highDist = lowHit.distance + 0.05f;
+            if (Physics.Raycast(highOrigin, dir, highDist, mask, QueryTriggerInteraction.Ignore)) return;
 
-            Vector3 downOrigin = lowHit.point + dir * 0.05f;
+            Vector3 downOrigin = lowHit.point + dir * 0.1f;
             downOrigin.y = feet.y + maxH + 0.05f;
             if (!Physics.Raycast(downOrigin, Vector3.down, out RaycastHit topHit, maxH + 0.05f, mask, QueryTriggerInteraction.Ignore)) return;
             if (Vector3.Angle(topHit.normal, Vector3.up) > _ground.MaxSlopeAngle) return;
