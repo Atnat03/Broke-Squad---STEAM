@@ -39,19 +39,25 @@ namespace Gameplay.LD
 
                 for (int i = 0; i < _bindings.Count; i++)
                 {
-                    int index = i;
-                    var trigger = _bindings[i].Trigger;
-                    if (trigger == null)
-                    {
-                        Debug.LogWarning($"[LD] {name} : binding {i} sans trigger", this);
-                        continue;
-                    }
-                    trigger.Triggered += activation => OnTriggered(index, activation);
+                    Subscribe(_bindings[i].Trigger, i);
+                    if (_bindings[i].AdditionnalTriggers == null) continue;
+                    foreach (var addTrigger in _bindings[i].AdditionnalTriggers)
+                        Subscribe(addTrigger, i);
                 }
             }
 
             _stateFlags.OnValueChanged += OnStateFlagsChanged;
         }
+
+        private void Subscribe(LDTriggerModule trigger, int bindingIndex)
+        {
+			if (trigger == null)
+			{
+				Debug.LogWarning($"[LD] {name} : binding {bindingIndex} sans trigger", this);
+				return;
+			}
+			trigger.Triggered += activation => OnTriggered(bindingIndex, activation);
+		}
 
         public override void OnNetworkDespawn()
         {

@@ -4,6 +4,7 @@ using Bus;
 using Gameplay.Controller;
 using MyPrint;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -350,9 +351,32 @@ namespace Gameplay.Items
             _isPreviewDrop = true;
             _dropPos = transform.position + transform.forward * (_baseDropPosition.z) + Vector3.up * (_baseDropPosition.y);
             
-            _previewVisual = Instantiate(item.Data.VisualPrefab);
+            _previewVisual = Instantiate(item.Data.PickupPrefab.gameObject);
+
+            Destroy(_previewVisual.GetComponent<ItemPickup>());
+            
+            foreach (var comp in _previewVisual.GetComponents<Component>())
+            {
+                if (!(comp is Transform))
+                {
+                    Destroy(comp);
+                }
+            }
+
+            foreach (var child in _previewVisual.GetComponentsInChildren<Transform>())
+            {
+                foreach (var comp in child.GetComponents<Component>())
+                {
+                    if (!(comp is Transform) && !(comp is MeshFilter) && !(comp is MeshRenderer))
+                    {
+                        Destroy(comp);
+                    }        
+                }
+            }
+           
+
             foreach (var r in _previewVisual.GetComponentsInChildren<Renderer>())
-                r.sharedMaterial = _previewMaterial;
+                r.material = _previewMaterial;
 
             _dropRot = Quaternion.Euler(item.Data.OffsetRotationDrop);
             

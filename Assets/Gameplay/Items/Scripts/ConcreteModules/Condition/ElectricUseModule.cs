@@ -15,11 +15,27 @@ namespace Gameplay.Items
         
         [SerializeField] private float _startPercentValue = 100;
         [SerializeField, Tooltip("En %")] private float _electricNeededToUse = 10;
+        [SerializeField] private string _keyEventCantUse = "CANT_USE_ELECTRIC";
+        
         private float _maxPercentValue = 100;
         private float _currentPercentValue;
         private bool _isInHand;
         protected override void SetModule() => _currentPercentValue = _startPercentValue;
-        public bool CheckCondition() => _currentPercentValue-_electricNeededToUse >= 0;
+
+        public bool CheckCondition()
+        {
+            bool r = _currentPercentValue - _electricNeededToUse >= 0;
+            
+            if (!r)
+            {
+                Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
+                {
+                    KeyEvent = _keyEventCantUse,
+                });
+            }
+
+            return r;
+        }
 
         public void UseItem()
         {

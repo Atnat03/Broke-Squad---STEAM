@@ -52,7 +52,11 @@ namespace Gameplay.Items
         private void UpdateExplosion(OnModuleDoAction_EVENT data)
         {
             if (data.KeyEvent != _eventKey) return;
-            if (data.HostId != GetHostId()) return;
+            if (data.HostId != GetHostId())
+            {
+                if(data.HostId != ulong.MinValue) 
+                    return;
+            }
 
             if (data.ValueB)
             {

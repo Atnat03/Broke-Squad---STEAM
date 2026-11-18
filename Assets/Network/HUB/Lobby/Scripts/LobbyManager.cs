@@ -331,6 +331,7 @@ namespace Network.HUB
                 Lobby lobby = await LobbyService.Instance.JoinLobbyByIdAsync(id, options);
 
                 int colorId = GetFirstFreeColor(lobby.Players);
+                PlayerLocalData.instance.PlayerColor = colorId;
 
                 _joinedLobby = await LobbyService.Instance.UpdatePlayerAsync(lobby.Id, AuthenticationService.Instance.PlayerId, new UpdatePlayerOptions
                     {

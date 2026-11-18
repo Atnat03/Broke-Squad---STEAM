@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7307331719782619346}
   - component: {fileID: 6819004643698031176}
   - component: {fileID: 7925550800057187772}
+  - component: {fileID: 8777184024276563624}
   m_Layer: 0
   m_Name: P_IT_VISUAL_BaseballBat
   m_TagString: Untagged
@@ -27,13 +28,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3369091547028494645}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.061587684, y: 0.010074287, z: 0.16111618, w: 0.98496044}
+  m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 1, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -7.156, y: 0, z: 18.58}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
 --- !u!33 &7307331719782619346
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -113,3 +114,16 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8777184024276563624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3369091547028494645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35b52acee9fe4a5bba491979d69c35c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.AnimationItemView
+  animator: {fileID: 7925550800057187772}
