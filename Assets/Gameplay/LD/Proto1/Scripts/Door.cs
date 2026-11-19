@@ -35,13 +35,13 @@ public class Door : OnlineInteractable
     public UnityEvent onCloseBack;
     
     [Header("Remote")]
-    [SerializeField] string remoteId;           
+    [SerializeField] int remoteId = -1;           
     private float remoteActiveDuration = 0;
     readonly HashSet<ulong> _remoteHolders = new();
     Coroutine _remoteRoutine;
     bool _remoteTimed;
 
-    bool UsesRemote => !string.IsNullOrEmpty(remoteId);
+    bool UsesRemote => remoteId != -1;
     bool RemoteActive => _remoteTimed || _remoteHolders.Count > 0;
     
     
