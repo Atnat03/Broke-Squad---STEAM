@@ -50,7 +50,7 @@ namespace Gameplay.IA
             
             if (!target)
             {
-                if (PlayerHealth == null || PlayerHealth.IsDowned)
+                if (!PlayerHealth || PlayerHealth.IsDowned)
                 {
                     Brain.ChangeState<PatrolState_GUARD, PatrolParam>(new PatrolParam { IsAlerted = false });
                     return;
@@ -59,6 +59,12 @@ namespace Gameplay.IA
                 PlayerHealth = null;
 
                 Brain.Motor.SetTarget(Brain.LineSight.LastSeenPosition);
+                return;
+            }
+
+            if (PlayerHealth.IsDowned)
+            {
+                Brain.ChangeState<PatrolState_GUARD, PatrolParam>(new PatrolParam { IsAlerted = false });
                 return;
             }
             

@@ -31,10 +31,10 @@ public abstract class OnlineInteractable : NetworkBusListener, IInteractable
         }
     }
 
-    public void SetOutline(bool state)
+    public void SetOutline(StartOutliningData data)
     {
         if(outline)
-            outline.enabled = state;
+            outline.enabled = data.State;
     }
     
     public void Interact(ulong clientId)
