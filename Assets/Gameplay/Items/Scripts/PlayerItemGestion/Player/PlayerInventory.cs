@@ -276,8 +276,6 @@ namespace Gameplay.Items
         
         private void UpdateHandWhenPickup(int id)
         {
-            OnPickupItem?.Invoke();
-            
             SO_Item data = _database.GetItemData(id);
 
             Transform parent = IsOwner ? _localHand : _remoteHand;
@@ -315,6 +313,8 @@ namespace Gameplay.Items
             {
                 passif.OnStartHolding();
             }
+
+            OnPickupItem?.Invoke();
             
             SetCurrentItemInHand(core);
         }
@@ -538,22 +538,40 @@ namespace Gameplay.Items
         
         public void DestroyItemInHand()
         {
-            if (!IsServer)
-            {
-                DestroyItemInHandRpc();
-                return;
-            }
-
             ItemInstance item = GetCurrentItemInHand();
-            if (item == null) return;
+            
+            if (item == null)
+                return;
             
             item.Cleanup();
 
             ClearCurrentSlot();
         }
+        
+        public void RemoveItemFromInventory(ItemInstance itemToRemove)
+        {
+            if (itemToRemove == null)
+                return;
 
-        [Rpc(SendTo.Server)]
-        private void DestroyItemInHandRpc() => DestroyItemInHand();
+            for (int i = 0; i < _slots.Length; i++)
+            {
+                if (_slots[i] != itemToRemove)
+                    continue;
+
+                SetSlot(i, null);
+                itemToRemove.Cleanup();
+
+                if (i == _selectedSlot.Value)
+                    RefreshHeldItem();
+
+                return;
+            }
+        }
+
+        public bool IsItemInHand(ItemInstance itemToCheck)
+        {
+            return GetCurrentItemInHand() == itemToCheck;
+        }
         
         private void NotifyNotInHand(ItemInstance item)
         {
@@ -601,6 +619,21 @@ namespace Gameplay.Items
             }
             
             return false;
+        }
+
+        public int RealNumberItemInInventory()
+        {
+            int i = 0;
+
+            foreach (var item in _slots)
+            {
+                if (item != null)
+                {
+                    i++;
+                }
+            }
+            
+            return i;
         }
     }
 }

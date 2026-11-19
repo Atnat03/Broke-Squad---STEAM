@@ -271,6 +271,16 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""ActionInInventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""0663a703-1901-49d0-85cd-4278a8e656e3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -559,6 +569,17 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""action"": ""EmoteWheel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""535e6ea9-f0bb-4a6c-a086-09fb8f3a7629"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ActionInInventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -698,6 +719,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
         m_Gameplay_Pause = m_Gameplay.FindAction("Pause", throwIfNotFound: true);
         m_Gameplay_ShowOtherPlayer = m_Gameplay.FindAction("ShowOtherPlayer", throwIfNotFound: true);
         m_Gameplay_EmoteWheel = m_Gameplay.FindAction("EmoteWheel", throwIfNotFound: true);
+        m_Gameplay_ActionInInventory = m_Gameplay.FindAction("ActionInInventory", throwIfNotFound: true);
         // Cheats
         m_Cheats = asset.FindActionMap("Cheats", throwIfNotFound: true);
         m_Cheats_Invicibility = m_Cheats.FindAction("Invicibility", throwIfNotFound: true);
@@ -804,6 +826,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Pause;
     private readonly InputAction m_Gameplay_ShowOtherPlayer;
     private readonly InputAction m_Gameplay_EmoteWheel;
+    private readonly InputAction m_Gameplay_ActionInInventory;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -888,6 +911,10 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @EmoteWheel => m_Wrapper.m_Gameplay_EmoteWheel;
         /// <summary>
+        /// Provides access to the underlying input action "Gameplay/ActionInInventory".
+        /// </summary>
+        public InputAction @ActionInInventory => m_Wrapper.m_Gameplay_ActionInInventory;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
@@ -967,6 +994,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @EmoteWheel.started += instance.OnEmoteWheel;
             @EmoteWheel.performed += instance.OnEmoteWheel;
             @EmoteWheel.canceled += instance.OnEmoteWheel;
+            @ActionInInventory.started += instance.OnActionInInventory;
+            @ActionInInventory.performed += instance.OnActionInInventory;
+            @ActionInInventory.canceled += instance.OnActionInInventory;
         }
 
         /// <summary>
@@ -1032,6 +1062,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @EmoteWheel.started -= instance.OnEmoteWheel;
             @EmoteWheel.performed -= instance.OnEmoteWheel;
             @EmoteWheel.canceled -= instance.OnEmoteWheel;
+            @ActionInInventory.started -= instance.OnActionInInventory;
+            @ActionInInventory.performed -= instance.OnActionInInventory;
+            @ActionInInventory.canceled -= instance.OnActionInInventory;
         }
 
         /// <summary>
@@ -1338,6 +1371,13 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnEmoteWheel(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ActionInInventory" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnActionInInventory(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Cheats" which allows adding and removing callbacks.

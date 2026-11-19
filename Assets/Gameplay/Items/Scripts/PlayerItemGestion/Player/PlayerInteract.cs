@@ -97,8 +97,6 @@
                     {
                         string message = _currentHoverInteractable.GetTooltip(modules);
                         
-                        ABPrint.Print("Message : " + message, ABColor.White);
-
                         OnTooltipChange?.Invoke(!string.IsNullOrEmpty(message), message);
                     }
                 }

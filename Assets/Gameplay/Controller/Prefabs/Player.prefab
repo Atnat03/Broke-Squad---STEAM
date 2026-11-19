@@ -1277,7 +1277,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3743338691
+  GlobalObjectIdHash: 861962280
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -1763,6 +1763,7 @@ GameObject:
   - component: {fileID: 7886903856503900242}
   - component: {fileID: 2488830388692849024}
   - component: {fileID: 7520677197054471513}
+  - component: {fileID: 72593844920518451}
   m_Layer: 7
   m_Name: Inventory
   m_TagString: Untagged
@@ -1841,6 +1842,22 @@ MonoBehaviour:
   _playerInputs: {fileID: 88644022890520242}
   _camera: {fileID: 8333721531469245462}
   _rangeDrop: 2
+--- !u!114 &72593844920518451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3123897319235820941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a02b93c3d8f4a6ca42a837b4e0825fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.InventoryActionCombo
+  ShowTopMostFoldoutHeaderGroup: 1
+  _playerInventory: {fileID: 2488830388692849024}
+  _playerInput: {fileID: 88644022890520242}
+  _dataBaseAction: {fileID: 11400000, guid: 7e25b1ab89e0d5742a58399846b34b30, type: 2}
 --- !u!1 &3193067219817813394
 GameObject:
   m_ObjectHideFlags: 0
@@ -5535,7 +5552,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 2
+  far clip plane: 5
   field of view: 60
   orthographic: 0
   orthographic size: 5
