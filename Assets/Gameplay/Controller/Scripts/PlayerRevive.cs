@@ -42,7 +42,8 @@ namespace Gameplay.Controller
         {
             _health = GetComponent<PlayerHealth>();
             All.Add(this);
-
+            _reviveProgress.OnValueChanged += OnProgressChanged;
+            
             if (!IsOwner) return;
 
             _playerInput = TryGetComponent(out PlayerInput pi) ? pi : gameObject.AddComponent<PlayerInput>();
@@ -52,6 +53,7 @@ namespace Gameplay.Controller
 
         public override void OnNetworkDespawn()
         {
+            _reviveProgress.OnValueChanged -= OnProgressChanged;
             All.Remove(this);
 
             if (_playerInput != null)
@@ -73,6 +75,16 @@ namespace Gameplay.Controller
             if (IsOwner) UpdateReviver();
             if (IsServer) UpdateServerRevive();
         }
+        private void OnProgressChanged(float previous, float current)
+        {
+            InvokeEvent(new ReviveChanged_EVENT
+            {
+                PlayerId = OwnerClientId,
+                Reviving = current > previous,   
+                Percent = current
+            });
+        }
+        
 
         #region Reviver (owner client)
 
@@ -82,7 +94,6 @@ namespace Gameplay.Controller
             if (_interactHeld && !_health.IsDowned)
                 best = FindClosestDownedAlly();
             
-            if (_interactHeld) Debug.Log($"[Revive] held, target={(best ? best.name : "none")}");
             if (best != _currentTarget)
             {
                 _currentTarget = best;

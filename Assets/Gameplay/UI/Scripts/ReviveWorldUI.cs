@@ -34,14 +34,12 @@ namespace Gameplay.Controller
                 return;
             }
             
-            _displayed = Mathf.Lerp(_displayed, revive.ReviveProgress,
-                1f - Mathf.Exp(-smoothSpeed * Time.deltaTime));
+            _displayed = Mathf.Lerp(_displayed, revive.ReviveProgress, 1f - Mathf.Exp(-smoothSpeed * Time.deltaTime));
             fillImage.fillAmount = _displayed;
 
             if (_cam == null) _cam = Camera.main;
             root.transform.position = revive.transform.position + worldOffset;
-            if (_cam != null)
-                root.transform.rotation = Quaternion.LookRotation(root.transform.position - _cam.transform.position);
+            if (_cam != null) root.transform.rotation = Quaternion.LookRotation(root.transform.position - _cam.transform.position);
         }
     }
 }
