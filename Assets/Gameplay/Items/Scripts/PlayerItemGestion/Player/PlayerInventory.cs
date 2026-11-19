@@ -592,5 +592,15 @@ namespace Gameplay.Items
                 UpdatePreviewDrop();
             }
         }
+
+        public bool HasThisItemInInventory(SO_Item item)
+        {
+            foreach (int id in _slotIds)
+            {
+                if(id == item.ID) return true;
+            }
+            
+            return false;
+        }
     }
 }

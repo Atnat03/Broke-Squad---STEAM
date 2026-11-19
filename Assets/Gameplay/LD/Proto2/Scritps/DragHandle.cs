@@ -59,9 +59,9 @@ namespace Gameplay.Items
             return "Hold to drag";
         }
 
-        public void SetOutline(bool state)
+        public void SetOutline(StartOutliningData data)
         {
-            if (_outline != null) _outline.enabled = state;
+            if (_outline != null) _outline.enabled = data.State;
         }
 
         public void Interact(ulong clientId) { }

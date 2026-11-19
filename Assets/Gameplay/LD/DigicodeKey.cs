@@ -22,12 +22,15 @@ namespace Gameplay.LD
 			var element = GetComponentInParent<LDElement>();
 			if (element != null) gameObject.layer = element.gameObject.layer;
 			GetComponent<Collider>().isTrigger = false;
-			SetOutline(false);
+			SetOutline(new StartOutliningData
+			{
+				State = false
+			});
 		}
 
-		public void SetOutline(bool state)
+		public void SetOutline(StartOutliningData data)
 		{
-			if (_outline != null) _outline.enabled = state;
+			if (_outline != null) _outline.enabled = data.State;
 		}
 
 		public void Interact(ulong clientId)
