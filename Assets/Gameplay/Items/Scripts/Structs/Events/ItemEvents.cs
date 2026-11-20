@@ -1,4 +1,5 @@
-﻿using Unity.Collections;
+﻿using System;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -27,6 +28,7 @@ namespace Gameplay.Items
         public Quaternion Rotation;
         public ulong HostId;
         public ulong InstanceId;
+        public byte[] BytesData;
         
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
@@ -42,6 +44,11 @@ namespace Gameplay.Items
             serializer.SerializeValue(ref Rotation);
             serializer.SerializeValue(ref HostId);
             serializer.SerializeValue(ref InstanceId);
+                        
+            if (serializer.IsWriter && BytesData == null)
+                BytesData = Array.Empty<byte>();
+            
+            serializer.SerializeValue(ref BytesData);
         }
 
         public NetworkObject GetTarget()

@@ -11,6 +11,8 @@ namespace Gameplay.Items
     [RequireComponent(typeof(PlayerInventoryReplication))]
     public class PlayerInventory : NetworkBusListener
     {
+        public Camera PhotoCamera;
+        
         public SO_ItemDataBase DataBase => _database;
         public PlayerController Controller => _playerController;
         public int ItemCount => _itemCount;
