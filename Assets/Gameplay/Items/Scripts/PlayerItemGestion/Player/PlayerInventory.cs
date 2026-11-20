@@ -65,7 +65,7 @@ namespace Gameplay.Items
         public Action OnDropItem;
         public Action<int, int> OnUpdateSlots;
         public Action<bool> OnSlotSelectedChanged;
-        public Action<bool, string> OnTooltipChange;
+        public Action<bool, Tooltip> OnTooltipChange;
         public Action<bool, ActionInInventory_SO> OnCanComboUpdate;
         
         public Action OnSlotsChanged;
@@ -461,7 +461,7 @@ namespace Gameplay.Items
             if (IsOwner)
             {
                 _currentItem.UnsubscribeFromInput(_playerInput);
-                OnTooltipChange?.Invoke(false, null);
+                OnTooltipChange?.Invoke(false, new Tooltip());
             }
 
             if (!IsServer)

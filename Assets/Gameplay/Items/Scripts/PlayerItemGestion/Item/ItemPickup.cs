@@ -233,19 +233,25 @@ namespace Gameplay.Items
         [Rpc(SendTo.Server)]
         void CreateSuspiciousSoundRpc(ulong clientId, float force) => CreateSuspiciousSound(clientId, force);
         
-        public string GetTooltip(ItemModule[] playerModules)
+        public Tooltip GetTooltip(ItemModule[] playerModules)
         {
-            string message = string.Empty;
+            Tooltip tooltip = new Tooltip
+            {
+                Message = string.Empty,
+                Icon = Instance.Data.TooltipInHand.DefaultTooltip.Icon
+            };
             
             if(playerModules != null)
-                message = Instance.Data.TooltipInHand.GetTooltip(playerModules);
-            
-            if (message.Equals(string.Empty))
             {
-                message = "E to pick " + Instance.Data.ItemName;
+                tooltip = Instance.Data.TooltipInHand.GetTooltip(playerModules);
             }
             
-            return message;
+            if (tooltip.Message.Equals(string.Empty))
+            {
+                tooltip.Message = "E to pick " + Instance.Data.ItemName;
+            }
+            
+            return tooltip;
         }
     }
 }
