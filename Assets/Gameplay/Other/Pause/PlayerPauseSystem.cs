@@ -15,7 +15,7 @@ namespace Gameplay.Other
         
         [Header("UI")]
         [SerializeField] private GameObject _uiPause;
-
+        
         private bool _isPause;
         
         public void Start()
@@ -36,12 +36,6 @@ namespace Gameplay.Other
             Cursor.visible = _isPause;
 
             _bridge.PlayerController.SetInputEnabled(!_isPause);
-        }
-
-        public void ToggleFpsCounter(Toggle toggle)
-        {
-            Debug.Log("evt");
-            InvokeEvent(new FPSCounterChangeVisual_EVENT{show = toggle.isOn});    
         }
     }
 }

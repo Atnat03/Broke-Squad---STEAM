@@ -13,56 +13,103 @@ namespace Gameplay.Items
         [SerializeField] private PlayerInventory _playerInventory;
         [SerializeField] private PlayerInput _playerInput;
         [SerializeField] private ActionInInventoryDataBase_SO _dataBaseAction;
-        ActionInInventory_SO _currentAIV;
-        
+
+        private ActionInInventory_SO _currentAIV;
+
         public override void OnNetworkSpawn()
         {
-            _playerInventory.OnUpdateSlots += CheckIfCanCombo;
-
+            _playerInventory.OnSlotsChanged += CheckIfCanCombo;
             _playerInput.OnActionInInventory += DoActionInInventory;
         }
 
-        private void DoActionInInventory()
+        public override void OnNetworkDespawn()
         {
-            if (!IsServer)
-            {
-                DoAIVServerRpc();
-                return;
-            }
-            
-            if (_playerInventory.RealNumberItemInInventory() < 2) return;
-            if (_currentAIV != null)
-            {
-                ItemInstance itemA = _playerInventory.ItemsInInventory[0];
-                ItemInstance itemB = _playerInventory.ItemsInInventory[1];
-                _currentAIV.DoTheAction(itemA, itemB);
-            }
-        }
-        
-        [Rpc(SendTo.Server)]
-        private void DoAIVServerRpc() => DoActionInInventory();
+            _playerInventory.OnSlotsChanged -= CheckIfCanCombo;
+            _playerInput.OnActionInInventory -= DoActionInInventory;
 
-        //Parameters do nothing
-        private void CheckIfCanCombo(int a, int b)
+            base.OnNetworkDespawn();
+        }
+
+        private void CheckIfCanCombo()
+        {
+            if (!IsOwner)
+                return;
+
+            CheckComboServerRpc();
+        }
+
+        [Rpc(SendTo.Server)]
+        private void CheckComboServerRpc()
         {
             if (_playerInventory.RealNumberItemInInventory() < 2)
             {
-                _playerInventory.OnCanComboUpdate?.Invoke(false, null);
+                SendComboResultToOwnerRpc(-1);
                 return;
             }
-            
-            _currentAIV = null;
-            
+
+            ActionInInventory_SO actionFound = null;
+
             foreach (ActionInInventory_SO action in _dataBaseAction.ActionList)
             {
                 if (action.HasAllOfTheItem(_playerInventory.ItemsInInventory))
                 {
-                    _currentAIV = action;
+                    actionFound = action;
                     break;
                 }
             }
-            
-            _playerInventory.OnCanComboUpdate?.Invoke(_currentAIV, _currentAIV);
+
+            int actionIndex = actionFound ? _dataBaseAction.ActionList.IndexOf(actionFound) : -1;
+
+            SendComboResultToOwnerRpc(actionIndex);
+        }
+
+        [Rpc(SendTo.Owner)]
+        private void SendComboResultToOwnerRpc(int actionIndex)
+        {
+            if (actionIndex < 0 || actionIndex >= _dataBaseAction.ActionList.Count)
+            {
+                _currentAIV = null;
+                _playerInventory.OnCanComboUpdate?.Invoke(false, null);
+                return;
+            }
+
+            _currentAIV = _dataBaseAction.ActionList[actionIndex];
+
+            _playerInventory.OnCanComboUpdate?.Invoke(true, _currentAIV);
+        }
+
+        private void DoActionInInventory()
+        {
+            if (!IsOwner)
+                return;
+
+            DoActionServerRpc();
+        }
+
+        [Rpc(SendTo.Server)]
+        private void DoActionServerRpc()
+        {
+            if (_playerInventory.RealNumberItemInInventory() < 2)
+                return;
+
+            ActionInInventory_SO action = null;
+
+            foreach (ActionInInventory_SO a in _dataBaseAction.ActionList)
+            {
+                if (a.HasAllOfTheItem(_playerInventory.ItemsInInventory))
+                {
+                    action = a;
+                    break;
+                }
+            }
+
+            if (action == null)
+                return;
+
+            ItemInstance itemA = _playerInventory.ItemsInInventory[0];
+            ItemInstance itemB = _playerInventory.ItemsInInventory[1];
+
+            action.DoTheAction(itemA, itemB);
         }
     }
 }

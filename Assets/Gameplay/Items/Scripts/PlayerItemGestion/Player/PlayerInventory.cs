@@ -626,9 +626,9 @@ namespace Gameplay.Items
         {
             int i = 0;
 
-            foreach (var item in _slots)
+            foreach (var id in _slotIds)
             {
-                if (item != null)
+                if (id != -1)
                 {
                     i++;
                 }
