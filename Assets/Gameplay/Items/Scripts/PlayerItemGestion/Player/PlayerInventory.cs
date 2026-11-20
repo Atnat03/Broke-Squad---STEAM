@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Numerics;
 using Bus;
 using Gameplay.Controller;
-using MyPrint;
 using Unity.Netcode;
-using Unity.Netcode.Components;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
@@ -19,6 +14,8 @@ namespace Gameplay.Items
         public SO_ItemDataBase DataBase => _database;
         public PlayerController Controller => _playerController;
         public int ItemCount => _itemCount;
+
+        public ItemInstance[] ItemsInInventory => _slots;
         
         [Header("References")]
         [SerializeField] private PlayerController _playerController;
@@ -68,7 +65,8 @@ namespace Gameplay.Items
         public Action OnDropItem;
         public Action<int, int> OnUpdateSlots;
         public Action<bool> OnSlotSelectedChanged;
-        public Action<bool, string> OnTooltipChange;
+        public Action<bool, Tooltip> OnTooltipChange;
+        public Action<bool, ActionInInventory_SO> OnCanComboUpdate;
         
         public Action OnSlotsChanged;
         
@@ -274,8 +272,6 @@ namespace Gameplay.Items
         
         private void UpdateHandWhenPickup(int id)
         {
-            OnPickupItem?.Invoke();
-            
             SO_Item data = _database.GetItemData(id);
 
             Transform parent = IsOwner ? _localHand : _remoteHand;
@@ -313,6 +309,8 @@ namespace Gameplay.Items
             {
                 passif.OnStartHolding();
             }
+
+            OnPickupItem?.Invoke();
             
             SetCurrentItemInHand(core);
         }
@@ -463,7 +461,7 @@ namespace Gameplay.Items
             if (IsOwner)
             {
                 _currentItem.UnsubscribeFromInput(_playerInput);
-                OnTooltipChange?.Invoke(false, null);
+                OnTooltipChange?.Invoke(false, new Tooltip());
             }
 
             if (!IsServer)
@@ -536,22 +534,40 @@ namespace Gameplay.Items
         
         public void DestroyItemInHand()
         {
-            if (!IsServer)
-            {
-                DestroyItemInHandRpc();
-                return;
-            }
-
             ItemInstance item = GetCurrentItemInHand();
-            if (item == null) return;
+            
+            if (item == null)
+                return;
             
             item.Cleanup();
 
             ClearCurrentSlot();
         }
+        
+        public void RemoveItemFromInventory(ItemInstance itemToRemove)
+        {
+            if (itemToRemove == null)
+                return;
 
-        [Rpc(SendTo.Server)]
-        private void DestroyItemInHandRpc() => DestroyItemInHand();
+            for (int i = 0; i < _slots.Length; i++)
+            {
+                if (_slots[i] != itemToRemove)
+                    continue;
+
+                SetSlot(i, null);
+                itemToRemove.Cleanup();
+
+                if (i == _selectedSlot.Value)
+                    RefreshHeldItem();
+
+                return;
+            }
+        }
+
+        public bool IsItemInHand(ItemInstance itemToCheck)
+        {
+            return GetCurrentItemInHand() == itemToCheck;
+        }
         
         private void NotifyNotInHand(ItemInstance item)
         {
@@ -589,6 +605,31 @@ namespace Gameplay.Items
             {
                 UpdatePreviewDrop();
             }
+        }
+
+        public bool HasThisItemInInventory(SO_Item item)
+        {
+            foreach (int id in _slotIds)
+            {
+                if(id == item.ID) return true;
+            }
+            
+            return false;
+        }
+
+        public int RealNumberItemInInventory()
+        {
+            int i = 0;
+
+            foreach (var id in _slotIds)
+            {
+                if (id != -1)
+                {
+                    i++;
+                }
+            }
+            
+            return i;
         }
     }
 }

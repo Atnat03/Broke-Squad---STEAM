@@ -15,7 +15,7 @@ namespace Gameplay.LD
                 return;
             }
 
-            IDamageable target = instigator.GetComponentInParent<IDamageable>();
+            IDamageable target = instigator.GetComponentInChildren<IDamageable>();
             if (target == null)
             {
                 Debug.LogWarning($"[LD] {instigator.name} n'implemente pas IDamageable", this);

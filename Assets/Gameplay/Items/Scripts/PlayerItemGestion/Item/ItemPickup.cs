@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Bus;
 using Gameplay.Controller.Minimap;
+using Gameplay.Items.PickingUp;
 using Gameplay.Other.SuspiciousSound;
 using JetBrains.Annotations;
 using MyPrint;
@@ -18,27 +19,37 @@ namespace Gameplay.Items
     [RequireComponent(typeof(NetworkTransform))]
     public class ItemPickup : NetworkBusListener, IInteractable
     {
+        //Inspector
+        [SerializeField] private SO_Item _itemData;
         [SerializeField] private float _rackRatio = 0.5f;
-        private Collider[] _collidersOffOnRack;
-        
+
+        //Components
         private NetworkTransform _nt;
         private Rigidbody _rb;
         private BoxCollider _box;
-        readonly NetworkVariable<bool> _onRack = new();
-        Vector3 _baseSize,_baseSizeRack, _baseScale;
-        
-        [SerializeField] private SO_Item _itemData;
-        
         private Outline _outline;
 
-        public Outline outline => _outline;
-        
-        private ItemInstance _instance;
-        
-        public ItemInstance Instance => _instance ??= new ItemInstance(_itemData);
+        //Network
+        private readonly NetworkVariable<bool> _onRack = new();
 
+        //Cached Data
+        private Collider[] _collidersOffOnRack;
+        private Vector3 _baseSize;
+        private Vector3 _baseSizeRack;
+        private Vector3 _baseScale;
+
+        //States
+        private ItemInstance _instance;
         private bool _canCollide;
         
+        //Hover
+        private IHoverItemInfo _hoverInfo;
+
+        //Properties
+        public Outline outline => _outline;
+        public ItemInstance Instance => _instance ??= new ItemInstance(_itemData);
+
+        //Actions
         public Action OnCollide;
         
         public override void OnNetworkDespawn()
@@ -61,6 +72,8 @@ namespace Gameplay.Items
             _baseSizeRack = new Vector3(_box.size.x, _box.size.y / 2, _box.size.z);
             _baseSize = new Vector3(_box.size.x, _box.size.y, _box.size.z);
             _baseScale = transform.localScale;
+
+            _hoverInfo = GetComponent<IHoverItemInfo>();
 
             if (_collidersOffOnRack == null || _collidersOffOnRack.Length == 0)
             {
@@ -134,11 +147,15 @@ namespace Gameplay.Items
             transform.localScale = on ? _baseScale * _rackRatio : _baseScale;
         }
 
-        public void SetOutline(bool state)
+        public void SetOutline(StartOutliningData data)
         {
-            
             if(outline)
-                outline.enabled = state;
+                outline.enabled = data.State;
+
+            if (_hoverInfo != null)
+            {
+                _hoverInfo.OnHoverUpdate(data.State);
+            }
         }
 
 
@@ -216,19 +233,25 @@ namespace Gameplay.Items
         [Rpc(SendTo.Server)]
         void CreateSuspiciousSoundRpc(ulong clientId, float force) => CreateSuspiciousSound(clientId, force);
         
-        public string GetTooltip(ItemModule[] playerModules)
+        public Tooltip GetTooltip(ItemModule[] playerModules)
         {
-            string message = string.Empty;
+            Tooltip tooltip = new Tooltip
+            {
+                Message = string.Empty,
+                Icon = Instance.Data.TooltipInHand.DefaultTooltip.Icon
+            };
             
             if(playerModules != null)
-                message = Instance.Data.TooltipInHand.GetTooltip(playerModules);
-            
-            if (message.Equals(string.Empty))
             {
-                message = "E to pick " + Instance.Data.ItemName;
+                tooltip = Instance.Data.TooltipInHand.GetTooltip(playerModules);
             }
             
-            return message;
+            if (tooltip.Message.Equals(string.Empty))
+            {
+                tooltip.Message = "E to pick " + Instance.Data.ItemName;
+            }
+            
+            return tooltip;
         }
     }
 }

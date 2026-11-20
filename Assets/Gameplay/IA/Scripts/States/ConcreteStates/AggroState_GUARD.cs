@@ -48,17 +48,9 @@ namespace Gameplay.IA
             
             Transform target = Brain.LineSight.PerformFindingPlayer(stimulated ? _target : null);
             
-            if (!target)
+            if (!target || (PlayerHealth && PlayerHealth.IsDowned))
             {
-                if (PlayerHealth == null || PlayerHealth.IsDowned)
-                {
-                    Brain.ChangeState<PatrolState_GUARD, PatrolParam>(new PatrolParam { IsAlerted = false });
-                    return;
-                }
-
-                PlayerHealth = null;
-
-                Brain.Motor.SetTarget(Brain.LineSight.LastSeenPosition);
+                Brain.ChangeState<PatrolState_GUARD, PatrolParam>(new PatrolParam { IsAlerted = false });
                 return;
             }
             

@@ -39,6 +39,8 @@ namespace Gameplay.UI
 
         private void StartLockDown(OnLockDownStart_EVENT data)
         {
+            ABPrint.Print("Player trigger : " + data.PlayerTriggerName, ABColor.Pink);
+            
             _lockDownUI.SetActive(true);
             
             string playerName = data.PlayerTriggerName.Value;

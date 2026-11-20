@@ -365,7 +365,7 @@ namespace Gameplay.Controller
 
         #endregion
 
-        public void SetInputEnabled(bool value)
+        public void  SetInputEnabled(bool value)
         {
             if (!IsOwner || _input == null) return;
             _input.Enabled = value;

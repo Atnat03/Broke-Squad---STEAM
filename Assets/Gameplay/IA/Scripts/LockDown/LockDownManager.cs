@@ -130,13 +130,14 @@ namespace Gameplay.IA
                 {
                     if(!Mathf.Approximately(_currentDuration.Value, _lockDownDuration))
                         _currentDuration.Value = _lockDownDuration;
-                    return;
                 }
-                
-                _currentDuration.Value -= Time.deltaTime;
-                if (_currentDuration.Value <= 0)
+                else
                 {
-                    EndLockDown();
+                    _currentDuration.Value -= Time.deltaTime;
+                    if (_currentDuration.Value <= 0)
+                    {
+                        EndLockDown();
+                    }
                 }
             }
 

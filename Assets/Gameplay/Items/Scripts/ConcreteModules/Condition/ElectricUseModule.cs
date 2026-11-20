@@ -21,7 +21,7 @@ namespace Gameplay.Items
         private float _currentPercentValue;
         private bool _isInHand;
         protected override void SetModule() => _currentPercentValue = _startPercentValue;
-
+        
         public bool CheckCondition()
         {
             bool r = _currentPercentValue - _electricNeededToUse >= 0;
@@ -43,14 +43,17 @@ namespace Gameplay.Items
             
             _currentPercentValue -= _electricNeededToUse;
             
-            Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
+            if(Context.Inventory.IsItemInHand(Context.Core.Instance))
             {
-                ClientId = Context.Inventory.OwnerClientId,
-                KeyEvent = _keyEventUse,
-                ValueB = true,
-                ValueF = _currentPercentValue,
-                ValueI = 0
-            });
+                Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
+                {
+                    ClientId = Context.Inventory.OwnerClientId,
+                    KeyEvent = _keyEventUse,
+                    ValueB = true,
+                    ValueF = _currentPercentValue,
+                    ValueI = 0
+                });
+            }
             
             Context.NotifyStateChanged(this);
         }
@@ -73,7 +76,7 @@ namespace Gameplay.Items
         
         public bool AddEnergy(float amount)
         {
-            if (amount <= 0f || _currentPercentValue >= _maxPercentValue)
+            if (amount <= 0f || _currentPercentValue >= _maxPercentValue || _currentPercentValue % 50 != 0)
                 return false;
 
             _currentPercentValue = Mathf.Min(_currentPercentValue + amount, _maxPercentValue);

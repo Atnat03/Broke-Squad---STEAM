@@ -7,30 +7,36 @@ using UnityEngine;
 namespace Gameplay.Items
 {
     [Serializable]
+    public struct Tooltip
+    {
+        public string Message;
+        public Sprite Icon;
+    }
+    
+    [Serializable]
     public class TooltipConfig
     {
         [Header("Default Tooltip")] 
-        [TextArea] [SerializeField] public string DefaultText;
-
+        [SerializeField] public Tooltip DefaultTooltip;
+        
         [Header("Is Item")] 
         [SerializeField] public bool IsItem;
-        [SerializeField] public string TooltipInHand;
+        [SerializeField] public Tooltip TooltipInHand;
 
         [Header("Item Requirement")] 
         [SerializeField] private bool _requiresItemModule;
-
-        [TextArea] [SerializeField] private string _tooltipWithItem;
+        [SerializeField] private Tooltip _tooltipWithItem;
         [SerializeReference][SubclassSelector] private ItemModule _requiredModule;
         
-        public string GetTooltip(ItemModule[] playerModules)
+        public Tooltip GetTooltip(ItemModule[] playerModules)
         {
             if (_requiresItemModule)
             {
                 if (_requiredModule == null)
-                    return DefaultText;
+                    return DefaultTooltip;
 
                 if (playerModules == null)
-                    return DefaultText;
+                    return DefaultTooltip;
 
                 foreach (ItemModule module in playerModules)
                 {
@@ -41,7 +47,7 @@ namespace Gameplay.Items
                 }
             }
 
-            return DefaultText;
+            return DefaultTooltip;
         }
     }
 }

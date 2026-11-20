@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Gameplay.Items
 {
@@ -137,6 +139,19 @@ namespace Gameplay.Items
             
             foreach (var m in AllModules())
                 if (m is IAnchorAware a) a.SetAnchor(anchor, hostId);
+        }
+
+        public IItemModule GetModule(Type targetModule)
+        {
+            foreach (var m in AllModules())
+            {
+                if (m.GetType() == targetModule)
+                {
+                    return m;
+                }
+            }
+
+            return null;
         }
     }
 }
