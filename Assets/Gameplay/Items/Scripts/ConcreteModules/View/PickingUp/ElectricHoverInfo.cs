@@ -1,6 +1,4 @@
-﻿using System;
-using Bus;
-using MyPrint;
+﻿using Bus;
 using TMPro;
 using UnityEngine;
 
@@ -8,39 +6,46 @@ namespace Gameplay.Items.PickingUp
 {
     public class ElectricHoverInfo : MonoBusListener, IHoverItemInfo
     {
+        [Header("References")]
         [SerializeField] private ItemPickup _pickup;
         [SerializeField] private GameObject _hoverInfo;
         [SerializeField] private TextMeshProUGUI _percentageInfo;
 
-        private ItemInstance _instance;
         private ElectricUseModule _electricUseModule;
-        
-        private void Start()
-        {
-            _instance = _pickup.Instance;
-        }
 
         public void OnHoverUpdate(bool state)
         {
-            if (!_hoverInfo) return; 
-            
+            if (_hoverInfo == null) return;
+
             _hoverInfo.SetActive(state);
-            
-            if (_instance != null)
+
+            if (!state)
             {
-                _electricUseModule = (ElectricUseModule)_instance.GetModule(typeof(ElectricUseModule));
+                _electricUseModule = null;
+                return;
             }
+
+            ItemInstance instance = _pickup.Instance;
+
+            _electricUseModule = instance?.GetModule(typeof(ElectricUseModule)) as ElectricUseModule;
+
+            UpdatePercentage();
         }
 
-        void LateUpdate()
+        private void LateUpdate()
         {
-            if (_instance != null && _hoverInfo.activeSelf)
-            {
-                if (_electricUseModule != null)
-                {
-                    _percentageInfo.text = _electricUseModule.GetState() + " %";
-                }
-            }
+            if (_hoverInfo == null || !_hoverInfo.activeSelf)
+                return;
+
+            UpdatePercentage();
+        }
+
+        private void UpdatePercentage()
+        {
+            if (_electricUseModule == null || _percentageInfo == null)
+                return;
+
+            _percentageInfo.text = _electricUseModule.GetState() + " %";
         }
     }
 }
