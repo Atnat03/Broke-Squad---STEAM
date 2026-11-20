@@ -54,7 +54,7 @@ namespace Gameplay.LD
 			_keypad.ServerPress(client.PlayerObject, key);
 		}
 
-		public string GetTooltip(ItemModule[] playerModules)
+		public Tooltip GetTooltip(ItemModule[] playerModules)
 		{
 			return _tooltipConfig.GetTooltip(playerModules); ;
 		}

@@ -1,6 +1,4 @@
-﻿using System;
-using MyPrint;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Gameplay.Items
 {
@@ -10,7 +8,6 @@ namespace Gameplay.Items
         
         [Header("UI")]
         [SerializeField] private InventoryActionTooltip _prefabTooltip;
-        [SerializeField] private Transform _tooltipParentTransform;
 
         private InventoryActionCombo _inventoryActionCombo;
         

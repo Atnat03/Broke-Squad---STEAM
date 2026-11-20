@@ -19,29 +19,37 @@ namespace Gameplay.Items
     [RequireComponent(typeof(NetworkTransform))]
     public class ItemPickup : NetworkBusListener, IInteractable
     {
+        //Inspector
+        [SerializeField] private SO_Item _itemData;
         [SerializeField] private float _rackRatio = 0.5f;
-        private Collider[] _collidersOffOnRack;
-        
+
+        //Components
         private NetworkTransform _nt;
         private Rigidbody _rb;
         private BoxCollider _box;
-        readonly NetworkVariable<bool> _onRack = new();
-        Vector3 _baseSize,_baseSizeRack, _baseScale;
-        
-        [SerializeField] private SO_Item _itemData;
-        
         private Outline _outline;
 
-        public Outline outline => _outline;
-        
+        //Network
+        private readonly NetworkVariable<bool> _onRack = new();
+
+        //Cached Data
+        private Collider[] _collidersOffOnRack;
+        private Vector3 _baseSize;
+        private Vector3 _baseSizeRack;
+        private Vector3 _baseScale;
+
+        //States
         private ItemInstance _instance;
+        private bool _canCollide;
         
+        //Hover
+        private IHoverItemInfo _hoverInfo;
+
+        //Properties
+        public Outline outline => _outline;
         public ItemInstance Instance => _instance ??= new ItemInstance(_itemData);
 
-        private bool _canCollide;
-
-        private IHoverItemInfo _hoverInfo;
-        
+        //Actions
         public Action OnCollide;
         
         public override void OnNetworkDespawn()
@@ -225,19 +233,25 @@ namespace Gameplay.Items
         [Rpc(SendTo.Server)]
         void CreateSuspiciousSoundRpc(ulong clientId, float force) => CreateSuspiciousSound(clientId, force);
         
-        public string GetTooltip(ItemModule[] playerModules)
+        public Tooltip GetTooltip(ItemModule[] playerModules)
         {
-            string message = string.Empty;
+            Tooltip tooltip = new Tooltip
+            {
+                Message = string.Empty,
+                Icon = Instance.Data.TooltipInHand.DefaultTooltip.Icon
+            };
             
             if(playerModules != null)
-                message = Instance.Data.TooltipInHand.GetTooltip(playerModules);
-            
-            if (message.Equals(string.Empty))
             {
-                message = "E to pick " + Instance.Data.ItemName;
+                tooltip = Instance.Data.TooltipInHand.GetTooltip(playerModules);
             }
             
-            return message;
+            if (tooltip.Message.Equals(string.Empty))
+            {
+                tooltip.Message = "E to pick " + Instance.Data.ItemName;
+            }
+            
+            return tooltip;
         }
     }
 }
