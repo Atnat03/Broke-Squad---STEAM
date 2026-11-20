@@ -87,7 +87,8 @@ namespace Gameplay.Items
             Context.SendEventToEveryone(new OnModuleDoAction_EVENT
             {
                 ClientId = Context.Inventory.OwnerClientId,
-                KeyEvent = _keyEventVFX
+                KeyEvent = _keyEventVFX,
+                InstanceId = Context.Core.Instance.InstanceId
             });
             
             return true;
