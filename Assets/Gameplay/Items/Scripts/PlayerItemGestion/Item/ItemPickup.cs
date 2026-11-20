@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Bus;
 using Gameplay.Controller.Minimap;
+using Gameplay.Items.PickingUp;
 using Gameplay.Other.SuspiciousSound;
 using JetBrains.Annotations;
 using MyPrint;
@@ -38,6 +39,8 @@ namespace Gameplay.Items
         public ItemInstance Instance => _instance ??= new ItemInstance(_itemData);
 
         private bool _canCollide;
+
+        private IHoverItemInfo _hoverInfo;
         
         public Action OnCollide;
         
@@ -61,6 +64,8 @@ namespace Gameplay.Items
             _baseSizeRack = new Vector3(_box.size.x, _box.size.y / 2, _box.size.z);
             _baseSize = new Vector3(_box.size.x, _box.size.y, _box.size.z);
             _baseScale = transform.localScale;
+
+            _hoverInfo = GetComponent<IHoverItemInfo>();
 
             if (_collidersOffOnRack == null || _collidersOffOnRack.Length == 0)
             {
@@ -138,6 +143,11 @@ namespace Gameplay.Items
         {
             if(outline)
                 outline.enabled = data.State;
+
+            if (_hoverInfo != null)
+            {
+                _hoverInfo.OnHoverUpdate(data.State);
+            }
         }
 
 

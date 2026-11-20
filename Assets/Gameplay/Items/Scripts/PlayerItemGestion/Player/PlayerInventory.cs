@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Numerics;
 using Bus;
 using Gameplay.Controller;
-using MyPrint;
 using Unity.Netcode;
-using Unity.Netcode.Components;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
@@ -626,9 +621,9 @@ namespace Gameplay.Items
         {
             int i = 0;
 
-            foreach (var item in _slots)
+            foreach (var id in _slotIds)
             {
-                if (item != null)
+                if (id != -1)
                 {
                     i++;
                 }
