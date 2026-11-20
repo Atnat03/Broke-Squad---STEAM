@@ -60,18 +60,29 @@
                 
                 if (target == null && _currentHoverInteractable != null)
                 {
-                    _currentHoverInteractable?.SetOutline(false);
+                    _currentHoverInteractable?.SetOutline(new StartOutliningData
+                    {
+                        State = false,
+                        Inventory = null
+                    });
                     OnTooltipChange?.Invoke(false, null);
                 }
 
-                _currentHoverInteractable?.SetOutline(false);
+                _currentHoverInteractable?.SetOutline(new StartOutliningData
+                {
+                    State = false,
+                    Inventory = null
+                });
                 
                 _currentHoverInteractable = target;
 
-
                 if (_currentHoverInteractable != null)
                 {
-                    _currentHoverInteractable?.SetOutline(true);
+                    _currentHoverInteractable?.SetOutline(new StartOutliningData
+                    {
+                        State = true,
+                        Inventory = _playerInventory
+                    });
 
                     ItemModule[] modules = null;
 
@@ -86,8 +97,6 @@
                     {
                         string message = _currentHoverInteractable.GetTooltip(modules);
                         
-                        ABPrint.Print("Message : " + message, ABColor.White);
-
                         OnTooltipChange?.Invoke(!string.IsNullOrEmpty(message), message);
                     }
                 }

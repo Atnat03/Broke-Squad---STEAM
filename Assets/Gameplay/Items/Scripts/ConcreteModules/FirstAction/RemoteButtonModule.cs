@@ -1,10 +1,11 @@
+using MyPrint;
 using Unity.Netcode;
 using UnityEngine;
 
 public enum RemoteButtonPhase { Press, HoldStart, HoldEnd }
 public struct OnRemoteAction_EVENT
 {
-    public string RemoteId;
+    public int RemoteId;
     public RemoteButtonPhase Phase;
     public ulong ClientId;
     public float ActiveDuration;
@@ -15,13 +16,12 @@ namespace Gameplay.Items
     public class RemoteButtonModule : ActionModule, IFirstAction, IServerAction
     {
         public override string Emoji => "🎛️";
-
         
-        [SerializeField] string remoteId;
+        [SerializeField] int remoteId;
         [SerializeField] bool holdMode = false;
         [SerializeField] float activeDuration = 5f;
         
-        public ICondition Condition { get; }
+        public ICondition Condition => ConditionParent;
         
         bool _pressedLocally;
         

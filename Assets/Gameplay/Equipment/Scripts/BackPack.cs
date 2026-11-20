@@ -22,9 +22,9 @@ namespace Gameplay.Equipment
         [SerializeField] TooltipConfig _tooltipConfig;
         
         public Outline outline => _outline;
-        public void SetOutline(bool state)
+        public void SetOutline(StartOutliningData data)
         {
-            _outline.enabled = state;
+            _outline.enabled = data.State;
         }
         
         public string GetTooltip(ItemModule[] playerModules)

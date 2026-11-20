@@ -70,9 +70,9 @@ namespace Gameplay.Equipment
 
         public Outline outline => _outline;
 
-        public void SetOutline(bool state)
+        public void SetOutline(StartOutliningData data)
         {
-            outline.enabled = state;
+            outline.enabled = data.State;
         }
         
         

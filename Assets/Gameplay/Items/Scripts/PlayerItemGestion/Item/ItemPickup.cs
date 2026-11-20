@@ -134,11 +134,10 @@ namespace Gameplay.Items
             transform.localScale = on ? _baseScale * _rackRatio : _baseScale;
         }
 
-        public void SetOutline(bool state)
+        public void SetOutline(StartOutliningData data)
         {
-            
             if(outline)
-                outline.enabled = state;
+                outline.enabled = data.State;
         }
 
 

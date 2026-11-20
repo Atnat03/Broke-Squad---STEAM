@@ -24,8 +24,11 @@ namespace Gameplay.LD
 			gameObject.layer = Context.Element.gameObject.layer;
 			GetComponent<Collider>().isTrigger = false;
 			outline = Context.Element.GetComponentInChildren<Outline>(true);
-			SetOutline(false);
-
+			SetOutline(new StartOutliningData
+			{
+				State = false
+			});
+			
 			if (Context.IsServer)
 				NetworkManager.Singleton.OnClientConnectedCallback += OnClientDisconnected;
 		}
@@ -88,9 +91,9 @@ namespace Gameplay.LD
 			return _tooltipConfig.GetTooltip(playerModules);
 		}
 
-		public void SetOutline(bool state)
+		public void SetOutline(StartOutliningData data)
 		{
-			if (outline != null) outline.enabled = state;
+			if (outline != null) outline.enabled = data.State;
 		}
 
 		#endregion
