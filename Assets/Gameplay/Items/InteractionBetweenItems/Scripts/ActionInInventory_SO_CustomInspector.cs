@@ -46,7 +46,13 @@ public class ActionInInventory_SO_CustomInspector : Editor
         SerializedProperty actionProperty = serializedObject.FindProperty("ActionInInventory");
 
         DrawActionDropdown(actionProperty);
-
+        
+        EditorGUILayout.Space(10);
+        
+        //Tooltip
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("Tooltip"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("Icon"));
+        
         serializedObject.ApplyModifiedProperties();
     }
 

@@ -71,6 +71,7 @@ namespace Gameplay.Items
         public Action<int, int> OnUpdateSlots;
         public Action<bool> OnSlotSelectedChanged;
         public Action<bool, string> OnTooltipChange;
+        public Action<bool, ActionInInventory_SO> OnCanComboUpdate;
         
         public Action OnSlotsChanged;
         

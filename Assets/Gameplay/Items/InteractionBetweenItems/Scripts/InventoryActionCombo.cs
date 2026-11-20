@@ -1,4 +1,5 @@
-﻿using Bus;
+﻿using System;
+using Bus;
 using Gameplay.Controller;
 using MyPrint;
 using Unity.Netcode;
@@ -16,7 +17,7 @@ namespace Gameplay.Items
         
         public override void OnNetworkSpawn()
         {
-            _playerInventory.OnPickupItem += CheckIfCanCombo;
+            _playerInventory.OnUpdateSlots += CheckIfCanCombo;
 
             _playerInput.OnActionInInventory += DoActionInInventory;
         }
@@ -28,7 +29,6 @@ namespace Gameplay.Items
                 DoAIVServerRpc();
                 return;
             }
-            
             
             if (_playerInventory.RealNumberItemInInventory() < 2) return;
             if (_currentAIV != null)
@@ -42,18 +42,27 @@ namespace Gameplay.Items
         [Rpc(SendTo.Server)]
         private void DoAIVServerRpc() => DoActionInInventory();
 
-        private void CheckIfCanCombo()
+        //Parameters do nothing
+        private void CheckIfCanCombo(int a, int b)
         {
-            if (_playerInventory.RealNumberItemInInventory() < 2) return;
+            if (_playerInventory.RealNumberItemInInventory() < 2)
+            {
+                _playerInventory.OnCanComboUpdate?.Invoke(false, null);
+                return;
+            }
+            
+            _currentAIV = null;
             
             foreach (ActionInInventory_SO action in _dataBaseAction.ActionList)
             {
                 if (action.HasAllOfTheItem(_playerInventory.ItemsInInventory))
                 {
                     _currentAIV = action;
-                    return;
+                    break;
                 }
             }
+            
+            _playerInventory.OnCanComboUpdate?.Invoke(_currentAIV, _currentAIV);
         }
     }
 }

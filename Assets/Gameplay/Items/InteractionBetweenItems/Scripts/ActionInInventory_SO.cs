@@ -1,4 +1,5 @@
 ﻿using MyPrint;
+using TMPro;
 using UnityEngine;
 
 namespace Gameplay.Items
@@ -11,6 +12,10 @@ namespace Gameplay.Items
         [SerializeField] public SO_Item ItemToConsumeCondition;
         [SerializeReference] public IActionInInventory ActionInInventory;
 
+        [Header("Tooltip")]
+        [TextArea][SerializeField] public string Tooltip;
+        [SerializeField] public Sprite Icon;
+        
         public void DoTheAction(ItemInstance itemA, ItemInstance itemB)
         {
             ActionInInventory?.DoAction(itemA, itemB);
