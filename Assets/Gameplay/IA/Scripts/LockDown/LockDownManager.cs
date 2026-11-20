@@ -126,8 +126,6 @@ namespace Gameplay.IA
 
             if (IsLockDown && !_isGoal.Value)
             {
-                ABPrint.PrintBool(CanStartCooldownToStop(), "CanStartCooldownToStop");
-                
                 if (!CanStartCooldownToStop())
                 {
                     if(!Mathf.Approximately(_currentDuration.Value, _lockDownDuration))
