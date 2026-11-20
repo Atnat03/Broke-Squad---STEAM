@@ -41,6 +41,7 @@ namespace Gameplay.Items
         //States
         private ItemInstance _instance;
         private bool _canCollide;
+        private readonly NetworkVariable<ulong> _networkInstanceId = new();
         
         //Hover
         private IHoverItemInfo _hoverInfo;
@@ -51,11 +52,6 @@ namespace Gameplay.Items
 
         //Actions
         public Action OnCollide;
-        
-        public override void OnNetworkDespawn()
-        {
-            _onRack.OnValueChanged -= OnRackChanged;
-        }
 
         private void Awake()
         {
@@ -83,17 +79,44 @@ namespace Gameplay.Items
                 _collidersOffOnRack = list.ToArray();
             }
         }
-
+        
         public override void OnNetworkSpawn()
         {
             _onRack.OnValueChanged += OnRackChanged;
 
             if (IsServer)
             {
+                if (_instance == null)
+                    _instance = new ItemInstance(_itemData);
+
+                _networkInstanceId.Value = _instance.InstanceId;
+
                 StartCoroutine(BufferCollision());
             }
-            
+            else
+            {
+                _networkInstanceId.OnValueChanged += OnInstanceIdChanged;
+
+                if (_networkInstanceId.Value != 0)
+                    OnInstanceIdChanged(0, _networkInstanceId.Value);
+            }
+
             ApplyRack();
+        }
+        
+        public override void OnNetworkDespawn()
+        {
+            base.OnNetworkDespawn();
+
+            _onRack.OnValueChanged -= OnRackChanged;
+            _networkInstanceId.OnValueChanged -= OnInstanceIdChanged;
+        }
+        
+        private void OnInstanceIdChanged(ulong previous, ulong current)
+        {
+            if (current == 0) return;
+
+            Instance.SetInstanceId(current);
         }
 
         private IEnumerator BufferCollision()
