@@ -1,9 +1,7 @@
 ﻿using Unity.Netcode;
 using System.Collections;
 using Gameplay.Other.SuspiciousSound;
-using MyPrint;
 using UnityEngine;
-using FixedString32Bytes = Unity.Collections.FixedString32Bytes;
 
 namespace Gameplay.Items
 {
