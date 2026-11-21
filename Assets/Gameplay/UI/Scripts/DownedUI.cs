@@ -11,9 +11,11 @@ namespace Gameplay.UI
     
     public class DownedUI : MonoBusListener
     {
+        [Header("References")]
         [SerializeField] private GameObject downedUI;
         [SerializeField] private PlayerSetUpBridge bridge;
         
+        [Header("Revive")]
         [SerializeField] private Image reviveImage;
         [SerializeField] private TextMeshProUGUI reviveText;
         
