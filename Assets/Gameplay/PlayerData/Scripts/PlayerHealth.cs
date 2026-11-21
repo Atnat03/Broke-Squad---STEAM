@@ -91,7 +91,7 @@
                 }
                 else
                 {
-                    _playerAnimator.ServerSetTrigger("Damaged");
+                    _playerAnimator?.ServerSetTrigger("Damaged");
                 }
             }
 
