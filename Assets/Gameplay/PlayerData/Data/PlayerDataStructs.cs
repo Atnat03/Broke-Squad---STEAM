@@ -24,4 +24,5 @@ namespace Gameplay.PlayerData
         public bool Reviving;
         public float Percent;
     }
+    
 }

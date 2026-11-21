@@ -18,6 +18,7 @@
             
             [Header("References")]
             [SerializeField] private PlayerRevive _playerRevive;
+            [SerializeField] private PlayerAnimator _playerAnimator;
             
             [Header("SFX")]
             [SerializeField, SoundName] private string[] _takeDamageSound;
@@ -87,6 +88,10 @@
                 {
                     _playerDown.Value = true;
                     PlayDeathRpc();
+                }
+                else
+                {
+                    _playerAnimator.ServerSetTrigger("Damaged");
                 }
             }
 
