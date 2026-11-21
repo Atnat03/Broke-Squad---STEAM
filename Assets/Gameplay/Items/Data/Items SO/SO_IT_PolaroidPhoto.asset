@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
+  m_Name: SO_IT_PolaroidPhoto
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
+  ID: 42
+  ItemName: Photo
+  VisualPrefabLocal: {fileID: 8599301166599164707, guid: 49859fa054adb4043b31013f4d6edc06, type: 3}
+  VisualPrefabRemote: {fileID: 8599301166599164707, guid: 49859fa054adb4043b31013f4d6edc06, type: 3}
+  PickupPrefab: {fileID: 8818917180308099792, guid: 48ade7cdf41bc8b46a96c123be52f2a1, type: 3}
+  Icon: {fileID: 21300000, guid: 3c125755d5769934fae41fa260070229, type: 3}
+  OffsetInHand: {x: 0, y: 0, z: 0}
+  TooltipInHand:
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
+    IsItem: 0
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
+    _requiresItemModule: 0
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
+    _requiredModule:
+      rid: -2
+  Weight: 1
+  OffsetRotationDrop: {x: 0, y: 0, z: 0}
+  FirstActionList:
+  - rid: 7693030440034631946
+  SecondActionList:
+  - rid: 7202345609054912641
+  PassifList:
+  - rid: 7202345609054912642
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7202345609054912641
+      type: {class: ThrowModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _durationToFullFill: 1.5
+        _minThrowForce: {x: 0, y: 0, z: 0}
+        _maxThrowForce: {x: 0, y: 2, z: 9}
+        _minTorqueForce: {x: 0, y: 0, z: 0}
+        _maxTorqueForce: {x: 5, y: 0, z: 0}
+        _spawnDistance: {x: 0.2, y: 0, z: 0.7}
+        _stringName: Joueur/Throw Item
+        _volume: 0.5
+    - rid: 7202345609054912642
+      type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _minVelocityForDamage: 4
+        _damage: 10
+        _canDamagePlayer: 1
+    - rid: 7693030440034631946
+      type: {class: PhotoModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
