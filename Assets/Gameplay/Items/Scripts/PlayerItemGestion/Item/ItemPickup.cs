@@ -90,6 +90,8 @@ namespace Gameplay.Items
                     _instance = new ItemInstance(_itemData);
 
                 _networkInstanceId.Value = _instance.InstanceId;
+                
+                SyncByteModulesToClients();
 
                 StartCoroutine(BufferCollision());
             }
@@ -206,6 +208,9 @@ namespace Gameplay.Items
             instance?.SetAnchor(transform, NetworkObjectId);
             
             GetComponent<BoxCollider>().isTrigger = true;
+            
+            if (IsServer && IsSpawned)
+                SyncByteModulesToClients();
         }
         
         public void OnCollisionEnter(Collision collision)
@@ -275,6 +280,46 @@ namespace Gameplay.Items
             }
             
             return tooltip;
+        }
+        
+        public void SyncByteModulesToClients()
+        {
+            if (!IsServer || !IsSpawned || _instance == null)
+                return;
+
+            int index = 0;
+
+            foreach (var module in _instance.AllModules())
+            {
+                if (module is IReplicatedByteModule byteModule)
+                {
+                    SyncByteModuleRpc(index, byteModule.GetByteState());
+                }
+
+                index++;
+            }
+        }
+        
+        [Rpc(SendTo.ClientsAndHost)]
+        private void SyncByteModuleRpc(int moduleIndex, byte[] data)
+        {
+            if (data == null)
+                return;
+
+            int index = 0;
+
+            foreach (var module in Instance.AllModules())
+            {
+                if (index == moduleIndex)
+                {
+                    if (module is IReplicatedByteModule byteModule)
+                        byteModule.SetByteState(data);
+
+                    return;
+                }
+
+                index++;
+            }
         }
     }
 }
