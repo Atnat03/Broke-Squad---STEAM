@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Gameplay.Controller
 {
-    public class OutlinePlayerToggle : NetworkBehaviour
+    public class PlayerOutlineToggle : NetworkBehaviour
     {
         [Header("References")]
         [SerializeField] private Outline _outline;
@@ -13,6 +13,9 @@ namespace Gameplay.Controller
         
         private static bool s_showOthers;
         private static event Action<bool> ShowOthersChanged;
+        
+        public event Action<bool> OnSeeThroughChanged;
+        public bool IsSeeThrough { get; private set; }
         
         private readonly NetworkVariable<int> _colorIndex = new(
             0,
@@ -73,7 +76,12 @@ namespace Gameplay.Controller
             ShowOthersChanged?.Invoke(false);
         }
 
-        private void SetOutlineEnabled(bool enabled) => _outline.enabled = enabled;
+        private void SetOutlineEnabled(bool enabled)
+        {
+            _outline.enabled = enabled;
+            IsSeeThrough = enabled;
+            OnSeeThroughChanged?.Invoke(enabled);
+        }
 
         private void OnColorIndexChanged(int previous, int current) => ApplyColor(current);
 

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 487544477931043576}
   - component: {fileID: 752501363568637928}
   - component: {fileID: 6835336039430536461}
+  - component: {fileID: 529107109866656005}
   m_Layer: 7
   m_Name: Pseudo
   m_TagString: Untagged
@@ -152,6 +153,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.UI.Scripts.PlayerSpeudoSetUp
   _bridge: {fileID: 629315446994890564}
   _playerName: {fileID: 752501363568637928}
+--- !u!114 &529107109866656005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1982563445453531536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72872a26d26d0fd4ca579ab3f5058f7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlwaysInFrontOfCam
+  _freeze_X_rotation: 0
+  _freeze_Y_rotation: 0
+  _freeze_Z_rotation: 0
+  _distanceMax: 100
+  _scaleModifier: 1
+  _scaleMap: {x: 0.01, y: 0.03}
 --- !u!1 &5442782263038506712
 GameObject:
   m_ObjectHideFlags: 0
@@ -461,6 +480,7 @@ MonoBehaviour:
   PlayerInteract: {fileID: 0}
   PlayerInventory: {fileID: 0}
   PlayerInput: {fileID: 0}
+  PlayerOutlineToggle: {fileID: 0}
 --- !u!114 &4997624246170684968
 MonoBehaviour:
   m_ObjectHideFlags: 0
