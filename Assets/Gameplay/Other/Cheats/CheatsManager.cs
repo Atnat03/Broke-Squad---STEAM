@@ -250,16 +250,11 @@ namespace Gameplay.Controller
 
         public void ToggleNoclip() => SetNoclip(!_noclip);
         
-        private void Update()
-        {
-            if (!IsSpawned || !IsOwner || _noclip) return;
-            if (_playerController.IsGrounded) _lastSafePosition = _playerController.transform.position;
-        }
-        
         private void SetNoclip(bool value)
         {
             if (_noclip == value) return;
             _noclipText.gameObject.SetActive(value);
+            _playerController.PlayerAnimator.SetAnimBool(value, "NoClip");
             if (value)
             {
                 _noclip = true;
