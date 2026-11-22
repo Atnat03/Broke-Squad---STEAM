@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Bus;
 using Gameplay.Controller.Minimap;
 using Gameplay.Items.PickingUp;
@@ -42,6 +43,7 @@ namespace Gameplay.Items
         private ItemInstance _instance;
         private bool _canCollide;
         private readonly NetworkVariable<ulong> _networkInstanceId = new();
+        public readonly NetworkVariable<ulong> ThrownBy = new(ulong.MaxValue);
         
         //Hover
         private IHoverItemInfo _hoverInfo;
@@ -94,6 +96,12 @@ namespace Gameplay.Items
                 SyncByteModulesToClients();
 
                 StartCoroutine(BufferCollision());
+
+                if (_rb)
+                {
+                    _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+                    _rb.interpolation = RigidbodyInterpolation.Interpolate;
+                }
             }
             else
             {
@@ -102,8 +110,13 @@ namespace Gameplay.Items
                 if (_networkInstanceId.Value != 0)
                     OnInstanceIdChanged(0, _networkInstanceId.Value);
             }
-
+            
             ApplyRack();
+            
+            if (ThrownBy.Value == NetworkManager.LocalClientId)
+            {
+                ThrowGhost.TryClaim(this);
+            }
         }
         
         public override void OnNetworkDespawn()
@@ -156,7 +169,7 @@ namespace Gameplay.Items
                 if (_rb == null)
                     _rb = gameObject.AddComponent<Rigidbody>();
 
-                _rb.isKinematic = false;
+                _rb.isKinematic = !IsServer;
                 _rb.useGravity = true;
             }
 
