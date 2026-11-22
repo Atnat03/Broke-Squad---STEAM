@@ -27,7 +27,7 @@ namespace Gameplay.IA
 
             _agent.isStopped = stop;
         }
-
+        
         public float GetDistanceFromTarget(Vector3 target)
         {
             return (target - transform.position).sqrMagnitude;

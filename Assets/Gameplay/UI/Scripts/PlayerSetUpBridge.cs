@@ -10,18 +10,21 @@ public class PlayerSetUpBridge : MonoBehaviour
     public PlayerInteract PlayerInteract;
     public PlayerInventory PlayerInventory;
     public PlayerInput PlayerInput;
+    public PlayerOutlineToggle PlayerOutlineToggle;
 
     public void SetUp(
         PlayerController controller, 
         PlayerHealth playerHealth, 
         PlayerInteract playerInteract, 
         PlayerInventory playerInventory, 
-        PlayerInput playerInput)
+        PlayerInput playerInput,
+        PlayerOutlineToggle playerOutlineToggle)
     {
         PlayerController = controller;
         PlayerHealth = playerHealth;
         PlayerInteract = playerInteract;
         PlayerInventory = playerInventory;
         PlayerInput = playerInput;
+        PlayerOutlineToggle = playerOutlineToggle;
     }
 }

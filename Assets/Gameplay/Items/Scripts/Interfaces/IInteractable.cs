@@ -11,7 +11,7 @@ namespace Gameplay
     
     public interface IInteractable
     {
-        string GetTooltip(ItemModule[] playerModules);
+        Tooltip GetTooltip(ItemModule[] playerModules);
         public Outline outline { get; }
 
         public void SetOutline(StartOutliningData data);

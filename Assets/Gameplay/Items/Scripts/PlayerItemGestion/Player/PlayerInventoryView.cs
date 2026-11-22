@@ -22,6 +22,7 @@ namespace Gameplay.Items
         [Header("Tooltip")]
         [SerializeField] private GameObject _tooltipParent;
         [SerializeField] private TextMeshProUGUI _tooltipText;
+        [SerializeField] private Image _tooltipIcon;
         
         [Header("SFX")]
         [SerializeField, SoundName] private string _pickUpSound;
@@ -98,10 +99,13 @@ namespace Gameplay.Items
         private void DropItem()
         { }
         
-        private void UpdateTooltip(bool isVisible, string txt)
+        private void UpdateTooltip(bool isVisible, Tooltip data)
         {
             _tooltipParent.SetActive(isVisible);
-            _tooltipText.text = txt;
+            _tooltipText.text = data.Message;
+            
+            _tooltipIcon.gameObject.SetActive(_tooltipIcon != null);
+            _tooltipIcon.sprite = data.Icon;
         }
     }
 }

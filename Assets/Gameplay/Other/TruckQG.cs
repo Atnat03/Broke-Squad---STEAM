@@ -1,5 +1,6 @@
 ﻿using Bus;
 using Gameplay.Items;
+using UnityEditor;
 using UnityEngine;
 
 namespace Gameplay.Other
@@ -10,7 +11,7 @@ namespace Gameplay.Other
 
         [SerializeField] TooltipConfig _tooltipConfig;
         
-        public string GetTooltip(ItemModule[] playerModules)
+        public Tooltip GetTooltip(ItemModule[] playerModules)
         {
             return _tooltipConfig.GetTooltip(playerModules);
         }

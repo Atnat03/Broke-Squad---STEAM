@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Gameplay.Items
 {
@@ -10,8 +12,14 @@ namespace Gameplay.Items
         public List<IFirstAction> FirstActionList { get; }
         public List<ISecondAction> SecondActionList { get; }
         public List<IPassif> Passifs { get; }
-
         public Transform Anchor { get; private set; }
+        
+        public ulong InstanceId { get; private set; }
+        
+        public void SetInstanceId(ulong id)
+        {
+            InstanceId = id;
+        }
         
         public ItemInstance(SO_Item data)
         {
@@ -19,6 +27,8 @@ namespace Gameplay.Items
             FirstActionList = CloneAll(data.FirstActionList);
             SecondActionList = CloneAll(data.SecondActionList);
             Passifs = CloneAll(data.PassifList);
+            
+            InstanceId = ItemInstanceIdGenerator.Generate();
 
             foreach (var m in AllModules())
                 m?.ResetState();
@@ -27,6 +37,8 @@ namespace Gameplay.Items
         private ItemInstance(ItemInstance source)
         {
             Data = source.Data;
+            InstanceId = source.InstanceId;
+            
             FirstActionList = CloneAll(source.FirstActionList);
             SecondActionList = CloneAll(source.SecondActionList);
             Passifs = CloneAll(source.Passifs);
@@ -137,6 +149,29 @@ namespace Gameplay.Items
             
             foreach (var m in AllModules())
                 if (m is IAnchorAware a) a.SetAnchor(anchor, hostId);
+        }
+
+        public IItemModule GetModule(Type targetModule)
+        {
+            foreach (var m in AllModules())
+            {
+                if (m.GetType() == targetModule)
+                {
+                    return m;
+                }
+            }
+
+            return null;
+        }
+    }
+    
+    public static class ItemInstanceIdGenerator
+    {
+        private static ulong _nextId = 1;
+
+        public static ulong Generate()
+        {
+            return _nextId++;
         }
     }
 }

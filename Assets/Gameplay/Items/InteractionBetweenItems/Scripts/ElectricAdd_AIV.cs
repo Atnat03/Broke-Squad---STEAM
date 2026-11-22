@@ -9,6 +9,8 @@ namespace Gameplay.Items
     {
         public void DoAction(ItemInstance myself, ItemInstance otherItem)
         {
+            ABPrint.Print("Charge in inventory", ABColor.Yellow);
+            
             ElectricUseModule electricUseModule = null;
             ChargeItemModule chargeItemModule = null;
             

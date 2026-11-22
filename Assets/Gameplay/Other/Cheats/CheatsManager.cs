@@ -6,6 +6,7 @@ using Gameplay.Items;
 using Gameplay.Other.Cheat;
 using Gameplay.PlayerData;
 using Network.Connections.SceneLoading;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -36,6 +37,16 @@ namespace Gameplay.Controller
         [Header("Teleport")]
         [SerializeField] private List<Button> _playerTeleportsButton;
         [SerializeField] private Button _spawnTeleportButton;
+        
+        [Header("Noclip")]
+        [SerializeField] private float _noclipSpeed = 8f;
+        [SerializeField] private float _noclipSprintMultiplier = 3f;
+        [SerializeField] private TextMeshProUGUI _noclipText;
+
+        private Rigidbody _rb;
+        private CapsuleCollider _capsule;
+        private Camera _noclipCam;
+        private bool _noclip;
         
         public Action OnInvincibility;
         public Action OnRevive;
@@ -75,6 +86,12 @@ namespace Gameplay.Controller
             
             _playerInputs.Cheats.CheatPannel.performed += UpdatePannelItemGive;
             
+            
+            _rb = _playerController.GetComponent<Rigidbody>();
+            _capsule = _playerController.GetComponent<CapsuleCollider>();
+            _noclipText.gameObject.SetActive(false);
+            
+            
             if(!IsServer)
                 _stopAggroButton.gameObject.SetActive(false);
         }
@@ -90,6 +107,8 @@ namespace Gameplay.Controller
                 _playerInputs.Gameplay.Pause.performed -= LeavePanel;
                 _playerInputs.Cheats.CheatPannel.performed -= UpdatePannelItemGive;
                 _playerInputs.Disable();
+                
+                if (_noclip) SetNoclip(false);
             }
             base.OnNetworkDespawn();
         }
@@ -226,5 +245,52 @@ namespace Gameplay.Controller
         {
             InvokeEvent(new OnLockDownEnd_EVENT());
         }
+        
+        #region Noclip
+
+        public void ToggleNoclip() => SetNoclip(!_noclip);
+        
+        private void SetNoclip(bool value)
+        {
+            if (_noclip == value) return;
+            _noclipText.gameObject.SetActive(value);
+            _playerController.PlayerAnimator.SetAnimBool(value, "NoClip");
+            if (value)
+            {
+                _noclip = true;
+                _playerController.NoclipActive = true;
+                _capsule.isTrigger = true;          
+                _playerController.Motor.StopMoving();
+            }
+            else
+            {
+                _capsule.isTrigger = false;
+                _playerController.NoclipActive = false;
+                _noclip = false;
+                _playerController.Motor.StopMoving();
+            }
+        }
+        
+        private void FixedUpdate()
+        {
+            if (!IsSpawned || !IsOwner || !_noclip) return;
+
+            if (_noclipCam == null) _noclipCam = _playerController.PlayerCamera.GetComponent<Camera>();
+            Transform view = _noclipCam != null ? _noclipCam.transform : _playerController.transform;
+
+            Vector2 move = _playerController.MoveInput;
+            Vector3 dir = view.forward * move.y + view.right * move.x;
+            
+            bool canAct = _playerController.InputEnabled;
+            if (canAct && _playerInputs.Gameplay.Jump.IsPressed()) dir += Vector3.up;
+            if (canAct && _playerController.CrouchHeld) dir += Vector3.down;
+
+            dir = Vector3.ClampMagnitude(dir, 1f);
+
+            float speed = _noclipSpeed * (_playerController.SprintHeld ? _noclipSprintMultiplier : 1f);
+            _rb.linearVelocity = dir * speed;
+        }
+        
+        #endregion
     }
 }

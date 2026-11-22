@@ -75,7 +75,7 @@ public abstract class OnlineInteractable : NetworkBusListener, IInteractable
     [Rpc(SendTo.Everyone)]
     protected void CloseEventsRpc() => onInteractableClose?.Invoke();
     
-    public string GetTooltip(ItemModule[] playerModules)
+    public Tooltip GetTooltip(ItemModule[] playerModules)
     {
         return _tooltipConfig.GetTooltip(playerModules);
     }

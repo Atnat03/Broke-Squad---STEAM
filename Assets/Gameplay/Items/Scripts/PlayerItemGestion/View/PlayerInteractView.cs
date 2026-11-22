@@ -1,6 +1,8 @@
 ﻿using Bus;
+using MyPrint;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Gameplay.Items
 {
@@ -11,6 +13,7 @@ namespace Gameplay.Items
         [Header("UI")]
         [SerializeField] private GameObject _tooltipParent;
         [SerializeField] private TextMeshProUGUI _tooltipText;
+        [SerializeField] private Image _tooltipIcon;
         
         void Start()
         {
@@ -26,10 +29,13 @@ namespace Gameplay.Items
                 _bridge.PlayerInteract.OnTooltipChange -= UpdateTooltip;
         }
 
-        private void UpdateTooltip(bool isVisible, string txt)
+        private void UpdateTooltip(bool isVisible, Tooltip data)
         {
             _tooltipParent.SetActive(isVisible);
-            _tooltipText.text = txt;
+            _tooltipText.text = data.Message;
+            
+            _tooltipIcon.gameObject.SetActive(data.Icon != null);
+            _tooltipIcon.sprite = data.Icon;
         }
     }
 }

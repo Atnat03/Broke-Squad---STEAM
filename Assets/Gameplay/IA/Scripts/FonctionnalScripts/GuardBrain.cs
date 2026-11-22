@@ -79,6 +79,8 @@ namespace Gameplay.IA
                 ChangeState<PatrolState_GUARD, PatrolParam>(new PatrolParam { IsAlerted = false });
 
                 OnAggroStateChangeServerRpc(false);
+
+                _lockDownManager.SubscribeGuard(this);
             }
         }
 
@@ -285,6 +287,8 @@ namespace Gameplay.IA
                 return;
             }
 
+            _lockDownManager.UnSubscribeGuard(this);
+            
             DesactivateWhenDieClientRpc();
         }
 
