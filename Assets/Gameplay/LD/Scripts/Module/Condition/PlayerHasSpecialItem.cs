@@ -22,13 +22,13 @@ namespace Gameplay.LD
 
             if (!activation.TryGetInstigator(out var player)) return false;
 
-            PlayerInventory inventory = player.GetComponent<PlayerInventory>();
+            PlayerInventory inventory = player.GetComponentInChildren<PlayerInventory>();
             if (inventory == null) return false;
 
             ItemInstance item = inventory.GetCurrentItemInHand();
             if (item == null) return false;
 
-            foreach(SO_Item so in _items)
+            foreach (SO_Item so in _items)
             {
                 if (so == item.Data) return true;
             }
