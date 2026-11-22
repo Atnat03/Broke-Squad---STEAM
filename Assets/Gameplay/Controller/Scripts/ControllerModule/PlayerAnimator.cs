@@ -54,6 +54,12 @@ namespace Gameplay.Controller
             }
         }
         
+        public void ServerSetTrigger(string nameVisual)
+        {
+            if (!IsServer) return;
+            ReplicateTriggerRpc(nameVisual);
+        }
+        
         
         
     }

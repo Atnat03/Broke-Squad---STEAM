@@ -21,6 +21,7 @@ public class PlayerSetUp : NetworkBehaviour
     [SerializeField] private PlayerInteract _playerInteract;
     [SerializeField] private PlayerInventory _playerInventory;
     [SerializeField] private PlayerInput _playerInput;
+    [SerializeField] private PlayerOutlineToggle _playerOutlineToggle;
     
     public override void OnNetworkSpawn()
     {
@@ -35,7 +36,7 @@ public class PlayerSetUp : NetworkBehaviour
 
                 if (g.TryGetComponent(out PlayerSetUpBridge setUpBridge))
                 {
-                    setUpBridge.SetUp(_playerController, _playerHealth, _playerInteract, _playerInventory, _playerInput);
+                    setUpBridge.SetUp(_playerController, _playerHealth, _playerInteract, _playerInventory, _playerInput, _playerOutlineToggle);
                 }
             }
         }

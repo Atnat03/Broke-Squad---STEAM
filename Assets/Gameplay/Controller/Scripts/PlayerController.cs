@@ -133,6 +133,9 @@ namespace Gameplay.Controller
         public void RequestLadderJump() => _ladderJumpRequested = true;
         public void ClearLadderJump() => _ladderJumpRequested = false;
         
+        public bool NoclipActive { get; set; }
+        public bool CrouchHeld => _input != null && _input.CrouchHeld;
+        public bool SprintHeld => _input != null && _input.SprintHeld;
 
         public string PlayerName { get; private set; }
         public int PlayerColorId { get; private set; }
@@ -263,6 +266,8 @@ namespace Gameplay.Controller
                 body.ApplyRemote(Time.deltaTime, _netCrouching.Value, IsDown);
                 return;
             }
+            
+            if (NoclipActive) return;
 
             _stunTimer -= Time.deltaTime;
             _motor.CanMove = !PlayerCamera.LocksController && !IsStunned && CanAct;
@@ -279,7 +284,8 @@ namespace Gameplay.Controller
         private void FixedUpdate()
         {
             if (!IsSpawned || !IsOwner) return;
-
+            if (NoclipActive) return;
+            
             float dt = Time.fixedDeltaTime;
             ground.Check(body, _rb, transform);
             Vector3 probeDir = _stateMachine.CurrentState is ClimbState ? -ladderChecker.LadderNormal : _motor.DesiredDirection;
