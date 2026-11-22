@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Gameplay.LD
 {
-    public class PlayerHasSpecialItem : LDConditionModule
+    public class PlayerHasSpecialItemCondition : LDConditionModule
     {
         [Tooltip("Le joueur doit avoir un de ces items en main")]
         [SerializeField] private SO_Item[] _items;
