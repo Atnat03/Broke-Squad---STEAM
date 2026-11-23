@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
+  m_Name: SO_IT_RifleBullet
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
+  ID: 0
+  ItemName: Rifle Bullet
+  VisualPrefabLocal: {fileID: 4666612592472668318, guid: 8e00958149ca6154aab3792c91b623ca, type: 3}
+  VisualPrefabRemote: {fileID: 1446310156286688980, guid: 5c4221dea93f4824b895931690a38677, type: 3}
+  PickupPrefab: {fileID: 5356968559522973319, guid: 4353e2c3bedbd614d973b332f18ed596, type: 3}
+  Icon: {fileID: 21300000, guid: 770f05e22d18fd849912136c5a53566d, type: 3}
+  OffsetInHand: {x: 0, y: 0, z: 0}
+  TooltipInHand:
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
+    IsItem: 0
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
+    _requiresItemModule: 0
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
+    _requiredModule:
+      rid: -2
+  Weight: 1
+  OffsetRotationDrop: {x: 0, y: 0, z: 0}
+  FirstActionList: []
+  SecondActionList: []
+  PassifList:
+  - rid: 7832863092312113434
+  - rid: 7832863092312113435
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7832863092312113434
+      type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _minVelocityForDamage: 10
+        _damage: 50
+        _canDamagePlayer: 1
+    - rid: 7832863092312113435
+      type: {class: NotGrabbableModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data: 
