@@ -1,5 +1,6 @@
 ﻿using Bus;
 using Gameplay.Items;
+using UnityEditor;
 using UnityEngine;
 
 namespace Gameplay.Other
@@ -10,15 +11,15 @@ namespace Gameplay.Other
 
         [SerializeField] TooltipConfig _tooltipConfig;
         
-        public string GetTooltip(ItemModule[] playerModules)
+        public Tooltip GetTooltip(ItemModule[] playerModules)
         {
             return _tooltipConfig.GetTooltip(playerModules);
         }
 
         public Outline outline => _outline;
-        public void SetOutline(bool state)
+        public void SetOutline(StartOutliningData data)
         {
-            _outline.enabled = state;
+            _outline.enabled = data.State;
         }
 
         public void Interact(ulong clientId)

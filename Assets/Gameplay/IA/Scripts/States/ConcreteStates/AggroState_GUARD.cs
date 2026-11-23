@@ -48,17 +48,9 @@ namespace Gameplay.IA
             
             Transform target = Brain.LineSight.PerformFindingPlayer(stimulated ? _target : null);
             
-            if (!target)
+            if (!target || (PlayerHealth && PlayerHealth.IsDowned))
             {
-                if (PlayerHealth == null || PlayerHealth.IsDowned)
-                {
-                    Brain.ChangeState<PatrolState_GUARD, PatrolParam>(new PatrolParam { IsAlerted = false });
-                    return;
-                }
-
-                PlayerHealth = null;
-
-                Brain.Motor.SetTarget(Brain.LineSight.LastSeenPosition);
+                Brain.ChangeState<PatrolState_GUARD, PatrolParam>(new PatrolParam { IsAlerted = false });
                 return;
             }
             
@@ -70,6 +62,8 @@ namespace Gameplay.IA
 
             Brain.Motor.SetTarget(destination - _transform.forward * (Brain.CurrentSetting.AttackRange * 0.5f));
 
+            _transform.LookAt(_target);
+            
             HandleAttack();
         }
 
@@ -99,9 +93,12 @@ namespace Gameplay.IA
 
             bool isInRangeToAttack = (_transform.position - _target.position).sqrMagnitude < Brain.CurrentSetting.AttackRange * Brain.CurrentSetting.AttackRange;
 
-            if (isInRangeToAttack && _attackCoroutine == null && !IsAttacking && !Brain.Health.IsStun)
+            if (isInRangeToAttack)
             {
-                _attackCoroutine = Brain.StartCoroutine(AttackRoutine());
+                if (_attackCoroutine == null && !IsAttacking && !Brain.Health.IsStun)
+                {
+                    _attackCoroutine = Brain.StartCoroutine(AttackRoutine());
+                }
             }
         }
 
@@ -109,7 +106,7 @@ namespace Gameplay.IA
         {
             IsAttacking = true;
             Brain.Motor.StopAgent(true);
-
+            
             PerformAttack();
 
             yield return new WaitForSeconds(Brain.CurrentSetting.AttackCooldown);

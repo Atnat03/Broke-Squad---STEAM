@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Gameplay.Items
 {
-    [CreateAssetMenu(fileName = "new ItemData", menuName = "Items/ItemData")]
+    [CreateAssetMenu(fileName = "new ItemData", menuName = "Inventory/Items/ItemData")]
     public class SO_Item : ScriptableObject
     {
         [HideInInspector] public int ID;

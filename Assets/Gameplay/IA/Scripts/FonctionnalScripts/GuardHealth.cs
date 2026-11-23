@@ -28,6 +28,7 @@ namespace Gameplay.IA
         public Action<float> OnHealthUpdate;
         public Action<bool> OnGuardDie;
         public Action<bool> OnGuardStunning;
+        public Action OnTakingDamage;
 
         //Brain reference        
         public GuardBrain Brain { get; set; }
@@ -53,7 +54,7 @@ namespace Gameplay.IA
             
             _currentHP.Value -= damage;
             _lastDamageTime = Time.time;
-
+            
             Brain.ResetLockDownTimer();
             
             if (_currentHP.Value <= 0)
@@ -62,6 +63,8 @@ namespace Gameplay.IA
                 return;
             }
 
+            TakingDamageRpc();
+            
             if (Brain.CurrentState is AggroState_GUARD) return;
  
             Transform target = GetNearestPlayer();
@@ -73,6 +76,12 @@ namespace Gameplay.IA
                     Target = target
                 });
             }
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void TakingDamageRpc()
+        {
+            OnTakingDamage?.Invoke();
         }
 
         private void Death()

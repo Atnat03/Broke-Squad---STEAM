@@ -27,7 +27,6 @@ namespace Gameplay.Controller
 
         public void UpdateState(bool crouched, bool moving, bool sprinting, bool downed, bool grounded)
         {
-            Debug.Log($"[Crouched] {crouched} [Moving] {moving} [Sprinting] {sprinting} [Downed] {downed} [Grounded] {grounded}");
             if(_crouched != crouched)
             {
                 SetAnimBool(crouched, "Crouched");
@@ -53,6 +52,12 @@ namespace Gameplay.Controller
                 SetAnimBool(grounded, "Grounded");
                 _grounded = grounded;
             }
+        }
+        
+        public void ServerSetTrigger(string nameVisual)
+        {
+            if (!IsServer) return;
+            ReplicateTriggerRpc(nameVisual);
         }
         
         

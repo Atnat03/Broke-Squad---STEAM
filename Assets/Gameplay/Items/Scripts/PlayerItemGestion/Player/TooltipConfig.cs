@@ -1,4 +1,5 @@
 ﻿using System;
+using Gameplay.LD;
 using MyPrint;
 using UnityEditor;
 using UnityEngine;
@@ -6,45 +7,47 @@ using UnityEngine;
 namespace Gameplay.Items
 {
     [Serializable]
+    public struct Tooltip
+    {
+        public string Message;
+        public Sprite Icon;
+    }
+    
+    [Serializable]
     public class TooltipConfig
     {
         [Header("Default Tooltip")] 
-        [TextArea] [SerializeField] public string DefaultText;
-
+        [SerializeField] public Tooltip DefaultTooltip;
+        
         [Header("Is Item")] 
         [SerializeField] public bool IsItem;
-        [SerializeField] public string TooltipInHand;
+        [SerializeField] public Tooltip TooltipInHand;
 
         [Header("Item Requirement")] 
         [SerializeField] private bool _requiresItemModule;
-
-        [TextArea] [SerializeField] private string _tooltipWithItem;
+        [SerializeField] private Tooltip _tooltipWithItem;
         [SerializeReference][SubclassSelector] private ItemModule _requiredModule;
         
-        public string GetTooltip(ItemModule[] playerModules)
+        public Tooltip GetTooltip(ItemModule[] playerModules)
         {
-            ABPrint.Print("Get tooltip");
-            
-            if (!_requiresItemModule)
-                return DefaultText;
-
-            if (_requiredModule == null)
-                return DefaultText;
-            
-            if(playerModules == null)
-                return DefaultText;
-            
-            foreach (ItemModule module in playerModules)
+            if (_requiresItemModule)
             {
-                if (module != null && module.GetType() == _requiredModule.GetType())
+                if (_requiredModule == null)
+                    return DefaultTooltip;
+
+                if (playerModules == null)
+                    return DefaultTooltip;
+
+                foreach (ItemModule module in playerModules)
                 {
-                    ABPrint.Print(module.GetType() + " / " + _requiredModule.GetType());
-                    
-                    return _tooltipWithItem;
+                    if (module != null && module.GetType() == _requiredModule.GetType())
+                    {
+                        return _tooltipWithItem;
+                    }
                 }
             }
 
-            return DefaultText;
+            return DefaultTooltip;
         }
     }
 }

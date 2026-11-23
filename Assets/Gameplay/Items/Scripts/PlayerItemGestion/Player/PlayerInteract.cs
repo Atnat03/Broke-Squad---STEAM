@@ -22,7 +22,7 @@
             private IInteractable _currentHoverInteractable = null;
             private IHoldInteractable _heldInteractable;
 
-            public Action<bool, string> OnTooltipChange;
+            public Action<bool, Tooltip> OnTooltipChange;
             
             #region Network Start
             
@@ -48,45 +48,52 @@
             #endregion
             
             // Activate / Desactivate the outline of the IInteractable that we're aiming to
-            void Update()
+            private void Update()
             {
                 if (!IsOwner || _camera == null) return;
-
                 if (_heldInteractable != null) return;
 
                 IInteractable target = (_playerCamera != null && _playerCamera.HasOverride) ? null : GetAimingInteractable();
-                
-                if (target == _currentHoverInteractable) return;
-                
-                if (target == null && _currentHoverInteractable != null)
-                {
-                    _currentHoverInteractable?.SetOutline(false);
-                    OnTooltipChange?.Invoke(false, null);
-                }
 
-                _currentHoverInteractable?.SetOutline(false);
-                
-                _currentHoverInteractable = target;
-
+                if (target == _currentHoverInteractable)
+                    return;
 
                 if (_currentHoverInteractable != null)
                 {
-                    _currentHoverInteractable?.SetOutline(true);
-
-                    ItemModule[] modules = null;
-
-                    ItemInstance currentItem = _playerInventory.GetCurrentItemInHand();
-
-                    if (currentItem != null)
+                    _currentHoverInteractable.SetOutline(new StartOutliningData
                     {
-                        modules = currentItem.GetAllModules();
-                    }
+                        State = false,
+                        Inventory = null
+                    });
 
-                    string message = _currentHoverInteractable.GetTooltip(modules);
-
-                    OnTooltipChange?.Invoke(!string.IsNullOrEmpty(message), message);
+                    OnTooltipChange?.Invoke(false, new Tooltip
+                    {
+                        Message = string.Empty,
+                        Icon = null
+                    });
                 }
 
+                _currentHoverInteractable = target;
+
+                if (_currentHoverInteractable == null)
+                    return;
+
+                _currentHoverInteractable.SetOutline(new StartOutliningData
+                {
+                    State = true,
+                    Inventory = _playerInventory
+                });
+
+                ItemModule[] modules = null;
+
+                ItemInstance currentItem = _playerInventory.GetCurrentItemInHand();
+
+                if (currentItem != null)
+                    modules = currentItem.GetAllModules();
+
+                Tooltip data = _currentHoverInteractable.GetTooltip(modules);
+
+                OnTooltipChange?.Invoke(!string.IsNullOrEmpty(data.Message), data);
             }
             
             private IInteractable GetAimingInteractable()

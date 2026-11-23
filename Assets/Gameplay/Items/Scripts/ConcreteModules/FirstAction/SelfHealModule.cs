@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MyPrint;
 using UnityEngine;
 
 namespace Gameplay.Items
@@ -27,6 +28,7 @@ namespace Gameplay.Items
 		public void StartFirstAction()
 		{
 			if (!CanUse()) return;
+			
 			PlayerHealth player = Context.Inventory.Controller.Health;
 
 			Context.SendToServer(this, new OnModuleDoAction_EVENT
@@ -49,6 +51,8 @@ namespace Gameplay.Items
 		{
 			PlayerHealth player = data.GetTarget().GetComponentInChildren<PlayerHealth>();
 
+			ABPrint.Print("heal : " + player);
+			
 			if(player)
 			{ 
 				player.Heal(data.ValueF);

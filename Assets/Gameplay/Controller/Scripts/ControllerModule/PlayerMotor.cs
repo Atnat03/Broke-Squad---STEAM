@@ -21,7 +21,8 @@ namespace Gameplay.Controller
         public bool CanMove { get; set; } = true;
         public bool IsClimbing { get; set; }
         public float ClimbVelocity { get; set; }
-        private Vector2 MoveInput => CanMove ? _input.Move : Vector2.zero;
+        public Vector2? ForcedMove { get; set; }
+        private Vector2 MoveInput => CanMove ? (ForcedMove ?? _input.Move) : Vector2.zero;
 
         public Vector3 HorizontalVelocity => new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 

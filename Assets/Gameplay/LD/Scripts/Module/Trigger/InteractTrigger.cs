@@ -1,4 +1,6 @@
-﻿using Gameplay.Items;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Gameplay.Items;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -12,7 +14,16 @@ namespace Gameplay.LD
         
         [SerializeField] TooltipConfig _tooltipConfig;
         
-        public string GetTooltip(ItemModule[] playerModules)
+        [Header("Needed Item On it")]
+        [SerializeField] private float _timeNeedToTriggerIcon = 2;
+        [SerializeField] private TooltipForTrigger _itemIconSpritePrefab;
+        [SerializeField] private Transform _itemIconPosition;
+        [SerializeField] private SO_Item _itemNeedData;
+        Coroutine _seeingRoutine = null;
+        PlayerInventory _playerInventoryInstance = null;
+        TooltipForTrigger _itemIconInstance;
+        
+        public Tooltip GetTooltip(ItemModule[] playerModules)
         {
             return _tooltipConfig.GetTooltip(playerModules);
         }
@@ -22,14 +33,13 @@ namespace Gameplay.LD
             gameObject.layer = Context.Element.gameObject.layer;
             GetComponent<Collider>().isTrigger = false;
             outline = Context.Element.GetComponentInChildren<Outline>(true);
-            SetOutline(false);
+            SetOutline(new StartOutliningData
+            {
+                State = false,
+                Inventory = null,
+            });
         }
-
-        public void SetOutline(bool state)
-        {
-            if (outline != null) outline.enabled = state;
-        }
-
+        
         public void Interact(ulong clientId) => Context.RequestInteract(this);
 
         public void ServerInteract(NetworkObject player)
@@ -38,5 +48,61 @@ namespace Gameplay.LD
             if (Vector3.Distance(player.transform.position, transform.position) > _range) return;;
             Raise(new LDActivation(player, player.transform.position));
         }
+        
+        #region Tooltip
+        
+        public void SetOutline(StartOutliningData data)
+        {
+            if (outline) outline.enabled = data.State;
+
+            if (data.State)
+            {
+                if(_playerInventoryInstance == null)
+                    _playerInventoryInstance = data.Inventory;
+                
+                if (_seeingRoutine == null)
+                {
+                    StartCoroutine(SeeingRoutine());
+                }
+            }
+            else
+            {
+                _playerInventoryInstance = null;
+                
+                if(_seeingRoutine!=null)
+                    StopCoroutine(_seeingRoutine);
+
+                if (_itemIconInstance)
+                    _itemIconInstance.StartDestroy();
+            }
+        }
+
+        private IEnumerator SeeingRoutine()
+        {
+            yield return new WaitForSeconds(_timeNeedToTriggerIcon);
+
+            CreateItemIcon();
+
+            _seeingRoutine = null;
+        }
+
+        private void CreateItemIcon()
+        {
+            if (!_itemIconSpritePrefab || !_itemIconPosition || !_itemNeedData) return;
+            
+            TooltipForTrigger tooltip = Instantiate(_itemIconSpritePrefab, _itemIconPosition.position, _itemIconPosition.rotation);
+
+            bool hasItem = false;
+            
+            if (_playerInventoryInstance)
+            {
+                hasItem = _playerInventoryInstance.HasThisItemInInventory(_itemNeedData);
+            }
+            
+            tooltip.SetUp(_itemNeedData.Icon, hasItem);
+            _itemIconInstance = tooltip;
+        }
+
+        #endregion
     }
 }

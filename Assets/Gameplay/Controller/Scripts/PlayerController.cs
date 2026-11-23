@@ -88,7 +88,7 @@ namespace Gameplay.Controller
         public float TiedUpSpeed => tiedUpSpeed;
 
         private bool WantsCrouch() => _input.CrouchHeld || (IsCrouching && !body.CanStandUp());
-        private bool WantsSprint() => _input.SprintHeld && MoveInput.y > 0.1f && _stamina.CanSprint;
+        private bool WantsSprint() => (_input.SprintHeld || ForcedSprint) && MoveInput.y > 0.1f && _stamina.CanSprint;
 
         public void PlayCrouchSound() => PlaySound(_crouchSound, 0.5f);
 
@@ -98,8 +98,19 @@ namespace Gameplay.Controller
         public void PopLock() => _lockCount = Mathf.Max(0, _lockCount - 1);
 
         private bool CanAct => !PlayerCamera.LocksController && !IsStunned && !IsLocked;
-        public Vector2 MoveInput => _input != null && CanAct ? _input.Move : Vector2.zero;
+        public Vector2 MoveInput => _input != null && CanAct ? (ForcedMove ?? _input.Move) : Vector2.zero;
+
         
+        
+        public Vector2? ForcedMove { get; private set; }
+        public bool ForcedSprint { get; private set; }
+
+        public void SetForcedInput(Vector2? move, bool sprint)
+        {
+            ForcedMove = move;
+            ForcedSprint = sprint;
+            if (_motor != null) _motor.ForcedMove = move;
+        }
 
         public Vector3 RawDesiredDirection
         {
@@ -133,6 +144,9 @@ namespace Gameplay.Controller
         public void RequestLadderJump() => _ladderJumpRequested = true;
         public void ClearLadderJump() => _ladderJumpRequested = false;
         
+        public bool NoclipActive { get; set; }
+        public bool CrouchHeld => _input != null && _input.CrouchHeld;
+        public bool SprintHeld => _input != null && _input.SprintHeld;
 
         public string PlayerName { get; private set; }
         public int PlayerColorId { get; private set; }
@@ -263,6 +277,8 @@ namespace Gameplay.Controller
                 body.ApplyRemote(Time.deltaTime, _netCrouching.Value, IsDown);
                 return;
             }
+            
+            if (NoclipActive) return;
 
             _stunTimer -= Time.deltaTime;
             _motor.CanMove = !PlayerCamera.LocksController && !IsStunned && CanAct;
@@ -279,7 +295,8 @@ namespace Gameplay.Controller
         private void FixedUpdate()
         {
             if (!IsSpawned || !IsOwner) return;
-
+            if (NoclipActive) return;
+            
             float dt = Time.fixedDeltaTime;
             ground.Check(body, _rb, transform);
             Vector3 probeDir = _stateMachine.CurrentState is ClimbState ? -ladderChecker.LadderNormal : _motor.DesiredDirection;
@@ -305,10 +322,10 @@ namespace Gameplay.Controller
         {
             InvokeEvent(new PlaySoundEvent
             {
-                soundName = clip,
-                position = transform.position,
-                volume = volumeToPlay,
-                pitch = Random.Range(0.95f, 1.05f)
+                SoundName = clip,
+                Position = transform.position,
+                Volume = volumeToPlay,
+                Pitch = Random.Range(0.95f, 1.05f)
             });
         }
 
@@ -365,7 +382,7 @@ namespace Gameplay.Controller
 
         #endregion
 
-        public void SetInputEnabled(bool value)
+        public void  SetInputEnabled(bool value)
         {
             if (!IsOwner || _input == null) return;
             _input.Enabled = value;

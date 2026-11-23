@@ -20,6 +20,8 @@ namespace Gameplay.Items
         private bool _canUse = true;
 
         private int _currentUse;
+        
+        public bool HasToBeDestroyed => _currentUse == 0;
 
         protected override void SetModule()
         {
@@ -59,18 +61,21 @@ namespace Gameplay.Items
 
         public void UseItem()
         {
-            if (_currentUse <= 0) return;
-            
-            _currentUse--;
-           
-            Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
-            {
-                ClientId = Context.Inventory.OwnerClientId,
-                KeyEvent = _keyEvent,
-                ValueB = true,
-                ValueS = _currentUse + "/"+ _numberOfUse,
-            });
+            if (_currentUse <= 0)
+                return;
 
+            _currentUse--;
+
+            if (Context.Inventory.IsItemInHand(Context.Core.Instance))
+            {
+                Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
+                {
+                    ClientId = Context.Inventory.OwnerClientId,
+                    KeyEvent = _keyEvent,
+                    ValueB = true,
+                    ValueS = _currentUse + "/" + _numberOfUse,
+                });
+            }
 
             if (_currentUse <= 0)
             {
@@ -85,7 +90,7 @@ namespace Gameplay.Items
             switch (_destroyWhenEmpty)
             {
                 case ConsequenceOfNoUse.DestroyObject:
-                    Context.Inventory.DestroyItemInHand();
+                    Context.Inventory.RemoveItemFromInventory(Context.Core.Instance);
                     return;
                 case ConsequenceOfNoUse.DisableAction:
                     ABPrint.Print("This action is disable !", ABColor.Red);

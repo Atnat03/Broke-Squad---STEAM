@@ -15,6 +15,7 @@ public abstract class OnlineInteractable : NetworkBusListener, IInteractable
     
     public Outline outline => Outline;
 
+    public UnityEvent onInteractServer;
     public UnityEvent onInteractableOpen;
     public UnityEvent onInteractableClose;
 
@@ -30,31 +31,41 @@ public abstract class OnlineInteractable : NetworkBusListener, IInteractable
         }
     }
 
-    public void SetOutline(bool state)
+    public void SetOutline(StartOutliningData data)
     {
         if(outline)
-            outline.enabled = state;
+            outline.enabled = data.State;
     }
     
     public void Interact(ulong clientId)
     {
+        onInteractServer?.Invoke();
+        
         if (IsServer) ServerInteract(clientId);
         else InteractServerRpc();
     }
 
     public void OnInteractParent()
     {
+        onInteractServer?.Invoke();
+        
         if (IsServer) OnInteract();
         else OnInteractServerRpc();
     }
     
     [Rpc(SendTo.Server)]
-    void InteractServerRpc(RpcParams rpcParams = default) => ServerInteract(rpcParams.Receive.SenderClientId);
+    void InteractServerRpc(RpcParams rpcParams = default)
+    {
+        ServerInteract(rpcParams.Receive.SenderClientId);
+    }
     
     protected abstract void ServerInteract(ulong senderClientId);
     
     [Rpc(SendTo.Server)]
-    void OnInteractServerRpc() => OnInteract();
+    void OnInteractServerRpc()
+    {
+        OnInteract();
+    }
     
     protected abstract void OnInteract();
 
@@ -64,7 +75,7 @@ public abstract class OnlineInteractable : NetworkBusListener, IInteractable
     [Rpc(SendTo.Everyone)]
     protected void CloseEventsRpc() => onInteractableClose?.Invoke();
     
-    public string GetTooltip(ItemModule[] playerModules)
+    public Tooltip GetTooltip(ItemModule[] playerModules)
     {
         return _tooltipConfig.GetTooltip(playerModules);
     }

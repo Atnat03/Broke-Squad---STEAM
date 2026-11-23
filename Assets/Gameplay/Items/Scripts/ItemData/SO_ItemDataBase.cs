@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gameplay.Items
 {
-    [CreateAssetMenu(fileName = "new Data Base", menuName = "Items/DataBase")]
+    [CreateAssetMenu(fileName = "new Data Base", menuName = "Inventory/Items/DataBase")]
     public class SO_ItemDataBase : ScriptableObject
     {
         [SerializeField] public List<SO_Item> Data = new List<SO_Item>();
