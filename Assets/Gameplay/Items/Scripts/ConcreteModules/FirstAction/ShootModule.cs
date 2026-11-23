@@ -13,38 +13,45 @@ namespace Gameplay.Items
         [SerializeField] private SO_Item _ammoPrefab;
         [SerializeField] private Vector3 _shootPos_SECURITY;
         [SerializeField] private float _shootForce;
+        [SerializeField] private LayerMask _aimMask = ~0;  
+        [SerializeField] private float _aimDistance = 100f;
         
         [Header("SFX")] 
         [SerializeField, SoundName] private string _stringName;
         [SerializeField, Range(0, 1)] private float _volume = 0.5f;
         
         public ICondition Condition => ConditionParent;
+
         public void StartFirstAction()
         {
             if (!CanUse()) return;
 
             Transform cam = Context.Camera.transform;
 
-            Ray ray = new Ray(cam.position, cam.forward);
-
-            Vector3 aimPoint = ray.origin + ray.direction * 100f;
-
-            if (Physics.Raycast(ray, out RaycastHit hit, 100f, ~0,  QueryTriggerInteraction.Ignore))
-            {
+            Vector3 aimPoint = cam.position + cam.forward * _aimDistance;
+            
+            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, _aimDistance, _aimMask, QueryTriggerInteraction.Ignore))
                 aimPoint = hit.point;
-            }
 
-            Vector3 pos = _shootPos_SECURITY;
-            
-            if(Context.Core.transform.childCount > 0)
-            {
-                pos = Context.Core.transform.GetChild(0).position;
-            }
+            Transform weaponTransform = Context.Core.transform;
 
-            pos = CheckWall(pos);
+            Vector3 muzzle = weaponTransform.position;
+
+            if (weaponTransform.childCount > 0)
+                muzzle = weaponTransform.GetChild(0).position;
+
+            muzzle += weaponTransform.TransformVector(_shootPos_SECURITY);
+
+            Vector3 origin = muzzle;
             
-            Vector3 origin = pos;
-            Vector3 direction = (aimPoint - origin).normalized;
+            Vector3 camToMuzzle = muzzle - cam.position;
+            if (Physics.Raycast(cam.position, camToMuzzle.normalized, camToMuzzle.magnitude, _aimMask, QueryTriggerInteraction.Ignore))
+                origin = cam.position;
+            
+            Vector3 direction = aimPoint - origin;
+            if (direction.sqrMagnitude < 0.01f || Vector3.Dot(direction, cam.forward) <= 0f)
+                direction = cam.forward;
+            direction.Normalize();
             
             Context.SendToServer(this, new OnModuleDoAction_EVENT
             {
@@ -52,7 +59,7 @@ namespace Gameplay.Items
                 Direction = direction,
                 ValueF = _shootForce
             });
-            
+
             ConsumeCondition(new OnModuleDoAction_EVENT());
         }
 

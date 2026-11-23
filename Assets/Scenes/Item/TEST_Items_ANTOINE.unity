@@ -51354,7 +51354,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1224057884621916055, guid: 8ca8fb032d3fe5b40aa942888a5b97ab, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.075
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1953322314869152341, guid: 8ca8fb032d3fe5b40aa942888a5b97ab, type: 3}
       propertyPath: m_InScenePlaced
@@ -51404,11 +51404,50 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7400896916677911207, guid: 8ca8fb032d3fe5b40aa942888a5b97ab, type: 3}
+      propertyPath: m_Layer
+      value: 18
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7400896916677911207, guid: 8ca8fb032d3fe5b40aa942888a5b97ab, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5538045284204543422}
   m_SourcePrefab: {fileID: 100100000, guid: 8ca8fb032d3fe5b40aa942888a5b97ab, type: 3}
+--- !u!1 &5538045284204543421 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7400896916677911207, guid: 8ca8fb032d3fe5b40aa942888a5b97ab, type: 3}
+  m_PrefabInstance: {fileID: 5538045284204543420}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &5538045284204543422
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5538045284204543421}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &5803286743690692138
 GameObject:
   m_ObjectHideFlags: 0
@@ -52895,10 +52934,6 @@ PrefabInstance:
     - target: {fileID: 4758141323779295421, guid: 261eab6988f566d4bac8e54eda6917d9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7750190774993009693, guid: 261eab6988f566d4bac8e54eda6917d9, type: 3}
-      propertyPath: outlineWidth
-      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

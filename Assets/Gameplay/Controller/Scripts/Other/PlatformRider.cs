@@ -1,53 +1,58 @@
-﻿using Gameplay.LD;
+﻿using System;
 using Unity.Netcode;
-using Unity.Netcode.Components;
 using UnityEngine;
 
 public class PlatformRider : NetworkBehaviour
 {
-    private MovingPlatform _currentPlatform;
-    private Vector3 _lastPlatformPos;
-    
+    [SerializeField] private LayerMask _platformMask;
+    [SerializeField] private float _rayStartHeight = 0.2f;
+    [SerializeField] private float _rayLength = 0.5f;
+
+    private readonly NetworkVariable<ulong> _platformId = new();
+
+    private ulong _appliedId; 
+
+    private void Update()
+    {
+        if (!IsSpawned) return;
+        
+        if (_appliedId != _platformId.Value) TryApplyParent(_platformId.Value);
+    }
+
     public void OnTriggerEnter(Collider other)
     {
         if (!IsOwner) return;
-
-        if (other.gameObject.TryGetComponent(out MovingPlatform platform))
-        {
-            SetPlatform(platform);
-        }
-    }
-    
-    public void OnTriggerExit(Collider other)
-    {
-        if (!IsOwner) return;
-
-        if (other.gameObject.TryGetComponent(out MovingPlatform platform))
-        {
-            _currentPlatform = null;
-        }
-    }
-    
-    public void SetPlatform(MovingPlatform platform)
-    {
-        if (!IsOwner) return;
         
-        _currentPlatform = platform;
-        if (platform != null)
-            _lastPlatformPos = platform.transform.position;
+        ulong foundId = 0;
+
+        NetworkObject platform = other.gameObject.GetComponent<NetworkObject>();
+        if (platform != null) foundId = platform.NetworkObjectId;
+
+        if (foundId == _appliedId) return;
+
+        if (TryApplyParent(foundId))
+            SetPlatformServerRpc(foundId);
     }
 
-    private void LateUpdate()
+    private bool TryApplyParent(ulong id)
     {
-        if (!IsOwner || _currentPlatform == null) return;
-
-        Vector3 delta = _currentPlatform.transform.position - _lastPlatformPos;
-        
-        if (delta.sqrMagnitude > 0.00001f)
+        if (id == 0)
         {
-            transform.position += delta;
+            transform.SetParent(null, true);
+            _appliedId = 0;
+            return true;
         }
-        
-        _lastPlatformPos = _currentPlatform.transform.position;
+
+        if (NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(id, out NetworkObject platform))
+        {
+            transform.SetParent(platform.transform, true);
+            _appliedId = id;
+            return true;
+        }
+
+        return false;
     }
+
+    [ServerRpc]
+    private void SetPlatformServerRpc(ulong id) => _platformId.Value = id;
 }
