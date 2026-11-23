@@ -1237,6 +1237,7 @@ GameObject:
   - component: {fileID: 819537467383390801}
   - component: {fileID: 527484849360358482}
   - component: {fileID: 2378170903502860804}
+  - component: {fileID: 3759238794715063357}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -1533,6 +1534,27 @@ ParentConstraint:
   m_Active: 0
   m_IsLocked: 0
   m_Sources: []
+--- !u!114 &3759238794715063357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2574743083563287450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6596b92cab4f43ba81b29527f3c4fa3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.JumpMetricsTool
+  _toolEnabled: 0
+  _walkJumpKey: 99
+  _sprintJumpKey: 100
+  _clearKey: 101
+  _runTimeBeforeJump: 0
+  _maxAirTimeExit: 10
+  _showOnScreen: 1
+  _historySize: 10
+  _controller: {fileID: 7696705341883764508}
 --- !u!1 &2718509364261996666
 GameObject:
   m_ObjectHideFlags: 0
