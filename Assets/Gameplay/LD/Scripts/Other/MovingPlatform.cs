@@ -14,8 +14,10 @@ namespace Gameplay.LD
     [RequireComponent(typeof(NetworkTransform))]
     public class MovingPlatform : NetworkBusListener
     {
+
         public Vector3 CurrentVelocity { get; private set; }
-        private Vector3 lastPos;
+
+        private Vector3 _lastPosition;
         
         [Header("Settings")]
         [SerializeField] private Transform _downPosition;
@@ -25,6 +27,11 @@ namespace Gameplay.LD
         private Coroutine _movingCoroutine;
         
         [SerializeField] private bool _up;
+        
+        private void Awake()
+        {
+            _lastPosition = transform.position;
+        }
         
         public void ActivateMoving()
         {
@@ -70,12 +77,10 @@ namespace Gameplay.LD
             _movingCoroutine = null;
         }
         
-        void Update()
+        private void Update()
         {
-            if (!IsServer) return;
-    
-            CurrentVelocity = (transform.position - lastPos) / Time.deltaTime;
-            lastPos = transform.position;
+            CurrentVelocity = (transform.position - _lastPosition) / Time.deltaTime;
+            _lastPosition = transform.position;
         }
     }
 }
