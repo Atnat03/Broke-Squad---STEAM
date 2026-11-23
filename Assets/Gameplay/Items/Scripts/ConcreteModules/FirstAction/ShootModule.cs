@@ -111,9 +111,9 @@ namespace Gameplay.Items
             //SFX
             Context.Inventory.InvokeEvent(new PlaySoundEvent
             {
-                position = pickup.transform.position,
-                volume = _volume,
-                soundName = _stringName
+                Position = pickup.transform.position,
+                Volume = _volume,
+                SoundName = _stringName
             });
         }
     }

@@ -44,9 +44,9 @@ namespace Gameplay.Items
             
             Context.Inventory.InvokeEvent(new PlaySoundEvent
             {
-                position = Context.Core.transform.position,
-                volume = _volume,
-                soundName = _sfxName
+                Position = Context.Core.transform.position,
+                Volume = _volume,
+                SoundName = _sfxName
             });
             
             yield return new WaitForSeconds(_drunkDuration);

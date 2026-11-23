@@ -311,10 +311,10 @@ namespace Gameplay.Controller
         {
             InvokeEvent(new PlaySoundEvent
             {
-                soundName = clip,
-                position = transform.position,
-                volume = volumeToPlay,
-                pitch = Random.Range(0.95f, 1.05f)
+                SoundName = clip,
+                Position = transform.position,
+                Volume = volumeToPlay,
+                Pitch = Random.Range(0.95f, 1.05f)
             });
         }
 

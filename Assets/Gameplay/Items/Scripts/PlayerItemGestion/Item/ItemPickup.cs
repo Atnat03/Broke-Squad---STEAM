@@ -43,7 +43,7 @@ namespace Gameplay.Items
         private ItemInstance _instance;
         private bool _canCollide;
         private readonly NetworkVariable<ulong> _networkInstanceId = new();
-        public readonly NetworkVariable<ulong> ThrownBy = new(ulong.MaxValue);
+        [HideInInspector] public readonly NetworkVariable<ulong> ThrownBy = new(ulong.MaxValue);
         
         //Hover
         private IHoverItemInfo _hoverInfo;
