@@ -15,7 +15,9 @@ namespace Gameplay.LD
         [Tooltip("PV de l'objet, 0 = se brise en 1 coup")]
         [SerializeField] private float _health = 20;
 
-        private float _currentHealth;
+		[SerializeField, Min(0f)] private float _range = 6f;
+
+		private float _currentHealth;
         protected override void OnInitialize()
         {
             _currentHealth = _health;
@@ -38,6 +40,24 @@ namespace Gameplay.LD
             Raise(new LDActivation(null, transform.position));
         }
 
-        public void Break(float force) => ApplyDamage(force);
-    }
+        public void Break(float force) => BreakServeurRpc(force);
+
+
+		[Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+		private void BreakServeurRpc(float force, RpcParams rpcParams = default)
+		{
+			if (Context == null) return;
+
+			ulong sender = rpcParams.Receive.SenderClientId;
+
+			if (!NetworkManager.ConnectedClients.TryGetValue(sender, out var client)) return;
+
+			NetworkObject player = client.PlayerObject;
+
+			if (player == null) return;
+			if (Vector3.Distance(player.transform.position, transform.position) > _range) return;
+
+            ApplyDamage(force, player);
+		}
+	}
 }

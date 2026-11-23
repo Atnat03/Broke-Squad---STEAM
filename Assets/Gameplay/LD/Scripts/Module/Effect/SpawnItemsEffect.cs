@@ -25,9 +25,9 @@ namespace Gameplay.LD
                     rb.AddExplosionForce(_explosionForce, transform.position, radius);
                     InvokeEvent(new PlaySoundEvent
                     {
-                        position = transform.position,
-                        soundName = _breakSound,
-                        volume = 0.3f
+                        Position = transform.position,
+                        SoundName = _breakSound,
+                        Volume = 0.3f
                     });
                 }
             }

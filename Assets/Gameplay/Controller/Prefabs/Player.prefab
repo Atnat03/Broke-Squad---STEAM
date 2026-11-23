@@ -1236,7 +1236,7 @@ GameObject:
   - component: {fileID: 543513128299446857}
   - component: {fileID: 819537467383390801}
   - component: {fileID: 527484849360358482}
-  - component: {fileID: 2378170903502860804}
+  - component: {fileID: 1907177617203136016}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -1281,7 +1281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3743338691
+  GlobalObjectIdHash: 861962280
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -1326,9 +1326,9 @@ MonoBehaviour:
   SyncPositionX: 1
   SyncPositionY: 1
   SyncPositionZ: 1
-  SyncRotAngleX: 1
+  SyncRotAngleX: 0
   SyncRotAngleY: 1
-  SyncRotAngleZ: 1
+  SyncRotAngleZ: 0
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0
@@ -1510,29 +1510,19 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1773428102 &2378170903502860804
-ParentConstraint:
+--- !u!114 &1907177617203136016
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2574743083563287450}
   m_Enabled: 1
-  serializedVersion: 2
-  m_Weight: 1
-  m_TranslationAtRest: {x: 0, y: 0.5, z: 0}
-  m_RotationAtRest: {x: 0, y: 0, z: 0}
-  m_TranslationOffsets: []
-  m_RotationOffsets: []
-  m_AffectTranslationX: 1
-  m_AffectTranslationY: 1
-  m_AffectTranslationZ: 1
-  m_AffectRotationX: 1
-  m_AffectRotationY: 1
-  m_AffectRotationZ: 1
-  m_Active: 0
-  m_IsLocked: 0
-  m_Sources: []
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 993afc556f35478da347c0b42f166226, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlatformDeltaApplier
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &2718509364261996666
 GameObject:
   m_ObjectHideFlags: 0
@@ -1817,7 +1807,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.PlayerInventory
   ShowTopMostFoldoutHeaderGroup: 1
-  PhotoCamera: {fileID: 0}
+  PhotoCamera: {fileID: 7243523188588558967}
   _playerController: {fileID: 7696705341883764508}
   _playerInput: {fileID: 88644022890520242}
   _camera: {fileID: 8333721531469245462}

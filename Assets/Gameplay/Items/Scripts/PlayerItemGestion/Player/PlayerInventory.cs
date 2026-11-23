@@ -273,9 +273,9 @@ namespace Gameplay.Items
             //SFX
             InvokeEvent(new PlaySoundEvent
             {
-                position = transform.position,
-                volume = _volume,
-                soundName = _sfxPickUp
+                Position = transform.position,
+                Volume = _volume,
+                SoundName = _sfxPickUp
             });
             
             int slot = FindFreeSlot();
@@ -459,9 +459,9 @@ namespace Gameplay.Items
 
             InvokeEvent(new PlaySoundEvent
             {
-                position = transform.position,
-                volume = _volume,
-                soundName = _sfxDrop
+                Position = transform.position,
+                Volume = _volume,
+                SoundName = _sfxDrop
             });
 
             ClearCurrentSlot();
