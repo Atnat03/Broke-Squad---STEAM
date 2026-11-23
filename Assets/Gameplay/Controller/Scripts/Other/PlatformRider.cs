@@ -1,53 +1,90 @@
-﻿using Gameplay.LD;
+﻿using System;
+using Gameplay.Controller;
+using Gameplay.LD;
 using Unity.Netcode;
-using Unity.Netcode.Components;
 using UnityEngine;
 
 public class PlatformRider : NetworkBehaviour
 {
+    [SerializeField] private LayerMask _platformMask;
+    [SerializeField] private float _rayStartHeight = 0.2f;
+    [SerializeField] private float _rayLength = 0.5f;
+
     private MovingPlatform _currentPlatform;
-    private Vector3 _lastPlatformPos;
+    private PlayerController _playerController;
     
+    private readonly NetworkVariable<ulong> _platformId = new();
+
+    private ulong _appliedId; 
+
+    private void Awake()
+    {
+        _playerController = GetComponent<PlayerController>();
+    }
+    
+    private void Update()
+    {
+        if (!IsSpawned) return;
+
+        if (_appliedId != _platformId.Value)
+            TryApplyParent(_platformId.Value);
+
+        if (!IsOwner) return;
+
+        _playerController.Motor.PlatformVelocity = _currentPlatform != null ? _currentPlatform.CurrentVelocity : Vector3.zero;
+    }
+
     public void OnTriggerEnter(Collider other)
     {
         if (!IsOwner) return;
+        
+        ulong foundId = 0;
 
-        if (other.gameObject.TryGetComponent(out MovingPlatform platform))
-        {
-            SetPlatform(platform);
-        }
+        MovingPlatform platform = other.gameObject.GetComponent<MovingPlatform>();
+        if (platform != null) foundId = platform.NetworkObjectId;
+
+        if (foundId == _appliedId) return;
+
+        if (TryApplyParent(foundId))
+            SetPlatformServerRpc(foundId);
     }
     
     public void OnTriggerExit(Collider other)
     {
-        if (!IsOwner) return;
+        if (!IsOwner || _currentPlatform == null)
+            return;
 
-        if (other.gameObject.TryGetComponent(out MovingPlatform platform))
+        MovingPlatform platform = other.GetComponentInParent<MovingPlatform>();
+
+        if (platform != _currentPlatform)
+            return;
+
+        SetPlatformServerRpc(0);
+
+        _currentPlatform = null;
+        _appliedId = 0;
+    }
+
+    private bool TryApplyParent(ulong id)
+    {
+        if (id == 0)
         {
+            _appliedId = 0;
             _currentPlatform = null;
+            return true;
         }
-    }
-    
-    public void SetPlatform(MovingPlatform platform)
-    {
-        if (!IsOwner) return;
-        
-        _currentPlatform = platform;
-        if (platform != null)
-            _lastPlatformPos = platform.transform.position;
-    }
 
-    private void LateUpdate()
-    {
-        if (!IsOwner || _currentPlatform == null) return;
-
-        Vector3 delta = _currentPlatform.transform.position - _lastPlatformPos;
-        
-        if (delta.sqrMagnitude > 0.00001f)
+        if (NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(id, out NetworkObject platform))
         {
-            transform.position += delta;
+            _currentPlatform = platform.GetComponent<MovingPlatform>();
+
+            _appliedId = id;
+            return true;
         }
-        
-        _lastPlatformPos = _currentPlatform.transform.position;
+
+        return false;
     }
+
+    [ServerRpc]
+    private void SetPlatformServerRpc(ulong id) => _platformId.Value = id;
 }

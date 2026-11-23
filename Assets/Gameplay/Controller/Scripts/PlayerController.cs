@@ -286,7 +286,7 @@ namespace Gameplay.Controller
             body.UpdateEye(Time.deltaTime);
             playerAnimator.UpdateState(
                 crouched: IsCrouching,
-                moving: HorizontalVelocity.sqrMagnitude > 0.1f,
+                moving: HorizontalVelocity.sqrMagnitude > 0.1f && _input.Move.magnitude > 0.1f,
                 sprinting: IsSprinting,
                 downed: IsDown,
                 grounded: IsGrounded);
