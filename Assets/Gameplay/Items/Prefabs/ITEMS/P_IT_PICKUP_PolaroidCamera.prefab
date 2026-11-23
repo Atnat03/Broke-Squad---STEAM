@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1853137309370064014}
   - component: {fileID: 5586447369023691371}
   - component: {fileID: 1140895816270371115}
+  - component: {fileID: 562974380061412614}
   m_Layer: 9
   m_Name: P_IT_PICKUP_PolaroidCamera
   m_TagString: Untagged
@@ -145,6 +146,33 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _itemData: {fileID: 11400000, guid: d098b1deeb1428a40ab147f0d0eabe3e, type: 2}
   _rackRatio: 0.5
+--- !u!54 &562974380061412614
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1622531414688096079}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &7637355195790504464
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -228,7 +256,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 497190421494574065}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
   m_Name: 

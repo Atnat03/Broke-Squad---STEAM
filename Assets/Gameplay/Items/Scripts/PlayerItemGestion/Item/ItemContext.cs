@@ -20,7 +20,12 @@ namespace Gameplay.Items
             _replication = inventory.GetComponent<PlayerInventoryReplication>();
         }
 
-        public void SendToServer(IItemModule module, OnModuleDoAction_EVENT itemEvent) => _replication.Send(Core.Instance.IndexOf(module), itemEvent);
+        public void SendToServer(IItemModule module, OnModuleDoAction_EVENT itemEvent)
+        {
+            int idx = Core.Instance.IndexOf(module);
+            _replication.Send(idx, itemEvent);
+        }
+        
         public void SendEventTo(ulong clientId, OnModuleDoAction_EVENT data) => _replication.SendEvent(clientId, data);
         public void SendEventToEveryone(OnModuleDoAction_EVENT data) => _replication.SendEventToEveryOne(data);
         

@@ -104,24 +104,24 @@ public class Door : OnlineInteractable
             onInteractableClose?.Invoke();
             InvokeEvent(new PlaySoundEvent
             {
-                soundName = closeSound,
-                position = transform.position,
-                volume = 0.8f,
-                pitch = Random.Range(0.95f, 1.05f),
-                is2D = false,
-                shared = false
+                SoundName = closeSound,
+                Position = transform.position,
+                Volume = 0.8f,
+                Pitch = Random.Range(0.95f, 1.05f),
+                Is2D = false,
+                Shared = false
             });
             return;
         }
 
         InvokeEvent(new PlaySoundEvent
         {
-            soundName = openSound,
-            position = transform.position,
-            volume = 0.8f,
-            pitch = Random.Range(0.95f, 1.05f),
-            is2D = false,
-            shared = false
+            SoundName = openSound,
+            Position = transform.position,
+            Volume = 0.8f,
+            Pitch = Random.Range(0.95f, 1.05f),
+            Is2D = false,
+            Shared = false
         });
         if (current > 0) onOpenFront?.Invoke();
         else onOpenBack?.Invoke();

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using MyPrint;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -30,11 +32,13 @@ namespace Gameplay.Items
         [Header("SFX")] 
         [SerializeField, SoundName] private string _stringName;
         [SerializeField, Range(0, 1)] private float _volume = 0.5f;
+
+        private readonly List<MeshRenderer> _hiddenMeshes = new();
         
         #region Action Gestion
 
         public ICondition Condition => ConditionParent;
-
+        
         public void StartSecondAction()
         {
             if (!CanUse()) return;
@@ -62,8 +66,22 @@ namespace Gameplay.Items
 
             Vector3 pos = Context.Camera.transform.position;
             Vector3 forward = Context.Camera.transform.forward;
+            Quaternion camRot = Context.Camera.transform.rotation;
 
             Vector3 finalPos = GetThrowStartPos(pos, forward);
+            
+            if (!Context.Inventory.IsServer)
+            {
+                ComputeThrow(_charge, camRot, finalPos, out var spawnPos, out var lin, out var ang);
+                
+                ThrowGhost.Create(held.Data.PickupPrefab, spawnPos,
+                    camRot * held.Data.PickupPrefab.transform.rotation,
+                    lin, ang,
+                    Context.Inventory.GetComponentsInChildren<Collider>(),
+                    onUnclaimed: () => SetHandVisible(true));
+                
+                SetHandVisible(false);
+            }
             
             foreach (IFirstAction firstAction in held.FirstActionList)
             {
@@ -73,9 +91,10 @@ namespace Gameplay.Items
             Context.SendToServer(this, new OnModuleDoAction_EVENT
             {
                 ValueF = _charge,
-                Rotation = Context.Camera.transform.rotation,
+                Rotation = camRot,
                 Position = finalPos,
             });
+            
             ConsumeCondition(new OnModuleDoAction_EVENT());
         }
 
@@ -97,41 +116,50 @@ namespace Gameplay.Items
         //Server
         public void ServerExecute(OnModuleDoAction_EVENT data)
         {
-            Quaternion camRot = data.Rotation;
-            Vector3 camPos = data.Position;
-            Vector3 spawnPos = camPos + camRot * _spawnDistance;
-            
-            ItemPickup thrown = ServerSpawnPickup(spawnPos, camRot);
-            
-           if (thrown == null || !thrown.TryGetComponent(out Rigidbody rb))
+            ComputeThrow(data.ValueF, data.Rotation, data.Position, out Vector3 spawnPos, out Vector3 linear, out Vector3 angular);
+
+            ItemPickup thrown = ServerSpawnPickup(spawnPos, data.Rotation);
+            if (thrown == null || !thrown.TryGetComponent(out Rigidbody rb))
                 return;
             
-            Vector3 force = Vector3.Lerp(_minThrowForce, _maxThrowForce, Mathf.Clamp01(data.ValueF));
-
-            Vector3 right = camRot * Vector3.right;
-            Vector3 up = camRot * Vector3.up;
-            Vector3 forward = camRot * Vector3.forward;
-            
-            //Force
-            Vector3 finalForce = right * force.x + up * force.y + forward * force.z;
-            rb.AddForce(finalForce, ForceMode.VelocityChange);
-            
-            //Torque
-            Vector3 currentTorqueForce = Vector3.Lerp(_minTorqueForce, _maxTorqueForce, Mathf.Clamp01(data.ValueF));
-            rb.AddTorque(camRot * currentTorqueForce, ForceMode.VelocityChange);
+            rb.AddForce(linear, ForceMode.VelocityChange);
+            rb.AddTorque(angular, ForceMode.VelocityChange);
             
             //SFX
             Context.Inventory.InvokeEvent(new PlaySoundEvent
             {
-                position = thrown.transform.position,
-                volume = _volume,
-                soundName = _stringName
+                Position = thrown.transform.position,
+                Volume = _volume,
+                SoundName = _stringName
             });
             
             foreach (IPassif passif in thrown.Instance.Passifs)
             {
                 passif.OnThrow(rb);
             }
+        }
+
+        private void SetHandVisible(bool visible)
+        {
+            if (!visible)
+            {
+                if (Context?.Core == null) return;
+                foreach (var m in Context.Core.GetComponentsInChildren<MeshRenderer>())
+                    if (m.enabled) { m.enabled = false; _hiddenMeshes.Add(m); }
+                return;
+            }
+
+            foreach (var m in _hiddenMeshes) if (m) m.enabled = true;
+            _hiddenMeshes.Clear();
+        }
+        
+        private void ComputeThrow(float charge, Quaternion camRot, Vector3 camPos, out Vector3 spawnPos, out Vector3 linearVelocity, out Vector3 angularVelocity)
+        {
+            float t = Mathf.Clamp01(charge);
+
+            spawnPos = camPos + camRot * _spawnDistance;
+            linearVelocity = camRot * Vector3.Lerp(_minThrowForce, _maxThrowForce, t);
+            angularVelocity = camRot * Vector3.Lerp(_minTorqueForce, _maxTorqueForce, t);
         }
 
         public void OnNotInHand()
@@ -162,6 +190,7 @@ namespace Gameplay.Items
             if (newObj == null) return null;
             if (!newObj.TryGetComponent(out ItemPickup pickup)) return null;
             
+            pickup.ThrownBy.Value = Context.Inventory.OwnerClientId;
             pickup.GetComponent<NetworkObject>().Spawn();
             pickup.Setup(item);
 

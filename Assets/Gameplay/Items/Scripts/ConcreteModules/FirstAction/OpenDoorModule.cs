@@ -59,9 +59,9 @@ namespace Gameplay.Items
                     //SFX
                     Context.Inventory.InvokeEvent(new PlaySoundEvent
                     {
-                        position = origin,
-                        volume = _volume,
-                        soundName = _stringNameGoodKey
+                        Position = origin,
+                        Volume = _volume,
+                        SoundName = _stringNameGoodKey
                     });
                     
                     ConsumeCondition(new OnModuleDoAction_EVENT());
@@ -71,9 +71,9 @@ namespace Gameplay.Items
                     //SFX
                     Context.Inventory.InvokeEvent(new PlaySoundEvent
                     {
-                        position = origin,
-                        volume = _volume,
-                        soundName = _stringNameWringKey
+                        Position = origin,
+                        Volume = _volume,
+                        SoundName = _stringNameWringKey
                     });
                 }
             }

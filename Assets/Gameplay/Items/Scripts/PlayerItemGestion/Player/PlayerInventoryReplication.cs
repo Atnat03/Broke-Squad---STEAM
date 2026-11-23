@@ -32,6 +32,7 @@ namespace Gameplay.Items
         private void ActionRpc(int moduleIndex, OnModuleDoAction_EVENT itemEvent)
         {
             ItemInstance item = _inventory.GetCurrentItemInHand();
+            
             if (item == null) return;
 
             if (item.GetModule(moduleIndex) is IServerAction action)
