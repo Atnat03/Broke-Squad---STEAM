@@ -40,7 +40,7 @@ public class PlatformRider : NetworkBehaviour
         
         ulong foundId = 0;
 
-        NetworkObject platform = other.gameObject.GetComponent<NetworkObject>();
+        MovingPlatform platform = other.gameObject.GetComponent<MovingPlatform>();
         if (platform != null) foundId = platform.NetworkObjectId;
 
         if (foundId == _appliedId) return;
