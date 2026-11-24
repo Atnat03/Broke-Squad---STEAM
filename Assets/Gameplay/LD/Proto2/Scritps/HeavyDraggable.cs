@@ -179,7 +179,8 @@
                         if (h.distance <= 0f) continue;                             
                         if (Vector3.Dot(h.normal, dir) >= 0f) continue;
                         if (h.collider.transform.IsChildOf(transform)) continue;     
-                        if (IsHolderCollider(h.collider)) continue;                
+                        if (IsHolderCollider(h.collider)) continue;               
+                        if (h.point.y < Mathf.Min(p1.y, p2.y) - r + 0.2f) continue;
                         allowed = Mathf.Min(allowed, Mathf.Max(0f, h.distance - collisionSkin));
                     }
                 }
