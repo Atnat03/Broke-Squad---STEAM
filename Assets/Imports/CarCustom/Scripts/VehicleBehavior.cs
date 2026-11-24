@@ -125,6 +125,8 @@ namespace Vehicle
         private void FixedUpdate()
         {
             if (!IsServer) return;
+         
+            ABPrint.Print(_rigidbody.linearVelocity.ToString(), ABColor.White);
             
             CastRay();
             ApplyWheelsPhysic();
@@ -164,7 +166,7 @@ namespace Vehicle
             {
                 wheel.SetIsGrounded(Physics.Raycast(
                     wheel.wheelTransform.position,
-                    -wheel.wheelTransform.up,
+                    -transform.up,
                     out wheel.tireRaycast,
                     wheel.maxRayDistance,
                     _groundLayer
@@ -187,24 +189,21 @@ namespace Vehicle
 
         private void Suspension(WheelBehavior wheel)
         {
-            Vector3 springDir = wheel.wheelTransform.up;
+            Vector3 springDir = wheel.tireRaycast.normal;
 
             Vector3 tireWorldVel = _rigidbody.GetPointVelocity(wheel.tireRaycast.point);
 
             float compression = Mathf.Clamp(wheel.suspensionRestDist - wheel.tireRaycast.distance, 0f, wheel.maxSuspensionCompression);
-            
-            _velocity = Vector3.Dot(springDir, tireWorldVel);
 
-            float force = compression * wheel.springStrength - _velocity * wheel.springDamper;
+            float vel = Vector3.Dot(springDir, tireWorldVel);
+            float force = Mathf.Max(0f, compression * wheel.springStrength - vel * wheel.springDamper);
 
-            force = Mathf.Max(0f, force);
-            
             _rigidbody.AddForceAtPosition(springDir * force, wheel.tireRaycast.point);
         }
         
         private void Steering(WheelBehavior wheel)
         {
-            Vector3 steeringDir = wheel.wheelTransform.right;
+            Vector3 steeringDir = Vector3.ProjectOnPlane(wheel.wheelTransform.right, transform.up).normalized;
             
             Vector3 tireWorldVel = _rigidbody.GetPointVelocity(wheel.wheelTransform.position);
             
