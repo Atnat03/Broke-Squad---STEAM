@@ -20,16 +20,19 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: 15a952fa7df21904d84702ba0b162e85, type: 3}
   OffsetInHand: {x: 0, y: 0, z: -0.4}
   TooltipInHand:
-    DefaultText: 
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 21300000, guid: 770f05e22d18fd849912136c5a53566d, type: 3}
     IsItem: 1
-    TooltipInHand: 'Left Click : Break'
+    TooltipInHand:
+      Message: Destroy !
+      Icon: {fileID: 21300126, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
     _requiresItemModule: 1
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: 7693030253545914594
-    _requiresElementModule: 1
-    _tooltipWithElementLD: Left click to destroy wall
-    _requiredElementLDModule: {fileID: 0}
   Weight: 1
   OffsetRotationDrop: {x: 0, y: 0, z: 0}
   FirstActionList:
@@ -109,7 +112,7 @@ MonoBehaviour:
       data:
         _condition:
           rid: -2
-        _percentGain: 10
+        PercentGain: 10
         _range: 2
         _stringName: 
         _volume: 0.5

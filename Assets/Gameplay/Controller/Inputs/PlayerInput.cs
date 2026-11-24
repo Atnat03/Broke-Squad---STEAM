@@ -50,6 +50,8 @@ namespace Gameplay.Controller
 
         public Action OnStartShowEmoteWheel;
         public Action OnEndShowEmoteWheel;
+
+        public Action OnActionInInventory;
         
         public Action OnPause;
         
@@ -109,7 +111,10 @@ namespace Gameplay.Controller
 
             _playerInputs.Gameplay.EmoteWheel.performed += PerformShowEmoteWheel;
             _playerInputs.Gameplay.EmoteWheel.canceled += CancelShowEmoteWheel;
+            
+            _playerInputs.Gameplay.ActionInInventory.performed += PerformActionInInventory;
         }
+
 
         private void OnDisable()
         {
@@ -143,6 +148,8 @@ namespace Gameplay.Controller
 
             _playerInputs.Gameplay.ShowOtherPlayer.performed -= PerformShowOtherPlayer;
             _playerInputs.Gameplay.ShowOtherPlayer.canceled -= CancelShowOtherPlayer;
+            
+            _playerInputs.Gameplay.ActionInInventory.performed -= PerformActionInInventory;
             
             _playerInputs.Gameplay.Pause.performed -= PerformPause;
             
@@ -298,6 +305,11 @@ namespace Gameplay.Controller
         private void CancelShowEmoteWheel(InputAction.CallbackContext obj)
         {
             OnEndShowEmoteWheel?.Invoke();
+        }
+        
+        private void PerformActionInInventory(InputAction.CallbackContext obj)
+        {
+            OnActionInInventory?.Invoke();
         }
         
         private void OnDestroy() => _playerInputs.Dispose();

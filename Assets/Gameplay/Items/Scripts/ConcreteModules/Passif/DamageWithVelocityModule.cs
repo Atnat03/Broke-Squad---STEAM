@@ -1,5 +1,6 @@
 ﻿using System;
 using Gameplay.LD.Scripts;
+using Gameplay.PlayerData;
 using MyPrint;
 using UnityEngine;
 
@@ -11,13 +12,8 @@ namespace Gameplay.Items
         public override string Emoji => "🤕";
         
         [SerializeField] private float _minVelocityForDamage = 1;
-        [SerializeField] private float _maxVelocity = 15f;
-        [SerializeField] private float _minDamage = 1f;
-        [SerializeField] private float _maxDamage = 15f;
-        [SerializeField] private AnimationCurve _damageCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-        [SerializeField] private float _weightFactor = 1;
-        [SerializeField] private float _mass = 1;
-        [SerializeField] private bool _canDamagePlayer = false;
+        [SerializeField] private float _damage = 10f;
+        [SerializeField] private bool _canDamagePlayer = true;
         
         private Rigidbody _rb;
         
@@ -26,25 +22,21 @@ namespace Gameplay.Items
             if (collision.collider == item.GetComponent<Collider>()) return;
             if (_rb == null && !item.TryGetComponent(out _rb)) return;
 
-            float speed = _rb.linearVelocity.magnitude * _mass;
+            float speed = _rb.linearVelocity.magnitude;
             
-            if (collision.gameObject.TryGetComponent<IDamageable>(out var damage))
+            IDamageable damageable = collision.gameObject.GetComponentInChildren<IDamageable>() ?? collision.gameObject.GetComponent<IDamageable>();
+
+            if (damageable != null)
             {
-               if (speed <= 0.5f) return;
-
-                float t = Mathf.InverseLerp(_minVelocityForDamage, _maxVelocity, speed);
-                float curved = _damageCurve.Evaluate(t);
-                float dmg = Mathf.Lerp(_minDamage, _maxDamage, curved) * _weightFactor;
-                
-                ABPrint.Print("Speed : " + speed + " / Dmg : " + dmg, ABColor.Purple);
-
-                if (collision.gameObject.TryGetComponent<PlayerData.PlayerHealth>(out var damageable))
+               if (speed <= _minVelocityForDamage) return;
+               
+                if (collision.gameObject.GetComponentInChildren<PlayerHealth>())
                 {
                     if (!_canDamagePlayer)
                         return;
                 }
                 
-                damage.ApplyDamage(dmg);
+                damageable.ApplyDamage(_damage);
             }
         }
 
@@ -52,7 +44,6 @@ namespace Gameplay.Items
         public void OnThrow(Rigidbody rb)
         {
             _rb = rb;
-            _rb.mass = _mass;
         }
 
         public void OnStartHolding()

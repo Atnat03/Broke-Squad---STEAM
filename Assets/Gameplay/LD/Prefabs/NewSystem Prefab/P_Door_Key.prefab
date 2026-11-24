@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1477583076
+  GlobalObjectIdHash: 4117088511
   InScenePlacedSourceGlobalObjectIdHash: 1477583076
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -77,9 +77,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.LDElement
   ShowTopMostFoldoutHeaderGroup: 1
-  _initialFlags: 0
+  _initialFlags: 16
   _bindings:
   - Trigger: {fileID: 5609025665634644604}
+    AdditionnalTriggers: []
     Action: 0
     Delay: 0
     CancelsPendingDelays: 0
@@ -87,9 +88,8 @@ MonoBehaviour:
     - {fileID: 3238926222013678223}
     Effects:
     - {fileID: 366820877161714009}
-    - {fileID: 887966597662549831}
-    - {fileID: 20344303126636130}
   - Trigger: {fileID: 5609025665634644604}
+    AdditionnalTriggers: []
     Action: 0
     Delay: 0
     CancelsPendingDelays: 0
@@ -98,8 +98,7 @@ MonoBehaviour:
     - {fileID: 4314721386219095697}
     Effects:
     - {fileID: 366820877161714009}
-    - {fileID: 887966597662549831}
-    - {fileID: 20344303126636130}
+    - {fileID: 8742735431211461881}
 --- !u!95 &3221287509083573655
 Animator:
   serializedVersion: 7
@@ -311,8 +310,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.OpenDoorEffect
   ShowTopMostFoldoutHeaderGroup: 1
   _mode: 0
-  _faceAxis: 1
-  _invertSide: 0
+  _faceAxis: 0
+  _invertSide: 1
 --- !u!1 &1551656079732412970
 GameObject:
   m_ObjectHideFlags: 0
@@ -659,7 +658,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.KeyCondition
   ShowTopMostFoldoutHeaderGroup: 1
-  _idKey: 0
+  _idKey: 1
 --- !u!1 &4123711120381239870
 GameObject:
   m_ObjectHideFlags: 0
@@ -755,8 +754,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.OpenDoorEffect
   ShowTopMostFoldoutHeaderGroup: 1
   _mode: 1
-  _faceAxis: 1
-  _invertSide: 0
+  _faceAxis: 0
+  _invertSide: 1
 --- !u!1 &4910896027010693895
 GameObject:
   m_ObjectHideFlags: 0

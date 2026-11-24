@@ -10,7 +10,7 @@ namespace Gameplay.Items
     {
         public override string Emoji => "🔋";
         
-        [SerializeField] public int _percentGain = 10;
+        [SerializeField] public int PercentGain = 10;
         [SerializeField] private float _range = 2f;
 
         [Header("SFX")] 
@@ -38,9 +38,9 @@ namespace Gameplay.Items
             //SFX
             Context.Inventory.InvokeEvent(new PlaySoundEvent
             {
-                position = Context.Core.transform.position,
-                volume = _volume,
-                soundName = _stringName
+                Position = Context.Core.transform.position,
+                Volume = _volume,
+                SoundName = _stringName
             });
         }
 
@@ -63,7 +63,7 @@ namespace Gameplay.Items
 
             bool charged = false;
             foreach (ElectricUseModule electric in pickup.Instance.AllModules().OfType<ElectricUseModule>().Distinct())
-                charged |= electric.AddEnergy(_percentGain);
+                charged |= electric.AddEnergy(PercentGain);
 
             if (charged)
                 ConsumeCondition(data);

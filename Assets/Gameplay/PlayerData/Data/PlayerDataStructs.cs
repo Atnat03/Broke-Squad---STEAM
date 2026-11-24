@@ -17,4 +17,12 @@ namespace Gameplay.PlayerData
         public bool Downed;
         public ulong PlayerId;
     }
+
+    public struct ReviveChanged_EVENT
+    {
+        public ulong PlayerId;  
+        public bool Reviving;
+        public float Percent;
+    }
+    
 }
