@@ -22,7 +22,7 @@ namespace SFX_Manage
 
         private void PlaySound()
         {
-            EventBus.InvokeEvent(new PlaySoundEvent { soundName = nameSound, position = transform.position, is2D = true });
+            EventBus.InvokeEvent(new PlaySoundEvent { SoundName = nameSound, Position = transform.position, Is2D = true });
         }
 
         private void OnDestroy()

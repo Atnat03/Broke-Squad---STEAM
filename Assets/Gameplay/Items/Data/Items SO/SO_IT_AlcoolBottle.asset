@@ -20,11 +20,17 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: 74bed9a5590361e4e9b122edaddda0fb, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
   TooltipInHand:
-    DefaultText: 
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 1
-    TooltipInHand: 'Left Click : Drink'
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   Weight: 1
@@ -59,41 +65,13 @@ MonoBehaviour:
       type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 3
-        _maxVelocity: 12
-        _minDamage: 1
-        _maxDamage: 5
-        _damageCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 0
-            inSlope: 0
-            outSlope: 0
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 1
-            value: 1
-            inSlope: 0
-            outSlope: 0
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-        _weightFactor: 1
-        _mass: 0.5
+        _damage: 10
         _canDamagePlayer: 1
     - rid: 7493938474522247168
       type: {class: AnimationModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: -2
+          rid: 7832863092312113438
         _animationType: 0
         _animationName: Drink
         _boolAnimation: 0
@@ -102,7 +80,7 @@ MonoBehaviour:
       type: {class: NewStaminaModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: -2
+          rid: 7832863092312113436
         newRegenParSecond: 1000
         effectDuration: 10
         regenDelay: 0
@@ -110,7 +88,25 @@ MonoBehaviour:
       type: {class: DrunkEffectWhenUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
-          rid: -2
+          rid: 7832863092312113437
         _drunkDuration: 10
         _sfxName: Joueur/Drink
         _volume: 0.5
+    - rid: 7832863092312113436
+      type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _numberOfUse: 1
+        _destroyWhenEmpty: 0
+        _keyEventCantUse: CANT_USE_NUMBER
+    - rid: 7832863092312113437
+      type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _numberOfUse: 1
+        _destroyWhenEmpty: 0
+        _keyEventCantUse: CANT_USE_NUMBER
+    - rid: 7832863092312113438
+      type: {class: NumberOfUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _numberOfUse: 1
+        _destroyWhenEmpty: 0
+        _keyEventCantUse: CANT_USE_NUMBER

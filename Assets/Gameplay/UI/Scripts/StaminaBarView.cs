@@ -11,7 +11,7 @@ namespace Gameplay.UI
         [SerializeField] private Slider playerStaminaSlider;
         [SerializeField] private CanvasGroup staminaGroup;
         [SerializeField] private float staminaSmoothSpeed = 12f;
-        [SerializeField] private float staminaHideDelay = 1.5f;
+        [SerializeField] private float staminaHideDelay = 1.5f; 
         [SerializeField] private float staminaFadeSpeed = 4f;
         
         [SerializeField] private Color normalStaminaColor = Color.white;

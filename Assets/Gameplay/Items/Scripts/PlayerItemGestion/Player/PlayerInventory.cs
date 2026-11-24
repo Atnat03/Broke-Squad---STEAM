@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Numerics;
 using Bus;
 using Gameplay.Controller;
-using MyPrint;
 using Unity.Netcode;
-using Unity.Netcode.Components;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
@@ -16,9 +11,13 @@ namespace Gameplay.Items
     [RequireComponent(typeof(PlayerInventoryReplication))]
     public class PlayerInventory : NetworkBusListener
     {
+        public Camera PhotoCamera;
+        
         public SO_ItemDataBase DataBase => _database;
         public PlayerController Controller => _playerController;
         public int ItemCount => _itemCount;
+
+        public ItemInstance[] ItemsInInventory => _slots;
         
         [Header("References")]
         [SerializeField] private PlayerController _playerController;
@@ -35,6 +34,7 @@ namespace Gameplay.Items
         [SerializeField] private int _itemCount = 3;
         private ItemInstance[] _slots;
         private readonly NetworkVariable<int> _selectedSlot = new(0);
+        private readonly NetworkVariable<ulong> _heldInstanceId = new(0);
 
         private readonly NetworkList<int> _slotIds = new();
         
@@ -68,7 +68,8 @@ namespace Gameplay.Items
         public Action OnDropItem;
         public Action<int, int> OnUpdateSlots;
         public Action<bool> OnSlotSelectedChanged;
-        public Action<bool, string> OnTooltipChange;
+        public Action<bool, Tooltip> OnTooltipChange;
+        public Action<bool, ActionInInventory_SO> OnCanComboUpdate;
         
         public Action OnSlotsChanged;
         
@@ -94,6 +95,7 @@ namespace Gameplay.Items
             
             _heldItemId.OnValueChanged += OnHeldItemChanged;
             _selectedSlot.OnValueChanged += OnSelectedSlotChanged;
+            _heldInstanceId.OnValueChanged += OnHeldInstanceIdChanged;
                 
             if (_heldItemId.Value != -1)
                 OnHeldItemChanged(-1, _heldItemId.Value);
@@ -114,6 +116,8 @@ namespace Gameplay.Items
         public override void OnNetworkDespawn()
         {
             base.OnNetworkDespawn();
+
+            _heldInstanceId.OnValueChanged -= OnHeldInstanceIdChanged;
             
             _slotIds.OnListChanged -= OnSlotIdsChanged;
             OnInventoryDespawned?.Invoke(this);
@@ -193,9 +197,12 @@ namespace Gameplay.Items
         {
             ItemInstance item = GetCurrentItemInHand();
             int newId = item != null ? item.Data.ID : -1;
-            
+
+            if (IsServer)
+                _heldInstanceId.Value = item != null ? item.InstanceId : 0;
+
             _replication.PublishHeldItem(item);
-            
+
             if (_heldItemId.Value == newId && newId != -1)
                 OnHeldItemChanged(newId, newId);
 
@@ -224,6 +231,14 @@ namespace Gameplay.Items
                 return;
             
             UpdateHandWhenPickup(newId);
+        }
+        
+        private void OnHeldInstanceIdChanged(ulong previous, ulong current)
+        {
+            if (current == 0 || _currentItem == null)
+                return;
+
+            _currentItem.Instance.SetInstanceId(current);
         }
 
         #endregion
@@ -258,9 +273,9 @@ namespace Gameplay.Items
             //SFX
             InvokeEvent(new PlaySoundEvent
             {
-                position = transform.position,
-                volume = _volume,
-                soundName = _sfxPickUp
+                Position = transform.position,
+                Volume = _volume,
+                SoundName = _sfxPickUp
             });
             
             int slot = FindFreeSlot();
@@ -274,8 +289,6 @@ namespace Gameplay.Items
         
         private void UpdateHandWhenPickup(int id)
         {
-            OnPickupItem?.Invoke();
-            
             SO_Item data = _database.GetItemData(id);
 
             Transform parent = IsOwner ? _localHand : _remoteHand;
@@ -305,6 +318,7 @@ namespace Gameplay.Items
             {
                 instance = new ItemInstance(data);
                 _replication.ApplyTo(instance);
+                instance.SetInstanceId(_heldInstanceId.Value);
             }
             
             core.SetInstance(instance, _camera, this);
@@ -313,6 +327,8 @@ namespace Gameplay.Items
             {
                 passif.OnStartHolding();
             }
+
+            OnPickupItem?.Invoke();
             
             SetCurrentItemInHand(core);
         }
@@ -438,14 +454,14 @@ namespace Gameplay.Items
             float offset = GetBottomOffset(pickup.gameObject);
             pickup.transform.position = groundPoint + Vector3.up * (offset + 0.01f);
 
-            pickup.GetComponent<NetworkObject>().Spawn();
             pickup.Setup(item);
+            pickup.GetComponent<NetworkObject>().Spawn();
 
             InvokeEvent(new PlaySoundEvent
             {
-                position = transform.position,
-                volume = _volume,
-                soundName = _sfxDrop
+                Position = transform.position,
+                Volume = _volume,
+                SoundName = _sfxDrop
             });
 
             ClearCurrentSlot();
@@ -463,7 +479,7 @@ namespace Gameplay.Items
             if (IsOwner)
             {
                 _currentItem.UnsubscribeFromInput(_playerInput);
-                OnTooltipChange?.Invoke(false, null);
+                OnTooltipChange?.Invoke(false, new Tooltip());
             }
 
             if (!IsServer)
@@ -536,22 +552,40 @@ namespace Gameplay.Items
         
         public void DestroyItemInHand()
         {
-            if (!IsServer)
-            {
-                DestroyItemInHandRpc();
-                return;
-            }
-
             ItemInstance item = GetCurrentItemInHand();
-            if (item == null) return;
+            
+            if (item == null)
+                return;
             
             item.Cleanup();
 
             ClearCurrentSlot();
         }
+        
+        public void RemoveItemFromInventory(ItemInstance itemToRemove)
+        {
+            if (itemToRemove == null)
+                return;
 
-        [Rpc(SendTo.Server)]
-        private void DestroyItemInHandRpc() => DestroyItemInHand();
+            for (int i = 0; i < _slots.Length; i++)
+            {
+                if (_slots[i] != itemToRemove)
+                    continue;
+
+                SetSlot(i, null);
+                itemToRemove.Cleanup();
+
+                if (i == _selectedSlot.Value)
+                    RefreshHeldItem();
+
+                return;
+            }
+        }
+
+        public bool IsItemInHand(ItemInstance itemToCheck)
+        {
+            return GetCurrentItemInHand() == itemToCheck;
+        }
         
         private void NotifyNotInHand(ItemInstance item)
         {
@@ -589,6 +623,31 @@ namespace Gameplay.Items
             {
                 UpdatePreviewDrop();
             }
+        }
+
+        public bool HasThisItemInInventory(SO_Item item)
+        {
+            foreach (int id in _slotIds)
+            {
+                if(id == item.ID) return true;
+            }
+            
+            return false;
+        }
+
+        public int RealNumberItemInInventory()
+        {
+            int i = 0;
+
+            foreach (var id in _slotIds)
+            {
+                if (id != -1)
+                {
+                    i++;
+                }
+            }
+            
+            return i;
         }
     }
 }

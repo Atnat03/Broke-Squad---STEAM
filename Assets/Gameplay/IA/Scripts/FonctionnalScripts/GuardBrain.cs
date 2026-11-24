@@ -79,6 +79,8 @@ namespace Gameplay.IA
                 ChangeState<PatrolState_GUARD, PatrolParam>(new PatrolParam { IsAlerted = false });
 
                 OnAggroStateChangeServerRpc(false);
+
+                _lockDownManager.SubscribeGuard(this);
             }
         }
 
@@ -149,6 +151,8 @@ namespace Gameplay.IA
 
         public void ChangeSettingToAlerted()
         {
+            if (Health.IsDead) return;
+            
             StopAlertedTimer();
 
             _isAlerted.Value = true;
@@ -180,6 +184,8 @@ namespace Gameplay.IA
 
         private void EnterAlertedState(OnLockDownStart_EVENT data)
         {
+            if (Health.IsDead) return;
+            
             _isLockDownActive = true;
             ChangeSettingToAlerted();
         }
@@ -271,14 +277,35 @@ namespace Gameplay.IA
 
         #endregion
 
+        #region Die Actions
+        
         public void DesactivateWhenDie()
         {
+            if (!IsServer)
+            {
+                DesactivateWhenDieServerRpc();
+                return;
+            }
+
+            _lockDownManager.UnSubscribeGuard(this);
+            
+            DesactivateWhenDieClientRpc();
+        }
+
+        [Rpc(SendTo.Server)]
+        private void DesactivateWhenDieServerRpc() => DesactivateWhenDie();
+        
+        [Rpc(SendTo.Everyone)]
+        private void DesactivateWhenDieClientRpc()
+        { 
             foreach (Collider c in _componentToDisableWhenDie)
                 c.enabled = false;
 
             foreach (GameObject g in _gameObjectToDisableWhenDie)
                 g.SetActive(false);
         }
+        
+        #endregion
 
         //Suspicious Sound
         public void TriggerBySound(float f, Transform newTarget)
