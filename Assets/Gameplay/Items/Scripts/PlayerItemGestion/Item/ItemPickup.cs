@@ -44,6 +44,7 @@ namespace Gameplay.Items
         private bool _canCollide;
         private readonly NetworkVariable<ulong> _networkInstanceId = new();
         [HideInInspector] public readonly NetworkVariable<ulong> ThrownBy = new(ulong.MaxValue);
+        private Coroutine _bufferRoutine;
         
         //Hover
         private IHoverItemInfo _hoverInfo;
@@ -96,7 +97,7 @@ namespace Gameplay.Items
                 
                 SyncByteModulesToClients();
 
-                StartCoroutine(BufferCollision());
+                _bufferRoutine = StartCoroutine(BufferCollision());
 
                 if (_rb)
                 {
@@ -237,7 +238,9 @@ namespace Gameplay.Items
         public void OnCollisionEnter(Collision collision)
         {
             if(_instance == null) return;
-            if(!_canCollide)return;
+            if(!_canCollide) return;
+            
+            ABPrint.Print("collision : " + collision.transform.name);
             
             OnCollide?.Invoke();
             
@@ -245,6 +248,12 @@ namespace Gameplay.Items
             {
                 passif.OnCollide(collision, this);
             }
+        }
+        
+        public void SkipCollisionBuffer()
+        {
+            if (_bufferRoutine != null) StopCoroutine(_bufferRoutine);
+            _canCollide = true;
         }
 
         bool DetectNotGrabbable()
