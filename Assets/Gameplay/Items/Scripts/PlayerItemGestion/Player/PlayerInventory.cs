@@ -445,6 +445,8 @@ namespace Gameplay.Items
             ItemInstance item = GetCurrentItemInHand();
             if (item == null) return;
 
+            NotifyNotInHand(item);
+            
             float maxDist = _dropRange + 2f;
             if ((groundPoint - transform.position).sqrMagnitude > maxDist * maxDist) return;
 

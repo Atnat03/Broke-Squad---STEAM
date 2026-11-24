@@ -188,12 +188,19 @@ namespace Gameplay.Items
 
         public void SetOutline(StartOutliningData data)
         {
+            bool state = data.State;
+            
+            if (Instance.GetModule(typeof(NotGrabbableModule)) != null)
+            {
+                state = false;
+            }
+            
             if(outline)
-                outline.enabled = data.State;
+                outline.enabled = state;
 
             if (_hoverInfo != null)
             {
-                _hoverInfo.OnHoverUpdate(data.State);
+                _hoverInfo.OnHoverUpdate(state);
             }
         }
 
@@ -277,6 +284,11 @@ namespace Gameplay.Items
         
         public Tooltip GetTooltip(ItemModule[] playerModules)
         {
+            if (Instance.GetModule(typeof(NotGrabbableModule)) != null)
+            {
+                return new Tooltip { Message = string.Empty };
+            }
+            
             Tooltip tooltip = new Tooltip
             {
                 Message = string.Empty,

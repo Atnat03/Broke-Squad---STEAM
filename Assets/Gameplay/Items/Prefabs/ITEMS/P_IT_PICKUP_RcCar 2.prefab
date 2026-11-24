@@ -10533,7 +10533,7 @@ Transform:
   m_GameObject: {fileID: 682873545439134551}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.05, z: 0}
+  m_LocalPosition: {x: 0, y: -0.05, z: -0.01}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24445,7 +24445,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1614380767507503342}
   serializedVersion: 2
-  m_LocalRotation: {x: 6.2113167e-15, y: 1, z: -0.000000081460335, w: 0.0000000754979}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 10.23, y: 0.21, z: -0.89}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 1
@@ -24455,7 +24455,7 @@ Transform:
   - {fileID: 5845773785792661469}
   - {fileID: 7894235020263693871}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!54 &4492358370864658862
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -24516,14 +24516,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2872544468
-  InScenePlacedSourceGlobalObjectIdHash: 0
+  GlobalObjectIdHash: 3365824006
+  InScenePlacedSourceGlobalObjectIdHash: 2872544468
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 0
+  m_InScenePlaced: 1
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -24590,8 +24590,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.ItemPickup
   ShowTopMostFoldoutHeaderGroup: 1
-  _rackRatio: 0.5
   _itemData: {fileID: 11400000, guid: 3113dafed49e61f4398d6113eaed026c, type: 2}
+  _rackRatio: 0.5
 --- !u!114 &1831228669579161435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24777,7 +24777,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   ShowTopMostFoldoutHeaderGroup: 1
-  _carID: 2
+  _carID: 1
 --- !u!1 &1622348901630898965
 GameObject:
   m_ObjectHideFlags: 0
@@ -105579,7 +105579,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: 6009ba63acb6c2d419be393df191f340, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: 7ac265ffc35315748918138adcfc0a74, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
