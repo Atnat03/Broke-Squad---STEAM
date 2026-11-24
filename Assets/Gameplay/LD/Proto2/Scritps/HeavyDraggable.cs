@@ -365,6 +365,25 @@
 
             #endregion
 
+            public int HoldersOnAxis(int axis)
+            {
+                int count = 0;
+                for (int i = 0; i < handles.Length && i < _holders.Count; i++)
+                    if (handles[i].Axis == axis && _holders[i] != NoHolder) count++;
+                return count;
+            }
+
+            public int RequiredOnAxis(int axis)
+            {
+                int total = 0;
+                for (int i = 0; i < handles.Length; i++)
+                    if (handles[i].Axis == axis) total++;
+                return Mathf.Min(Mathf.Max(1, axes[axis].playersRequired), total);
+            }
+
+            public bool EnoughPlayersOnAxis(int axis) => HoldersOnAxis(axis) >= RequiredOnAxis(axis);
+
+            public bool IsHandleHeldByLocal(int index) => NetworkManager != null && index < _holders.Count && _holders[index] == NetworkManager.LocalClientId;
             #region Local client
 
             private void OnHoldersChanged(NetworkListEvent<ulong> _) => RefreshLocalHold();

@@ -167,13 +167,23 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _range: 4
   _tooltipConfig:
-    DefaultText: Tourner le tourniquet
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
+  _timeNeedToTriggerIcon: 2
+  _itemIconSpritePrefab: {fileID: 0}
+  _itemIconPosition: {fileID: 0}
+  _itemNeedData: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -2370,11 +2380,17 @@ MonoBehaviour:
   _digit: 0
   _outline: {fileID: 110218535}
   _tooltipConfig:
-    DefaultText: Key Confirm
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   references:
@@ -2854,11 +2870,17 @@ MonoBehaviour:
   _digit: 4
   _outline: {fileID: 137076000}
   _tooltipConfig:
-    DefaultText: Key 4
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   references:
@@ -3169,6 +3191,98 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 142857380}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &144467974
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2084367217750241534, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: m_InScenePlaced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2084367217750241534, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1496791533
+      objectReference: {fileID: 0}
+    - target: {fileID: 2084367217750241534, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 4084330518
+      objectReference: {fileID: 0}
+    - target: {fileID: 4204007204367536810, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: m_Name
+      value: P_HeavyDraggable
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225182297020282382, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -31.494417
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225182297020282382, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.5572389
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225182297020282382, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 5.6086826
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225182297020282382, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225182297020282382, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225182297020282382, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225182297020282382, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225182297020282382, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225182297020282382, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225182297020282382, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6805605588914110121, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: handles.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6805605588914110121, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: 'handles.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1548770950}
+    - target: {fileID: 6805605588914110121, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      propertyPath: 'handles.Array.data[1]'
+      value: 
+      objectReference: {fileID: 638809939}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 5225182297020282382, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1548770949}
+    - targetCorrespondingSourceObject: {fileID: 5225182297020282382, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 638809938}
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+--- !u!4 &144467975 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5225182297020282382, guid: 3cf71be701ba9094aa425cede5360901, type: 3}
+  m_PrefabInstance: {fileID: 144467974}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &145098052
 GameObject:
   m_ObjectHideFlags: 0
@@ -4486,6 +4600,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _damageTreshold: 5
   _health: 0
+  _range: 6
 --- !u!65 &225390278
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5789,11 +5904,17 @@ MonoBehaviour:
   _digit: 0
   _outline: {fileID: 252011008}
   _tooltipConfig:
-    DefaultText: Key 0
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   references:
@@ -8555,11 +8676,17 @@ MonoBehaviour:
   _digit: 6
   _outline: {fileID: 378459802}
   _tooltipConfig:
-    DefaultText: Key 6
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   references:
@@ -9601,11 +9728,17 @@ MonoBehaviour:
   _digit: 0
   _outline: {fileID: 408572654}
   _tooltipConfig:
-    DefaultText: Key Clear
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   references:
@@ -9773,13 +9906,23 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _range: 4
   _tooltipConfig:
-    DefaultText: Ouvrir la vent (cle ID 100)
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
+  _timeNeedToTriggerIcon: 2
+  _itemIconSpritePrefab: {fileID: 0}
+  _itemIconPosition: {fileID: 0}
+  _itemNeedData: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -11199,11 +11342,17 @@ MonoBehaviour:
   _digit: 3
   _outline: {fileID: 478687009}
   _tooltipConfig:
-    DefaultText: Key 3
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   references:
@@ -14758,13 +14907,23 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _range: 4
   _tooltipConfig:
-    DefaultText: Actionner le levier
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
+  _timeNeedToTriggerIcon: 2
+  _itemIconSpritePrefab: {fileID: 0}
+  _itemIconPosition: {fileID: 0}
+  _itemNeedData: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -15084,6 +15243,79 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 636412477}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &638809937
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 144467975}
+    m_Modifications:
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.307
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.61300004
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7703815954995664359, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_Name
+      value: DragHandle (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d733b094a717521449e5b61e7364707d, type: 3}
+--- !u!4 &638809938 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+  m_PrefabInstance: {fileID: 638809937}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &638809939 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1622028437201334506, guid: d733b094a717521449e5b61e7364707d, type: 3}
+  m_PrefabInstance: {fileID: 638809937}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 634974ca9fa7488d938ccc5c0d07df52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Proto2.DragHandle
 --- !u!1 &641730780
 GameObject:
   m_ObjectHideFlags: 0
@@ -17802,11 +18034,17 @@ MonoBehaviour:
   _digit: 2
   _outline: {fileID: 774883153}
   _tooltipConfig:
-    DefaultText: Key 2
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   references:
@@ -19731,11 +19969,17 @@ MonoBehaviour:
   _digit: 8
   _outline: {fileID: 851523299}
   _tooltipConfig:
-    DefaultText: Key 8
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   references:
@@ -21234,11 +21478,17 @@ MonoBehaviour:
   _digit: 1
   _outline: {fileID: 931792949}
   _tooltipConfig:
-    DefaultText: Key 1
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   references:
@@ -22358,11 +22608,17 @@ MonoBehaviour:
   _digit: 9
   _outline: {fileID: 973571862}
   _tooltipConfig:
-    DefaultText: Key 9
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   references:
@@ -24183,13 +24439,23 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _range: 4
   _tooltipConfig:
-    DefaultText: Ouvrir (cle ID 1) / Fermer
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
+  _timeNeedToTriggerIcon: 2
+  _itemIconSpritePrefab: {fileID: 0}
+  _itemIconPosition: {fileID: 0}
+  _itemNeedData: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -31757,13 +32023,23 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _range: 4
   _tooltipConfig:
-    DefaultText: Couper / remettre le laser
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
+  _timeNeedToTriggerIcon: 2
+  _itemIconSpritePrefab: {fileID: 0}
+  _itemIconPosition: {fileID: 0}
+  _itemNeedData: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -33774,11 +34050,17 @@ MonoBehaviour:
   _digit: 5
   _outline: {fileID: 1503414398}
   _tooltipConfig:
-    DefaultText: Key 5
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   references:
@@ -35290,6 +35572,79 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1547940680}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &1548770948
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 144467975}
+    m_Modifications:
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.372
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.613
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7703815954995664359, guid: d733b094a717521449e5b61e7364707d, type: 3}
+      propertyPath: m_Name
+      value: DragHandle
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d733b094a717521449e5b61e7364707d, type: 3}
+--- !u!4 &1548770949 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4381510723546002203, guid: d733b094a717521449e5b61e7364707d, type: 3}
+  m_PrefabInstance: {fileID: 1548770948}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1548770950 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1622028437201334506, guid: d733b094a717521449e5b61e7364707d, type: 3}
+  m_PrefabInstance: {fileID: 1548770948}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 634974ca9fa7488d938ccc5c0d07df52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.LD.Proto2.DragHandle
 --- !u!1 &1558127117
 GameObject:
   m_ObjectHideFlags: 0
@@ -38147,11 +38502,17 @@ MonoBehaviour:
   _digit: 7
   _outline: {fileID: 1648008964}
   _tooltipConfig:
-    DefaultText: Key 7
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   references:
@@ -40669,13 +41030,23 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _range: 4
   _tooltipConfig:
-    DefaultText: Ouvrir / Fermer
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
+  _timeNeedToTriggerIcon: 2
+  _itemIconSpritePrefab: {fileID: 0}
+  _itemIconPosition: {fileID: 0}
+  _itemNeedData: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -45925,6 +46296,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _damageTreshold: 10
   _health: 50
+  _range: 6
 --- !u!65 &1981564608
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -46843,6 +47215,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _damageTreshold: 80
   _health: 0
+  _range: 6
 --- !u!65 &2053877678
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -48994,11 +49367,17 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _outline: {fileID: 907169510}
   _tooltipConfig:
-    DefaultText: 
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   references:
@@ -51776,3 +52155,4 @@ SceneRoots:
   - {fileID: 1406394432}
   - {fileID: 1908478258}
   - {fileID: 1895864138}
+  - {fileID: 144467974}

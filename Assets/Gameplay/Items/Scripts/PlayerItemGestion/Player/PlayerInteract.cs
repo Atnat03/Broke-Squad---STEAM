@@ -25,6 +25,7 @@
             private Component _heldComponent;
 
             public Action<bool, Tooltip> OnTooltipChange;
+            private string _lastHeldTooltip;
             
             #region Network Start
             
@@ -55,14 +56,18 @@
                 if (!IsOwner || _camera == null) return;
                 if (_heldInteractable != null)
                 {
-                    if (IsHeldTooFar())
-                        ReleaseHold();
+                    if (_heldInteractable is IInteractable held)
+                    {
+                        Tooltip t = held.GetTooltip(null);
+                        if (t.Message != _lastHeldTooltip)
+                        {
+                            _lastHeldTooltip = t.Message;
+                            OnTooltipChange?.Invoke(!string.IsNullOrEmpty(t.Message), t);
+                        }
+                    }
                     return;
                 }
-                
-                
-                
-                
+                _lastHeldTooltip = null;
                 IInteractable target = (_playerCamera != null && _playerCamera.HasOverride) ? null : GetAimingInteractable();
 
                 if (target == _currentHoverInteractable)
