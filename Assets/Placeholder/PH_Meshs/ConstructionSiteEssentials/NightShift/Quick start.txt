@@ -1,0 +1,8 @@
+Night Shift Setup · Construction Site Essentials
+Open NightShiftSetup in Unity 6000.3 (Built-in Render Pipeline), then press Play. Use a mouse in a landscape Game view.
+
+Select the cable reel or its label. Move the pointer to carry it, then click the marked reel bay. Move the work light the same way. Select the positioned light to power the mixer station. Put back or Escape returns an item you are carrying. Run again resets the job.
+
+To reuse the lamp, drag Prefabs/Switchable Work Light into your scene. Its two warm spotlights are attached to the model's LED heads. Enable Starts On in the inspector, or call SwitchableWorkLight.SetPower(bool) or Toggle() in play mode.
+
+CarryAndPlace is independent of the job. Attach it to a grounded prop, call PickUp(), feed CarryTo() a ground position, then call TryPlace(groundPosition, socketTransform). The socket supplies the finished position and rotation. ResetItem() restores the original pose. The sample uses a fixed site camera and two marked destinations.
