@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using MyPrint;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Gameplay.Items
@@ -15,6 +17,9 @@ namespace Gameplay.Items
         [SerializeField] private float _shootForce;
         [SerializeField] private LayerMask _aimMask = ~0;  
         [SerializeField] private float _aimDistance = 100f;
+        [SerializeField] private float _fireRate = 0.25f;
+        private bool _canShoot = true;
+        Coroutine _fireRateCoroutine;
         
         [Header("SFX")] 
         [SerializeField, SoundName] private string _stringName;
@@ -26,6 +31,10 @@ namespace Gameplay.Items
         {
             if (!CanUse()) return;
 
+            if (!_canShoot) return;
+
+            _fireRateCoroutine = Context.StartCoroutine(FireRateRoutine());
+            
             Transform cam = Context.Camera.transform;
 
             Vector3 aimPoint = cam.position + cam.forward * _aimDistance;
@@ -63,6 +72,15 @@ namespace Gameplay.Items
             ConsumeCondition(new OnModuleDoAction_EVENT());
         }
 
+        IEnumerator FireRateRoutine()
+        {
+            _canShoot = false;
+            
+            yield return new WaitForSeconds(_fireRate);
+
+            _canShoot = true;
+        }
+        
         private Vector3 CheckWall(Vector3 pos)
         {
             Vector3 finalPos = pos;
@@ -79,10 +97,21 @@ namespace Gameplay.Items
         public void StopFirstAction()
         { }
 
-        public void OnNotInHand() { }
+        public void OnNotInHand()
+        {
+            if (_fireRateCoroutine != null)
+            {
+                Context.StopCoroutine(_fireRateCoroutine);
+                _fireRateCoroutine = null;
+            }
+        }
         public void OnThrow()
         {
-            
+            if (_fireRateCoroutine != null)
+            {
+                Context.StopCoroutine(_fireRateCoroutine);
+                _fireRateCoroutine = null;
+            }
         }
 
         public void ServerExecute(OnModuleDoAction_EVENT data)
@@ -93,12 +122,11 @@ namespace Gameplay.Items
             
             ItemInstance item = new ItemInstance(_ammoPrefab);
             
-            if (item == null || item.Data.PickupPrefab == null)
+            if (item.Data.PickupPrefab == null)
                 return;
             
             if (ammo.TryGetComponent(out ItemPickup pickup))
             {
-                ABPrint.Print(item.Data.ItemName);
                 pickup.Setup(item);
             }
             
@@ -109,10 +137,12 @@ namespace Gameplay.Items
                     p.OnThrow(rb);
                 }
                 
+                float force = data.ValueF * rb.mass;
+                
                 rb.useGravity = false;
                 pickup.OnCollide += () => rb.useGravity = true;
                 
-                rb.AddForce(data.Direction * data.ValueF, ForceMode.Impulse);
+                rb.AddForce(data.Direction * force, ForceMode.Impulse);
             }
             
             //SFX
