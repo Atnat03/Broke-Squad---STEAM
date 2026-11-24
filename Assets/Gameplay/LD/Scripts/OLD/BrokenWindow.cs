@@ -53,9 +53,9 @@ namespace Assets.Gameplay.LD.Scripts
             
             InvokeEvent(new PlaySoundEvent
             {
-                soundName = _breakSound,
-                position = transform.position,
-                volume = 0.5f
+                SoundName = _breakSound,
+                Position = transform.position,
+                Volume = 0.5f
             });
 
             //brokenWAnimator.Play(brokenStateName, 0);

@@ -14,6 +14,12 @@ namespace Gameplay.IA
         [SerializeField] private GuardLineSight _lineSight;
         [SerializeField] private GuardHealth _health;
         [SerializeField] private Animator _animator;
+
+        [Header("Model")] 
+        [Header("Take damage")] 
+        [SerializeField] private Material _hitMaterial;
+        private float _hitDuration = 0.15f;
+        private Coroutine _hitCoroutine;
         
         [Header("UI")]
         [Header("Player Detection")]
@@ -55,6 +61,7 @@ namespace Gameplay.IA
             _health.OnHealthUpdate += UpdateHP;
             _health.OnGuardStunning += UpdateStun;
             _health.OnGuardDie += UpdateDeath;
+            _health.OnTakingDamage += TakeDamage;
             
             _brain.OnAlertedChange += UpdateAlertedState;
             _brain.OnUpdateLockDownTimer += UpdateLockDownTimer;
@@ -62,6 +69,7 @@ namespace Gameplay.IA
             _brain.OnGuardIsAggro += UpdateAggro;
             _brain.OnGuardIsInvestigate += UpdateInvestigation;
         }
+
         private void OnDisable()
         {
             _lineSight.OnDetectionProgressChanged += OnUpdateDetectionPlayer;
@@ -69,6 +77,7 @@ namespace Gameplay.IA
             _health.OnHealthUpdate -= UpdateHP;
             _health.OnGuardStunning -= UpdateStun;
             _health.OnGuardDie -= UpdateDeath;
+            _health.OnTakingDamage -= TakeDamage;
             
             _brain.OnAlertedChange -= UpdateAlertedState;
             _brain.OnUpdateLockDownTimer -= UpdateLockDownTimer;
@@ -104,7 +113,6 @@ namespace Gameplay.IA
         
         private void PerformAttacking()
         {
-            ABPrint.Print("Attack ?", ABColor.Orange);
             _animator.SetTrigger("Attacking");
         }
         
@@ -128,6 +136,25 @@ namespace Gameplay.IA
         private void UpdateInvestigation(bool isInvestigation)
         {
             _investigationImage.gameObject.SetActive(isInvestigation);
+        }
+        
+        private void TakeDamage()
+        {
+            if(_hitCoroutine == null)
+            {
+                _hitCoroutine = StartCoroutine(HitRoutine());
+            }
+        }
+
+        private IEnumerator HitRoutine()
+        {
+            _meshRenderer.material = _hitMaterial;
+            
+            yield return new WaitForSeconds(_hitDuration);
+            
+            _meshRenderer.material = _normalMaterial;
+            
+            _hitCoroutine = null;
         }
     }
 }

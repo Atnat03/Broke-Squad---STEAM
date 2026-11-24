@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Bus;
 using Gameplay.Controller.Minimap;
+using Gameplay.Items.PickingUp;
 using Gameplay.Other.SuspiciousSound;
 using JetBrains.Annotations;
 using MyPrint;
@@ -18,33 +20,40 @@ namespace Gameplay.Items
     [RequireComponent(typeof(NetworkTransform))]
     public class ItemPickup : NetworkBusListener, IInteractable
     {
+        //Inspector
+        [SerializeField] private SO_Item _itemData;
         [SerializeField] private float _rackRatio = 0.5f;
-        private Collider[] _collidersOffOnRack;
-        
+
+        //Components
         private NetworkTransform _nt;
         private Rigidbody _rb;
         private BoxCollider _box;
-        readonly NetworkVariable<bool> _onRack = new();
-        Vector3 _baseSize,_baseSizeRack, _baseScale;
-        
-        [SerializeField] private SO_Item _itemData;
-        
         private Outline _outline;
 
-        public Outline outline => _outline;
-        
+        //Network
+        private readonly NetworkVariable<bool> _onRack = new();
+
+        //Cached Data
+        private Collider[] _collidersOffOnRack;
+        private Vector3 _baseSize;
+        private Vector3 _baseSizeRack;
+        private Vector3 _baseScale;
+
+        //States
         private ItemInstance _instance;
+        private bool _canCollide;
+        private readonly NetworkVariable<ulong> _networkInstanceId = new();
+        [HideInInspector] public readonly NetworkVariable<ulong> ThrownBy = new(ulong.MaxValue);
         
+        //Hover
+        private IHoverItemInfo _hoverInfo;
+
+        //Properties
+        public Outline outline => _outline;
         public ItemInstance Instance => _instance ??= new ItemInstance(_itemData);
 
-        private bool _canCollide;
-        
+        //Actions
         public Action OnCollide;
-        
-        public override void OnNetworkDespawn()
-        {
-            _onRack.OnValueChanged -= OnRackChanged;
-        }
 
         private void Awake()
         {
@@ -62,6 +71,8 @@ namespace Gameplay.Items
             _baseSize = new Vector3(_box.size.x, _box.size.y, _box.size.z);
             _baseScale = transform.localScale;
 
+            _hoverInfo = GetComponent<IHoverItemInfo>();
+
             if (_collidersOffOnRack == null || _collidersOffOnRack.Length == 0)
             {
                 List<Collider> list = new List<Collider>();
@@ -70,24 +81,64 @@ namespace Gameplay.Items
                 _collidersOffOnRack = list.ToArray();
             }
         }
-
+        
         public override void OnNetworkSpawn()
         {
             _onRack.OnValueChanged += OnRackChanged;
 
             if (IsServer)
             {
+                if (_instance == null)
+                    _instance = new ItemInstance(_itemData);
+
+                _networkInstanceId.Value = _instance.InstanceId;
+                
+                SyncByteModulesToClients();
+
                 StartCoroutine(BufferCollision());
+
+                if (_rb)
+                {
+                    _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+                    _rb.interpolation = RigidbodyInterpolation.Interpolate;
+                }
+            }
+            else
+            {
+                _networkInstanceId.OnValueChanged += OnInstanceIdChanged;
+
+                if (_networkInstanceId.Value != 0)
+                    OnInstanceIdChanged(0, _networkInstanceId.Value);
             }
             
             ApplyRack();
+            
+            if (ThrownBy.Value == NetworkManager.LocalClientId)
+            {
+                ThrowGhost.TryClaim(this);
+            }
+        }
+        
+        public override void OnNetworkDespawn()
+        {
+            base.OnNetworkDespawn();
+
+            _onRack.OnValueChanged -= OnRackChanged;
+            _networkInstanceId.OnValueChanged -= OnInstanceIdChanged;
+        }
+        
+        private void OnInstanceIdChanged(ulong previous, ulong current)
+        {
+            if (current == 0) return;
+
+            Instance.SetInstanceId(current);
         }
 
         private IEnumerator BufferCollision()
         {
             _canCollide = false;
 
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.1f);
 
             _canCollide = true;
         }
@@ -118,7 +169,7 @@ namespace Gameplay.Items
                 if (_rb == null)
                     _rb = gameObject.AddComponent<Rigidbody>();
 
-                _rb.isKinematic = false;
+                _rb.isKinematic = !IsServer;
                 _rb.useGravity = true;
             }
 
@@ -138,6 +189,11 @@ namespace Gameplay.Items
         {
             if(outline)
                 outline.enabled = data.State;
+
+            if (_hoverInfo != null)
+            {
+                _hoverInfo.OnHoverUpdate(data.State);
+            }
         }
 
 
@@ -165,6 +221,9 @@ namespace Gameplay.Items
             instance?.SetAnchor(transform, NetworkObjectId);
             
             GetComponent<BoxCollider>().isTrigger = true;
+            
+            if (IsServer && IsSpawned)
+                SyncByteModulesToClients();
         }
         
         public void OnCollisionEnter(Collision collision)
@@ -215,19 +274,65 @@ namespace Gameplay.Items
         [Rpc(SendTo.Server)]
         void CreateSuspiciousSoundRpc(ulong clientId, float force) => CreateSuspiciousSound(clientId, force);
         
-        public string GetTooltip(ItemModule[] playerModules)
+        public Tooltip GetTooltip(ItemModule[] playerModules)
         {
-            string message = string.Empty;
+            Tooltip tooltip = new Tooltip
+            {
+                Message = string.Empty,
+                Icon = Instance.Data.TooltipInHand.DefaultTooltip.Icon
+            };
             
             if(playerModules != null)
-                message = Instance.Data.TooltipInHand.GetTooltip(playerModules);
-            
-            if (message.Equals(string.Empty))
             {
-                message = "E to pick " + Instance.Data.ItemName;
+                tooltip = Instance.Data.TooltipInHand.GetTooltip(playerModules);
             }
             
-            return message;
+            if (tooltip.Message.Equals(string.Empty))
+            {
+                tooltip.Message = "E to pick " + Instance.Data.ItemName;
+            }
+            
+            return tooltip;
+        }
+        
+        public void SyncByteModulesToClients()
+        {
+            if (!IsServer || !IsSpawned || _instance == null)
+                return;
+
+            int index = 0;
+
+            foreach (var module in _instance.AllModules())
+            {
+                if (module is IReplicatedByteModule byteModule)
+                {
+                    SyncByteModuleRpc(index, byteModule.GetByteState());
+                }
+
+                index++;
+            }
+        }
+        
+        [Rpc(SendTo.ClientsAndHost)]
+        private void SyncByteModuleRpc(int moduleIndex, byte[] data)
+        {
+            if (data == null)
+                return;
+
+            int index = 0;
+
+            foreach (var module in Instance.AllModules())
+            {
+                if (index == moduleIndex)
+                {
+                    if (module is IReplicatedByteModule byteModule)
+                        byteModule.SetByteState(data);
+
+                    return;
+                }
+
+                index++;
+            }
         }
     }
 }

@@ -258,7 +258,7 @@ namespace Gameplay.Controller
         private Vector3 UpdateBob(float dt, out float roll)
         {
             roll = 0f;
-            if (!_bobEnabled) return Vector3.zero;
+            if (!_bobEnabled || player.NoclipActive) return Vector3.zero;
 
             Vector3 horizVel = player.HorizontalVelocity;
             bool moving = player.IsGrounded && horizVel.magnitude > 0.1f;

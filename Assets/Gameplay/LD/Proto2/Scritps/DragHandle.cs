@@ -52,11 +52,23 @@ namespace Gameplay.Items
         }
 
         
-        public string GetTooltip(ItemModule[] playerModules)
+        public Tooltip GetTooltip(ItemModule[] playerModules)
         {
-            if (!_owner.IsHandleFree(_index)) return "Already taken";
-            if (!HasSpace()) return "Not enough space";
-            return "Hold to drag";
+            Tooltip tooltip = new Tooltip();
+            
+            if (!_owner.IsHandleFree(_index))
+            {
+                tooltip.Message = "Already taken";
+                return tooltip;
+            }
+            if (!HasSpace())
+            {
+                tooltip.Message = "Not enough space";
+                return tooltip;
+            }
+            
+            tooltip.Message = "Hold to drag";
+            return tooltip;
         }
 
         public void SetOutline(StartOutliningData data)

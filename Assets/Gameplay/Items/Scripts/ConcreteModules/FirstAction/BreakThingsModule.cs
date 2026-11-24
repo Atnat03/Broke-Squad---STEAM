@@ -8,6 +8,8 @@ namespace Gameplay.Items
     public class BreakThingsModule : ActionModule, IFirstAction
     {
         public override string Emoji => "💥";
+
+        public float Force => _force;
         
         [SerializeField] private float _force = 5;
 
@@ -30,9 +32,9 @@ namespace Gameplay.Items
                 //SFX
                 Context.Inventory.InvokeEvent(new PlaySoundEvent
                 {
-                    position = Context.Core.transform.position,
-                    volume = _volume,
-                    soundName = _stringName
+                    Position = Context.Core.transform.position,
+                    Volume = _volume,
+                    SoundName = _stringName
                 });
                 
                 ConsumeCondition(new OnModuleDoAction_EVENT());

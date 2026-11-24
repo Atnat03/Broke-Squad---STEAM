@@ -24,7 +24,7 @@ namespace Gameplay.Controller
         [Header("Tooltip")]
         [SerializeField] TooltipConfig _tooltipConfig;
         
-        public string GetTooltip(ItemModule[] playerModules) => _tooltipConfig.GetTooltip(playerModules);
+        public Tooltip GetTooltip(ItemModule[] playerModules) => _tooltipConfig.GetTooltip(playerModules);
         
         public Outline outline => _outline;
 

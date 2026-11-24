@@ -14,6 +14,11 @@ namespace Gameplay.LD
     [RequireComponent(typeof(NetworkTransform))]
     public class MovingPlatform : NetworkBusListener
     {
+
+        public Vector3 CurrentVelocity { get; private set; }
+
+        private Vector3 _lastPosition;
+        
         [Header("Settings")]
         [SerializeField] private Transform _downPosition;
         [SerializeField] private Transform _upPosition;
@@ -22,7 +27,12 @@ namespace Gameplay.LD
         private Coroutine _movingCoroutine;
         
         [SerializeField] private bool _up;
-
+        
+        private void Awake()
+        {
+            _lastPosition = transform.position;
+        }
+        
         public void ActivateMoving()
         {
             if (!IsServer)
@@ -66,23 +76,11 @@ namespace Gameplay.LD
 
             _movingCoroutine = null;
         }
-
-
-        void OnTriggerEnter(Collider c) {
-            if (!IsServer) return;
-            var p = c.GetComponent<PlayerController>();
-            if (p != null && p.NetworkObject.IsPlayerObject)
-            {
-                p.NetworkObject.TrySetParent(NetworkObject);
-            }
-        }
-        void OnTriggerExit(Collider c) {
-            if (!IsServer) return;
-            var p = c.GetComponent<PlayerController>();
-            if (p != null && p.NetworkObject.IsPlayerObject)
-            {
-                p.NetworkObject.TryRemoveParent();
-            }
+        
+        private void Update()
+        {
+            CurrentVelocity = (transform.position - _lastPosition) / Time.deltaTime;
+            _lastPosition = transform.position;
         }
     }
 }
