@@ -128,9 +128,9 @@ namespace Gameplay.Items
             //SFX
             Context.Inventory.InvokeEvent(new PlaySoundEvent
             {
-                position = thrown.transform.position,
-                volume = _volume,
-                soundName = _stringName
+                Position = thrown.transform.position,
+                Volume = _volume,
+                SoundName = _stringName
             });
             
             foreach (IPassif passif in thrown.Instance.Passifs)

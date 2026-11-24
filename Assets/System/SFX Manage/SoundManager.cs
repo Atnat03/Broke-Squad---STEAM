@@ -58,20 +58,20 @@ namespace SFX_Manage
         private void OnPlaySound(PlaySoundEvent e)
         {
             
-            if (!clips.TryGetValue(e.soundName, out AudioClip clip))
+            if (!clips.TryGetValue(e.SoundName, out AudioClip clip))
             {
-                Debug.LogWarning($"SoundManager: son introuvable : '{e.soundName}'");
+                Debug.LogWarning($"SoundManager: son introuvable : '{e.SoundName}'");
                 return;
             }
 
             AudioSource src = pool[nextSource];
             nextSource = (nextSource + 1) % poolSize;
 
-            src.transform.position = e.position;
+            src.transform.position = e.Position;
             src.clip = clip;
-            src.volume = (e.volume <= 0f ? 1f : e.volume);
-            src.pitch = e.pitch <= 0f ? 1f : e.pitch;
-            src.spatialBlend = e.is2D ? 0f : 1f;
+            src.volume = (e.Volume <= 0f ? 1f : e.Volume);
+            src.pitch = e.Pitch <= 0f ? 1f : e.Pitch;
+            src.spatialBlend = e.Is2D ? 0f : 1f;
             src.Play();
         }
         

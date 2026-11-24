@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
+  m_Name: SO_IT_Rifle
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
+  ID: 43
+  ItemName: Rifle
+  VisualPrefabLocal: {fileID: 3456991800632344086, guid: 8311e848c169ffb4bab0f4544dc8a13c, type: 3}
+  VisualPrefabRemote: {fileID: 5815907392575084338, guid: 2c60355a36951b546a604a3aefcb10a7, type: 3}
+  PickupPrefab: {fileID: 7742960481575548408, guid: 017f8b28be0528a4c94147e9ee2d54fd, type: 3}
+  Icon: {fileID: 21300000, guid: 901857e19f1e54d429dc29beedf509de, type: 3}
+  OffsetInHand: {x: 0, y: 0, z: 0}
+  TooltipInHand:
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
+    IsItem: 0
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
+    _requiresItemModule: 0
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
+    _requiredModule:
+      rid: -2
+  Weight: 1
+  OffsetRotationDrop: {x: 0, y: 0, z: 0}
+  FirstActionList:
+  - rid: 7832863092312113430
+  SecondActionList:
+  - rid: 7832863092312113431
+  PassifList:
+  - rid: 7832863092312113432
+  - rid: 7832863092312113433
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7832863092312113430
+      type: {class: ShootModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _ammoPrefab: {fileID: 11400000, guid: 72d8b06196f1fd147961485a37faad1a, type: 2}
+        _shootPos_SECURITY: {x: 0.11, y: 0.03, z: -1.25}
+        _shootForce: 40
+        _aimMask:
+          serializedVersion: 2
+          m_Bits: 4294967295
+        _aimDistance: 100
+        _stringName: 
+        _volume: 0.5
+    - rid: 7832863092312113431
+      type: {class: ThrowModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _durationToFullFill: 3
+        _minThrowForce: {x: 0, y: 0, z: 0}
+        _maxThrowForce: {x: 0, y: 2, z: 10}
+        _minTorqueForce: {x: 0, y: 0, z: 0}
+        _maxTorqueForce: {x: 15, y: 0, z: 0}
+        _spawnDistance: {x: 0.2, y: 0, z: 0.7}
+        _stringName: Joueur/Throw Item
+        _volume: 0.5
+    - rid: 7832863092312113432
+      type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _minVelocityForDamage: 3
+        _damage: 50
+        _canDamagePlayer: 1
+    - rid: 7832863092312113433
+      type: {class: CreateSuspiciousSoundModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _miniVelocityToDoSound: 1
+        _suspiciousSoundSettings: {fileID: 11400000, guid: 8029d65674b61e844acad36af99f168f, type: 2}
