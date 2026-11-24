@@ -66,6 +66,7 @@ namespace Gameplay.Items
             _nt.SyncScaleX = false;
             _nt.SyncScaleY = false;
             _nt.SyncScaleZ = false;
+            _nt.Interpolate = false;
             
             _baseSizeRack = new Vector3(_box.size.x, _box.size.y / 2, _box.size.z);
             _baseSize = new Vector3(_box.size.x, _box.size.y, _box.size.z);
