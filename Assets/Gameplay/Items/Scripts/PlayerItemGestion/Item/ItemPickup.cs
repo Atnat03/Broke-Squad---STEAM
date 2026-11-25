@@ -102,7 +102,7 @@ namespace Gameplay.Items
                 if (_rb)
                 {
                     _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-                    _rb.interpolation = RigidbodyInterpolation.Interpolate;
+                    _rb.interpolation = RigidbodyInterpolation.None;
                 }
             }
             else
@@ -237,10 +237,10 @@ namespace Gameplay.Items
         
         public void OnCollisionEnter(Collision collision)
         {
+            ABPrint.Print("collision : " + collision.transform.name);
             if(_instance == null) return;
             if(!_canCollide) return;
             
-            ABPrint.Print("collision : " + collision.transform.name);
             
             OnCollide?.Invoke();
             
