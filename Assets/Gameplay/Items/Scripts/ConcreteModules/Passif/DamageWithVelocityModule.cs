@@ -2,6 +2,7 @@
 using Gameplay.LD.Scripts;
 using Gameplay.PlayerData;
 using MyPrint;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Gameplay.Items
@@ -14,21 +15,22 @@ namespace Gameplay.Items
         [SerializeField] private float _minVelocityForDamage = 1;
         [SerializeField] private float _damage = 10f;
         [SerializeField] private bool _canDamagePlayer = true;
+        [SerializeField] private bool _destroyOnApplyDamage = false;
         
         private Rigidbody _rb;
         
         public void OnCollide(Collision collision, ItemPickup item)
         {
-            if (collision.collider == item.GetComponent<Collider>()) return;
             if (_rb == null && !item.TryGetComponent(out _rb)) return;
-
-            float speed = _rb.linearVelocity.magnitude;
+            if(_rb.linearVelocity.magnitude < 1f) return;
+            
+            float speed = collision.relativeVelocity.magnitude;
             
             IDamageable damageable = collision.gameObject.GetComponentInChildren<IDamageable>() ?? collision.gameObject.GetComponent<IDamageable>();
-
+            
             if (damageable != null)
             {
-               if (speed <= _minVelocityForDamage) return;
+                if (speed <= _minVelocityForDamage) return;
                
                 if (collision.gameObject.GetComponentInChildren<PlayerHealth>())
                 {
@@ -37,6 +39,12 @@ namespace Gameplay.Items
                 }
                 
                 damageable.ApplyDamage(_damage);
+            }
+            
+            if (_destroyOnApplyDamage)
+            {
+                if(item)
+                    item.NetworkObject.Despawn();
             }
         }
 

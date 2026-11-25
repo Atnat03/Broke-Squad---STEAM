@@ -21,7 +21,9 @@ namespace Gameplay.Controller
         public bool CanMove { get; set; } = true;
         public bool IsClimbing { get; set; }
         public float ClimbVelocity { get; set; }
-        private Vector2 MoveInput => CanMove ? _input.Move : Vector2.zero;
+        public Vector2? ForcedMove { get; set; }
+        public Vector3 PlatformVelocity { get; set; }
+        private Vector2 MoveInput => CanMove ? (ForcedMove ?? _input.Move) : Vector2.zero;
 
         public Vector3 HorizontalVelocity => new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 
@@ -97,39 +99,47 @@ namespace Gameplay.Controller
             ApplyGravity(dt);
             SnapToGround();
         }
-
+        
         private void ApplyHorizontal(float dt)
         {
             float speed = TargetSpeed * (ForwardDot < -0.1f ? _profile.backwardSpeedMultiplier : 1f);
 
             Vector3 input = Vector3.ClampMagnitude(new Vector3(MoveInput.x, 0f, MoveInput.y), 1f);
+
             Vector3 worldDir = _transform.TransformDirection(input);
             bool grounded = _ground.IsGrounded;
 
-            float accel = grounded
-                ? (input.sqrMagnitude > 0.01f ? _profile.groundAcceleration : _profile.groundDeceleration)
-                : _profile.airAcceleration;
-
-            Vector3 v = _rb.linearVelocity;
+            float accel = grounded ? (input.sqrMagnitude > 0.01f ? _profile.groundAcceleration : _profile.groundDeceleration) : _profile.airAcceleration;
+            
+            Vector3 v = _rb.linearVelocity - PlatformVelocity;
 
             if (grounded)
             {
                 Vector3 normal = _ground.Normal;
-                
+
                 Vector3 slopeDir = Vector3.ProjectOnPlane(worldDir, normal);
+
                 if (slopeDir.sqrMagnitude > 1e-4f)
                     slopeDir = slopeDir.normalized * worldDir.magnitude;
 
                 Vector3 current = Vector3.ProjectOnPlane(v, normal);
-                _rb.linearVelocity = Vector3.MoveTowards(current, slopeDir * speed, accel * dt);
+
+                Vector3 relativeVelocity = Vector3.MoveTowards(current, slopeDir * speed, accel * dt);
+
+                _rb.linearVelocity = relativeVelocity + PlatformVelocity;
             }
             else
             {
                 Vector3 target = worldDir * speed;
+
                 Vector3 h = Vector3.MoveTowards(new Vector3(v.x, 0f, v.z), target, accel * dt);
-                _rb.linearVelocity = new Vector3(h.x, v.y, h.z);
+
+                Vector3 relativeVelocity = new Vector3(h.x, v.y, h.z);
+
+                _rb.linearVelocity = relativeVelocity + PlatformVelocity;
             }
         }
+
 
         private void ApplyGravity(float dt)
         {
@@ -148,7 +158,7 @@ namespace Gameplay.Controller
             float g = Mathf.Abs(Physics.gravity.y) * _profile.gravityMultiplier;
             float jumpVel = Mathf.Sqrt(2f * g * _profile.jumpHeight);
 
-            _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, jumpVel, _rb.linearVelocity.z);
+            _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, jumpVel + PlatformVelocity.y, _rb.linearVelocity.z);
 
             _jumpBufferTimer = 0f;
             _coyoteTimer = 0f;

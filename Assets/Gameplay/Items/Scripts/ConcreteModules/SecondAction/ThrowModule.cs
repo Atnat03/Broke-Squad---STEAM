@@ -33,6 +33,8 @@ namespace Gameplay.Items
         [SerializeField, SoundName] private string _stringName;
         [SerializeField, Range(0, 1)] private float _volume = 0.5f;
 
+        private bool _isInputPressed = false;
+        
         private readonly List<MeshRenderer> _hiddenMeshes = new();
         
         #region Action Gestion
@@ -43,23 +45,22 @@ namespace Gameplay.Items
         {
             if (!CanUse()) return;
             
+            _isInputPressed = true;
+            
             _chargeCoroutine = Context.StartCoroutine(FillTheThrowForce());
         }
 
         public void StopSecondAction()
         {
             if (_chargeCoroutine == null) return;
+            
+            if (!_isInputPressed)
+                return;
 
             Context.StopCoroutine(_chargeCoroutine);
             _chargeCoroutine = null;
 
-            Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
-            {
-                ClientId = Context.Inventory.OwnerClientId,
-                KeyEvent = "UI_THROW_BAR",
-                ValueF = 0,
-                ValueB = false,
-            });
+            SendToUI(false);
 
             ItemInstance held = Context.Inventory.GetHeldInstance();
             if (held == null || held.Data == null || held.Data.PickupPrefab == null) return;
@@ -95,6 +96,8 @@ namespace Gameplay.Items
                 Position = finalPos,
             });
             
+            _isInputPressed = false;
+            
             ConsumeCondition(new OnModuleDoAction_EVENT());
         }
 
@@ -128,9 +131,9 @@ namespace Gameplay.Items
             //SFX
             Context.Inventory.InvokeEvent(new PlaySoundEvent
             {
-                position = thrown.transform.position,
-                volume = _volume,
-                soundName = _stringName
+                Position = thrown.transform.position,
+                Volume = _volume,
+                SoundName = _stringName
             });
             
             foreach (IPassif passif in thrown.Instance.Passifs)
@@ -165,14 +168,10 @@ namespace Gameplay.Items
         public void OnNotInHand()
         {
             Context.StopCoroutine(_chargeCoroutine);
+
+            _isInputPressed = false;
             
-            Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
-            {
-                ClientId = Context.Inventory.OwnerClientId,
-                KeyEvent = "UI_THROW_BAR",
-                ValueF = 0,
-                ValueB = false,
-            });
+            SendToUI(false);
         }
 
         // Faire spawn le nouvel item via la fonction de Context
@@ -210,17 +209,23 @@ namespace Gameplay.Items
                 _charge = Mathf.Clamp01(elapsed / _durationToFullFill);
                 
                 // Envoie un event à destination de l'ui avec la key : UI_THROW_BAR
-                Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
-                {
-                    ClientId = Context.Inventory.OwnerClientId,
-                    KeyEvent = "UI_THROW_BAR",
-                    ValueF = _charge,
-                    ValueB = true
-                });
+
+                SendToUI(true);
                 
                 yield return null;
             }
             _charge = 1f;
+        }
+
+        private void SendToUI(bool state)
+        {
+            Context.SendEventTo(Context.Inventory.OwnerClientId, new OnModuleDoAction_EVENT
+            {
+                ClientId = Context.Inventory.OwnerClientId,
+                KeyEvent = "UI_THROW_BAR",
+                ValueF = _charge,
+                ValueB = state
+            });
         }
     }
 }

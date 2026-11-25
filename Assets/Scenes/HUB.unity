@@ -11295,10 +11295,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 759806948}
-        m_TargetAssemblyTypeName: Network.Connections.PlayerLocalPersonalisation,
-          Assembly-CSharp
-        m_MethodName: SetReadyButton
+      - m_Target: {fileID: 1354779340}
+        m_TargetAssemblyTypeName: Network.HUB.LobbyManager, Assembly-CSharp
+        m_MethodName: SetReady
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11308,9 +11307,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1354779340}
-        m_TargetAssemblyTypeName: Network.HUB.LobbyManager, Assembly-CSharp
-        m_MethodName: SetReady
+      - m_Target: {fileID: 759806948}
+        m_TargetAssemblyTypeName: Network.Connections.PlayerLocalPersonalisation,
+          Assembly-CSharp
+        m_MethodName: SetReadyButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11481,7 +11481,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000029571165}
+  m_AnchoredPosition: {x: 0, y: 0.00035621715}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &709989895
@@ -12743,7 +12743,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2018433652}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99983495
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -21197,6 +21197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LobbyUI
   _lobbyManager: {fileID: 1354779340}
+  _personnalisationManager: {fileID: 759806948}
   _creationCanva: {fileID: 2011266604}
   _inLobbyCanva: {fileID: 999174377}
   _lobbyListElementPrefab: {fileID: 2446531678303073518, guid: 35975953cc3697c40a3fe7b07ea1362d, type: 3}
@@ -22753,7 +22754,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000029571165}
+  m_AnchoredPosition: {x: 0, y: 0.00035920483}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1292845508
@@ -34657,7 +34658,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 992166229}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99983716
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -42444,7 +42445,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Multiplayer.Tools.NetworkSimulator.Runtime::Unity.Multiplayer.Tools.NetworkSimulator.Runtime.NetworkSimulator
   m_PresetAsset: {fileID: 0}
   m_PresetReference:
-    rid: 7693030486098313893
+    rid: 7693030500762648578
   m_Scenario:
     rid: -2
   m_IsScenarioSettingsFolded: 0
@@ -42454,7 +42455,7 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 7693030486098313893
+    - rid: 7693030500762648578
       type: {class: NetworkSimulatorPreset, ns: Unity.Multiplayer.Tools.NetworkSimulator.Runtime, asm: Unity.Multiplayer.Tools.NetworkSimulator.Runtime}
       data:
         <Name>k__BackingField: 'Home Broadband [WIFI, Cable, Console, PC]'
@@ -42566,7 +42567,7 @@ MonoBehaviour:
     NetworkIdRecycleDelay: 120
     RpcHashSize: 0
     LoadSceneTimeOut: 120
-    SpawnTimeout: 10
+    SpawnTimeout: 798
     EnableNetworkLogs: 1
     NetworkTopology: 0
     UseCMBService: 0
@@ -42585,7 +42586,7 @@ Transform:
   m_GameObject: {fileID: 2158308782997525959}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 917.2791, y: 434.11673, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

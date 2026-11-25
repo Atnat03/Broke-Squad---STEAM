@@ -83,9 +83,9 @@ namespace Gameplay.Items
             //SFX
             Context.Inventory.InvokeEvent(new PlaySoundEvent
             {
-                position = Context.Core.transform.position,
-                volume = _volume,
-                soundName = _sfxTrigger
+                Position = Context.Core.transform.position,
+                Volume = _volume,
+                SoundName = _sfxTrigger
             });
         }
 

@@ -43,7 +43,8 @@ namespace Gameplay.Items
         private ItemInstance _instance;
         private bool _canCollide;
         private readonly NetworkVariable<ulong> _networkInstanceId = new();
-        public readonly NetworkVariable<ulong> ThrownBy = new(ulong.MaxValue);
+        [HideInInspector] public readonly NetworkVariable<ulong> ThrownBy = new(ulong.MaxValue);
+        private Coroutine _bufferRoutine;
         
         //Hover
         private IHoverItemInfo _hoverInfo;
@@ -66,6 +67,7 @@ namespace Gameplay.Items
             _nt.SyncScaleX = false;
             _nt.SyncScaleY = false;
             _nt.SyncScaleZ = false;
+            _nt.Interpolate = false;
             
             _baseSizeRack = new Vector3(_box.size.x, _box.size.y / 2, _box.size.z);
             _baseSize = new Vector3(_box.size.x, _box.size.y, _box.size.z);
@@ -95,12 +97,12 @@ namespace Gameplay.Items
                 
                 SyncByteModulesToClients();
 
-                StartCoroutine(BufferCollision());
+                _bufferRoutine = StartCoroutine(BufferCollision());
 
                 if (_rb)
                 {
                     _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-                    _rb.interpolation = RigidbodyInterpolation.Interpolate;
+                    _rb.interpolation = RigidbodyInterpolation.None;
                 }
             }
             else
@@ -187,12 +189,19 @@ namespace Gameplay.Items
 
         public void SetOutline(StartOutliningData data)
         {
+            bool state = data.State;
+            
+            if (Instance.GetModule(typeof(NotGrabbableModule)) != null)
+            {
+                state = false;
+            }
+            
             if(outline)
-                outline.enabled = data.State;
+                outline.enabled = state;
 
             if (_hoverInfo != null)
             {
-                _hoverInfo.OnHoverUpdate(data.State);
+                _hoverInfo.OnHoverUpdate(state);
             }
         }
 
@@ -228,15 +237,23 @@ namespace Gameplay.Items
         
         public void OnCollisionEnter(Collision collision)
         {
-            if(_instance == null) return;
-            if(!_canCollide)return;
+            if (!IsServer) return;
             
-            OnCollide?.Invoke();
+            if(_instance == null) return;
+            if(!_canCollide) return;
             
             foreach (var passif in _instance.Passifs)
             {
                 passif.OnCollide(collision, this);
             }
+            
+            OnCollide?.Invoke();
+        }
+        
+        public void SkipCollisionBuffer()
+        {
+            if (_bufferRoutine != null) StopCoroutine(_bufferRoutine);
+            _canCollide = true;
         }
 
         bool DetectNotGrabbable()
@@ -276,6 +293,11 @@ namespace Gameplay.Items
         
         public Tooltip GetTooltip(ItemModule[] playerModules)
         {
+            if (Instance.GetModule(typeof(NotGrabbableModule)) != null)
+            {
+                return new Tooltip { Message = string.Empty };
+            }
+            
             Tooltip tooltip = new Tooltip
             {
                 Message = string.Empty,

@@ -14,6 +14,10 @@ namespace Gameplay.LD
     [RequireComponent(typeof(NetworkTransform))]
     public class MovingPlatform : NetworkBusListener
     {
+        public Vector3 CurrentVelocity { get; private set; }
+
+        private Vector3 _lastPosition;
+        
         [Header("Settings")]
         [SerializeField] private Transform _downPosition;
         [SerializeField] private Transform _upPosition;
@@ -22,7 +26,12 @@ namespace Gameplay.LD
         private Coroutine _movingCoroutine;
         
         [SerializeField] private bool _up;
-
+        
+        private void Awake()
+        {
+            _lastPosition = transform.position;
+        }
+        
         public void ActivateMoving()
         {
             if (!IsServer)
@@ -35,7 +44,7 @@ namespace Gameplay.LD
 
             if (_movingCoroutine != null)
                 StopCoroutine(_movingCoroutine);
-
+            
             _movingCoroutine = StartCoroutine(MovingRoutine());
         }
 
@@ -45,8 +54,15 @@ namespace Gameplay.LD
 
         private IEnumerator MovingRoutine()
         {
-            Transform startT = _up ? _downPosition : _upPosition;
-            Transform endT = _up ? _upPosition : _downPosition;
+            Vector3 startT = _up ? _downPosition.position : _upPosition.position;
+            Vector3 endT = _up ? _upPosition.position : _downPosition.position;
+            
+            float distance = Vector3.Distance(transform.position, startT);
+            
+            if(distance > 0.1f)
+            {
+                startT = transform.position;
+            }
             
             float e = 0;
 
@@ -57,32 +73,20 @@ namespace Gameplay.LD
                 float t = Mathf.Clamp01(e / _duration);
                 float curveValue = _movingCurve.Evaluate(t);
 
-                transform.position = Vector3.Lerp(startT.position, endT.position, curveValue);
+                transform.position = Vector3.Lerp(startT, endT, curveValue);
                 
                 yield return null;
             }
 
-            transform.position = endT.position;
+            transform.position = endT;
 
             _movingCoroutine = null;
         }
-
-
-        void OnTriggerEnter(Collider c) {
-            if (!IsServer) return;
-            var p = c.GetComponent<PlayerController>();
-            if (p != null && p.NetworkObject.IsPlayerObject)
-            {
-                p.NetworkObject.TrySetParent(NetworkObject);
-            }
-        }
-        void OnTriggerExit(Collider c) {
-            if (!IsServer) return;
-            var p = c.GetComponent<PlayerController>();
-            if (p != null && p.NetworkObject.IsPlayerObject)
-            {
-                p.NetworkObject.TryRemoveParent();
-            }
+        
+        private void Update()
+        {
+            CurrentVelocity = (transform.position - _lastPosition) / Time.deltaTime;
+            _lastPosition = transform.position;
         }
     }
 }

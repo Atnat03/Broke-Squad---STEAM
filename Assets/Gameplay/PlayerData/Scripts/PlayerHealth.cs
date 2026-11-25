@@ -186,9 +186,9 @@
 
                 InvokeEvent(new PlaySoundEvent
                 {
-                    soundName = sound,
-                    position = transform.position,
-                    volume = volume
+                    SoundName = sound,
+                    Position = transform.position,
+                    Volume = volume
                 });
             }
 
