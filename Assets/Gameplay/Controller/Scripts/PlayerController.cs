@@ -89,6 +89,7 @@ namespace Gameplay.Controller
 
         private bool WantsCrouch() => _input.CrouchHeld || (IsCrouching && !body.CanStandUp());
         private bool WantsSprint() => (_input.SprintHeld || ForcedSprint) && MoveInput.y > 0.1f && _stamina.CanSprint;
+        private bool CanWantSprint() => WantsSprint() && IsGrounded;
 
         public void PlayCrouchSound() => PlaySound(_crouchSound, 0.5f);
 
@@ -252,7 +253,7 @@ namespace Gameplay.Controller
             At(movementState, crouchState, new FuncPredicate(WantsCrouch));
             At(sprintState, crouchState, new FuncPredicate(WantsCrouch));
             At(crouchState, movementState, new FuncPredicate(() => !WantsCrouch()));
-            At(movementState, sprintState, new FuncPredicate(WantsSprint));
+            At(movementState, sprintState, new FuncPredicate(CanWantSprint));
             At(sprintState, movementState, new FuncPredicate(() => !WantsSprint()));
             At(movementState, climbState, new FuncPredicate(WantsClimb));
             At(sprintState, climbState, new FuncPredicate(WantsClimb));

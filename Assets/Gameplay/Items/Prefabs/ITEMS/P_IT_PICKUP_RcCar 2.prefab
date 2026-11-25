@@ -24516,7 +24516,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2078126463
+  GlobalObjectIdHash: 3365824006
   InScenePlacedSourceGlobalObjectIdHash: 2872544468
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -24613,7 +24613,7 @@ MonoBehaviour:
     springStrength: 1226
     springDamper: 55
     maxSuspensionCompression: 0.02
-    tireGripFactor: 0.95
+    tireGripFactor: 0.3
     tireMass: 1.25
     isMotorWheel: 0
     powerCurve:
@@ -24651,7 +24651,7 @@ MonoBehaviour:
     springStrength: 1226
     springDamper: 55
     maxSuspensionCompression: 0.02
-    tireGripFactor: 0.95
+    tireGripFactor: 0.3
     tireMass: 1.25
     isMotorWheel: 0
     powerCurve:
@@ -24689,7 +24689,7 @@ MonoBehaviour:
     springStrength: 1226
     springDamper: 55
     maxSuspensionCompression: 0.02
-    tireGripFactor: 0.95
+    tireGripFactor: 0.3
     tireMass: 1.25
     isMotorWheel: 1
     powerCurve:
@@ -24727,7 +24727,7 @@ MonoBehaviour:
     springStrength: 1226
     springDamper: 55
     maxSuspensionCompression: 0.02
-    tireGripFactor: 0.95
+    tireGripFactor: 0.3
     tireMass: 1.25
     isMotorWheel: 1
     powerCurve:
@@ -24777,7 +24777,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   ShowTopMostFoldoutHeaderGroup: 1
-  _carID: 2
+  _carID: 1
 --- !u!1 &1622348901630898965
 GameObject:
   m_ObjectHideFlags: 0
@@ -39131,7 +39131,7 @@ Transform:
   m_GameObject: {fileID: 2534487184383154558}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0749, y: -0.0127, z: -0.0919}
+  m_LocalPosition: {x: 0.0749, y: -0.0072999997, z: -0.0919}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -88862,7 +88862,7 @@ Transform:
   m_GameObject: {fileID: 6278631175393833259}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0743, y: -0.0123, z: -0.0918}
+  m_LocalPosition: {x: -0.0743, y: -0.0069, z: -0.0918}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -105577,9 +105577,9 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 524023
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: 6009ba63acb6c2d419be393df191f340, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: 7ac265ffc35315748918138adcfc0a74, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
@@ -115551,8 +115551,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2908853565523133048}
   - component: {fileID: 4533519605698484834}
-  - component: {fileID: 7934569969940794250}
-  - component: {fileID: 3238831650404575879}
   m_Layer: 0
   m_Name: CarModel
   m_TagString: Untagged
@@ -115614,36 +115612,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.19216919, y: 0.09679875, z: 0.28401333}
   m_Center: {x: 0.00027182698, y: 0.02510482, z: 0.0032151043}
---- !u!114 &7934569969940794250
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8383409687584595799}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher
---- !u!114 &3238831650404575879
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8383409687584595799}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Outline
-  outlineMode: 0
-  outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 2
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!1 &8388842748852140762
 GameObject:
   m_ObjectHideFlags: 0
