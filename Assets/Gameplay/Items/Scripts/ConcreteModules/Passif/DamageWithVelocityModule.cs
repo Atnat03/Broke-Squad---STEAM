@@ -21,16 +21,16 @@ namespace Gameplay.Items
         
         public void OnCollide(Collision collision, ItemPickup item)
         {
-            if (collision.collider == item.GetComponent<Collider>()) return;
             if (_rb == null && !item.TryGetComponent(out _rb)) return;
+            if(_rb.linearVelocity.magnitude < 1f) return;
             
-            float speed = _rb.linearVelocity.magnitude;
+            float speed = collision.relativeVelocity.magnitude;
             
             IDamageable damageable = collision.gameObject.GetComponentInChildren<IDamageable>() ?? collision.gameObject.GetComponent<IDamageable>();
-
+            
             if (damageable != null)
             {
-               if (speed <= _minVelocityForDamage) return;
+                if (speed <= _minVelocityForDamage) return;
                
                 if (collision.gameObject.GetComponentInChildren<PlayerHealth>())
                 {

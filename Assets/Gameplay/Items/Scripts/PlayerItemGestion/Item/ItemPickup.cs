@@ -237,16 +237,17 @@ namespace Gameplay.Items
         
         public void OnCollisionEnter(Collision collision)
         {
-            ABPrint.Print("collision : " + collision.transform.name);
+            if (!IsServer) return;
+            
             if(_instance == null) return;
             if(!_canCollide) return;
-            
-            OnCollide?.Invoke();
             
             foreach (var passif in _instance.Passifs)
             {
                 passif.OnCollide(collision, this);
             }
+            
+            OnCollide?.Invoke();
         }
         
         public void SkipCollisionBuffer()

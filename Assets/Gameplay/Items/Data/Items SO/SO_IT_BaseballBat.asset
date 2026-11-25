@@ -25,8 +25,8 @@ MonoBehaviour:
       Icon: {fileID: 0}
     IsItem: 1
     TooltipInHand:
-      Message: Hit
-      Icon: {fileID: 21300000, guid: 8ae8f158311cc8642a15ba853aef5b8c, type: 3}
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
     _tooltipWithItem:
       Message: 
@@ -36,6 +36,7 @@ MonoBehaviour:
   Weight: 1
   OffsetRotationDrop: {x: 0, y: 0, z: 0}
   FirstActionList:
+  - rid: 7202345609054912643
   - rid: 7693030277138612449
   - rid: 7693030277138612451
   SecondActionList:
@@ -64,9 +65,18 @@ MonoBehaviour:
     - rid: 7202345609054912642
       type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
-        _minVelocityForDamage: 3
+        _minVelocityForDamage: 5
         _damage: 50
         _canDamagePlayer: 1
+        _destroyOnApplyDamage: 0
+    - rid: 7202345609054912643
+      type: {class: BreakThingsModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _force: 30
+        _stringName: 
+        _volume: 0.5
     - rid: 7203101116948808037
       type: {class: CreateSuspiciousSoundModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
