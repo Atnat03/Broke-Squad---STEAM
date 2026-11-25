@@ -55,13 +55,14 @@ namespace Gameplay.LD
         private IEnumerator MovingRoutine()
         {
             Vector3 startT = _up ? _downPosition.position : _upPosition.position;
-           
-            if(Vector3.Distance(transform.position, _downPosition.position) > 0.1f)
+            Vector3 endT = _up ? _upPosition.position : _downPosition.position;
+            
+            float distance = Vector3.Distance(transform.position, startT);
+            
+            if(distance > 0.1f)
             {
                 startT = transform.position;
             }
-            
-            Vector3 endT = _up ? _upPosition.position : _downPosition.position;
             
             float e = 0;
 
