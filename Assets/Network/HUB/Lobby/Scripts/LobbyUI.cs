@@ -1,8 +1,10 @@
+using System.Collections;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using MyPrint;
 using System.Collections.Generic;
+using Network.Connections;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
@@ -11,6 +13,7 @@ namespace Network.HUB
     public class LobbyUI : MonoBehaviour
     {
         [SerializeField] private LobbyManager _lobbyManager;
+        [SerializeField] private PlayerLocalPersonalisation _personnalisationManager;
 
         [Header("Canvas")] 
         [SerializeField] private GameObject _creationCanva;
@@ -29,7 +32,7 @@ namespace Network.HUB
         private readonly List<PlayerElementVisual> _elementPlayerList = new();
         private readonly List<PlayerDataLobby> _dataPlayerList = new();
 
-        [Header("Scene List UI")] 
+        [Header("Scene List UI")]
         [SerializeField] private GameObject[] _onlyHostUI;
         [SerializeField] private SceneLobbyElement _sceneListPrefab;
         [SerializeField] private Transform _parentListScene;
@@ -42,6 +45,9 @@ namespace Network.HUB
         [SerializeField] private GameObject _inLobbyScene;
         [SerializeField] private Camera _firstCamera;
         
+        //Other variables
+        private bool _canSetReady = true;
+        
         private void OnEnable()
         {
             _lobbyManager.OnJoinLobby += JoinLobbyUI;
@@ -50,6 +56,8 @@ namespace Network.HUB
             _lobbyManager.OnUpdatedMap += UpdateSelectedMapName;
             _lobbyManager.OnTryToJoinGame += ActivateLoadingScreen;
             _lobbyManager.OnLeaveLobby += LeaveLobbyUI;
+            _lobbyManager.OnSetReadyLocal += UpdateLocalReady;
+            _lobbyManager.OnSetColorLocal += UpdateLocalColor;
         }
         
         private void OnDisable()
@@ -59,7 +67,9 @@ namespace Network.HUB
             _lobbyManager.OnUpdateLobbyInfo -= UpdateUI;
             _lobbyManager.OnUpdatedMap -= UpdateSelectedMapName;
             _lobbyManager.OnTryToJoinGame -= ActivateLoadingScreen; 
-            _lobbyManager.OnLeaveLobby -= LeaveLobbyUI; 
+            _lobbyManager.OnLeaveLobby -= LeaveLobbyUI;
+            _lobbyManager.OnSetReadyLocal -= UpdateLocalReady;
+            _lobbyManager.OnSetColorLocal -= UpdateLocalColor;
             
             _elementList.Clear();
         }
@@ -179,7 +189,8 @@ namespace Network.HUB
                     {
                         Name = nom,
                         ColorID = colorId,
-                        IsReady = isReady
+                        IsReady = isReady,
+                        ID = player.Id
                     };
                     
                     _elementPlayerList[i].SetData(_dataPlayerList[i]);
@@ -200,7 +211,8 @@ namespace Network.HUB
                 {
                     Name = "",
                     ColorID = 0,
-                    IsReady = false
+                    IsReady = false,
+                    ID = string.Empty
                 };
                 
                 _elementPlayerList.Add(ui);
@@ -227,6 +239,29 @@ namespace Network.HUB
         private void Update()
         {
             _startGameButton.interactable = _lobbyManager.CheckAllPlayerReady();
+        }
+        
+        private void UpdateLocalReady(bool isReady, string playerId)
+        {
+            for (int i = 0; i < _dataPlayerList.Count; i++)
+            {
+                if (_dataPlayerList[i].ID == playerId)
+                {
+                    _personnalisationManager.UpdateReadyVisual(isReady);
+                    _elementPlayerList[i].SetLocalIsReady(isReady);
+                }
+            }
+        }
+        
+        private void UpdateLocalColor(int colorId, string playerId)
+        {
+            for (int i = 0; i < _dataPlayerList.Count; i++)
+            {
+                if (_dataPlayerList[i].ID == playerId)
+                {
+                    _elementPlayerList[i].SetLocalColor(colorId);
+                }
+            }
         }
     }
 }

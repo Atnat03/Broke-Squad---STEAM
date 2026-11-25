@@ -8,8 +8,11 @@ using UnityEngine.UI;
 
 namespace Network.Connections
 {
+    
     public class PlayerLocalPersonalisation : MonoBehaviour
     {
+        public static readonly float BufferIsReady = 0.3f;
+        
         [Header("References")]
         [SerializeField] private LobbyManager _lobbyManager;
         
@@ -79,22 +82,16 @@ namespace Network.Connections
 
         public void SetReadyButton()
         {
-            if (!_canSetReady) return;
-            
-            _isReady = !_isReady;
-            _readyButton.color = _isReady ?  _confirmColor[0] : _confirmColor[1];
-            _readyText.text = _isReady ?  "READY" : "NOT READY";
-
-            StartCoroutine(ReadyBuffer());
+            _lobbyManager.SetReady();
         }
-
-        IEnumerator ReadyBuffer()
+        
+        public void UpdateReadyVisual(bool isReady)
         {
-            _canSetReady = false;
-            
-            yield return new WaitForSeconds(1);
-            
-            _canSetReady = true;
+            _isReady = isReady;
+
+            _readyButton.color = _isReady ? _confirmColor[0] : _confirmColor[1];
+
+            _readyText.text = _isReady ? "READY" : "NOT READY";
         }
     }
 }

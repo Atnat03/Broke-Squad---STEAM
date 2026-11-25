@@ -11295,10 +11295,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 759806948}
-        m_TargetAssemblyTypeName: Network.Connections.PlayerLocalPersonalisation,
-          Assembly-CSharp
-        m_MethodName: SetReadyButton
+      - m_Target: {fileID: 1354779340}
+        m_TargetAssemblyTypeName: Network.HUB.LobbyManager, Assembly-CSharp
+        m_MethodName: SetReady
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11308,9 +11307,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1354779340}
-        m_TargetAssemblyTypeName: Network.HUB.LobbyManager, Assembly-CSharp
-        m_MethodName: SetReady
+      - m_Target: {fileID: 759806948}
+        m_TargetAssemblyTypeName: Network.Connections.PlayerLocalPersonalisation,
+          Assembly-CSharp
+        m_MethodName: SetReadyButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11481,7 +11481,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000047430618}
+  m_AnchoredPosition: {x: 0, y: 0.00035621715}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &709989895
@@ -21197,6 +21197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LobbyUI
   _lobbyManager: {fileID: 1354779340}
+  _personnalisationManager: {fileID: 759806948}
   _creationCanva: {fileID: 2011266604}
   _inLobbyCanva: {fileID: 999174377}
   _lobbyListElementPrefab: {fileID: 2446531678303073518, guid: 35975953cc3697c40a3fe7b07ea1362d, type: 3}
@@ -22753,7 +22754,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000015086745}
+  m_AnchoredPosition: {x: 0, y: 0.00035920483}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1292845508
