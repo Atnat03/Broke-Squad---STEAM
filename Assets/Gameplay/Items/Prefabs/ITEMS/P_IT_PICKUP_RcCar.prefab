@@ -24516,7 +24516,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2409625355
+  GlobalObjectIdHash: 3259424076
   InScenePlacedSourceGlobalObjectIdHash: 4035078783
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -115551,6 +115551,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2908853565523133048}
   - component: {fileID: 4533519605698484834}
+  - component: {fileID: 7660912620980918969}
+  - component: {fileID: 7383978303552913356}
   m_Layer: 0
   m_Name: CarModel
   m_TagString: Untagged
@@ -115612,6 +115614,36 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.19216919, y: 0.09679875, z: 0.28401333}
   m_Center: {x: 0.00027182698, y: 0.02510482, z: 0.0032151043}
+--- !u!114 &7660912620980918969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8383409687584595799}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 10
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
+--- !u!114 &7383978303552913356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8383409687584595799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher
 --- !u!1 &8388842748852140762
 GameObject:
   m_ObjectHideFlags: 0
