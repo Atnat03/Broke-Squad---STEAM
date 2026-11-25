@@ -14,7 +14,6 @@ namespace Gameplay.LD
     [RequireComponent(typeof(NetworkTransform))]
     public class MovingPlatform : NetworkBusListener
     {
-
         public Vector3 CurrentVelocity { get; private set; }
 
         private Vector3 _lastPosition;
@@ -45,7 +44,7 @@ namespace Gameplay.LD
 
             if (_movingCoroutine != null)
                 StopCoroutine(_movingCoroutine);
-
+            
             _movingCoroutine = StartCoroutine(MovingRoutine());
         }
 
@@ -55,8 +54,14 @@ namespace Gameplay.LD
 
         private IEnumerator MovingRoutine()
         {
-            Transform startT = _up ? _downPosition : _upPosition;
-            Transform endT = _up ? _upPosition : _downPosition;
+            Vector3 startT = _up ? _downPosition.position : _upPosition.position;
+           
+            if(Vector3.Distance(transform.position, _downPosition.position) > 0.1f)
+            {
+                startT = transform.position;
+            }
+            
+            Vector3 endT = _up ? _upPosition.position : _downPosition.position;
             
             float e = 0;
 
@@ -67,12 +72,12 @@ namespace Gameplay.LD
                 float t = Mathf.Clamp01(e / _duration);
                 float curveValue = _movingCurve.Evaluate(t);
 
-                transform.position = Vector3.Lerp(startT.position, endT.position, curveValue);
+                transform.position = Vector3.Lerp(startT, endT, curveValue);
                 
                 yield return null;
             }
 
-            transform.position = endT.position;
+            transform.position = endT;
 
             _movingCoroutine = null;
         }
