@@ -30,8 +30,6 @@ namespace Gameplay.Items
             
             if (damageable != null)
             {
-                ABPrint.Print("Speed :"  + speed + " || min speed : " + _minVelocityForDamage + " || rb velocity : " + _rb.linearVelocity.magnitude);
-                
                 if (speed <= _minVelocityForDamage) return;
                
                 if (collision.gameObject.GetComponentInChildren<PlayerHealth>())
