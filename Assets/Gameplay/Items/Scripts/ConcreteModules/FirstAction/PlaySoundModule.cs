@@ -27,7 +27,8 @@ namespace Gameplay.Items
                 Position = Context.Core.transform.position,
                 KeyEvent =  _key,
                 ValueF = _volume,
-                ValueS = _soundName
+                ValueS = _soundName,
+                InstanceId = Context.Core.Instance.InstanceId
             });
             
             ConsumeCondition(new OnModuleDoAction_EVENT());

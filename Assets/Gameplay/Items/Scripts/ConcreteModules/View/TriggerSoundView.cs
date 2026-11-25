@@ -20,6 +20,7 @@ namespace Gameplay.Items
                 _itemInstance = GetComponentInParent<ItemCore>().Instance;
             
             if (data.KeyEvent != _key) return;
+            if (_itemInstance.InstanceId != data.InstanceId) return;
             if (_itemInstance == null) return;
             
             InvokeEvent(new PlaySoundEvent

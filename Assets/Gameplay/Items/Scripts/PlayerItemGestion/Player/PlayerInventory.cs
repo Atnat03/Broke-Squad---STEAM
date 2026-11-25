@@ -52,6 +52,7 @@ namespace Gameplay.Items
         private float _dropAngle = 0f;
         private GameObject _previewVisual;
         private float _previewBottomOffset;
+        private bool _hasPos = false;
         
         private PlayerInventoryReplication _replication;
         private readonly NetworkVariable<int> _heldItemId = new(-1);
@@ -107,6 +108,8 @@ namespace Gameplay.Items
             
             _playerInput.OnDropInput += OnDropPreviewStart;
             _playerInput.OnDropInputCanceled += OnPerformDrop;
+            
+            _playerInput.OnSelectedItemInInventory += SelectSlot;
             
             _playerInput.OnMouseRoll += OnSelectedItemChange;
             
@@ -403,13 +406,19 @@ namespace Gameplay.Items
         private void UpdatePreviewDrop()
         {
             if (_previewVisual == null) return;
-
+            
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward,
                     out RaycastHit hit, _dropRange, ~0, QueryTriggerInteraction.Ignore))
             {
                 _dropPos = hit.point;
+                _hasPos = true;
             }
-
+            else
+            {
+                _hasPos = false;
+            }
+            
+            _previewVisual.SetActive(_hasPos);
             _previewVisual.transform.SetPositionAndRotation(_dropPos + Vector3.up * (_previewBottomOffset + 0.01f), _dropRot);
         }
         
@@ -429,6 +438,8 @@ namespace Gameplay.Items
         {
             _isPreviewDrop = false;
 
+            if (!_hasPos) return;
+            
             if (_previewVisual != null)
             {
                 Destroy(_previewVisual);
@@ -445,6 +456,8 @@ namespace Gameplay.Items
             ItemInstance item = GetCurrentItemInHand();
             if (item == null) return;
 
+            NotifyNotInHand(item);
+            
             float maxDist = _dropRange + 2f;
             if ((groundPoint - transform.position).sqrMagnitude > maxDist * maxDist) return;
 

@@ -26,7 +26,7 @@ namespace Gameplay.Items
         
         [Header("Drop")]
         [SerializeField] private ItemPickup _spawnItem;
-
+        
         private float _currentFill = 0;
         private Coroutine _decayCoroutine;
         
@@ -85,6 +85,12 @@ namespace Gameplay.Items
 
         public void OnThrow()
         {
+            if (_decayCoroutine != null)
+            {
+                Context.Inventory.StopCoroutine(_decayCoroutine);
+                _decayCoroutine = null;
+            }
+            
             _currentFill = 0;
             
             UpdateView(false);

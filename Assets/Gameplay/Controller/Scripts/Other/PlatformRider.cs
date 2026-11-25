@@ -12,7 +12,6 @@ public class PlatformRider : NetworkBehaviour
     private PlayerController _playerController;
     
     private readonly NetworkVariable<ulong> _ridingPlatformId = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-
     private readonly NetworkVariable<Vector3> _ridingLocalPos = new(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     private bool _remoteWasRiding;
@@ -25,7 +24,7 @@ public class PlatformRider : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (!IsSpawned || !IsOwner) return;
+        if (!IsOwner) return;
 
         _playerController.Motor.PlatformVelocity = _currentPlatform != null ? _currentPlatform.CurrentVelocity : Vector3.zero;
 
@@ -42,7 +41,7 @@ public class PlatformRider : NetworkBehaviour
     
     private void LateUpdate()
     {
-        if (!IsSpawned || IsOwner) return;
+        if (IsOwner) return;
 
         MovingPlatform platform = FindPlatform(_ridingPlatformId.Value);
 

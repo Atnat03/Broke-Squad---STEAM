@@ -53,6 +53,8 @@ namespace Gameplay.Controller
 
         public Action OnActionInInventory;
         
+        public Action<int> OnSelectedItemInInventory;
+        
         public Action OnPause;
         
         private void Awake()
@@ -112,9 +114,11 @@ namespace Gameplay.Controller
             _playerInputs.Gameplay.EmoteWheel.performed += PerformShowEmoteWheel;
             _playerInputs.Gameplay.EmoteWheel.canceled += CancelShowEmoteWheel;
             
+            _playerInputs.Inventory.FirstItem.performed += PerformSelectFirstItem;
+            _playerInputs.Inventory.SecondItem.performed += PerformSelectSecondItem;
+            
             _playerInputs.Gameplay.ActionInInventory.performed += PerformActionInInventory;
         }
-
 
         private void OnDisable()
         {
@@ -310,6 +314,16 @@ namespace Gameplay.Controller
         private void PerformActionInInventory(InputAction.CallbackContext obj)
         {
             OnActionInInventory?.Invoke();
+        }
+        
+        private void PerformSelectSecondItem(InputAction.CallbackContext obj)
+        {
+            OnSelectedItemInInventory?.Invoke(1);
+        }
+
+        private void PerformSelectFirstItem(InputAction.CallbackContext obj)
+        {
+            OnSelectedItemInInventory?.Invoke(0);
         }
         
         private void OnDestroy() => _playerInputs.Dispose();

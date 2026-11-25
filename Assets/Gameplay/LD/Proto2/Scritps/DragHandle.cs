@@ -56,6 +56,14 @@ namespace Gameplay.Items
         {
             Tooltip tooltip = new Tooltip();
             
+            if (_owner.IsHandleHeldByLocal(_index))
+            {
+                tooltip.Message = _owner.EnoughPlayersOnAxis(axis)
+                    ? string.Empty
+                    : $"Not enough players ({_owner.HoldersOnAxis(axis)}/{_owner.RequiredOnAxis(axis)})";
+                return tooltip;
+            }
+            
             if (!_owner.IsHandleFree(_index))
             {
                 tooltip.Message = "Already taken";
@@ -66,8 +74,12 @@ namespace Gameplay.Items
                 tooltip.Message = "Not enough space";
                 return tooltip;
             }
+
             
-            tooltip.Message = "Hold to drag";
+            
+            tooltip.Message = _owner.HoldersOnAxis(axis) + 1 >= _owner.RequiredOnAxis(axis)
+                ? "Hold to drag"
+                : $"Hold to drag ({_owner.HoldersOnAxis(axis)}/{_owner.RequiredOnAxis(axis)})";
             return tooltip;
         }
 
