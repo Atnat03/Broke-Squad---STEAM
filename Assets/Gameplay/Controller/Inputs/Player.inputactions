@@ -561,6 +561,16 @@
                     "interactions": "",
                     "initialStateCheck": false,
                     "priority": 0
+                },
+                {
+                    "name": "NoClip",
+                    "type": "Button",
+                    "id": "edb0041c-1e7e-43f3-98ba-36a520a34984",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -616,6 +626,78 @@
                     "processors": "",
                     "groups": "",
                     "action": "CheatPannel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "61dc4dcc-4d3a-4dfa-a5ae-ae80dca0b551",
+                    "path": "<Keyboard>/numpad5",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "NoClip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8124c13e-a03b-4646-868a-c013b5fb0853",
+                    "path": "<Keyboard>/5",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "NoClip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Inventory",
+            "id": "89bac5a9-2891-4e4a-b1ea-0daf0d7a2073",
+            "actions": [
+                {
+                    "name": "FirstItem",
+                    "type": "Button",
+                    "id": "d7a5937c-c32e-496e-a198-b7e13edfd101",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "SecondItem",
+                    "type": "Button",
+                    "id": "ffef8fb5-5673-4b13-b6d0-8614ef9f602d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "cc1ef6e6-db86-4e56-9341-40ad3de40b79",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FirstItem",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d496c95d-c46e-4811-b73b-76a1058693ae",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SecondItem",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
