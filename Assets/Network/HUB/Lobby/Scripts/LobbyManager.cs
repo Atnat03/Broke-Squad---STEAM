@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Threading.Tasks;
 using Bus;
 using MyPrint;
@@ -49,7 +50,8 @@ namespace Network.HUB
         //Other variables
         private string _playerName;
         private bool _relayJoined;
-
+        private bool _isUpdatingReady = false;
+        
         //Actions
         public Action<Lobby, bool> OnJoinLobby;
         public Action<List<Lobby>> OnUpdateJoinedLobby;
@@ -57,6 +59,8 @@ namespace Network.HUB
         public Action<string> OnUpdatedMap;
         public Action OnTryToJoinGame;
         public Action OnLeaveLobby;
+        public Action<bool, string> OnSetReadyLocal;
+        public Action<int, string> OnSetColorLocal;
 
         private async void Start()
         {
@@ -518,6 +522,8 @@ namespace Network.HUB
         {
             try
             {
+                OnSetColorLocal?.Invoke(newSkinId, GetLocalPlayer().Id);
+                
                 await LobbyService.Instance.UpdatePlayerAsync(
                     _joinedLobby.Id,
                     AuthenticationService.Instance.PlayerId,
@@ -528,8 +534,6 @@ namespace Network.HUB
                             { KEY_PLAYER_COLOR, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, newSkinId.ToString()) }
                         }
                     });
-
-                Debug.Log("Skin updated: " + newSkinId);
             }
             catch (LobbyServiceException e)
             {
@@ -591,37 +595,62 @@ namespace Network.HUB
         
         public void SetReadyButton() => SetReady();
         
+
         public async void SetReady()
         {
+            // Empêche les requêtes simultanées
+            if (_isUpdatingReady || _joinedLobby == null)
+                return;
+
+            Player me = GetLocalPlayer();
+
+            if (me == null)
+                return;
+
+            _isUpdatingReady = true;
+
+            string currentState = "0";
+
+            if (me.Data != null &&
+                me.Data.TryGetValue(KEY_PLAYER_READY, out var readyData))
+            {
+                currentState = readyData.Value;
+            }
+
+            string newState = currentState == "1" ? "0" : "1";
+            bool isReady = newState == "1";
+
+            OnSetReadyLocal?.Invoke(isReady, me.Id);
+
             try
             {
-                Player me = _joinedLobby.Players.Find(p => p.Id == AuthenticationService.Instance.PlayerId);
-
-                if (me == null)
-                {
-                    Debug.LogError("Local player not found in lobby");
-                    return;
-                }
-
-                string current  = me.Data.ContainsKey(KEY_PLAYER_READY) ? me.Data[KEY_PLAYER_READY].Value : "0";
-                string newState = current == "0" ? "1" : "0";
-
-                await LobbyService.Instance.UpdatePlayerAsync(
+                _joinedLobby = await LobbyService.Instance.UpdatePlayerAsync(
                     _joinedLobby.Id,
-                    AuthenticationService.Instance.PlayerId,
+                    me.Id,
                     new UpdatePlayerOptions
                     {
                         Data = new Dictionary<string, PlayerDataObject>
                         {
-                            { KEY_PLAYER_READY, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, newState) }
+                            {
+                                KEY_PLAYER_READY,
+                                new PlayerDataObject(
+                                    PlayerDataObject.VisibilityOptions.Member,
+                                    newState
+                                )
+                            }
                         }
-                    });
-
-                Debug.Log(KEY_PLAYER_READY + newState);
+                    }
+                );
             }
             catch (LobbyServiceException e)
             {
-                Debug.Log(e);
+                OnSetReadyLocal?.Invoke(!isReady, me.Id);
+
+                Debug.LogException(e);
+            }
+            finally
+            {
+                _isUpdatingReady = false;
             }
         }
         
@@ -644,5 +673,15 @@ namespace Network.HUB
         }
 
         #endregion
+        
+        public Player GetLocalPlayer()
+        {
+            if (_joinedLobby == null || _joinedLobby.Players == null)
+                return null;
+
+            string localPlayerId = AuthenticationService.Instance.PlayerId;
+
+            return _joinedLobby.Players.Find(p => p.Id == localPlayerId);
+        }
     }
 }
