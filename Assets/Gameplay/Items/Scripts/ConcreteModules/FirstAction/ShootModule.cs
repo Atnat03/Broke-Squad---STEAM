@@ -14,11 +14,13 @@ namespace Gameplay.Items
         
         [SerializeField] private SO_Item _ammoPrefab;
         [SerializeField] private Vector3 _spawnOffset = new Vector3(0.2f, -0.15f, 0.7f);
+        [SerializeField] private Vector3 _torqueAmmo = new Vector3(0f, 0f, 0f);
         [SerializeField] private float _wallMargin = 0.15f;
         [SerializeField] private float _shootForce;
         [SerializeField] private LayerMask _aimMask = ~0;  
         [SerializeField] private float _aimDistance = 100f;
         [SerializeField] private float _fireRate = 0.25f;
+        [SerializeField] private bool _ammoAreAffectByGravity = false;
         private bool _canShoot = true;
         Coroutine _fireRateCoroutine;
         
@@ -140,9 +142,10 @@ namespace Gameplay.Items
                 
                 float force = data.ValueF * rb.mass;
                 
-                rb.useGravity = false;
+                rb.useGravity = _ammoAreAffectByGravity;
                 pickup.OnCollide += () => rb.useGravity = true;
                 
+                rb.AddTorque(_torqueAmmo);
                 rb.AddForce(data.Direction * force, ForceMode.Impulse);
             }
             

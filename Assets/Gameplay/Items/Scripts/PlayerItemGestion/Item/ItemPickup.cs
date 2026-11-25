@@ -102,7 +102,7 @@ namespace Gameplay.Items
                 if (_rb)
                 {
                     _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-                    _rb.interpolation = RigidbodyInterpolation.Interpolate;
+                    _rb.interpolation = RigidbodyInterpolation.None;
                 }
             }
             else
@@ -237,17 +237,17 @@ namespace Gameplay.Items
         
         public void OnCollisionEnter(Collision collision)
         {
+            if (!IsServer) return;
+            
             if(_instance == null) return;
             if(!_canCollide) return;
-            
-            ABPrint.Print("collision : " + collision.transform.name);
-            
-            OnCollide?.Invoke();
             
             foreach (var passif in _instance.Passifs)
             {
                 passif.OnCollide(collision, this);
             }
+            
+            OnCollide?.Invoke();
         }
         
         public void SkipCollisionBuffer()

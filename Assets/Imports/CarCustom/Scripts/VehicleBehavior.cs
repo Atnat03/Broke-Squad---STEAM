@@ -116,6 +116,8 @@ namespace Vehicle
             {
                 _inputs.Gameplay.Disable();
                 _lastSentInput = Vector2.zero;
+
+                return;
             }
 
             GetInputs();
@@ -125,8 +127,6 @@ namespace Vehicle
         private void FixedUpdate()
         {
             if (!IsServer) return;
-         
-            ABPrint.Print(_rigidbody.linearVelocity.ToString(), ABColor.White);
             
             CastRay();
             ApplyWheelsPhysic();
