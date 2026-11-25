@@ -306,6 +306,8 @@ GameObject:
   - component: {fileID: 651644645001593831}
   - component: {fileID: 3653296310633939460}
   - component: {fileID: 2852140066047393129}
+  - component: {fileID: 1007943405465442749}
+  - component: {fileID: 708628961935269055}
   m_Layer: 9
   m_Name: P_IT_PICKUP_RcRemote
   m_TagString: Untagged
@@ -438,6 +440,45 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _itemData: {fileID: 11400000, guid: 543f60c639420f04ab5c5e59ed6a9e08, type: 2}
   _rackRatio: 0.5
+--- !u!114 &1007943405465442749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3562788849326337215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher
+--- !u!54 &708628961935269055
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3562788849326337215}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &3808846507679785183
 GameObject:
   m_ObjectHideFlags: 0

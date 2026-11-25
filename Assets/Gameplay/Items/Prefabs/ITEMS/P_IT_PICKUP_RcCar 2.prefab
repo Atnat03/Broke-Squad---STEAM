@@ -24430,6 +24430,7 @@ GameObject:
   - component: {fileID: 3573334230214029796}
   - component: {fileID: 1831228669579161435}
   - component: {fileID: 6421093648490819057}
+  - component: {fileID: 970870041424814918}
   m_Layer: 9
   m_Name: P_IT_PICKUP_RcCar 2
   m_TagString: Untagged
@@ -24778,6 +24779,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   ShowTopMostFoldoutHeaderGroup: 1
   _carID: 1
+--- !u!114 &970870041424814918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1614380767507503342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher
 --- !u!1 &1622348901630898965
 GameObject:
   m_ObjectHideFlags: 0
@@ -31340,7 +31353,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6513390955689033124}
-  m_Layer: 9
+  - component: {fileID: 1697393192233286694}
+  - component: {fileID: 4562139896697656684}
+  m_Layer: 0
   m_Name: Wheels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31366,6 +31381,39 @@ Transform:
   - {fileID: 4748762215595034315}
   m_Father: {fileID: 3439096868915934712}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1697393192233286694
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133267770854705119}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.19216919, y: 0.09679875, z: 0.28401333}
+  m_Center: {x: 0.00027182698, y: 0.02510482, z: 0.0032151043}
+--- !u!114 &4562139896697656684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133267770854705119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109624ed20c39c64590b6777d51a1d31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightLayerSwitcher
 --- !u!1 &2134138611080358165
 GameObject:
   m_ObjectHideFlags: 0
@@ -39115,7 +39163,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4748762215595034315}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: BR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -88846,7 +88894,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4440037330578207662}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: BL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95479,7 +95527,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2619697752967539464}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: FL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96051,7 +96099,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3329910762596060132}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: FR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
