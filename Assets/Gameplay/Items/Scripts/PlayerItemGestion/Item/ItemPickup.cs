@@ -241,7 +241,6 @@ namespace Gameplay.Items
             if(_instance == null) return;
             if(!_canCollide) return;
             
-            
             OnCollide?.Invoke();
             
             foreach (var passif in _instance.Passifs)

@@ -19,6 +19,7 @@ namespace Gameplay.Items
         [SerializeField] private LayerMask _aimMask = ~0;  
         [SerializeField] private float _aimDistance = 100f;
         [SerializeField] private float _fireRate = 0.25f;
+        [SerializeField] private bool _ammoAreAffectByGravity = false;
         private bool _canShoot = true;
         Coroutine _fireRateCoroutine;
         
@@ -140,7 +141,7 @@ namespace Gameplay.Items
                 
                 float force = data.ValueF * rb.mass;
                 
-                rb.useGravity = false;
+                rb.useGravity = _ammoAreAffectByGravity;
                 pickup.OnCollide += () => rb.useGravity = true;
                 
                 rb.AddForce(data.Direction * force, ForceMode.Impulse);
