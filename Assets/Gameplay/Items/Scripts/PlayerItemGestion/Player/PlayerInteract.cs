@@ -17,12 +17,15 @@
             [Header("World Settings")]
             [SerializeField] private Camera _camera;
             [SerializeField] private float _maxDistanceToInteract = 2f;
+            [SerializeField] private float _maxDistanceToKeepHolding = 2.5f;
             [SerializeField] private LayerMask _interactableMask;
             [SerializeField] private LayerMask _obstacleMask;
             private IInteractable _currentHoverInteractable = null;
             private IHoldInteractable _heldInteractable;
+            private Component _heldComponent;
 
             public Action<bool, Tooltip> OnTooltipChange;
+            private string _lastHeldTooltip;
             
             #region Network Start
             
@@ -51,8 +54,20 @@
             private void Update()
             {
                 if (!IsOwner || _camera == null) return;
-                if (_heldInteractable != null) return;
-
+                if (_heldInteractable != null)
+                {
+                    if (_heldInteractable is IInteractable held)
+                    {
+                        Tooltip t = held.GetTooltip(null);
+                        if (t.Message != _lastHeldTooltip)
+                        {
+                            _lastHeldTooltip = t.Message;
+                            OnTooltipChange?.Invoke(!string.IsNullOrEmpty(t.Message), t);
+                        }
+                    }
+                    return;
+                }
+                _lastHeldTooltip = null;
                 IInteractable target = (_playerCamera != null && _playerCamera.HasOverride) ? null : GetAimingInteractable();
 
                 if (target == _currentHoverInteractable)
@@ -95,7 +110,26 @@
 
                 OnTooltipChange?.Invoke(!string.IsNullOrEmpty(data.Message), data);
             }
-            
+
+            private bool IsHeldTooFar()
+            {
+                if (_heldComponent == null)
+                    return true;
+
+                Vector3 origin = _camera.transform.position;
+                Vector3 closest;
+                
+                if (_heldComponent.TryGetComponent(out Collider col))
+                {
+                    closest = col.ClosestPoint(origin);
+                }
+                else
+                {
+                    closest = _heldComponent.transform.position;
+                }
+                return (closest - origin).sqrMagnitude > _maxDistanceToKeepHolding * _maxDistanceToKeepHolding;
+            }
+
             private IInteractable GetAimingInteractable()
             {
                 int rayMask = _interactableMask | _obstacleMask;
@@ -128,6 +162,7 @@
                 if (target is IHoldInteractable hold)
                 {
                     _heldInteractable = hold;
+                    _heldComponent = hold as Component;
                     hold.HoldStart(OwnerClientId);
                 }
                 else
@@ -141,6 +176,7 @@
                 if (_heldInteractable == null) return;
                 _heldInteractable.HoldEnd(OwnerClientId);
                 _heldInteractable = null;
+                _heldComponent = null;
             }
         }
     }

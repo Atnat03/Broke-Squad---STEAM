@@ -636,6 +636,16 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""NoClip"",
+                    ""type"": ""Button"",
+                    ""id"": ""edb0041c-1e7e-43f3-98ba-36a520a34984"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -693,6 +703,78 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""action"": ""CheatPannel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""61dc4dcc-4d3a-4dfa-a5ae-ae80dca0b551"",
+                    ""path"": ""<Keyboard>/numpad5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""NoClip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8124c13e-a03b-4646-868a-c013b5fb0853"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""NoClip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Inventory"",
+            ""id"": ""89bac5a9-2891-4e4a-b1ea-0daf0d7a2073"",
+            ""actions"": [
+                {
+                    ""name"": ""FirstItem"",
+                    ""type"": ""Button"",
+                    ""id"": ""d7a5937c-c32e-496e-a198-b7e13edfd101"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
+                    ""name"": ""SecondItem"",
+                    ""type"": ""Button"",
+                    ""id"": ""ffef8fb5-5673-4b13-b6d0-8614ef9f602d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""cc1ef6e6-db86-4e56-9341-40ad3de40b79"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FirstItem"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d496c95d-c46e-4811-b73b-76a1058693ae"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SecondItem"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -727,12 +809,18 @@ public partial class @Player: IInputActionCollection2, IDisposable
         m_Cheats_Heal = m_Cheats.FindAction("Heal", throwIfNotFound: true);
         m_Cheats_TakeDamage = m_Cheats.FindAction("Take Damage", throwIfNotFound: true);
         m_Cheats_CheatPannel = m_Cheats.FindAction("CheatPannel", throwIfNotFound: true);
+        m_Cheats_NoClip = m_Cheats.FindAction("NoClip", throwIfNotFound: true);
+        // Inventory
+        m_Inventory = asset.FindActionMap("Inventory", throwIfNotFound: true);
+        m_Inventory_FirstItem = m_Inventory.FindAction("FirstItem", throwIfNotFound: true);
+        m_Inventory_SecondItem = m_Inventory.FindAction("SecondItem", throwIfNotFound: true);
     }
 
     ~@Player()
     {
         UnityEngine.Debug.Assert(!m_Gameplay.enabled, "This will cause a leak and performance issues, Player.Gameplay.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Cheats.enabled, "This will cause a leak and performance issues, Player.Cheats.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Inventory.enabled, "This will cause a leak and performance issues, Player.Inventory.Disable() has not been called.");
     }
 
     /// <summary>
@@ -1107,6 +1195,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Cheats_Heal;
     private readonly InputAction m_Cheats_TakeDamage;
     private readonly InputAction m_Cheats_CheatPannel;
+    private readonly InputAction m_Cheats_NoClip;
     /// <summary>
     /// Provides access to input actions defined in input action map "Cheats".
     /// </summary>
@@ -1138,6 +1227,10 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Cheats/CheatPannel".
         /// </summary>
         public InputAction @CheatPannel => m_Wrapper.m_Cheats_CheatPannel;
+        /// <summary>
+        /// Provides access to the underlying input action "Cheats/NoClip".
+        /// </summary>
+        public InputAction @NoClip => m_Wrapper.m_Cheats_NoClip;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1179,6 +1272,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @CheatPannel.started += instance.OnCheatPannel;
             @CheatPannel.performed += instance.OnCheatPannel;
             @CheatPannel.canceled += instance.OnCheatPannel;
+            @NoClip.started += instance.OnNoClip;
+            @NoClip.performed += instance.OnNoClip;
+            @NoClip.canceled += instance.OnNoClip;
         }
 
         /// <summary>
@@ -1205,6 +1301,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @CheatPannel.started -= instance.OnCheatPannel;
             @CheatPannel.performed -= instance.OnCheatPannel;
             @CheatPannel.canceled -= instance.OnCheatPannel;
+            @NoClip.started -= instance.OnNoClip;
+            @NoClip.performed -= instance.OnNoClip;
+            @NoClip.canceled -= instance.OnNoClip;
         }
 
         /// <summary>
@@ -1238,6 +1337,113 @@ public partial class @Player: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="CheatsActions" /> instance referencing this action map.
     /// </summary>
     public CheatsActions @Cheats => new CheatsActions(this);
+
+    // Inventory
+    private readonly InputActionMap m_Inventory;
+    private List<IInventoryActions> m_InventoryActionsCallbackInterfaces = new List<IInventoryActions>();
+    private readonly InputAction m_Inventory_FirstItem;
+    private readonly InputAction m_Inventory_SecondItem;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Inventory".
+    /// </summary>
+    public struct InventoryActions
+    {
+        private @Player m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public InventoryActions(@Player wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Inventory/FirstItem".
+        /// </summary>
+        public InputAction @FirstItem => m_Wrapper.m_Inventory_FirstItem;
+        /// <summary>
+        /// Provides access to the underlying input action "Inventory/SecondItem".
+        /// </summary>
+        public InputAction @SecondItem => m_Wrapper.m_Inventory_SecondItem;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Inventory; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="InventoryActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(InventoryActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="InventoryActions" />
+        public void AddCallbacks(IInventoryActions instance)
+        {
+            if (instance == null || m_Wrapper.m_InventoryActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_InventoryActionsCallbackInterfaces.Add(instance);
+            @FirstItem.started += instance.OnFirstItem;
+            @FirstItem.performed += instance.OnFirstItem;
+            @FirstItem.canceled += instance.OnFirstItem;
+            @SecondItem.started += instance.OnSecondItem;
+            @SecondItem.performed += instance.OnSecondItem;
+            @SecondItem.canceled += instance.OnSecondItem;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="InventoryActions" />
+        private void UnregisterCallbacks(IInventoryActions instance)
+        {
+            @FirstItem.started -= instance.OnFirstItem;
+            @FirstItem.performed -= instance.OnFirstItem;
+            @FirstItem.canceled -= instance.OnFirstItem;
+            @SecondItem.started -= instance.OnSecondItem;
+            @SecondItem.performed -= instance.OnSecondItem;
+            @SecondItem.canceled -= instance.OnSecondItem;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="InventoryActions.UnregisterCallbacks(IInventoryActions)" />.
+        /// </summary>
+        /// <seealso cref="InventoryActions.UnregisterCallbacks(IInventoryActions)" />
+        public void RemoveCallbacks(IInventoryActions instance)
+        {
+            if (m_Wrapper.m_InventoryActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="InventoryActions.AddCallbacks(IInventoryActions)" />
+        /// <seealso cref="InventoryActions.RemoveCallbacks(IInventoryActions)" />
+        /// <seealso cref="InventoryActions.UnregisterCallbacks(IInventoryActions)" />
+        public void SetCallbacks(IInventoryActions instance)
+        {
+            foreach (var item in m_Wrapper.m_InventoryActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_InventoryActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="InventoryActions" /> instance referencing this action map.
+    /// </summary>
+    public InventoryActions @Inventory => new InventoryActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Gameplay" which allows adding and removing callbacks.
     /// </summary>
@@ -1421,5 +1627,34 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCheatPannel(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "NoClip" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNoClip(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Inventory" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="InventoryActions.AddCallbacks(IInventoryActions)" />
+    /// <seealso cref="InventoryActions.RemoveCallbacks(IInventoryActions)" />
+    public interface IInventoryActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "FirstItem" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnFirstItem(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SecondItem" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSecondItem(InputAction.CallbackContext context);
     }
 }

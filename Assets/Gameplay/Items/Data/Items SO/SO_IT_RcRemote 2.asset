@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
   m_Name: SO_IT_RcRemote 2
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
-  ID: 37
+  ID: 40
   ItemName: Rc Remote
   VisualPrefabLocal: {fileID: 3320872626927670681, guid: 08e21e32b11b4624a910107ee269f53a, type: 3}
   VisualPrefabRemote: {fileID: 3320872626927670681, guid: 84244f5f637de9a49924c5c46e3a9dc2, type: 3}
@@ -20,11 +20,17 @@ MonoBehaviour:
   Icon: {fileID: -6796170423369660680, guid: 0f7dab8cb7527f54194970b88f1526bd, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
   TooltipInHand:
-    DefaultText: 
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 1
-    TooltipInHand: 'Left Click : Control RC Car'
+    TooltipInHand:
+      Message: 
+      Icon: {fileID: 0}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   Weight: 1
@@ -57,40 +63,12 @@ MonoBehaviour:
       type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 3
-        _maxVelocity: 12
-        _minDamage: 1
-        _maxDamage: 5
-        _damageCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 0
-            inSlope: 0
-            outSlope: 0
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 1
-            value: 1
-            inSlope: 0
-            outSlope: 0
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-        _weightFactor: 1
-        _mass: 0.5
+        _damage: 10
         _canDamagePlayer: 1
     - rid: 7693030302417158484
       type: {class: RcRemoteModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _condition:
           rid: -2
-        _carID: 2
+        _carID: 1
         _animationName: Active

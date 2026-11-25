@@ -39,6 +39,13 @@ namespace Vehicle
         float _steerInput;
         float _velocity;
         
+        //Network
+        public const ulong NoDriver = ulong.MaxValue;
+
+        private readonly NetworkVariable<ulong> _driverId = new(NoDriver);
+        private readonly NetworkVariable<Vector2> _syncedInput = new(Vector2.zero);
+        private Vector2 _lastSentInput;
+        
         #endregion
 
         #region Functions
@@ -52,8 +59,6 @@ namespace Vehicle
             _velocity = 0;
             
             _inputs = new Player();
-            _inputs.Enable();
-
             _moveAction = _inputs.Gameplay.Movement;
             
             _rigidbody.centerOfMass = _centerOfMass.localPosition;
@@ -62,6 +67,18 @@ namespace Vehicle
             SetUpMotorType();
         }
 
+        public ulong DriverId => _driverId.Value;
+        
+        public void SetDriver(ulong clientId)
+        {
+            if (!IsServer) return;
+            
+            _driverId.Value = clientId;
+            
+            if (clientId == NoDriver) 
+                _syncedInput.Value = Vector2.zero;
+        }
+        
         void SetUpTires()
         {
             foreach (WheelBehavior wheel in _wheelList)
@@ -78,17 +95,40 @@ namespace Vehicle
         
         #region Updates
 
+
         private void Update()
         {
+            bool iAmDriver = NetworkManager != null && _driverId.Value == NetworkManager.LocalClientId;
+
+            if (iAmDriver)
+            {
+                if (!_inputs.Gameplay.enabled)
+                    _inputs.Gameplay.Enable();
+
+                Vector2 v = _moveAction.ReadValue<Vector2>();
+                if ((v - _lastSentInput).sqrMagnitude > 0.0001f)
+                {
+                    _lastSentInput = v;
+                    SendInputRpc(v);
+                }
+            }
+            else if (_inputs.Gameplay.enabled)
+            {
+                _inputs.Gameplay.Disable();
+                _lastSentInput = Vector2.zero;
+
+                return;
+            }
+
             GetInputs();
-            
             ApplyVisualWheels();
         }
-
+        
         private void FixedUpdate()
         {
+            if (!IsServer) return;
+            
             CastRay();
-
             ApplyWheelsPhysic();
         }
 
@@ -96,11 +136,18 @@ namespace Vehicle
 
         void GetInputs()
         {
-            Vector2 moveValue = _moveAction.ReadValue<Vector2>();
-            _accelInput = moveValue.y;
-            _steerInput = moveValue.x;
+            bool iAmDriver = NetworkManager != null && _driverId.Value == NetworkManager.LocalClientId;
+            Vector2 v = iAmDriver ? _lastSentInput : _syncedInput.Value;
+            _accelInput = v.y;
+            _steerInput = v.x;
         }
         
+        [Rpc(SendTo.Server)]
+        private void SendInputRpc(Vector2 input, RpcParams rpcParams = default)
+        {
+            if (rpcParams.Receive.SenderClientId != _driverId.Value) return;
+            _syncedInput.Value = new Vector2(Mathf.Clamp(input.x, -1f, 1f), Mathf.Clamp(input.y, -1f, 1f));
+        }
         
         private void ApplyVisualWheels()
         {
@@ -119,7 +166,7 @@ namespace Vehicle
             {
                 wheel.SetIsGrounded(Physics.Raycast(
                     wheel.wheelTransform.position,
-                    -wheel.wheelTransform.up,
+                    -transform.up,
                     out wheel.tireRaycast,
                     wheel.maxRayDistance,
                     _groundLayer
@@ -142,24 +189,21 @@ namespace Vehicle
 
         private void Suspension(WheelBehavior wheel)
         {
-            Vector3 springDir = wheel.wheelTransform.up;
+            Vector3 springDir = wheel.tireRaycast.normal;
 
             Vector3 tireWorldVel = _rigidbody.GetPointVelocity(wheel.tireRaycast.point);
 
             float compression = Mathf.Clamp(wheel.suspensionRestDist - wheel.tireRaycast.distance, 0f, wheel.maxSuspensionCompression);
-            
-            _velocity = Vector3.Dot(springDir, tireWorldVel);
 
-            float force = compression * wheel.springStrength - _velocity * wheel.springDamper;
+            float vel = Vector3.Dot(springDir, tireWorldVel);
+            float force = Mathf.Max(0f, compression * wheel.springStrength - vel * wheel.springDamper);
 
-            force = Mathf.Max(0f, force);
-            
             _rigidbody.AddForceAtPosition(springDir * force, wheel.tireRaycast.point);
         }
         
         private void Steering(WheelBehavior wheel)
         {
-            Vector3 steeringDir = wheel.wheelTransform.right;
+            Vector3 steeringDir = Vector3.ProjectOnPlane(wheel.wheelTransform.right, transform.up).normalized;
             
             Vector3 tireWorldVel = _rigidbody.GetPointVelocity(wheel.wheelTransform.position);
             

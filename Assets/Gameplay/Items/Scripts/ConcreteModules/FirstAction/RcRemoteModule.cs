@@ -1,4 +1,5 @@
 ﻿using System;
+using MyPrint;
 using Unity.Collections;
 using UnityEngine;
 
@@ -24,12 +25,13 @@ namespace Gameplay.Items
         {
             _isActivated = !_isActivated;
             
-            Context.SendEventToEveryone(new OnModuleDoAction_EVENT
+            Context.Inventory.InvokeEvent(new OnModuleDoAction_EVENT
             {
                 ClientId = Context.Inventory.OwnerClientId,
                 KeyEvent = _keyEventAnim,
                 ValueB = _isActivated,
-                ValueS = _animationName
+                ValueS = _animationName,
+                InstanceId = Context.Core.Instance.InstanceId
             });
             
             if(_isActivated)Context.Inventory.Controller.PushLock();
@@ -44,6 +46,8 @@ namespace Gameplay.Items
 
         public void OnNotInHand()
         {
+            ABPrint.Print("Not in hand");
+            
             SendEvent(false);
             Context.Inventory.Controller.PopLock();
         }

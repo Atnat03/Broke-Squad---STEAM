@@ -56,7 +56,7 @@ namespace Gameplay.Controller
         void Awake()
         {
             _itemGiveUI.SetActive(false);
-            
+            _noclipText.gameObject.SetActive(false);
             foreach (SO_Item item in _database.Data)
             {
                 CheatGiveItemElement elem = Instantiate(_prefabCheatItemGive, _parentGiveItemSpawn);
@@ -83,6 +83,7 @@ namespace Gameplay.Controller
             _playerInputs.Cheats.Revive.performed += Revive;
             _playerInputs.Cheats.TakeDamage.performed += Damage;
             _playerInputs.Gameplay.Pause.performed += LeavePanel;
+            _playerInputs.Cheats.NoClip.performed += _ => ToggleNoclip();
             
             _playerInputs.Cheats.CheatPannel.performed += UpdatePannelItemGive;
             
@@ -106,6 +107,7 @@ namespace Gameplay.Controller
                 _playerInputs.Cheats.TakeDamage.performed -= Damage;
                 _playerInputs.Gameplay.Pause.performed -= LeavePanel;
                 _playerInputs.Cheats.CheatPannel.performed -= UpdatePannelItemGive;
+                _playerInputs.Cheats.NoClip.performed += _ => ToggleNoclip();
                 _playerInputs.Disable();
                 
                 if (_noclip) SetNoclip(false);

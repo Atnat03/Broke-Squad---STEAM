@@ -179,7 +179,8 @@
                         if (h.distance <= 0f) continue;                             
                         if (Vector3.Dot(h.normal, dir) >= 0f) continue;
                         if (h.collider.transform.IsChildOf(transform)) continue;     
-                        if (IsHolderCollider(h.collider)) continue;                
+                        if (IsHolderCollider(h.collider)) continue;               
+                        if (h.point.y < Mathf.Min(p1.y, p2.y) - r + 0.2f) continue;
                         allowed = Mathf.Min(allowed, Mathf.Max(0f, h.distance - collisionSkin));
                     }
                 }
@@ -364,6 +365,25 @@
 
             #endregion
 
+            public int HoldersOnAxis(int axis)
+            {
+                int count = 0;
+                for (int i = 0; i < handles.Length && i < _holders.Count; i++)
+                    if (handles[i].Axis == axis && _holders[i] != NoHolder) count++;
+                return count;
+            }
+
+            public int RequiredOnAxis(int axis)
+            {
+                int total = 0;
+                for (int i = 0; i < handles.Length; i++)
+                    if (handles[i].Axis == axis) total++;
+                return Mathf.Min(Mathf.Max(1, axes[axis].playersRequired), total);
+            }
+
+            public bool EnoughPlayersOnAxis(int axis) => HoldersOnAxis(axis) >= RequiredOnAxis(axis);
+
+            public bool IsHandleHeldByLocal(int index) => NetworkManager != null && index < _holders.Count && _holders[index] == NetworkManager.LocalClientId;
             #region Local client
 
             private void OnHoldersChanged(NetworkListEvent<ulong> _) => RefreshLocalHold();
