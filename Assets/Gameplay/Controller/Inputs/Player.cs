@@ -636,6 +636,16 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""NoClip"",
+                    ""type"": ""Button"",
+                    ""id"": ""edb0041c-1e7e-43f3-98ba-36a520a34984"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -691,6 +701,28 @@ public partial class @Player: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""CheatPannel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""61dc4dcc-4d3a-4dfa-a5ae-ae80dca0b551"",
+                    ""path"": ""<Keyboard>/numpad5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""NoClip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8124c13e-a03b-4646-868a-c013b5fb0853"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""NoClip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -777,6 +809,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
         m_Cheats_Heal = m_Cheats.FindAction("Heal", throwIfNotFound: true);
         m_Cheats_TakeDamage = m_Cheats.FindAction("Take Damage", throwIfNotFound: true);
         m_Cheats_CheatPannel = m_Cheats.FindAction("CheatPannel", throwIfNotFound: true);
+        m_Cheats_NoClip = m_Cheats.FindAction("NoClip", throwIfNotFound: true);
         // Inventory
         m_Inventory = asset.FindActionMap("Inventory", throwIfNotFound: true);
         m_Inventory_FirstItem = m_Inventory.FindAction("FirstItem", throwIfNotFound: true);
@@ -1162,6 +1195,7 @@ public partial class @Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Cheats_Heal;
     private readonly InputAction m_Cheats_TakeDamage;
     private readonly InputAction m_Cheats_CheatPannel;
+    private readonly InputAction m_Cheats_NoClip;
     /// <summary>
     /// Provides access to input actions defined in input action map "Cheats".
     /// </summary>
@@ -1193,6 +1227,10 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Cheats/CheatPannel".
         /// </summary>
         public InputAction @CheatPannel => m_Wrapper.m_Cheats_CheatPannel;
+        /// <summary>
+        /// Provides access to the underlying input action "Cheats/NoClip".
+        /// </summary>
+        public InputAction @NoClip => m_Wrapper.m_Cheats_NoClip;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1234,6 +1272,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @CheatPannel.started += instance.OnCheatPannel;
             @CheatPannel.performed += instance.OnCheatPannel;
             @CheatPannel.canceled += instance.OnCheatPannel;
+            @NoClip.started += instance.OnNoClip;
+            @NoClip.performed += instance.OnNoClip;
+            @NoClip.canceled += instance.OnNoClip;
         }
 
         /// <summary>
@@ -1260,6 +1301,9 @@ public partial class @Player: IInputActionCollection2, IDisposable
             @CheatPannel.started -= instance.OnCheatPannel;
             @CheatPannel.performed -= instance.OnCheatPannel;
             @CheatPannel.canceled -= instance.OnCheatPannel;
+            @NoClip.started -= instance.OnNoClip;
+            @NoClip.performed -= instance.OnNoClip;
+            @NoClip.canceled -= instance.OnNoClip;
         }
 
         /// <summary>
@@ -1583,6 +1627,13 @@ public partial class @Player: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCheatPannel(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "NoClip" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNoClip(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Inventory" which allows adding and removing callbacks.
