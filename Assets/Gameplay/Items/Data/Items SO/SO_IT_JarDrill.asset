@@ -65,6 +65,7 @@ MonoBehaviour:
         _minVelocityForDamage: 3
         _damage: 10
         _canDamagePlayer: 1
+        _destroyOnApplyDamage: 0
     - rid: 7832862682398589470
       type: {class: HardToOpenModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -72,10 +73,10 @@ MonoBehaviour:
           rid: 7832862682398589473
         _keyEvent: HARD_TO_OPEN_EVENT_KEY
         _keyEventNoStamina: CANT_USE_NO_STAMINA
-        _fillPerClick: 5
+        _fillPerClick: 10
         _maxFilling: 100
-        _staminaCost: 10
-        _decayDelay: 0.5
+        _staminaCost: 20
+        _decayDelay: 0
         _decayPerSecond: 50
         _spawnItem: {fileID: 5654455528838130014, guid: da06ecf2262754b4e974a601b470e299, type: 3}
     - rid: 7832862682398589473
