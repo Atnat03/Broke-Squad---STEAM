@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEditor;
@@ -82,3 +84,5 @@ public class ActionInInventory_SO_CustomInspector : Editor
         }
     }
 }
+
+#endif

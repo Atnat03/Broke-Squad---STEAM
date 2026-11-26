@@ -20,18 +20,24 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: 78c50f16d5d24f047adc35858832dfb3, type: 3}
   OffsetInHand: {x: 0, y: 0, z: 0}
   TooltipInHand:
-    DefaultText: 
+    DefaultTooltip:
+      Message: 
+      Icon: {fileID: 0}
     IsItem: 0
-    TooltipInHand: 
+    TooltipInHand:
+      Message: Hit
+      Icon: {fileID: 21300000, guid: 8ae8f158311cc8642a15ba853aef5b8c, type: 3}
     _requiresItemModule: 0
-    _tooltipWithItem: 
+    _tooltipWithItem:
+      Message: 
+      Icon: {fileID: 0}
     _requiredModule:
       rid: -2
   Weight: 1
   OffsetRotationDrop: {x: 0, y: 0, z: 0}
   FirstActionList:
-  - rid: 7493938474522247173
   - rid: 7493938474522247176
+  - rid: 7493938474522247173
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -58,36 +64,9 @@ MonoBehaviour:
       type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 5
-        _maxVelocity: 10
-        _minDamage: 10
-        _maxDamage: 50
-        _damageCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 0
-            inSlope: 0
-            outSlope: 0
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 1
-            value: 1
-            inSlope: 0
-            outSlope: 0
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-        _weightFactor: 1
-        _mass: 0.5
+        _damage: 10
         _canDamagePlayer: 1
+        _destroyOnApplyDamage: 0
     - rid: 7493938474522247173
       type: {class: MeleeDamageModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -96,7 +75,7 @@ MonoBehaviour:
         _range: 3
         _damage: 10
         _attackCooldown: 1
-        _offsetTimerTrigger: 0.5
+        _offsetTimerTrigger: 0.15
     - rid: 7493938474522247176
       type: {class: AnimationModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
