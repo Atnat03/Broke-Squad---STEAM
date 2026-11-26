@@ -19,7 +19,6 @@ namespace Network.Connections
         [Header("Pseudo")]
         [SerializeField] private TextMeshProUGUI _playerName;
         [SerializeField] private TMP_InputField _playerInputField;
-        [SerializeField] private Image _confirmNameButtonImage;
         [SerializeField] private Color[] _confirmColor;
         private string _currentName = String.Empty;
         
@@ -32,7 +31,6 @@ namespace Network.Connections
         [SerializeField] private Image _readyButton;
         [SerializeField] private TextMeshProUGUI _readyText;
         private bool _isReady = false;
-        private bool _canSetReady = true;
 
         void Start()
         {
@@ -44,7 +42,6 @@ namespace Network.Connections
                 _selectColorList.Add(colorInstance);
             }
             
-            _confirmNameButtonImage.color = _confirmColor[1];
             _readyButton.color = _confirmColor[1];
 
             DisableAllSelectionUI();
@@ -57,17 +54,7 @@ namespace Network.Connections
                 c.DisableSelection();
             }
         }
-
-        private void Update()
-        {
-            if (_currentName.Equals(String.Empty)) return;
-            
-            if (!_currentName.Equals(_playerInputField.text))
-            {
-                _confirmNameButtonImage.color = _confirmColor[1];
-            }
-        }
-
+        
         public void ChangeName()
         {
             string newName = _playerInputField.text;
@@ -76,8 +63,6 @@ namespace Network.Connections
             _lobbyManager.SetNameButton(newName);
             _playerName.text = newName;
             _currentName = newName;
-            
-            _confirmNameButtonImage.color = _confirmColor[0];
         }
 
         public void SetReadyButton()

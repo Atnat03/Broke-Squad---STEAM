@@ -1,4 +1,5 @@
 ﻿using Gameplay.Items;
+using MyPrint;
 using UnityEngine;
 
 namespace Gameplay.LD
@@ -21,7 +22,18 @@ namespace Gameplay.LD
 			foreach (IFirstAction first in item.FirstActionList)
 			{
 				if (first is OpenDoorModule key)
-					return KeyFits(key.Range);
+				{
+					bool b = KeyFits(key.Range);
+
+					ABPrint.PrintBool(b, "B");
+					
+					if (b)
+					{
+						first.Condition.UseItem();
+					}
+					
+					return b;
+				}
 			}
 
 			return false;

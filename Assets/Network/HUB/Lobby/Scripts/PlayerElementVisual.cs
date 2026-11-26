@@ -39,8 +39,12 @@ namespace Network.HUB
 
         public void SetLocalIsReady(bool isReady)
         {
-            ABPrint.Print("ready");
             _readyText.gameObject.SetActive(isReady);
+        }
+        
+        public void SetLocalName(string newName)
+        {
+            _namePlayerText.text = newName;
         }
     }
 

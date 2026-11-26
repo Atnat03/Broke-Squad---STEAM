@@ -61,6 +61,7 @@ namespace Network.HUB
         public Action OnLeaveLobby;
         public Action<bool, string> OnSetReadyLocal;
         public Action<int, string> OnSetColorLocal;
+        public Action<string, string> OnChangePlayerNameLocal;
 
         private async void Start()
         {
@@ -572,6 +573,8 @@ namespace Network.HUB
         
         private async void SetName(string newName)
         {
+            OnChangePlayerNameLocal?.Invoke(GetLocalPlayer().Id, newName);
+            
             try
             {
                 await LobbyService.Instance.UpdatePlayerAsync(
