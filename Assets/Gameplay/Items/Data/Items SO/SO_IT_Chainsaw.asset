@@ -37,7 +37,6 @@ MonoBehaviour:
   OffsetRotationDrop: {x: 0, y: 0, z: 0}
   FirstActionList:
   - rid: 7693030277138612449
-  - rid: 7693030277138612451
   - rid: 7832863052131729736
   SecondActionList:
   - rid: 7202345609054912641
@@ -83,15 +82,6 @@ MonoBehaviour:
         _animationName: Hit
         _boolAnimation: 1
         _floatAnimation: 0
-    - rid: 7693030277138612451
-      type: {class: MeleeDamageModule, ns: Gameplay.Items, asm: Assembly-CSharp}
-      data:
-        _condition:
-          rid: 7832863124606681088
-        _range: 3
-        _damage: 10
-        _attackCooldown: 1
-        _offsetTimerTrigger: 0.15
     - rid: 7832863052131729736
       type: {class: OpenDoorModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -102,9 +92,3 @@ MonoBehaviour:
         _stringNameGoodKey: Items/Unlock Door
         _stringNameWringKey: Enviro/Try Open Closed Door
         _volume: 0.5
-    - rid: 7832863124606681088
-      type: {class: ElectricUseModule, ns: Gameplay.Items, asm: Assembly-CSharp}
-      data:
-        _startPercentValue: 0
-        _electricNeededToUse: 50
-        _keyEventCantUse: NO_ELECTRICITY_EVENT
