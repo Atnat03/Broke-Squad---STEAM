@@ -104,14 +104,13 @@ namespace Gameplay.Items
             if (IsOwner)
             {
                 ListenToEvent<OnPickupItem_EVENT>(TryPickupItem);
+                _playerInput.OnMouseRoll += OnSelectedItemChange;
             }
             
             _playerInput.OnDropInput += OnDropPreviewStart;
             _playerInput.OnDropInputCanceled += OnPerformDrop;
             
             _playerInput.OnSelectedItemInInventory += SelectSlot;
-            
-            _playerInput.OnMouseRoll += OnSelectedItemChange;
             
             OnInventorySpawned?.Invoke(this);
         }
@@ -370,6 +369,8 @@ namespace Gameplay.Items
             
             _isPreviewDrop = true;
             _dropPos = transform.position + transform.forward * (_baseDropPosition.z) + Vector3.up * (_baseDropPosition.y);
+            _dropAngle = 0f;
+            _dropRot = Quaternion.Euler(item.Data.OffsetRotationDrop);
             
             _previewVisual = Instantiate(item.Data.PickupPrefab.gameObject);
 
@@ -426,7 +427,7 @@ namespace Gameplay.Items
         {
             if (_isPreviewDrop)
             {
-                ItemInstance item = GetCurrentItemInHand();
+                ItemInstance item = GetLocalInstance();
                 if (item == null) return;
                             
                 _dropAngle = (_dropAngle + 90f) % 360f;
