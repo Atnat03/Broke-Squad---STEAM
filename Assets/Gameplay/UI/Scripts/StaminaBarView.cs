@@ -8,7 +8,7 @@ namespace Gameplay.UI
 {
     public class StaminaBarView : MonoBusListener
     {
-        [SerializeField] private Slider playerStaminaSlider;
+        [SerializeField] private Image playerStaminaSlider;
         [SerializeField] private CanvasGroup staminaGroup;
         [SerializeField] private float staminaSmoothSpeed = 12f;
         [SerializeField] private float staminaHideDelay = 1.5f; 
@@ -35,14 +35,11 @@ namespace Gameplay.UI
         {
             _max = e.MaxStamina;
             _target = e.Current;
-
-            if (playerStaminaSlider != null) playerStaminaSlider.maxValue = _max;
             
             if (!_initialized)
             {
                 _initialized = true;
                 _displayed = _target;
-                if (playerStaminaSlider != null) playerStaminaSlider.value = _displayed;
                 if (staminaGroup != null) staminaGroup.alpha = 0f;
             }
         }
@@ -56,7 +53,7 @@ namespace Gameplay.UI
             _displayed = Mathf.Lerp(_displayed, _target, t);
             if (Mathf.Abs(_displayed - _target) < 0.01f) _displayed = _target;
 
-            playerStaminaSlider.value = _displayed;
+            playerStaminaSlider.fillAmount = _displayed/_max;
 
             if (staminaGroup == null) return;
 

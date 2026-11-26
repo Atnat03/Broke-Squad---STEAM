@@ -30,10 +30,20 @@ namespace Gameplay.LD
 
             foreach (SO_Item so in _items)
             {
-                if (so == item.Data) return true;
+                if (so == item.Data) return IsUsable(item);
+                Debug.Log($"[LD] item {IsUsable(item)}");
             }
 
             return false;
          }
+        private static bool IsUsable(ItemInstance item)
+        {
+            foreach (IFirstAction action in item.FirstActionList)
+            {
+                if (action.Condition != null && !action.Condition.CheckCondition())
+                    return false;
+            }
+            return true;
+        }
     }
 }

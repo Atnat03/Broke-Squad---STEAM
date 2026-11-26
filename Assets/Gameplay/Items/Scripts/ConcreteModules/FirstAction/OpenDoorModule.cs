@@ -1,4 +1,5 @@
 ﻿using System;
+using Gameplay.LD;
 using MyPrint;
 using UnityEngine;
 
@@ -30,6 +31,7 @@ namespace Gameplay.Items
 
             Context.SendToServer(this, new OnModuleDoAction_EVENT
             {
+                ClientId = Context.Inventory.OwnerClientId,
                 Position =  cam.position,
                 Direction = cam.forward,
             });
@@ -49,33 +51,17 @@ namespace Gameplay.Items
             Vector3 origin = data.Position;
             Vector3 direction = data.Direction;
             
-            if (Physics.Raycast(origin, direction, out RaycastHit hit, 2f) && hit.transform.TryGetComponent(out Door door))
+            if (Physics.Raycast(origin, direction, out RaycastHit hit, 2f))
             {
-                bool b = door.TryUnlock(Range);
-                ABPrint.PrintBool(b);
+                KeyCondition key = hit.transform.parent.gameObject.GetComponentInChildren<KeyCondition>();
+
+                if (key == null) return;
                 
-                if(b)
-                {
-                    //SFX
-                    Context.Inventory.InvokeEvent(new PlaySoundEvent
-                    {
-                        Position = origin,
-                        Volume = _volume,
-                        SoundName = _stringNameGoodKey
-                    });
-                    
-                    ConsumeCondition(new OnModuleDoAction_EVENT());
-                }
-                else
-                {
-                    //SFX
-                    Context.Inventory.InvokeEvent(new PlaySoundEvent
-                    {
-                        Position = origin,
-                        Volume = _volume,
-                        SoundName = _stringNameWringKey
-                    });
-                }
+                InteractTrigger interactTrigger = hit.transform.GetComponentInChildren<InteractTrigger>();
+
+                if (interactTrigger == null) return;
+                                    
+                interactTrigger.Interact(data.ClientId);
             }
         }
     }

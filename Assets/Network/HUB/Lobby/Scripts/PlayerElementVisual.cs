@@ -9,7 +9,7 @@ namespace Network.HUB
     public class PlayerElementVisual : MonoBusListener
     {
         [SerializeField] private TextMeshProUGUI _namePlayerText;
-        [SerializeField] private MeshRenderer[] _meshRendererPlayer;
+        [SerializeField] private SkinnedMeshRenderer[] _meshRendererPlayer;
         [SerializeField] private TextMeshProUGUI _readyText;
 
         void Start()
@@ -28,10 +28,29 @@ namespace Network.HUB
 
             _readyText.gameObject.SetActive(data.IsReady);
         }
+
+        public void SetLocalColor(int colorId)
+        {
+            foreach (var m in  _meshRendererPlayer)
+            {
+                m.material.color = PlayerLocalData.instance.PossibleColor[colorId];
+            }
+        }
+
+        public void SetLocalIsReady(bool isReady)
+        {
+            _readyText.gameObject.SetActive(isReady);
+        }
+        
+        public void SetLocalName(string newName)
+        {
+            _namePlayerText.text = newName;
+        }
     }
 
     public class PlayerDataLobby
     {
+        public string ID;
         public int ColorID;
         public string Name;
         public bool IsReady;

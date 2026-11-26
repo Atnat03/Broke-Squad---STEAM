@@ -115,17 +115,15 @@ namespace Gameplay.Items
         private void PerformExplosion()
         {
             Collider[] buffer = new Collider[32];
-            var size = Physics.OverlapSphereNonAlloc(Context.Core.Instance.Anchor.position, _explosionRadius, buffer);
-
+            var size = Physics.OverlapSphereNonAlloc(_anchor.position, _explosionRadius, buffer);
+            
             for (int i = 0; i < size; i++)
             {
                 IDamageable d = buffer[i].GetComponentInChildren<IDamageable>();
                 d?.ApplyDamage(_explosionDamage);
                 
-                if(buffer[i].TryGetComponent(out IBreakable breakable))
-                {
-                    breakable.Break(_explosionBreakForce);
-                }
+                IBreakable breakable = buffer[i].GetComponent<IBreakable>();
+                breakable?.Break(_explosionBreakForce);
 
                 /*if (buffer[i].TryGetComponent(out PlayerController player))
                 {

@@ -1,4 +1,6 @@
-﻿using Unity.Netcode;
+﻿using Gameplay.Controller;
+using MyPrint;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Gameplay.LD
@@ -17,8 +19,9 @@ namespace Gameplay.LD
         {
             if (!Context.IsServer) return;
             NetworkObject netObj = other.GetComponentInParent<NetworkObject>();
+            
             if (netObj == null || !netObj.IsPlayerObject) return;
-            Raise(new LDActivation(netObj, netObj.transform.position));
+            Raise(new LDActivation(netObj, netObj.transform.position, netObj.GetComponent<PlayerController>().PlayerName));
         }
     }
 }

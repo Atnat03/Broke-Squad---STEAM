@@ -9,7 +9,10 @@ namespace Gameplay.LD
     {
         public override void Activate(LDActivation activation)
         {
-            InvokeEvent(new OnLockDownStart_EVENT());
+            InvokeEvent(new OnLockDownStart_EVENT
+            {
+                PlayerTriggerName = activation.TriggerPlayerName
+            });
         }
     }
 }

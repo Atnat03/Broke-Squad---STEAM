@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fba00ee032b4e01b43c9681c20ffab8, type: 3}
   m_Name: SO_IT_Axe
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.SO_Item
-  ID: 40
+  ID: 41
   ItemName: Axe
   VisualPrefabLocal: {fileID: 4315403989195616334, guid: c4df27e69d89f82479e41eb873d2857c, type: 3}
   VisualPrefabRemote: {fileID: 6503635076838167944, guid: 78cb6194d4e0f3b42a0456e409f47ca3, type: 3}
@@ -25,8 +25,8 @@ MonoBehaviour:
       Icon: {fileID: 0}
     IsItem: 1
     TooltipInHand:
-      Message: 
-      Icon: {fileID: 0}
+      Message: Break Planks
+      Icon: {fileID: 21300000, guid: 8ae8f158311cc8642a15ba853aef5b8c, type: 3}
     _requiresItemModule: 0
     _tooltipWithItem:
       Message: 
@@ -66,35 +66,7 @@ MonoBehaviour:
       type: {class: DamageWithVelocityModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
         _minVelocityForDamage: 3
-        _maxVelocity: 12
-        _minDamage: 15
-        _maxDamage: 60
-        _damageCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 0
-            inSlope: 0
-            outSlope: 0
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 1
-            value: 1
-            inSlope: 0
-            outSlope: 0
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-        _weightFactor: 1
-        _mass: 2
+        _damage: 10
         _canDamagePlayer: 1
     - rid: 7203101116948808037
       type: {class: CreateSuspiciousSoundModule, ns: Gameplay.Items, asm: Assembly-CSharp}

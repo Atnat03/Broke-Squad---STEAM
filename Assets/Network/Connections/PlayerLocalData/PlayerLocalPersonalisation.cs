@@ -8,15 +8,17 @@ using UnityEngine.UI;
 
 namespace Network.Connections
 {
+    
     public class PlayerLocalPersonalisation : MonoBehaviour
     {
+        public static readonly float BufferIsReady = 0.3f;
+        
         [Header("References")]
         [SerializeField] private LobbyManager _lobbyManager;
         
         [Header("Pseudo")]
         [SerializeField] private TextMeshProUGUI _playerName;
         [SerializeField] private TMP_InputField _playerInputField;
-        [SerializeField] private Image _confirmNameButtonImage;
         [SerializeField] private Color[] _confirmColor;
         private string _currentName = String.Empty;
         
@@ -29,7 +31,6 @@ namespace Network.Connections
         [SerializeField] private Image _readyButton;
         [SerializeField] private TextMeshProUGUI _readyText;
         private bool _isReady = false;
-        private bool _canSetReady = true;
 
         void Start()
         {
@@ -41,7 +42,6 @@ namespace Network.Connections
                 _selectColorList.Add(colorInstance);
             }
             
-            _confirmNameButtonImage.color = _confirmColor[1];
             _readyButton.color = _confirmColor[1];
 
             DisableAllSelectionUI();
@@ -54,17 +54,7 @@ namespace Network.Connections
                 c.DisableSelection();
             }
         }
-
-        private void Update()
-        {
-            if (_currentName.Equals(String.Empty)) return;
-            
-            if (!_currentName.Equals(_playerInputField.text))
-            {
-                _confirmNameButtonImage.color = _confirmColor[1];
-            }
-        }
-
+        
         public void ChangeName()
         {
             string newName = _playerInputField.text;
@@ -73,28 +63,20 @@ namespace Network.Connections
             _lobbyManager.SetNameButton(newName);
             _playerName.text = newName;
             _currentName = newName;
-            
-            _confirmNameButtonImage.color = _confirmColor[0];
         }
 
         public void SetReadyButton()
         {
-            if (!_canSetReady) return;
-            
-            _isReady = !_isReady;
-            _readyButton.color = _isReady ?  _confirmColor[0] : _confirmColor[1];
-            _readyText.text = _isReady ?  "READY" : "NOT READY";
-
-            StartCoroutine(ReadyBuffer());
+            _lobbyManager.SetReady();
         }
-
-        IEnumerator ReadyBuffer()
+        
+        public void UpdateReadyVisual(bool isReady)
         {
-            _canSetReady = false;
-            
-            yield return new WaitForSeconds(1);
-            
-            _canSetReady = true;
+            _isReady = isReady;
+
+            _readyButton.color = _isReady ? _confirmColor[0] : _confirmColor[1];
+
+            _readyText.text = _isReady ? "READY" : "NOT READY";
         }
     }
 }
