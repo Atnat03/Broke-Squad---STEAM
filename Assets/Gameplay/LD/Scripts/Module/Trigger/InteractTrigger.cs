@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Gameplay.Controller;
 using Gameplay.Items;
+using MyPrint;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -40,13 +42,18 @@ namespace Gameplay.LD
             });
         }
         
+        private void OnDisable()
+        {
+            CancelIcon();   
+        }
+        
         public void Interact(ulong clientId) => Context.RequestInteract(this);
 
         public void ServerInteract(NetworkObject player)
         {
             if (!Context.IsServer) return;
             if (Vector3.Distance(player.transform.position, transform.position) > _range) return;;
-            Raise(new LDActivation(player, player.transform.position));
+            Raise(new LDActivation(player, player.transform.position, player.GetComponent<PlayerController>().PlayerName));
         }
         
         #region Tooltip
@@ -57,23 +64,31 @@ namespace Gameplay.LD
 
             if (data.State)
             {
-                if(_playerInventoryInstance == null)
+                if (_playerInventoryInstance == null)
                     _playerInventoryInstance = data.Inventory;
-                
-                if (_seeingRoutine == null)
-                {
-                    StartCoroutine(SeeingRoutine());
-                }
+
+                if (_seeingRoutine == null && _itemIconInstance == null)
+                    _seeingRoutine = StartCoroutine(SeeingRoutine());
             }
             else
             {
                 _playerInventoryInstance = null;
-                
-                if(_seeingRoutine!=null)
-                    StopCoroutine(_seeingRoutine);
+                CancelIcon();
+            }
+        }
 
-                if (_itemIconInstance)
-                    _itemIconInstance.StartDestroy();
+        private void CancelIcon()
+        {
+            if (_seeingRoutine != null)
+            {
+                StopCoroutine(_seeingRoutine);
+                _seeingRoutine = null; 
+            }
+
+            if (_itemIconInstance)
+            {
+                _itemIconInstance.StartDestroy();
+                _itemIconInstance = null;
             }
         }
 
