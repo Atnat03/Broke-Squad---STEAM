@@ -8,7 +8,7 @@ namespace Gameplay.UI.Scripts
 {
     public class HealthBarView : MonoBusListener
     {
-        [SerializeField] private Slider pvSlider;
+        [SerializeField] private Image pvSlider;
         [SerializeField] private TextMeshProUGUI playerHpText;
         [SerializeField] private Color pvColor = Color.red;
         [SerializeField] private Color invincibleColor = Color.yellow;
@@ -27,9 +27,8 @@ namespace Gameplay.UI.Scripts
         private void OnHpChanged(float hp, float maxHp)
         {
             if (pvSlider != null)
-            {
-                pvSlider.maxValue = maxHp;
-                pvSlider.value = hp;
+            { 
+                pvSlider.fillAmount = hp/maxHp;
             }
             if (playerHpText != null) playerHpText.text = ((int)hp).ToString();
         }
