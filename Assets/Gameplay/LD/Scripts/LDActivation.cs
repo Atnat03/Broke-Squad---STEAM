@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Gameplay.Controller;
+using Unity.Collections;
+using UnityEngine;
 using Unity.Netcode;
 
 namespace Gameplay.LD
@@ -9,6 +11,7 @@ namespace Gameplay.LD
         public ulong InstigatorClientId;
         public ulong InstigatorObjectId;
         public Vector3 Position;
+        public FixedString32Bytes TriggerPlayerName;
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
@@ -16,14 +19,16 @@ namespace Gameplay.LD
             serializer.SerializeValue(ref InstigatorObjectId);
             serializer.SerializeValue(ref Position);
             serializer.SerializeValue(ref HasInstigator); 
+            serializer.SerializeValue(ref TriggerPlayerName); 
         }
 
-        public LDActivation(NetworkObject instigator, Vector3 position)
+        public LDActivation(NetworkObject instigator, Vector3 position, string playerNameTrigger = null)
         {
             HasInstigator = instigator != null;
             InstigatorClientId = instigator != null ? instigator.OwnerClientId : 0;
             InstigatorObjectId = instigator != null ? instigator.NetworkObjectId : 0;
             Position = position;
+            TriggerPlayerName = new FixedString32Bytes(playerNameTrigger);
         }
 
         public bool TryGetInstigator(out NetworkObject instigator)
