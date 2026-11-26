@@ -37,6 +37,7 @@ MonoBehaviour:
   OffsetRotationDrop: {x: 0, y: 0, z: 0}
   FirstActionList:
   - rid: 7493938474522247175
+  - rid: 7832863158144074108
   SecondActionList:
   - rid: 7202345609054912641
   PassifList:
@@ -65,6 +66,7 @@ MonoBehaviour:
         _minVelocityForDamage: 5
         _damage: 10
         _canDamagePlayer: 1
+        _destroyOnApplyDamage: 0
     - rid: 7493938474522247175
       type: {class: AnimationModule, ns: Gameplay.Items, asm: Assembly-CSharp}
       data:
@@ -74,3 +76,12 @@ MonoBehaviour:
         _animationName: Hit
         _boolAnimation: 1
         _floatAnimation: 0
+    - rid: 7832863158144074108
+      type: {class: MeleeDamageModule, ns: Gameplay.Items, asm: Assembly-CSharp}
+      data:
+        _condition:
+          rid: -2
+        _range: 3
+        _damage: 10
+        _attackCooldown: 1
+        _offsetTimerTrigger: 0.15
