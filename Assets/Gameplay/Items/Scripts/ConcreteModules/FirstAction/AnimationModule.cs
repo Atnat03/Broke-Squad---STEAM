@@ -51,8 +51,6 @@ namespace Gameplay.Items
                     throw new ArgumentOutOfRangeException();
             }
             
-            ABPrint.Print("I : " + e.ValueI);
-            
             if(e.ValueI != -1)
                 Context.SendEventToEveryone(e);
             

@@ -53,7 +53,7 @@ namespace Gameplay.Items
             
             if (Physics.Raycast(origin, direction, out RaycastHit hit, 2f))
             {
-                KeyCondition key = hit.transform.gameObject.GetComponentInChildren<KeyCondition>();
+                KeyCondition key = hit.transform.parent.gameObject.GetComponentInChildren<KeyCondition>();
 
                 if (key == null) return;
                 
