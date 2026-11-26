@@ -45,9 +45,6 @@ namespace Network.HUB
         [SerializeField] private GameObject _inLobbyScene;
         [SerializeField] private Camera _firstCamera;
         
-        //Other variables
-        private bool _canSetReady = true;
-        
         private void OnEnable()
         {
             _lobbyManager.OnJoinLobby += JoinLobbyUI;
@@ -58,6 +55,7 @@ namespace Network.HUB
             _lobbyManager.OnLeaveLobby += LeaveLobbyUI;
             _lobbyManager.OnSetReadyLocal += UpdateLocalReady;
             _lobbyManager.OnSetColorLocal += UpdateLocalColor;
+            _lobbyManager.OnChangePlayerNameLocal += UpdateLocalName;
         }
         
         private void OnDisable()
@@ -70,6 +68,7 @@ namespace Network.HUB
             _lobbyManager.OnLeaveLobby -= LeaveLobbyUI;
             _lobbyManager.OnSetReadyLocal -= UpdateLocalReady;
             _lobbyManager.OnSetColorLocal -= UpdateLocalColor;
+            _lobbyManager.OnChangePlayerNameLocal -= UpdateLocalName;
             
             _elementList.Clear();
         }
@@ -132,7 +131,8 @@ namespace Network.HUB
         
         private void LeaveLobbyUI()
         {
-            foreach (PlayerElementVisual p in _elementPlayerList) Destroy(p.gameObject);
+            foreach (PlayerElementVisual p in _elementPlayerList) 
+                Destroy(p.gameObject);
             
             _elementPlayerList.Clear();
             _dataPlayerList.Clear();
@@ -164,10 +164,12 @@ namespace Network.HUB
                 }
             }
 
+            Unity.Services.Lobbies.Models.Player localPlayer = _lobbyManager.GetLocalPlayer();
+            
             for (int i = 0; i < list.Count; i++)
             {
                 var player = list[i];
-
+                
                 string nom = "Unknown";
 
                 if (player.Data.TryGetValue(_lobbyManager.KEY_PLAYER_NAME, out PlayerDataObject valueName))
@@ -260,6 +262,17 @@ namespace Network.HUB
                 if (_dataPlayerList[i].ID == playerId)
                 {
                     _elementPlayerList[i].SetLocalColor(colorId);
+                }
+            }
+        }
+        
+        private void UpdateLocalName(string playerId, string newName)
+        {
+            for (int i = 0; i < _dataPlayerList.Count; i++)
+            {
+                if (_dataPlayerList[i].ID == playerId)
+                {
+                    _elementPlayerList[i].SetLocalName(newName);
                 }
             }
         }
