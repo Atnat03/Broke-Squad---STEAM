@@ -51,9 +51,12 @@ namespace Gameplay.Items
             Vector3 origin = data.Position;
             Vector3 direction = data.Direction;
             
-            
             if (Physics.Raycast(origin, direction, out RaycastHit hit, 2f))
             {
+                KeyCondition key = hit.transform.gameObject.GetComponentInChildren<KeyCondition>();
+
+                if (key == null) return;
+                
                 InteractTrigger interactTrigger = hit.transform.GetComponentInChildren<InteractTrigger>();
 
                 if (interactTrigger == null) return;
