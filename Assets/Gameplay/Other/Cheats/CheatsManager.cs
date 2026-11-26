@@ -16,30 +16,27 @@ namespace Gameplay.Controller
 {
     public class CheatsManager : NetworkBusListener
     {
-        [Header("References")] 
-        [SerializeField] private PlayerHealth  _playerHealth; 
+        [Header("References")] [SerializeField]
+        private PlayerHealth _playerHealth;
+
         [SerializeField] private PlayerRevive _playerRevive;
         [SerializeField] private PlayerController _playerController;
-        
+
         private Player _playerInputs;
-            
-        [Header("Item Give")]
-        [SerializeField]private PlayerInventory _inventory;
+
+        [Header("Item Give")] [SerializeField] private PlayerInventory _inventory;
         [SerializeField] private CheatGiveItemElement _prefabCheatItemGive;
         [SerializeField] private Transform _parentGiveItemSpawn;
         [SerializeField] private GameObject _itemGiveUI;
         [SerializeField] private SO_ItemDataBase _database;
         private bool _isOpen = false;
 
-        [Header("Lock Down")]
-        [SerializeField] private Button _stopAggroButton;
-        
-        [Header("Teleport")]
-        [SerializeField] private List<Button> _playerTeleportsButton;
+        [Header("Lock Down")] [SerializeField] private Button _stopAggroButton;
+
+        [Header("Teleport")] [SerializeField] private List<Button> _playerTeleportsButton;
         [SerializeField] private Button _spawnTeleportButton;
-        
-        [Header("Noclip")]
-        [SerializeField] private float _noclipSpeed = 8f;
+
+        [Header("Noclip")] [SerializeField] private float _noclipSpeed = 8f;
         [SerializeField] private float _noclipSprintMultiplier = 3f;
         [SerializeField] private TextMeshProUGUI _noclipText;
 
@@ -47,12 +44,12 @@ namespace Gameplay.Controller
         private CapsuleCollider _capsule;
         private Camera _noclipCam;
         private bool _noclip;
-        
+
         public Action OnInvincibility;
         public Action OnRevive;
         public Action OnDamage;
         public Action OnHeal;
-        
+
         void Awake()
         {
             _itemGiveUI.SetActive(false);
@@ -60,23 +57,24 @@ namespace Gameplay.Controller
             foreach (SO_Item item in _database.Data)
             {
                 CheatGiveItemElement elem = Instantiate(_prefabCheatItemGive, _parentGiveItemSpawn);
-                elem.Initialise(item, () => _inventory.TryAddItem(new ItemInstance(item)));
+                elem.Initialise(item, () => TryGiveItem(item.ID));
             }
         }
-        
+
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
-            if (!IsOwner) 
+            if (!IsOwner)
                 return;
 
             _spawnTeleportButton.onClick.AddListener(() =>
             {
-                _playerController.TeleportClientRpc(SpawnPointManager.instance.GetPlayerSpawnPoint(0).position, SpawnPointManager.instance.GetPlayerSpawnPoint(0).transform.rotation);
+                _playerController.TeleportClientRpc(SpawnPointManager.instance.GetPlayerSpawnPoint(0).position,
+                    SpawnPointManager.instance.GetPlayerSpawnPoint(0).transform.rotation);
             });
-            
+
             _playerInputs = new Player();
-            
+
             _playerInputs.Enable();
             _playerInputs.Cheats.Invicibility.performed += Invicibility;
             _playerInputs.Cheats.Heal.performed += Heal;
@@ -84,16 +82,16 @@ namespace Gameplay.Controller
             _playerInputs.Cheats.TakeDamage.performed += Damage;
             _playerInputs.Gameplay.Pause.performed += LeavePanel;
             _playerInputs.Cheats.NoClip.performed += _ => ToggleNoclip();
-            
+
             _playerInputs.Cheats.CheatPannel.performed += UpdatePannelItemGive;
-            
-            
+
+
             _rb = _playerController.GetComponent<Rigidbody>();
             _capsule = _playerController.GetComponent<CapsuleCollider>();
             _noclipText.gameObject.SetActive(false);
-            
-            
-            if(!IsServer)
+
+
+            if (!IsServer)
                 _stopAggroButton.gameObject.SetActive(false);
         }
 
@@ -109,9 +107,10 @@ namespace Gameplay.Controller
                 _playerInputs.Cheats.CheatPannel.performed -= UpdatePannelItemGive;
                 _playerInputs.Cheats.NoClip.performed += _ => ToggleNoclip();
                 _playerInputs.Disable();
-                
+
                 if (_noclip) SetNoclip(false);
             }
+
             base.OnNetworkDespawn();
         }
 
@@ -122,19 +121,19 @@ namespace Gameplay.Controller
                 //Loop just in case they are many lock active
                 _playerController.PopLock();
             }
-            
+
         }
 
         public void ToggleInfiniteStamina()
         {
             _playerController.Stamina.ToggleInfiniteStamina();
         }
-        
+
         private void Invicibility(InputAction.CallbackContext context)
         {
             InvincibilityServerRpc();
         }
-        
+
         [Rpc(SendTo.Server)]
         private void InvincibilityServerRpc()
         {
@@ -145,6 +144,7 @@ namespace Gameplay.Controller
         {
             DamageServerRpc();
         }
+
         [Rpc(SendTo.Server)]
         private void DamageServerRpc()
         {
@@ -154,8 +154,9 @@ namespace Gameplay.Controller
         private void Heal(InputAction.CallbackContext context)
         {
             HealServerRpc();
-            
+
         }
+
         [Rpc(SendTo.Server)]
         private void HealServerRpc()
         {
@@ -166,7 +167,7 @@ namespace Gameplay.Controller
 
         [Rpc(SendTo.Server)]
         private void ReviveServerRpc() => _playerHealth.ServerRevive();
-        
+
         #region Give Item
 
         private void UpdatePannelItemGive(InputAction.CallbackContext context)
@@ -180,8 +181,23 @@ namespace Gameplay.Controller
             Cursor.lockState = _isOpen ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible = _isOpen;
         }
-        
-        #endregion
+
+
+        private void TryGiveItem(int id)
+        {
+            if (!IsServer)
+            {
+                TryGiveItemServerRpc(id);
+                return;
+            }
+
+            _inventory.TryAddItem(new ItemInstance(_database.GetItemData(id)));
+        }
+
+        [Rpc(SendTo.Server)]
+        private void TryGiveItemServerRpc(int id) => TryGiveItem(id);
+
+    #endregion
 
         private void LeavePanel(InputAction.CallbackContext context)
         {
