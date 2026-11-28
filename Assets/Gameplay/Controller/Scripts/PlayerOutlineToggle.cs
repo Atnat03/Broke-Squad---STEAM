@@ -11,6 +11,7 @@ namespace Gameplay.Controller
         [SerializeField] private Outline _outline;
         [SerializeField] private PlayerInput _playerInput;
         
+        private Color _outlineColor;
         private static bool s_showOthers;
         private static event Action<bool> ShowOthersChanged;
         
@@ -80,13 +81,14 @@ namespace Gameplay.Controller
         {
             _outline.enabled = enabled;
             IsSeeThrough = enabled;
+            SetOutlineColor(enabled ? _outlineColor : Color.white);
             OnSeeThroughChanged?.Invoke(enabled);
         }
 
         private void OnColorIndexChanged(int previous, int current) => ApplyColor(current);
 
-        private void ApplyColor(int index) =>
-            SetOutlineColor(PlayerLocalData.instance.PossibleColor[index]);
+        private void ApplyColor(int index) => _outlineColor = PlayerLocalData.instance.PossibleColor[index];
+        
 
         public void SetOutlineColor(Color color) => _outline.OutlineColor = color;
     }

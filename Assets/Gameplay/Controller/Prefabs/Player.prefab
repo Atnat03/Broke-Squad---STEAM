@@ -1281,7 +1281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3743338691
+  GlobalObjectIdHash: 861962280
   InScenePlacedSourceGlobalObjectIdHash: 0
   m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
@@ -3064,7 +3064,9 @@ GameObject:
   - component: {fileID: 2768083272804090170}
   - component: {fileID: 5092067612077265200}
   - component: {fileID: 3829407431041333052}
-  m_Layer: 7
+  - component: {fileID: 93703944268050049}
+  - component: {fileID: 4937843153300796056}
+  m_Layer: 9
   m_Name: HP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3122,11 +3124,49 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Controller.PlayerResurrection
   ShowTopMostFoldoutHeaderGroup: 1
+  _health: {fileID: 5092067612077265200}
+  _interactZone: {fileID: 4937843153300796056}
   reviveDistance: 2.5
   reviveDuration: 4
   progressDecayPerSecond: 0.5
   heartbeatInterval: 0.1
   heartbeatTimeout: 0.15
+--- !u!114 &93703944268050049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5567793349798264000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c50bec4208d4166930edf25814d4303, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Items.PlayerReviveInteractable
+  _revive: {fileID: 3829407431041333052}
+  _tooltipMessage: Hold E to revive
+  _outline: {fileID: 6525180056855478565}
+--- !u!65 &4937843153300796056
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5567793349798264000}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1.0854023, z: 1.9279637}
+  m_Center: {x: -0.000000002114445, y: -0.4650421, z: 0.31122038}
 --- !u!1 &5605156750683152477
 GameObject:
   m_ObjectHideFlags: 0

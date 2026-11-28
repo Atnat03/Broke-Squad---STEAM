@@ -8,10 +8,17 @@ namespace Gameplay.Controller
 {
     public class PlayerRevive : NetworkBusListener
     {
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() => All.Clear();
+        private static readonly Dictionary<ulong, PlayerRevive> ByOwner = new();
 
-        private static readonly List<PlayerRevive> All = new();
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() => ByOwner.Clear();
+
+        public static bool TryGet(ulong ownerClientId, out PlayerRevive revive)
+            => ByOwner.TryGetValue(ownerClientId, out revive) && revive != null;
+
+        [Header("References")]
+        [SerializeField] private PlayerHealth _health;
+        [SerializeField] private Collider _interactZone;
 
         [Header("Resurrection")]
         [SerializeField] private float reviveDistance = 2.5f;
@@ -22,133 +29,111 @@ namespace Gameplay.Controller
 
         private readonly NetworkVariable<float> _reviveProgress = new(0f,
             NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
-        private PlayerHealth _health;
-        private PlayerInput _playerInput;
         
-        private bool _interactHeld;
-        private PlayerRevive _currentTarget;
+        private bool _localHolding;
         private float _heartbeatTimer;
         
-        private ulong _reviverId;
-        private float _lastHeartbeatTime = float.NegativeInfinity;
-        
         private PlayerRevive _reviver;
-        
+        private float _lastHeartbeatTime = float.NegativeInfinity;
+
         public PlayerHealth Health => _health;
         public float ReviveProgress => _reviveProgress.Value;
+        public bool IsDowned => _health != null && _health.IsDowned;
+        
+        private Vector3 PlayerPosition => NetworkObject.transform.position;
 
         public override void OnNetworkSpawn()
         {
-            _health = GetComponent<PlayerHealth>();
-            All.Add(this);
-            _reviveProgress.OnValueChanged += OnProgressChanged;
-            
-            if (!IsOwner) return;
+            if (_health == null) _health = GetComponentInParent<PlayerHealth>();
+            if (_health == null) _health = GetComponentInChildren<PlayerHealth>();
+            if (_health == null)
+            {
+                Debug.LogError("PlayerRevive: no PlayerHealth found.", this);
+                enabled = false;
+                return;
+            }
 
-            _playerInput = TryGetComponent(out PlayerInput pi) ? pi : gameObject.AddComponent<PlayerInput>();
-            _playerInput.OnInteractInput += OnInteractPressed;
-            _playerInput.OnInteractInputCanceled += OnInteractReleased;
+            ByOwner[OwnerClientId] = this;
+
+            _reviveProgress.OnValueChanged += OnProgressChanged;
+            _health.OnChangedDown += OnDownedChanged;
+            SetZoneActive(_health.IsDowned); 
         }
 
         public override void OnNetworkDespawn()
         {
-            _reviveProgress.OnValueChanged -= OnProgressChanged;
-            All.Remove(this);
+            if (ByOwner.TryGetValue(OwnerClientId, out var current) && current == this)
+                ByOwner.Remove(OwnerClientId);
 
-            if (_playerInput != null)
-            {
-                _playerInput.OnInteractInput -= OnInteractPressed;
-                _playerInput.OnInteractInputCanceled -= OnInteractReleased;
-            }
+            _reviveProgress.OnValueChanged -= OnProgressChanged;
+            if (_health != null) _health.OnChangedDown -= OnDownedChanged;
+            _localHolding = false;
 
             base.OnNetworkDespawn();
         }
 
-        private void OnInteractPressed() => _interactHeld = true;
-        private void OnInteractReleased() => _interactHeld = false;
-        
+        private void OnDownedChanged(bool downed) => SetZoneActive(downed);
+
+        private void SetZoneActive(bool active)
+        {
+            if (_interactZone != null) _interactZone.enabled = active;
+        }
 
         private void Update()
         {
-            if (!IsSpawned) return;
-            if (IsOwner) UpdateReviver();
+            if (!IsSpawned || _health == null) return;
+            if (_localHolding) UpdateLocalHold();
             if (IsServer) UpdateServerRevive();
         }
+
         private void OnProgressChanged(float previous, float current)
         {
             InvokeEvent(new ReviveChanged_EVENT
             {
                 PlayerId = OwnerClientId,
-                Reviving = current > previous,   
+                Reviving = current > previous,
                 Percent = current
             });
         }
-        
 
-        #region Reviver (owner client)
+        #region Reviver side (called by PlayerReviveInteractable on the local client)
 
-        private void UpdateReviver()
+        public void LocalHoldStart()
         {
-            PlayerRevive best = null;
-            if (_interactHeld && !_health.IsDowned)
-                best = FindClosestDownedAlly();
-            
-            if (best != _currentTarget)
-            {
-                _currentTarget = best;
-                _heartbeatTimer = 0f;
-            }
+            _localHolding = true;
+            _heartbeatTimer = 0f; 
+        }
 
-            if (_currentTarget == null) return;
+        public void LocalHoldEnd() => _localHolding = false;
+
+        private void UpdateLocalHold()
+        {
+            if (!IsDowned) { _localHolding = false; return; }
 
             _heartbeatTimer -= Time.deltaTime;
-            if (_heartbeatTimer <= 0f)
-            {
-                _heartbeatTimer = heartbeatInterval;
-                ReviveHeartbeatRpc(_currentTarget);
-            }
+            if (_heartbeatTimer > 0f) return;
+
+            _heartbeatTimer = heartbeatInterval;
+            ReviveHeartbeatRpc();
         }
 
-        private PlayerRevive FindClosestDownedAlly()
-        {
-            PlayerRevive best = null;
-            float bestSqr = reviveDistance * reviveDistance;
-
-            foreach (var other in All)
-            {
-                if (other == this || !other.IsSpawned || other.Health == null || !other.Health.IsDowned) continue;
-                
-                float sqr = (other.transform.position - transform.position).sqrMagnitude;
-                
-                if (sqr <= bestSqr)
-                {
-                    bestSqr = sqr;
-                    best = other;
-                }
-            }
-            return best;
-        }
-
+        
         [Rpc(SendTo.Server)]
-        private void ReviveHeartbeatRpc(NetworkBehaviourReference targetRef, RpcParams rpcParams = default)
+        private void ReviveHeartbeatRpc(RpcParams rpcParams = default)
         {
-            if (rpcParams.Receive.SenderClientId != OwnerClientId) return;
+            if (!_health.IsDowned) return;
 
-            if (targetRef.TryGet(out PlayerRevive target))
-                target.ServerReceiveHeartbeat(this);  
+            ulong sender = rpcParams.Receive.SenderClientId;
+            if (sender == OwnerClientId) return;              
+            if (!TryGet(sender, out var reviver)) return;    
+
+            _reviver = reviver;
+            _lastHeartbeatTime = Time.time;
         }
 
         #endregion
 
         #region Revivable (server, on the downed player's object)
-
-        private void ServerReceiveHeartbeat(PlayerRevive reviver)
-        {
-            if (!_health.IsDowned) return;
-            _reviver = reviver;
-            _lastHeartbeatTime = Time.time;
-        }
 
         private void UpdateServerRevive()
         {
@@ -158,7 +143,7 @@ namespace Gameplay.Controller
                 if (_reviveProgress.Value != 0f) _reviveProgress.Value = 0f;
                 return;
             }
-            
+
             if (IsReviverStillValid())
             {
                 _reviveProgress.Value = Mathf.Min(1f, _reviveProgress.Value + Time.deltaTime / reviveDuration);
@@ -167,7 +152,7 @@ namespace Gameplay.Controller
                 {
                     _reviveProgress.Value = 0f;
                     _lastHeartbeatTime = float.NegativeInfinity;
-                    _health.ServerRevive();          
+                    _health.ServerRevive();
                 }
             }
             else if (_reviveProgress.Value > 0f)
@@ -183,11 +168,9 @@ namespace Gameplay.Controller
             if (_reviver.Health == null || _reviver.Health.IsDowned) return false;
 
             float maxDist = reviveDistance * 1.5f;
-            return (_reviver.transform.position - transform.position).sqrMagnitude <= maxDist * maxDist;
+            return (_reviver.PlayerPosition - PlayerPosition).sqrMagnitude <= maxDist * maxDist;
         }
 
         #endregion
-        
-       
     }
 }
